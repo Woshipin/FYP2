@@ -1,0 +1,262 @@
+@extends('backend-user.newlayout')
+
+@section('newuser-section')
+
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
+{{-- BookingStatus Pusher --}}
+<script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+<script>
+    // 启用Pusher日志记录 - 在生产中不要包括这个
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('66e2c17903cc96af1475', {
+        cluster: 'ap1'
+    });
+
+    var audio = new Audio('/sound/notification.mp3');
+
+    var channel = pusher.subscribe('bookingstatus');
+    channel.bind('booking-status', function() {
+        // 在这里处理实时更新
+        audio.play(); // 播放通知声音
+        // 您可以在这里添加代码来更新UI或获取新数据
+        // 例如，您可能希望重新加载页面或通过AJAX获取更新的数据
+        location.reload(); // 重新加载页面以进行演示
+    });
+</script>
+
+<!-- Show All Restaurant -->
+<div class="container">
+
+    {{-- <div id="map" style="height: 400px;"></div><br> --}}
+
+    <div class="row">
+        <div class="col-12">
+
+            {{-- Search Has Booked Hotel Function --}}
+            <form action="{{ route('hashotelSearch') }}" method="GET" class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
+                <div class="input-group">
+                    <input type="text" class="form-control bg-white small m-2" name="user_name" placeholder="User Name" aria-label="Search" aria-describedby="basic-addon2">
+                    <input type="text" class="form-control bg-white small m-2" name="hotel_name" placeholder="Hotel Name" aria-label="Search" aria-describedby="basic-addon2">
+                    <input type="date" class="form-control bg-white small m-2" name="booking_date" placeholder="booking_date" aria-label="Search" aria-describedby="basic-addon2">
+                    <input type="time" class="form-control bg-white small m-2" name="check_in_time" placeholder="check_in_time" aria-label="Search" aria-describedby="basic-addon2">
+                    <input type="time" class="form-control bg-white small m-2" name="check_out_time" placeholder="check_out_time" aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary pb-2"><i class="fas fa-search fa-sm"></i></button>
+                    </div>
+                </div>
+            </form>
+
+            <br>
+
+            <div class="data_table">
+
+                @if (\Session::has('error'))
+                    <div class="alert alert-danger">{{ Session::get('error') }}</div>
+                @endif
+
+                @if (\Session::has('success'))
+                    <div class="alert alert-success">{{ Session::get('success') }}</div>
+                @endif
+
+                <div class="row">
+                    <div class="col-2">
+                        <form action="{{ route('viewhotel-pdf') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn btn-info m-1">View In PDF</button>
+                        </form>
+                    </div>
+                    <div class="col" style="margin-left: -60px">
+                        <form action="{{ route('downloadbookedhotel-pdf') }}" method="POST" target="__blank">
+                            @csrf
+                            <button type="submit" class="btn btn-info m-1">Download PDF</button>
+                        </form>
+                    </div>
+                </div>
+
+                <hr>
+
+                <!-- Button to delete all selected items -->
+                {{-- <form action="{{ route ('hotels.deleteMultiplebookedhotel') }}" method="post" id="deleteMultipleForm">
+                    @csrf --}}
+                    <!-- Your table code here -->
+                    <div class="table-responsive">
+                        <table id="example" class="table table-striped table-bordered">
+
+                            {{-- Button to delete all selected items --}}
+                            <button type="submit" class="btn btn-danger m-1" id="deleteAllSelectedRecord">Delete All Selected Booked Hotels</button>
+
+                            {{-- Export Booked Hotel --}}
+                            <a href="{{ url('export-bookedHotel') }}"><button type="button" class="btn btn-primary m-1">Export Booked Hotels</button></a>
+
+                            <thead class="table-dark">
+                                <tr>
+                                    <th><input type="checkbox" name="" id="select_all_ids" onclick="checkAll(this)"></th>
+                                    <th class="p-2">User Name</th>
+                                    <th class="p-2">Hotel Name</th>
+                                    <th class="p-2">Booking Table</th>
+                                    <th class="p-2">Booking Date</th>
+                                    <th class="p-2">Booking Check_in Time</th>
+                                    <th class="p-2">Booking Check_out Time</th>
+                                    <th class="p-2">User Gender</th>
+                                    <th class="p-2">User Quantity</th>
+                                    <th class="p-2">Payment Status</th>
+                                    <th class="p-2">ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if($hotelbookeds !==null && count($hotelbookeds) > 0)
+                                    @foreach ($hotelbookeds as $hotel)
+                                        <tr>
+                                            <td><input type="checkbox" name="ids" class="checkbox_ids" id="" value="{{ $hotel->id }}"></td>
+                                            <td>{{ $hotel->user_name }}</td>
+                                            <td>{{ $hotel->hotel_name }}</td>
+                                            <td>
+                                                @if ($hotel->room)
+                                                    {{ $hotel->room->name }}
+                                                @else
+                                                    No Room <!-- Or any default value you prefer when 'room' is null -->
+                                                @endif
+                                            </td>
+                                            <td>{{ \Carbon\Carbon::parse($hotel->booking_date)->format('j F Y (l)') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($hotel->checkin_time)->format('g:i A') }}</td>
+                                            <td>{{ \Carbon\Carbon::parse($hotel->checkout_time)->format('g:i A') }}</td>
+                                            <td>{{ $hotel->gender }}</td>
+                                            <td>{{ $hotel->quantity }}</td>
+                                            <td>
+                                                @if ($hotel->payment_status == 'Unpaid')
+                                                    <form id="paymentForm"
+                                                        action="/paymenthotel/{{ $hotel->id }}/view/{{ $hotel->room_id }}"
+                                                        method="post">
+                                                        @csrf
+                                                        <div>
+                                                            <button type="submit"
+                                                                class="btn btn-danger btn-sm payment-link"
+                                                                data-hotel-id="{{ $hotel->id }}"
+                                                                data-table-id="{{ $hotel->room_id }}">
+                                                                <i class="fas fa-credit-card"></i>&nbsp;Check Out
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                @elseif($hotel->payment_status == 'Paid')
+                                                    <span>{{ $hotel->payment_status }}</span>
+                                                @endif
+                                            </td>
+                                            <td>
+                                                <a href="{{ url('viewBookedHotel/' . $hotel->id) . '/view' }}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>&nbsp;View Detail</a>
+                                                {{-- <a href="{{ url('/download-bookedhotel-pdf/' . $hotel->id) }}" class="btn btn-info btn-sm"><i class="fas fa-file-pdf"></i>View In PDF</a> --}}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                @else
+                                    <tr>
+                                        <td colspan="9">No Booked Hotel</td>
+                                    </tr>
+                                @endif
+                            </tbody>
+                        </table>
+                    </div>
+                {{-- </form> --}}
+
+                <!-- Pagination links -->
+                {{ $hotelbookeds->links() }}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{-- New Delete Selected All Restaurant Has Booked --}}
+<script>
+
+    // Function to check/uncheck all checkboxes
+    function checkAll(checkbox) {
+        const checkboxes = document.getElementsByClassName('checkbox_ids');
+        for (const cb of checkboxes) {
+            cb.checked = checkbox.checked;
+        }
+    }
+
+    document.getElementById('deleteAllSelectedRecord').addEventListener('click', function () {
+        const checkboxes = document.getElementsByClassName('checkbox_ids');
+        const selectedIds = [];
+
+        for (const checkbox of checkboxes) {
+            if (checkbox.checked) {
+                selectedIds.push(parseInt(checkbox.value));
+            }
+        }
+
+        if (selectedIds.length === 0) {
+            alert('Please select at least one restaurant to delete.');
+        } else {
+            const form = document.getElementById('deleteMultipleForm');
+            const idsInput = document.createElement('input');
+            idsInput.type = 'hidden';
+            idsInput.name = 'ids';
+            idsInput.value = JSON.stringify(selectedIds);
+            form.appendChild(idsInput);
+
+            form.submit();
+        }
+    });
+</script>
+
+{{-- Customer Check Out Function --}}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    var paymentForm = document.getElementById('paymentForm');
+
+    paymentForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        var hotelId = paymentForm.querySelector('.payment-link').getAttribute(
+            'data-hotel-id');
+        var tableId = paymentForm.querySelector('.payment-link').getAttribute('data-table-id');
+
+        // 发送 POST 请求
+        fetch('/paymenthotel/' + hotelId + '/view/' + tableId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                        .getAttribute('content')
+                },
+            })
+            .then(response => {
+                // 检查响应状态码
+                if (response.ok) {
+                    // 返回 JSON 数据
+                    return response.json();
+                } else {
+                    throw new Error('网络响应失败');
+                }
+            })
+            .then(data => {
+                // 处理成功的响应数据
+                console.log('支付成功。');
+
+                // 显示成功消息
+                var successMessage = document.createElement('div');
+                successMessage.className = 'alert alert-success';
+                successMessage.textContent = '支付成功。';
+
+                // 插入到适当的位置
+                document.body.appendChild(successMessage);
+
+                // 这里你可能需要根据实际情况更新页面的其他部分，例如隐藏或禁用按钮等
+            })
+            .catch(error => {
+                // 处理异常
+                console.error('支付处理出错:', error);
+            })
+            .finally(() => {
+                // 提交表单，如果不手动提交，表单将不会被提交
+                paymentForm.submit();
+            });
+    });
+});
+</script>
+
+@endsection

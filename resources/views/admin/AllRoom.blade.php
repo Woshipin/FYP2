@@ -1,0 +1,168 @@
+@extends('admin.layout')
+
+@section('admin-section')
+
+<!-- Show All Table -->
+<div class="container">
+
+    <br><br><br><br>
+
+    <!-- <div id="map" style="height: 400px;"></div> -->
+
+    <div class="records table-responsive">
+        <div class="record-header">
+            <div class="add">
+                <span>Entries</span>
+                <select name="" id="">
+                    <option value="">ID</option>
+                </select>
+                <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Launch demo modal</button> -->
+                <!-- Restaurant Model -->
+                <!-- <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#restaurantModal">Add Restaurant</button> -->
+                <!-- Add Table Model -->
+                {{-- <button type="button" class="btn btn-primary m-1" data-toggle="modal" data-target="#tableModal">AddTable</button> --}}
+                <!--Export Room Model -->
+                <a href="{{ url('export-room') }}"><button type="button" class="btn btn-primary m-1">Export Room</button></a>
+                <!-- View Resort PDF Model -->
+                <!-- <form action="{{ url('resort/view-pdf') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn btn-danger m-1">View In PDF</button>
+                    </form> -->
+                <!-- Export Resort PDF Model -->
+                <!-- <form action="{{ url('resort/download-pdf') }}" method="POST" target="__blank">
+                        @csrf
+                        <button type="submit" class="btn btn-danger m-1">Download PDF</button>
+                    </form> -->
+            </div>
+
+            <div class="browse">
+                <input type="search" placeholder="Search" class="record-search m-1">
+                <select name="" id="">
+                    <option value="">Status</option>
+                </select>
+            </div>
+        </div>
+
+        @if (\Session::has('error'))
+            <div class="alert alert-danger">{{ Session::get('error') }}</div>
+        @endif
+
+        @if (\Session::has('table'))
+            <div class="alert alert-success">{{ Session::get('table') }}</div>
+        @endif
+
+        {{-- <div>
+            <table width="100%">
+                <thead>
+                    <tr>
+                        <th class="p-2">Room ID</th>
+                        <th class="p-2">Hotel Name</th>
+                        <th class="p-2">Room Title</th>
+                        <th class="p-2">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($rooms as $room)
+                        <tr>
+                            <td>{{ $room->id }}</td>
+                            <td>{{ optional($room->hotel)->name }}</td>
+                            <td>{{ $room->name }}</td>
+                            <td>
+                                <!-- <a href="" class="btn btn-info btn-sm"><i class="las la-eye"></i></a> -->
+                                <a href="{{ url('admin/editRoom/' . $room->id) . '/edit' }}"
+                                    class="btn btn-primary btn-sm" data-toggle="modal"data-target="#adminroomeditModal{{ $room->id }}"><i class="las la-pencil-alt"></i></a>
+                                <a onclick="return confirm('Are you sure to delete this data?')"href="{{ url('admin/deleteRoom/' . $room->id) . '/delete' }}"class="btn btn-danger btn-sm"><i class="las la-trash"></i></a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div> --}}
+
+        <div class="container-fluid mt-3">
+            <!-- DataTales Example -->
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Room List</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th class="p-2">Room ID</th>
+                                    <th class="p-2">Hotel Name</th>
+                                    <th class="p-2">Room Title</th>
+                                    <th class="p-2">ACTIONS</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($rooms as $room)
+                                    <tr>
+                                        <td>{{ $room->id }}</td>
+                                        <td>{{ optional($room->hotel)->name }}</td>
+                                        <td>{{ $room->name }}</td>
+                                        <td>
+                                            <a href="{{ url('admin/editRoom/' . $room->id) . '/edit' }}"
+                                                class="btn btn-primary btn-sm" data-toggle="modal"
+                                                data-target="#adminroomeditModal{{ $room->id }}"><i
+                                                    class="las la-pencil-alt"></i>&nbsp;Edit</a>
+                                            <a onclick="return confirm('Are you sure to delete this data?')"
+                                                href="{{ url('admin/deleteRoom/' . $room->id) . '/delete' }}"
+                                                class="btn btn-danger btn-sm"><i class="las la-trash"></i>&nbsp;Delete</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {{ $rooms->links() }}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Table Model -->
+@foreach($rooms as $room)
+<!-- Modal content for each Resort -->
+<div class="modal fade" id="adminroomeditModal{{$room->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!-- Modal header and form -->
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit Table Modal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <form action="{{url('admin/updateRoom/'.$room->id)}}" method="POST" enctype="multipart/form-data">
+                @method('PUT')
+                @csrf
+                <div class="modal-body">
+                    <select class="form-control" name="hotel_id">
+                        {{-- <option value="">-------</option> --}}
+                        @foreach($hoteld as $hotel)
+                            <option value="{{ $hotel->id }}">{{ $hotel->name }}</option>
+                        @endforeach
+                    </select>
+
+                    <div class="form-group">
+                        <label for="name">Room Title </label>
+                        <input type="text" class="form-control" name="name" id="name" placeholder="Enter Room Name" value="{{$room->name}}">
+                        <span class="text-danger">@error('title') {{$message}} @enderror</span>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Update Room</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endforeach
+
+@endsection

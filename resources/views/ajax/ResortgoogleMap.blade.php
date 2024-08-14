@@ -1,0 +1,1 @@
+<iframe width="100%" height="500" src="https://maps.google.com/maps?q={{$resorts->latitude}},{{$resorts->longitude}}&output=embed"></iframe>
