@@ -324,6 +324,33 @@
         }
     </style> --}}
 
+    {{-- Mutliple Image UI CSS --}}
+    <style>
+        /* 自定义样式 */
+        .product-imgs {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .img-display {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .swiper {
+            width: 100%;
+            height: auto;
+        }
+
+        .swiper-slide img {
+            display: block;
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+    </style>
+
     {{-- Rating CSS --}}
     <style>
         /* Combined CSS */
@@ -416,6 +443,14 @@
 
     {{-- toastify CSS --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    <!-- 引入Pannellum的JS和CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css">
+    <script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
+
+    {{-- Mutliple Image Silder CSS and JS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 
     <style>
         body {
@@ -562,14 +597,36 @@
 
     <div class="card-wrapper">
         <div class="card">
-            <!-- card left -->
+
+            {{-- Mutliple Image --}}
             <div class="product-imgs">
                 <div class="img-display">
-                    <div class="img-showcase">
-                        <img src="{{ asset('images/' . $restaurants->image) }}" alt="shoe image"
-                            style="max-width: 100%; height: auto;">
+                    <div class="swiper img-showcase">
+                        <div class="swiper-wrapper">
+                            @foreach($restaurants->images as $image)
+                            <div class="swiper-slide">
+                                <img src="{{ asset('images/' . $image->image) }}" alt="restaurant image"
+                                     onclick="show360Image('{{ asset('images/' . $image->image) }}')" style="max-width: 100%; height: auto;">
+                            </div>
+                            @endforeach
+                        </div>
+
+                        <!-- 分页导航 -->
+                        <div class="swiper-pagination"></div>
+
+                        <!-- 导航按钮 -->
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
                     </div>
                 </div>
+            </div>
+
+            <!-- 模态窗口，用于显示360度视图 -->
+            <div id="pannellumModal"
+                style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 1000;">
+                <div id="panorama" style="width: 100%; height: 100%;"></div>
+                <button onclick="close360View()"
+                    style="position: absolute; top: 10px; right: 10px; padding: 10px; background: #fff; border: none; cursor: pointer;">Close</button>
             </div>
 
             <!-- card right -->
@@ -640,6 +697,7 @@
                             class="far fa-envelope"></i></a>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -682,7 +740,6 @@
 
     {{-- Toastr JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
     <script>
         @if (Session::has('success'))
             Toastify({
@@ -723,6 +780,41 @@
                 }).showToast();
             @endforeach
         @endif
+    </script>
+
+    {{-- Mutliple Image Slider JS --}}
+    <script>
+        var swiper = new Swiper('.swiper', {
+            slidesPerView: 1,
+            spaceBetween: 10,
+            loop: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+    </script>
+
+    {{-- Img 360 View JS --}}
+    <script>
+        // 显示360度视图
+        function show360Image(imageUrl) {
+            document.getElementById('pannellumModal').style.display = 'block';
+            pannellum.viewer('panorama', {
+                type: 'equirectangular',
+                panorama: imageUrl,
+                autoLoad: true
+            });
+        }
+
+        // 关闭360度视图
+        function close360View() {
+            document.getElementById('pannellumModal').style.display = 'none';
+        }
     </script>
 
     {{-- Multiple image --}}

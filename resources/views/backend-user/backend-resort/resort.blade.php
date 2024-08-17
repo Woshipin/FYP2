@@ -496,84 +496,63 @@
                                         <th>Resort Address</th>
                                         <th>Resort Description</th>
                                         <th>Open / Close</th>
+                                        <th>Register Status</th>
                                         <th>ACTIONS</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if ($resortss !== null && count($resortss) > 0)
                                         @foreach ($resortss as $resort)
-                                            <tr id="resort_ids{{ $resort->id }}">
-                                                <td><input type="checkbox" name="ids" class="checkbox_ids"
-                                                        id="" value="{{ $resort->id }}"></td>
-                                                <td>{{ $resort->id }}</td>
-                                                <td>{{ $resort->name }}</td>
-                                                <td
-                                                    style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
-                                                    @if ($resort->images->count() > 0)
-                                                        <div id="carousel{{ $resort->id }}" class="carousel slide"
-                                                            data-ride="carousel">
-                                                            <div class="carousel-inner"
-                                                                style="width: 100%; height: 100%;">
-                                                                @foreach ($resort->images as $key => $image)
-                                                                    <div
-                                                                        class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                                                        <img src="{{ asset('images/' . $image->image) }}"
-                                                                            class="d-block w-100" alt="Resort Image"
-                                                                            style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
-                                                                    </div>
-                                                                @endforeach
+                                            @if ($resort->register_status === 1)
+                                                <tr id="resort_ids{{ $resort->id }}">
+                                                    <td><input type="checkbox" name="ids" class="checkbox_ids" value="{{ $resort->id }}"></td>
+                                                    <td>{{ $resort->id }}</td>
+                                                    <td>{{ $resort->name }}</td>
+                                                    <td style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
+                                                        @if ($resort->images->count() > 0)
+                                                            <div id="carousel{{ $resort->id }}" class="carousel slide" data-ride="carousel">
+                                                                <div class="carousel-inner" style="width: 100%; height: 100%;">
+                                                                    @foreach ($resort->images as $key => $image)
+                                                                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                                                            <img src="{{ asset('images/' . $image->image) }}" class="d-block w-100" alt="Resort Image" style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                                <a class="carousel-control-prev" href="#carousel{{ $resort->id }}" role="button" data-slide="prev" style="width: 20px;">
+                                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                                    <span class="sr-only">Previous</span>
+                                                                </a>
+                                                                <a class="carousel-control-next" href="#carousel{{ $resort->id }}" role="button" data-slide="next" style="width: 20px;">
+                                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                                    <span class="sr-only">Next</span>
+                                                                </a>
                                                             </div>
-                                                            <a class="carousel-control-prev"
-                                                                href="#carousel{{ $resort->id }}" role="button"
-                                                                data-slide="prev" style="width: 20px;">
-                                                                <span class="carousel-control-prev-icon"
-                                                                    aria-hidden="true"></span>
-                                                                <span class="sr-only">Previous</span>
-                                                            </a>
-                                                            <a class="carousel-control-next"
-                                                                href="#carousel{{ $resort->id }}" role="button"
-                                                                data-slide="next" style="width: 20px;">
-                                                                <span class="carousel-control-next-icon"
-                                                                    aria-hidden="true"></span>
-                                                                <span class="sr-only">Next</span>
-                                                            </a>
-                                                        </div>
-                                                    @else
-                                                        <span
-                                                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No
-                                                            Image</span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $resort->price }}</td>
-                                                <td>{{ $resort->location }}</td>
-                                                {{-- <td>{{ $resort->latitude }}</td>
-                                                    <td>{{ $resort->longitude }}</td> --}}
-                                                <td>{{ $resort->description }}</td>
-                                                <td>
-                                                    @if ($resort->status == 0)
-                                                        <a href="{{ url('changeresort-status/' . $resort->id) }}"
-                                                            class="btn btn-sm btn-success"
-                                                            onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
-                                                    @else
-                                                        <a href="{{ url('changeresort-status/' . $resort->id) }}"
-                                                            class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <a href="{{ url('showResortMap/' . $resort->id) . '/map' }}"
-                                                        class="btn btn-info btn-sm"><i
-                                                            class="fas fa-eye"></i>&nbsp;View</a>
-                                                    <a href="{{ url('editResort/' . $resort->id) . '/edit' }}"
-                                                        class="btn btn-primary btn-sm" data-toggle="modal"
-                                                        data-target="#resorteditModal{{ $resort->id }}"><i
-                                                            class="fa fa-edit"></i>&nbsp;Edit</a><br>
-                                                    <a onclick="return confirm('Are you sure to delete this data?')"
-                                                        href="{{ url('deleteResort/' . $resort->id) . '/delete' }}"
-                                                        class="btn btn-danger btn-sm"><i
-                                                            class="fa fa-trash"></i>&nbsp;Delete</a>
-                                                </td>
-                                            </tr>
+                                                        @else
+                                                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $resort->price }}</td>
+                                                    <td>{{ $resort->location }}</td>
+                                                    <td>{{ $resort->description }}</td>
+                                                    <td>
+                                                        @if ($resort->status == 0)
+                                                            <a href="{{ url('changeresort-status/' . $resort->id) }}" class="btn btn-sm btn-success" onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
+                                                        @else
+                                                            <a href="{{ url('changeresort-status/' . $resort->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if ($resort->register_status === 1)
+                                                            <span class="text-success">Approved</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ url('showResortMap/' . $resort->id) . '/map' }}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>&nbsp;View</a>
+                                                        <a href="{{ url('editResort/' . $resort->id) . '/edit' }}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#resorteditModal{{ $resort->id }}"><i class="fa fa-edit"></i>&nbsp;Edit</a><br>
+                                                        <a onclick="return confirm('Are you sure to delete this data?')" href="{{ url('deleteResort/' . $resort->id) . '/delete' }}" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     @else
                                         <tr>
@@ -581,6 +560,7 @@
                                         </tr>
                                     @endif
                                 </tbody>
+
                             </table>
                         </div>
                     </form>
@@ -769,7 +749,7 @@
         });
     </script>
 
-    {{-- Delete Mutliple Image --}}
+    {{-- Delete Resort Mutliple Image --}}
     <script>
         $(document).ready(function() {
             $('.delete-image').click(function() {
@@ -852,4 +832,5 @@
     <script src="{{ asset('table/assets/js/pdfmake.min.js') }}"></script>
     <script src="{{ asset('table/assets/js/vfs_fonts.js') }}"></script>
     {{-- <script src="{{ asset('table/assets/js/custom.js') }}"></script> --}}
+
 @endsection

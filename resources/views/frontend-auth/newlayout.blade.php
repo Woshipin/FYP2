@@ -85,24 +85,14 @@
                     $id = Auth::user()->id;
                 @endphp
                 <a href="{{ url('/users/dashboard/' . $id) }}"
-                    class="{{ request()->is('users/dashboard/' . $id) ? 'active' : '' }}">My Dashboard</a>
-                <a class="btn" href="{{ url('/logout') }}">Logout</a>
+                    class="{{ request()->is('users/dashboard/' . $id) ? 'active' : '' }}"><i class="fas fa-tachometer-alt" id="mydashboard-btn"></i> My Dashboard</a>
+                <a class="btn" href="{{ url('/logout') }}"><i class="fas fa-sign-out-alt" id="logout-btn"></i> Logout</a>
             @endauth
 
             @guest
-                <a class="btn" href="{{ url('/login') }}"><i class="fas fa-user" id="login-btn"></i>Login</a>
+                <a class="btn" href="{{ url('/login') }}"><i class="fas fa-user" id="login-btn"></i> Login</a>
             @endguest
         </nav>
-
-        {{-- <div class="icons">
-            <i class="fas fa-search" id="search-btn"></i>
-            <i class="fas fa-user" id="login-btn"></i>
-        </div>
-
-        <form action="" class="search-bar-container">
-            <input type="search" id="search-bar" placeholder="search here...">
-            <label for="search-bar" class="fas fa-search"></label>
-        </form> --}}
 
     </header>
     <!-- header section ends -->

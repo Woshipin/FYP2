@@ -1,70 +1,12 @@
 @extends('admin.layout')
 
 @section('admin-section')
-    <!--Add Resort Modal -->
-    {{-- <div class="modal fade" id="adminresortModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
 
-            <form action="{{ url('admin/AddResort') }}" method="POST" enctype="multipart/form-data" id="searchMap2">
-            @csrf
-                <div class="modal-body">
-                    <!-- {{ Auth::id() }} -->
-                    <input type="hidden" name="user_id" value="{{ Auth::id() }}">
-                    <div class="form-group">
-                        <label for="name">Resort Name</label>
-                        <input type="text" class="form-control" name="name" id="name" placeholder="Enter Resort Name">
-                        <span class="text-danger">@error('name') {{$message}} @enderror</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="image">Resort Image </label>
-                        <input type="file" class="form-control" name="image" id="image" placeholder="Enter Resort Image">
-                        <span class="text-danger">@error('image') {{$message}} @enderror</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="price">Resort Price</label>
-                        <input type="number" class="form-control" name="price" id="price" placeholder="Enter Resort Price">
-                        <span class="text-danger">@error('price') {{$message}} @enderror</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="location">Resort Location</label>
-                        <input type="text" class="form-control" name="location" id="location" placeholder="Enter Resort Address">
-                        <span class="text-danger">@error('location') {{$message}} @enderror</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="location">Resort Latitude</label>
-                        <input type="text" class="form-control" name="latitude"  id='latitude' placeholder="Enter Latitude">
-                        <span class="text-danger">@error('latitude') {{$message}} @enderror</span>
-                    </div>
-                    <div class="form-group">
-                        <label for="location">Resort Longitude</label>
-                        <input type="text" class="form-control" name="longitude" id='longitude' placeholder="Enter Longitude">
-                        <span class="text-danger">@error('longitude') {{$message}} @enderror</span>
-                    </div>
+    <!-- 引入Pannellum的JS和CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css">
+    <script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
 
-                    <!-- <input type="text" id="latitude" name="latitude">
-                    <input type="text" id="longitude" name="longitude"> -->
-
-                    <div class="form-group">
-                        <label for="description">Resort Description</label>
-                        <input type="text" class="form-control" name="description" id="description" placeholder="Enter Description ">
-                        <span class="text-danger">@error('description') {{$message}} @enderror</span>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add New Resort</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div> --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Edit Resort Model -->
     @foreach ($resorts as $resort)
@@ -241,14 +183,14 @@
                             Resort</button></a>
                     <!-- View Resort PDF Model -->
                     <!-- <form action="{{ url('resort/view-pdf') }}" method="POST">
-                                                @csrf
-                                                <button type="submit" class="btn btn-danger m-1">View In PDF</button>
-                                            </form> -->
+                                                                                                @csrf
+                                                                                                <button type="submit" class="btn btn-danger m-1">View In PDF</button>
+                                                                                            </form> -->
                     <!-- Export Resort PDF Model -->
                     <!-- <form action="{{ url('resort/download-pdf') }}" method="POST" target="__blank">
-                                                @csrf
-                                                <button type="submit" class="btn btn-danger m-1">Download PDF</button>
-                                            </form> -->
+                                                                                                @csrf
+                                                                                                <button type="submit" class="btn btn-danger m-1">Download PDF</button>
+                                                                                            </form> -->
                 </div>
 
                 {{-- Real Time Search --}}
@@ -415,6 +357,7 @@
                                         <th>Resort Location</th>
                                         <th>Resort Description</th>
                                         <th>Open / Close</th>
+                                        <th>Register Status</th>
                                         <th>ACTIONS</th>
                                     </tr>
                                 </thead>
@@ -437,8 +380,8 @@
     {{-- JS --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    {{-- Real Time Search --}}
-    <script>
+    {{-- Admin Real Time Search --}}
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             function updateSearchResults(filteredResorts) {
                 var resultsContainer = document.getElementById('searchResultsContainer');
@@ -448,38 +391,58 @@
                     filteredResorts.forEach(function(resort) {
                         var isDisabled = resort.status === 1;
 
-                        var resortHTML = '<tr class="' + (isDisabled ? 'disabled' : '') + '">' +
-                            '<td>' + resort.id + '</td>' +
-                            '<td>' + resort.name + '</td>' +
-                            '<td><img width="80" src="{{ asset('images/') }}/' + resort.image +
-                            '" alt="Image" /></td>' +
-                            '<td>' + resort.price + '</td>' +
-                            '<td>' + resort.location + '</td>' +
-                            '<td>' + resort.description + '</td>' +
-                            '<td>' +
-                            (isDisabled ?
-                                '<a href="{{ url('changeresort-status/') }}/' + resort.id +
-                                '" class="btn btn-sm btn-danger">Closed</a>' :
-                                '<a href="{{ url('changeresort-status/') }}/' + resort.id +
-                                '" class="btn btn-sm btn-success">Open</a>'
-                            ) +
-                            '</td>' +
-                            '<td>' +
-                            '<a href="{{ url('admin/viewResort/') }}/' + resort.id +
-                            '/view" class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>' +
-                            '<a href="" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#resorteditModal' +
-                            resort.id + '"><i class="las la-pencil-alt"></i></a>' +
-                            '<a onclick="return confirm("Are you sure to delete this data?")" href="{{ url('admin/deleteResort/') }}/' +
-                            resort.id +
-                            '/delete" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>' +
-                            '</td>' +
-                            '</tr>';
+                        var resortHTML = `<tr class="${isDisabled ? 'disabled' : ''}">
+                            <td>${resort.id}</td>
+                            <td>${resort.name}</td>
+                            <td style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
+                                ${resort.images && resort.images.length > 0 ?
+                                `<div id="carousel${resort.id}" class="carousel slide" data-ride="carousel">
+                                                    <div class="carousel-inner" style="width: 100%; height: 100%;">
+                                                        ${resort.images.map((image, index) => `
+                                        <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                            <img src="{{ asset('images/') }}/${image.image}" class="d-block w-100" alt="Resort Image" style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
+                                        </div>
+                                        `).join('')}
+                                                    </div>
+                                                    <a class="carousel-control-prev" href="#carousel${resort.id}" role="button" data-slide="prev" style="width: 20px;">
+                                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                        <span class="sr-only">Previous</span>
+                                                    </a>
+                                                    <a class="carousel-control-next" href="#carousel${resort.id}" role="button" data-slide="next" style="width: 20px;">
+                                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                        <span class="sr-only">Next</span>
+                                                    </a>
+                                                </div>` :
+                                `<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>`}
+                            </td>
+                            <td>${resort.price}</td>
+                            <td>${resort.location}</td>
+                            <td>${resort.description}</td>
+                            <td>
+                                ${isDisabled ?
+                                    `<a href="{{ url('changeresort-status/') }}/${resort.id}" class="btn btn-sm btn-danger">Closed</a>` :
+                                    `<a href="{{ url('changeresort-status/') }}/${resort.id}" class="btn btn-sm btn-success">Open</a>`
+                                }
+                            </td>
+                            <td>
+                                ${resort.register_status === 1
+                                    ? `<span class="text-success">Approved</span>`
+                                    : resort.register_status === 2
+                                        ? `<span class="text-danger">Rejected</span>`
+                                        : `<button class="btn btn-sm btn-success" onclick="updateResortRegisterStatus(${resort.id}, 1)">Approve</button>
+                                                           <button class="btn btn-sm btn-danger" onclick="rejectResort(${resort.id})">Reject</button>`
+                                }
+                            </td>
+                            <td>
+                                <a href="{{ url('admin/viewResort/') }}/${resort.id}/view" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>&nbsp;View</a>
+                                <a onclick="return confirm('Are you sure to delete this data?')" href="{{ url('admin/deleteResort/') }}/${resort.id}/delete" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
+                            </td>
+                        </tr>`;
 
                         resultsContainer.innerHTML += resortHTML;
                     });
                 } else {
-                    resultsContainer.innerHTML =
-                        '<tr><td colspan="8">No Resort Found</td></tr>';
+                    resultsContainer.innerHTML = '<tr><td colspan="8">No Resort Found</td></tr>';
                 }
             }
 
@@ -506,37 +469,253 @@
                 updateSearchResults(filteredResorts);
             }
         });
-    </script>
 
-
-    {{-- <script>
-        function initMap() {
-
-            var kualaLumpur = new google.maps.LatLng(3.1390, 101.6869);
-            var johorBahru = new google.maps.LatLng(1.4927, 103.7414);
-
-            var resorts = @json($resorts);
-
-            var map = new google.maps.Map(document.getElementById('map'), {
-                zoom: 10,
-                center: {
-                    lat: 1.4927,
-                    lng: 103.7414
-                }
-            });
-
-            resorts.forEach(function(resort) {
-                var marker = new google.maps.Marker({
-                    position: {
-                        lat: parseFloat(resort.latitude),
-                        lng: parseFloat(resort.longitude)
+        function updateResortRegisterStatus(resortId, status) {
+            fetch(`/admin/updateResortRegisterStatus/${resortId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                     },
-                    map: map,
-                    title: resort.name
+                    body: JSON.stringify({
+                        status: status
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Resort status updated successfully');
+                        location.reload(); // Refresh the page to update the table
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
                 });
-            });
+        }
+
+        function rejectResort(resortId) {
+            var rejectionMessage = prompt("Please enter the reason for rejection:");
+
+            if (rejectionMessage) {
+                fetch(`/admin/rejectResort/${resortId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            message: rejectionMessage
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(`HTTP error ${response.status}: ${text}`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert('Resort rejected and email sent successfully');
+                            location.reload(); // 刷新页面以更新表格
+                        } else {
+                            alert('Failed to reject resort: ' + (data.message || ''));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred: ' + error.message);
+                    });
+            }
         }
     </script> --}}
-    {{-- <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCG2YHIuPJYMOJzS6wSw5eZ0dTYXnhZFLs&callback=initMap"></script> --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function updateSearchResults(filteredResorts) {
+                var resultsContainer = document.getElementById('searchResultsContainer');
+                resultsContainer.innerHTML = ''; // Clear previous results
+
+                if (Array.isArray(filteredResorts) && filteredResorts.length > 0) {
+                    filteredResorts.forEach(function(resort) {
+                        var isDisabled = resort.status === 1;
+
+                        var resortHTML = `<tr class="${isDisabled ? 'disabled' : ''}">
+                            <td>${resort.id}</td>
+                            <td>${resort.name}</td>
+                            <td style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
+                                ${resort.images && resort.images.length > 0 ?
+                                `<div id="carousel${resort.id}" class="carousel slide" data-ride="carousel">
+                                    <div class="carousel-inner" style="width: 100%; height: 100%;">
+                                        ${resort.images.map((image, index) => `
+                                        <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                                            <img src="{{ asset('images/') }}/${image.image}" class="d-block w-100" alt="Resort Image"
+                                                 style="max-width: 100%; max-height: 100%; display: block; margin: auto;"
+                                                 onclick="show360Image('{{ asset('images/') }}/${image.image}')">
+                                        </div>
+                                        `).join('')}
+                                    </div>
+                                    <a class="carousel-control-prev" href="#carousel${resort.id}" role="button" data-slide="prev" style="width: 20px;">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#carousel${resort.id}" role="button" data-slide="next" style="width: 20px;">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>` :
+                                `<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>`}
+                            </td>
+                            <td>${resort.price}</td>
+                            <td>${resort.location}</td>
+                            <td>${resort.description}</td>
+                            <td>
+                                ${isDisabled ?
+                                    `<a href="{{ url('changeresort-status/') }}/${resort.id}" class="btn btn-sm btn-danger">Closed</a>` :
+                                    `<a href="{{ url('changeresort-status/') }}/${resort.id}" class="btn btn-sm btn-success">Open</a>`
+                                }
+                            </td>
+                            <td>
+                                ${resort.register_status === 1
+                                    ? `<span class="text-success">Approved</span>`
+                                    : resort.register_status === 2
+                                        ? `<span class="text-danger">Rejected</span>`
+                                        : `<button class="btn btn-sm btn-success" onclick="updateResortRegisterStatus(${resort.id}, 1)">Approve</button>
+                                                        <button class="btn btn-sm btn-danger" onclick="rejectResort(${resort.id})">Reject</button>`
+                                }
+                            </td>
+                            <td>
+                                <a href="{{ url('admin/viewResort/') }}/${resort.id}/view" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>&nbsp;View</a>
+                                <a onclick="return confirm('Are you sure to delete this data?')" href="{{ url('admin/deleteResort/') }}/${resort.id}/delete" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
+                            </td>
+                        </tr>`;
+
+                        resultsContainer.innerHTML += resortHTML;
+                    });
+                } else {
+                    resultsContainer.innerHTML = '<tr><td colspan="8">No Resort Found</td></tr>';
+                }
+            }
+
+            var initialResorts = @json($resorts->items());
+            updateSearchResults(initialResorts);
+
+            document.getElementById('searchInput').addEventListener('input', function() {
+                performSearch();
+            });
+
+            function performSearch() {
+                var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
+                var resortsData = @json($resorts->items());
+
+                if (!Array.isArray(resortsData)) {
+                    console.error('Invalid resorts data:', resortsData);
+                    return;
+                }
+
+                var filteredResorts = resortsData.filter(function(resort) {
+                    return resort.name.toLowerCase().includes(searchInputValue);
+                });
+
+                updateSearchResults(filteredResorts);
+            }
+        });
+
+        function updateResortRegisterStatus(resortId, status) {
+            fetch(`/admin/updateResortRegisterStatus/${resortId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        status: status
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Resort status updated successfully');
+                        location.reload(); // Refresh the page to update the table
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+        }
+
+        function rejectResort(resortId) {
+            var rejectionMessage = prompt("Please enter the reason for rejection:");
+
+            if (rejectionMessage) {
+                fetch(`/admin/rejectResort/${resortId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            message: rejectionMessage
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(`HTTP error ${response.status}: ${text}`);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert('Resort rejected and email sent successfully');
+                            location.reload(); // 刷新页面以更新表格
+                        } else {
+                            alert('Failed to reject resort: ' + (data.message || ''));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred: ' + error.message);
+                    });
+            }
+        }
+
+        // 显示360度视图
+        function show360Image(imageUrl) {
+            var modal = document.createElement('div');
+            modal.id = 'pannellumModal';
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.height = '100%';
+            modal.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+            modal.style.zIndex = '1000';
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            modal.innerHTML = `
+                <div id="panorama" style="width: 80%; height: 80%;"></div>
+                <button onclick="close360View()" style="position: absolute; top: 10px; right: 10px; padding: 10px; background: #fff; border: none; cursor: pointer;">Close</button>
+            `;
+            document.body.appendChild(modal);
+
+            pannellum.viewer('panorama', {
+                type: 'equirectangular',
+                panorama: imageUrl,
+                autoLoad: true
+            });
+        }
+
+        function close360View() {
+            var modal = document.getElementById('pannellumModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+    </script>
+
 @endsection

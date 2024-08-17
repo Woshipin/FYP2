@@ -24,7 +24,7 @@ class RestaurantController extends Controller
             'address' => 'required',
             'description' => 'required',
             'map' => 'required',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // 验证每个图像
+            // 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // 验证每个图像
         ]);
 
         $restaurant = new Restaurant();
@@ -100,7 +100,7 @@ class RestaurantController extends Controller
             'address' => 'required',
             'description' => 'required',
             'map' => 'required',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // 验证每个图像
+            // 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // 验证每个图像
         ]);
 
         $restaurant->name = $request->name;
@@ -136,6 +136,25 @@ class RestaurantController extends Controller
         }
 
         return back()->with('success', 'This Restaurant has been updated successfully.');
+    }
+
+    public function deleteRestaurantImage($id)
+    {
+        $image = RestaurantImage::find($id);
+        if ($image) {
+            // 删除图片文件
+            $imagePath = public_path('images/' . $image->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+
+            // 删除数据库中的记录
+            $image->delete();
+
+            return response()->json(['message' => 'Image deleted successfully.']);
+        } else {
+            return response()->json(['message' => 'Image not found.'], 404);
+        }
     }
 
     public function deleteRestaurant($id){

@@ -27,7 +27,7 @@ class ResortController extends Controller
             'map' => 'required',
             'location' => 'required',
             'description' => 'required',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // 验证每个图像
+            // 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // 验证每个图像
         ]);
 
         $resort = new Resort();
@@ -91,45 +91,6 @@ class ResortController extends Controller
         return view('backend-user.backend-resort.resort', compact('resorts'));
     }
 
-    // public function editResort($id){
-
-    //     $resorts = Resort::find($id);
-
-    //     return view('backend-user.backend-resort.resort',compact('resorts'));
-    // }
-
-    // public function updateResort(Request $request, $id){
-
-    //     $resorts = Resort::find($id);
-
-    //     // Check if a new image is uploaded
-    //     if ($request->hasFile('image')) {
-
-    //         $image = $request->file('image');
-    //         $image->move('images', $image->getClientOriginalName());
-    //         $imageName = $image->getClientOriginalName();
-    //         $resorts->image = $imageName;
-
-    //     } else {
-    //         // Keep the original image value or set it to null if it's empty
-    //         $resorts->image = $resorts->image ?: null;
-    //     }
-
-    //     $resorts->name = $request->name;
-    //     $resorts->price = $request->price;
-    //     $resorts->location = $request->location;
-    //     $resorts->phone = $request->phone;
-    //     $resorts->type = $request->type;
-    //     $resorts->email = $request->email;
-    //     $resorts->country = $request->country;
-    //     $resorts->state = $request->state;
-    //     $resorts->map = $request->map;
-    //     $resorts->description = $request->description;
-    //     $resorts->save();
-
-    //     return back()->with('success','This Resort has been updated successfully.');
-    // }
-
     public function editResort($id){
 
         $resorts = Resort::find($id);
@@ -152,7 +113,7 @@ class ResortController extends Controller
             'state' => 'required',
             'map' => 'required',
             'description' => 'required',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // 验证每个图像
+            // 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // 验证每个图像
         ]);
 
         $resort->name = $request->name;
@@ -320,13 +281,6 @@ class ResortController extends Controller
     // -------------------------------------------------Frontend----------------------------------------------------------- //
 
     //Frontend Function
-    // public function AllResort(){
-
-    //     $resort = Resort::all();
-
-    //     return view('frontend-auth.frontend-resort.resort',compact('resort'));
-    // }
-
     public function AllResort()
     {
         $resort = Resort::with('images')->get();

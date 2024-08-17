@@ -17,6 +17,9 @@
     <!-- Custom styles for this Charts template-->
     <link href="{{asset ('charts/chart.css') }}" rel="stylesheet">
 
+    {{-- CRSF Token --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
 </head>
 <body>
 <input type="checkbox" id="menu-toggle">

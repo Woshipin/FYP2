@@ -24,8 +24,21 @@
                         <td>{{$resorts->price}}</td>
                     </tr>
                     <tr>
-                        <th>Resort Photo</th>
-                        <td><img width="80" src="{{ asset('images/' . $resorts->image) }}" alt="Image"/></td>
+                        <th>Resort Image</th>
+                        <td style="border: 5px solid #ddd; padding: 5px; width: 470px; height: 200px; overflow-y: auto; position: relative;">
+                            @if(isset($resorts->images) && count($resorts->images) > 0)
+                            <div style="display: flex; flex-wrap: nowrap; width: 100%; height: 100%;">
+                                @foreach($resorts->images as $image)
+                                <div style="position: relative; margin-right: 5px; width: 80px; height: 80px; border-radius 2px">
+                                    <img src="{{ asset('images/' . $image->image) }}" alt="Resort Image"
+                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                @endforeach
+                            </div>
+                            @else
+                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>
+                            @endif
+                        </td>
                     </tr>
                     <tr>
                         <th>Resort Location</th>

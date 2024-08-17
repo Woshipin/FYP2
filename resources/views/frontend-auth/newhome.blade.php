@@ -41,244 +41,6 @@
     {{-- <link rel="stylesheet" href="{{ asset('new-card-ui/assets/css/style.css') }}"> --}}
 
     {{-- New Card Ui With Slider --}}
-    {{-- <style>
-        hr {
-            border: none;
-            border-top: 2px solid black;
-            /* 设置线条颜色为黑色，宽度为2px */
-            margin: 10px 0;
-            /* 设置上下外边距 */
-        }
-
-        .pin {
-            background: #021526;
-        }
-
-        #wishlist {
-            font-size: 25px;
-            color: red;
-            gap: 10px;
-        }
-
-        #wishlist:hover {
-            color: rgb(255, 183, 0);
-        }
-
-        #price {
-            color: #000;
-            font-size: 150%;
-            font-weight: bold;
-        }
-
-        #closed {
-            border-radius: 8px;
-            color: black;
-            background-color: silver;
-            padding: 8px 16px;
-        }
-
-        .swiper-slide.slide {
-            border-radius: 10px;
-            padding: 20px;
-            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
-            height: 500px;
-            /* Fixed height for the cards */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            background: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
-            /* 添加影印效果 */
-            text-align: left;
-            /* 内容左对齐 */
-        }
-
-        .swiper-slide.slide:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 12px 24px rgba(0, 0, 0, 0.2);
-            /* 加强影印效果 */
-            background-color: #f0f0f0;
-            /* 添加背景色变化 */
-        }
-
-        .concert-action-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .concert-action-container .actions {
-            display: flex;
-            align-items: center;
-        }
-
-        .concert-action-container form {
-            margin-right: 10px;
-        }
-
-        /* .room .swiper-wrapper {
-                        display: grid;
-                        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-                        gap: 20px;
-                    } */
-
-        .room .swiper-wrapper {
-            display: flex;
-            /* Ensure slides are arranged in a row */
-            flex-direction: row;
-            /* Ensure horizontal arrangement */
-        }
-
-        /* .room .slide {
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                        border-radius: 30px;
-                        padding: 20px;
-                        box-sizing: border-box;
-                        height: 100%;
-                        background: white;
-                        text-align: left;
-                        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
-                    } */
-
-        .room .swiper-slide {
-            flex: 0 0 auto;
-            /* Allow slides to take up only their content width */
-        }
-
-        .room .slide:hover {
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 12px 24px rgba(0, 0, 0, 0.2);
-            /* 加强影印效果 */
-            background-color: #e0f7fa;
-        }
-
-        .room .image {
-            width: 100%;
-            height: 250px;
-            overflow: hidden;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-
-        .room .image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s;
-        }
-
-        .room .image img:hover {
-            transform: scale(1.1);
-        }
-
-        .room .content {
-            flex: 1;
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
-            /* 添加影印效果 */
-            margin-bottom: 20px;
-            text-align: left;
-            /* 内容左对齐 */
-            height: 50px;
-            /* 固定高度 */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            /* 上下对齐 */
-        }
-
-        .room .content p {
-            font-size: 16px;
-            color: #333;
-            margin: 0;
-            text-align: left;
-            /* 内容左对齐 */
-        }
-
-        .room .content p#www {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
-            text-align: left;
-            /* 内容左对齐 */
-        }
-
-        .room .stars {
-            display: flex;
-            justify-content: flex-start;
-            /* 星级靠左对齐 */
-            margin-top: auto;
-            /* 向下对齐 */
-        }
-
-        .room .stars i {
-            font-size: 20px;
-            color: gold;
-        }
-
-        .room .concert-info {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            text-align: left;
-            /* 内容左对齐 */
-        }
-
-        .concert-action-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .concert-action-container .actions {
-            display: flex;
-            align-items: center;
-        }
-
-        .concert-action-container form {
-            margin-right: 10px;
-        }
-
-        #closed {
-            border-radius: 8px;
-            color: black;
-            background-color: silver;
-            padding: 8px 16px;
-        }
-
-        @media screen and (min-width: 768px) {
-            .room .slide {
-                flex: 0 0 calc(33.333% - 2rem);
-                margin: 1rem;
-            }
-
-            .room .image {
-                height: 250px;
-            }
-
-            .room .content {
-                padding: 2rem;
-                height: auto;
-                /* 响应式调整 */
-            }
-
-            .room .content h3 {
-                font-size: 2.5rem;
-            }
-
-            .room .content p {
-                font-size: 1.6rem;
-            }
-
-            .room .content .stars i {
-                font-size: 1.7rem;
-            }
-        }
-    </style> --}}
     <style>
         .btn {
             display: inline-block;
@@ -1758,9 +1520,10 @@
 
                                 <div class="image"
                                     style="width: 100%; height: 250px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
-                                    @if (!empty($hotel->image))
-                                        <img src="{{ asset('images/' . $hotel->image) }}" class="d-block w-100"
-                                            alt="Hotel Image" style="width: 100%; height: 100%; object-fit: cover;">
+                                    @if ($hotel->images->count() > 0)
+                                        <img src="{{ asset('images/' . $hotel->images->first()->image) }}"
+                                            class="d-block w-100" alt="Hotel Image"
+                                            style="width: 100%; height: 100%; object-fit: cover;">
                                     @else
                                         <span style="color: #777;">No Image</span>
                                     @endif
@@ -1848,9 +1611,10 @@
 
                                 <div class="image"
                                     style="width: 100%; height: 250px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
-                                    @if (!empty($restaurant->image))
-                                        <img src="{{ asset('images/' . $restaurant->image) }}" class="d-block w-100"
-                                            alt="Restaurant Image" style="width: 100%; height: 100%; object-fit: cover;">
+                                    @if ($restaurant->images->count() > 0)
+                                        <img src="{{ asset('images/' . $restaurant->images->first()->image) }}"
+                                            class="d-block w-100" alt="Restaurant Image"
+                                            style="width: 100%; height: 100%; object-fit: cover;">
                                     @else
                                         <span style="color: #777;">No Image</span>
                                     @endif

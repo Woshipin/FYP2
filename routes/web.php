@@ -137,6 +137,10 @@ Route::get('admin/showResortMap/{id}/map',[AdminController::class,'AdminShowReso
 Route::get('admin/showMap',[AdminController::class,'AdminShowAllResortMap']);
 //Search Resort Function
 Route::post('admin/searchResort',[AdminController::class,'AdminSearchResort'])->name('admin.searchResort');
+//Change Resort Register Status Function
+Route::post('/admin/updateResortRegisterStatus/{id}', [AdminController::class, 'updateResortRegisterStatus']);
+//Reject Resort Register Status Function
+Route::post('/admin/rejectResort/{id}', [AdminController::class, 'rejectResort']);
 
 //Admin Control Restaurant
 //Admin View All Restaurant
@@ -151,6 +155,10 @@ Route::put('/admin/updateRestaurant/{id}', [AdminController::class, 'AdminUpdate
 Route::get('/admin/deleteRestaurant/{id}/delete', [AdminController::class, 'AdminDeleteRestaurant'])->name('admin-deleteRestaurant');
 //Search Restaurant Function
 Route::post('admin/searchRestaurant',[AdminController::class,'AdminSearchRestaurant'])->name('admin.searchRestaurant');
+//Change Resort Register Status Function
+Route::post('/admin/updateRestaurantRegisterStatus/{id}', [AdminController::class, 'updateRestaurantRegisterStatus']);
+//Reject Resort Register Status Function
+Route::post('/admin/rejectRestaurant/{id}', [AdminController::class, 'rejectRestaurant']);
 
 //Admin Control Hotel
 //Admin View All Hotel
@@ -167,6 +175,10 @@ Route::get('admin/deleteHotel/{id}/delete', [AdminController::class, 'AdminDelet
 Route::get('/admin/viewHotel/{id}/view',[AdminController::class,'AdminViewHotel'])->name('admin-viewHotel');
 //Search Hotel Function
 Route::post('admin/searchHotel',[AdminController::class,'AdminSearchHotel'])->name('admin.searchHotel');
+//Change Resort Register Status Function
+Route::post('/admin/updateHotelRegisterStatus/{id}', [AdminController::class, 'updateHotelRegisterStatus']);
+//Reject Resort Register Status Function
+Route::post('/admin/rejectHotel/{id}', [AdminController::class, 'rejectHotel']);
 
 //Admin Control Table
 //Admin View All Table
@@ -273,6 +285,8 @@ Route::get('/deleteResort/{id}/delete', [ResortController::class, 'deleteResort'
 Route::post('/mutlipledeleteResort/delete', [ResortController::class, 'deleteMultiple'])->name('resorts.deleteMultiple');
 //show has bookingsrestaurant
 Route::get('/bookingsresort',[BookingController::class, 'hasbookingResort']);
+//MutlipleDelete Resort Images Function
+Route::delete('/resort-image/{id}', [ResortController::class, 'deleteResortImage'])->name('deleteResortImage');
 
 // Verify Resort
 Route::post('/booking/verify/resort/{id}', [BookingController::class, 'verifyResortPayment'])->name('booking.verify.resort');
@@ -287,8 +301,6 @@ Route::post('/mutlipledeletebookedresort/delete', [BookingController::class, 'de
 Route::get('/ResortSearch',[ResortController::class, 'ResortSearch'])->name('ResortSearch');
 //View Booked Resort Detail Follow ID Function
 Route::get('/viewBookedResort/{id}/view',[BookingController::class,'viewBookedResort'])->name('viewBookedResort');
-//MutlipleDelete Resort Images Function
-Route::delete('/resort-image/{id}', [ResortController::class, 'deleteResortImage'])->name('deleteResortImage');
 // GPS Auto Search Resort
 Route::get('/gps-search', [ResortController::class, 'gpsSearch'])->name('gps.search');
 
@@ -315,7 +327,8 @@ Route::post('/deleterestauranttable/delete', [RestaurantController::class, 'dele
 Route::get('/RestaurantSearch',[RestaurantController::class, 'RestaurantSearch'])->name('RestaurantSearch');
 //show has bookingsrestaurant
 Route::get('/bookingsrestaurant',[BookingController::class, 'hasbookingRestaurant']);
-
+//MutlipleDelete Restaurant Images Function
+Route::delete('/restaurant-image/{id}', [RestaurantController::class, 'deleteRestaurantImage'])->name('deleteRestaurantImage');
 
 // Verify restaurant
 Route::post('/booking/verify/restaurant/{id}', [BookingController::class, 'verifyRestaurantPayment'])->name('booking.verify.restaurant');
@@ -370,6 +383,8 @@ Route::post('/mutlipledeletehotel/delete', [HotelController::class, 'mutlipledel
 Route::post('/mutlipledeleterooms/delete', [HotelController::class, 'mutlipledeleterooms'])->name('rooms.mutlipledeleterooms');
 //show has bookingsrestaurant
 Route::get('/bookingshotel',[BookingController::class, 'hasbookingHotel']);
+//MutlipleDelete Hotel Images Function
+Route::delete('/hotel-image/{id}', [HotelController::class, 'deleteHotelImage'])->name('deleteHotelImage');
 
 // Verify hotel
 Route::post('/booking/verify/hotel/{id}', [BookingController::class, 'verifyHotelPayment'])->name('booking.verify.hotel');

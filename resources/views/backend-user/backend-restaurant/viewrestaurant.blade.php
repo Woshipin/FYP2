@@ -31,11 +31,18 @@
                     </tr>
                     <tr>
                         <th>Restaurant Image</th>
-                        <td>
-                            @if ($restaurants->image)
-                                <img width="80" src="{{ asset('images/' . $restaurants->image) }}" alt="Resort Image" />
+                        <td style="border: 5px solid #ddd; padding: 5px; width: 470px; height: 200px; overflow-y: auto; position: relative;">
+                            @if(isset($restaurants->images) && count($restaurants->images) > 0)
+                            <div style="display: flex; flex-wrap: nowrap; width: 100%; height: 100%;">
+                                @foreach($restaurants->images as $image)
+                                <div style="position: relative; margin-right: 5px; width: 80px; height: 80px; border-radius 2px">
+                                    <img src="{{ asset('images/' . $image->image) }}" alt="Resort Image"
+                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                @endforeach
+                            </div>
                             @else
-                                <span width="80">No Image</span>
+                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>
                             @endif
                         </td>
                     </tr>

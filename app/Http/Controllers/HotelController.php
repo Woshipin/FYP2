@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 
 class HotelController extends Controller
 {
+    
     public function index(){
         return view('user.hotel.hotel');
     }
@@ -30,7 +31,7 @@ class HotelController extends Controller
             'map' => 'required',
             'address' => 'required',
             'description' => 'required',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // Validate each image
+            // 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // Validate each image
         ]);
 
         // Create a new Hotel instance
@@ -139,7 +140,7 @@ class HotelController extends Controller
             'map' => 'required',
             'address' => 'required',
             'description' => 'required',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // 验证每个图像
+            // 'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // 验证每个图像
         ]);
 
         $hotel->name = $request->name;
@@ -171,6 +172,25 @@ class HotelController extends Controller
         }
 
         return back()->with('success', 'This Hotel has been updated successfully.');
+    }
+
+    public function deleteHotelImage($id)
+    {
+        $image = HotelImage::find($id);
+        if ($image) {
+            // 删除图片文件
+            $imagePath = public_path('images/' . $image->image);
+            if (file_exists($imagePath)) {
+                unlink($imagePath);
+            }
+
+            // 删除数据库中的记录
+            $image->delete();
+
+            return response()->json(['message' => 'Image deleted successfully.']);
+        } else {
+            return response()->json(['message' => 'Image not found.'], 404);
+        }
     }
 
     public function deleteHotel($id){

@@ -554,7 +554,8 @@
                         var coordinates = getCoordinatesFromIframe(mapIframe);
                         if (coordinates) {
                             var marker = L.marker([coordinates.lat, coordinates.lng]).addTo(map)
-                                .bindPopup('<b>' + restaurant.name + '</b><br>' + restaurant.address + '<br>' + restaurant.state);
+                                .bindPopup('<b>' + restaurant.name + '</b><br>' + restaurant.address +
+                                    '<br>' + restaurant.state);
                             markers.push(marker);
                         }
                     });
@@ -583,11 +584,17 @@
                 if (Array.isArray(filteredRestaurants) && filteredRestaurants.length > 0) {
                     filteredRestaurants.forEach(function(restaurant) {
                         var isDisabled = restaurant.status === 1;
+                        var restaurantImages = restaurant.images || []; // Default to empty array
+
+                        // Display only the first image
+                        var firstImageHTML = restaurantImages.length > 0 && restaurantImages[0].image ?
+                            `<img class="concert-image" src="{{ asset('images/') }}/${restaurantImages[0].image}" alt="Image" />` :
+                            `<img class="concert-image" src="path/to/placeholder-image.jpg" alt="No Image" />`;
 
                         var restaurantHTML = `
                             <div class="concert ${isDisabled ? 'disabled' : ''}">
                                 <div class="concert-main" id="restaurantcard_${restaurant.id}">
-                                    <img class="concert-image" src="{{ asset('images/') }}/${restaurant.image}" alt="${restaurant.image ? 'Image' : 'No Image'}" />
+                                    ${firstImageHTML} <!-- Display only the first image here -->
                                     <div class="concert-content">
                                         <h2 class="concert-title">
                                             <i class="fas fa-utensils"></i> ${restaurant.name}
@@ -606,10 +613,10 @@
                                             ${isDisabled ?
                                                 `<a href="{{ url('Restaurantdetail/') }}/${restaurant.id}/view" class="concert-action disabled">Closed</a>` :
                                                 `<form id="wishlistForm" action="{{ url('/wishlist/add/restaurant') }}/${restaurant.id}" method="POST">
-                                                    @csrf
-                                                    <button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button>
-                                                </form>
-                                                <a href="{{ url('Restaurantdetail/') }}/${restaurant.id}/view" class="concert-action" id="viewrestaurant${restaurant.id}">Book Now</a>`
+                                                        @csrf
+                                                        <button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button>
+                                                    </form>
+                                                    <a href="{{ url('Restaurantdetail/') }}/${restaurant.id}/view" class="concert-action" id="viewrestaurant${restaurant.id}">Book Now</a>`
                                             }
                                         </div>
                                     </div>
@@ -619,19 +626,24 @@
                         resultsContainer.append(restaurantHTML);
                     });
                 } else {
-                    resultsContainer.html('<p style="margin-top:40px; font-size:24px; display:block">No Restaurants Found</p>');
+                    resultsContainer.html(
+                        '<p style="margin-top:40px; font-size:24px; display:block">No Restaurants Found</p>');
                 }
             }
+
 
             // 执行搜索函数
             function performSearch() {
                 var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
                 var filteredRestaurants = restaurants.filter(function(restaurant) {
                     return (restaurant.name && restaurant.name.toLowerCase().includes(searchInputValue)) ||
-                        (restaurant.country && restaurant.country.toLowerCase().includes(searchInputValue)) ||
+                        (restaurant.country && restaurant.country.toLowerCase().includes(
+                        searchInputValue)) ||
                         (restaurant.state && restaurant.state.toLowerCase().includes(searchInputValue)) ||
-                        (restaurant.address && restaurant.address.toLowerCase().includes(searchInputValue)) ||
-                        (restaurant.description && restaurant.description.toLowerCase().includes(searchInputValue));
+                        (restaurant.address && restaurant.address.toLowerCase().includes(
+                        searchInputValue)) ||
+                        (restaurant.description && restaurant.description.toLowerCase().includes(
+                            searchInputValue));
                 });
 
                 // 更新地图标记和搜索结果
@@ -650,11 +662,12 @@
 
                 var formData = new FormData(this);
 
-                fetch('{{ route("uploadAndSearchRestaurants") }}', {
+                fetch('{{ route('uploadAndSearchRestaurants') }}', {
                         method: 'POST',
                         body: formData,
                         headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
                             'X-Requested-With': 'XMLHttpRequest'
                         }
                     })
@@ -733,7 +746,7 @@
         });
     </script>
 
-    // {{-- Pusher JS Disabled Function --}}
+    {{-- Pusher JS Disabled Function --}}
     <script>
         // JavaScript code here to disable resort cards based on status
         let restaurantcard_; // Declare the variable outside of the loop
@@ -759,7 +772,7 @@
         @endforeach
     </script>
 
-    // {{-- Toastr JS --}}
+    {{-- Toastr JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         @if (Session::has('success'))

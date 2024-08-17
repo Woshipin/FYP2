@@ -496,61 +496,69 @@
                                         <th>Restaurant Address</th>
                                         <th>Restaurant Description</th>
                                         <th>Open / Close</th>
+                                        <th>Register Status</th>
                                         <th>ACTIONS</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if ($restaurantss !== null && count($restaurantss) > 0)
+                                    @if ($restaurantss && count($restaurantss) > 0)
                                         @foreach ($restaurantss as $restaurant)
-                                            <tr id="restaurant_ids{{ $restaurant->id }}">
-                                                <td><input type="checkbox" name="ids" class="checkbox_ids" value="{{ $restaurant->id }}"></td>
-                                                <td>{{ $restaurant->id }}</td>
-                                                <td>{{ $restaurant->name }}</td>
-                                                <td style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
-                                                    @if ($restaurant->images->count() > 0)
-                                                        <div id="carousel{{ $restaurant->id }}" class="carousel slide" data-ride="carousel">
-                                                            <div class="carousel-inner" style="width: 100%; height: 100%;">
-                                                                @foreach ($restaurant->images as $key => $image)
-                                                                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                                                        <img src="{{ asset('images/' . $image->image) }}" class="d-block w-100" alt="Restaurant Image" style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
-                                                                    </div>
-                                                                @endforeach
+                                            @if ($restaurant->register_status === 1)
+                                                <tr id="restaurant_ids{{ $restaurant->id }}">
+                                                    <td><input type="checkbox" name="ids" class="checkbox_ids" value="{{ $restaurant->id }}"></td>
+                                                    <td>{{ $restaurant->id }}</td>
+                                                    <td>{{ $restaurant->name }}</td>
+                                                    <td style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
+                                                        @if ($restaurant->images->count() > 0)
+                                                            <div id="carousel{{ $restaurant->id }}" class="carousel slide" data-ride="carousel">
+                                                                <div class="carousel-inner" style="width: 100%; height: 100%;">
+                                                                    @foreach ($restaurant->images as $key => $image)
+                                                                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                                                            <img src="{{ asset('images/' . $image->image) }}" class="d-block w-100" alt="Restaurant Image" style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                                <a class="carousel-control-prev" href="#carousel{{ $restaurant->id }}" role="button" data-slide="prev" style="width: 20px;">
+                                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                                    <span class="sr-only">Previous</span>
+                                                                </a>
+                                                                <a class="carousel-control-next" href="#carousel{{ $restaurant->id }}" role="button" data-slide="next" style="width: 20px;">
+                                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                                    <span class="sr-only">Next</span>
+                                                                </a>
                                                             </div>
-                                                            <a class="carousel-control-prev" href="#carousel{{ $restaurant->id }}" role="button" data-slide="prev" style="width: 20px;">
-                                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                                <span class="sr-only">Previous</span>
-                                                            </a>
-                                                            <a class="carousel-control-next" href="#carousel{{ $restaurant->id }}" role="button" data-slide="next" style="width: 20px;">
-                                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                                <span class="sr-only">Next</span>
-                                                            </a>
-                                                        </div>
-                                                    @else
-                                                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $restaurant->date }}</td>
-                                                <td>{{ $restaurant->time }}</td>
-                                                <td>{{ $restaurant->type }}</td>
-                                                <td>{{ $restaurant->address }}</td>
-                                                <td>{{ $restaurant->description }}</td>
-                                                <td>
-                                                    @if ($restaurant->status == 0)
-                                                        <a href="{{ url('changerestaurant-status/' . $restaurant->id) }}" class="btn btn-sm btn-success" onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
-                                                    @else
-                                                        <a href="{{ url('changerestaurant-status/' . $restaurant->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <a href="{{ url('viewRestaurant/' . $restaurant->id) . '/view' }}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>&nbsp;View</a>
-                                                    <a href="{{ url('editRestaurant/' . $restaurant->id) . '/edit' }}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#restauranteditModal{{ $restaurant->id }}"><i class="fa fa-edit"></i>&nbsp;Edit</a><br>
-                                                    <a onclick="return confirm('Are you sure to delete this data?')" href="{{ url('deleteRestaurant/' . $restaurant->id) . '/delete' }}" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
-                                                </td>
-                                            </tr>
+                                                        @else
+                                                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $restaurant->date }}</td>
+                                                    <td>{{ $restaurant->time }}</td>
+                                                    <td>{{ $restaurant->type }}</td>
+                                                    <td>{{ $restaurant->address }}</td>
+                                                    <td>{{ $restaurant->description }}</td>
+                                                    <td>
+                                                        @if ($restaurant->status == 0)
+                                                            <a href="{{ url('changerestaurant-status/' . $restaurant->id) }}" class="btn btn-sm btn-success" onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
+                                                        @else
+                                                            <a href="{{ url('changerestaurant-status/' . $restaurant->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if ($restaurant->register_status === 1)
+                                                            <span class="text-success">Approved</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ url('viewRestaurant/' . $restaurant->id . '/view') }}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>&nbsp;View</a>
+                                                        <a href="{{ url('editRestaurant/' . $restaurant->id . '/edit') }}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#restauranteditModal{{ $restaurant->id }}"><i class="fa fa-edit"></i>&nbsp;Edit</a><br>
+                                                        <a onclick="return confirm('Are you sure to delete this data?')" href="{{ url('deleteRestaurant/' . $restaurant->id . '/delete') }}" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td colspan="9">No Restaurants Found</td>
+                                            <td colspan="12">No Restaurants Found</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -993,6 +1001,50 @@
 
                     // 开始读取文件内容（以二进制字符串形式）
                     fileReader.readAsBinaryString(selectedFile);
+                }
+            });
+        });
+    </script>
+
+    {{-- Delete Restaurant Mutliple Image --}}
+    <script>
+        $(document).ready(function() {
+            $('.delete-image').click(function() {
+                var imageId = $(this).data('image-id');
+                var imageElement = $(this).closest('div'); // 获取图片元素的父级 div
+                var modalContent = $(this).closest('.modal-content');
+                var modal = modalContent.closest('.modal');
+                var modalId = modal.attr('id');
+
+                if (modalId) {
+                    var restaurantId = modalId.split('restauranteditModal')[1];
+                    console.log('restaurantId', restaurantId);
+
+                    if (restaurantId) {
+                        var confirmation = confirm('Are you sure you want to delete this image?');
+                        if (confirmation) {
+                            $.ajax({
+                                url: '/restaurant-image/' + imageId,
+                                type: 'DELETE',
+                                data: {
+                                    "_token": "{{ csrf_token() }}", // Ensure CSRF token is included
+                                    "id": imageId,
+                                },
+                                success: function(data) {
+                                    console.log(data.message);
+                                    // 从DOM中移除图片元素
+                                    imageElement.remove();
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                        }
+                    } else {
+                        console.error('Restaurant ID not found in modal ID');
+                    }
+                } else {
+                    console.error('Modal ID not found');
                 }
             });
         });

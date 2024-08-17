@@ -14,10 +14,12 @@ use App\Models\Table;
 use App\Models\Room;
 use App\Models\User;
 use App\Models\AdminWallet;
+use Illuminate\Support\Facades\Mail;
 use Session;
 use Hash;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\RejectionMail;
 
 class AdminController extends Controller
 {
@@ -204,89 +206,54 @@ class AdminController extends Controller
         return redirect()->back();
     }
 
-    //Admin Control Resort Area
-    public function showAllResort(){
+    //------------------------------------------------- Admin Control Resort Area -----------------------------------------------//
+    public function showAllResort() {
+        // Load resorts with images and paginate
+        $resorts = Resort::with('images')->paginate(10);
 
-        $resorts = Resort::paginate(10);
-        $resortss = Resort::all();
+        // Load all resorts with images without pagination (if needed elsewhere)
+        $resortss = Resort::with('images')->get();
 
-        return view('admin.AllResort',compact('resorts','resortss'));
+        return view('admin.AllResort', compact('resorts', 'resortss'));
     }
 
-    // public function AdminAddResort(Request $request){
+    public function updateResortRegisterStatus($id, Request $request) {
+        $resort = Resort::find($id);
+        if (!$resort) {
+            return response()->json(['success' => false, 'message' => 'Resort not found']);
+        }
 
-    //     // |image|mimes:jpeg,png,jpg,gif|max:2048
-    //     $request->validate([
-    //         'name'=>'required',
-    //         'image' =>'required',
-    //         'price'=>'required',
-    //         'location'=>'required',
-    //         'latitude'=>'required',
-    //         'longitude'=>'required',
-    //         'description'=>'required'
-    //     ]);
+        $resort->register_status = $request->status;
+        $resort->save();
 
-    //     // Handle image upload
-    //     $image = $request->file('image');
-    //     $image->move('images', $image->getClientOriginalName());
-    //     $imageName = $image->getClientOriginalName();
-
-    //     $resort = new Resort();
-    //     $resort->user_id = auth()->id();
-    //     $resort->name = $request->name;
-    //     $resort->image = $imageName; // Corrected line
-    //     $resort->price = $request->price;
-    //     $resort->location = $request->location;
-    //     $resort->latitude = $request->latitude;
-    //     $resort->longitude = $request->longitude;
-    //     $resort->description = $request->description;
-    //     $resort->save();
-
-    //     return back()->with('success', 'You have add new Resort successfully by Admin.');
-    // }
-
-    //View Resort with id
-    // public function AdminShowResortMap($resortId)
-    // {
-    //     $resorts = Resort::find($resortId);
-
-    //     return view('admin.ViewAllResort',compact('resorts'));
-    // }
-
-    //Mutliple Google Map
-    // public function AdminShowAllResortMap()
-    // {
-    //     $resorts = Resort::all();
-
-    //     return view('admin.AllResort', compact('resorts'));
-    // }
-
-    public function AdminEditResort($id){
-
-        $resorts = Resort::find($id);
-
-        return view('user.resort',compact('resorts'));
+        return response()->json(['success' => true]);
     }
 
-    public function AdminUpdateResort(Request $request, $id){
+    public function rejectResort($id, Request $request)
+    {
+        try {
+            \Log::info('Reject Resort Method Called', ['id' => $id, 'message' => $request->message]);
 
-        $resorts = Resort::find($id);
+            $resort = Resort::find($id);
+            if (!$resort) {
+                return response()->json(['success' => false, 'message' => 'Resort not found']);
+            }
 
-        // Handle image upload
-        $image = $request->file('image');
-        $image->move('images', $image->getClientOriginalName());
-        $imageName = $image->getClientOriginalName();
+            $resort->register_status = 2; // 标记为拒绝
+            $resort->save();
 
-        $resorts->name = $request->name;
-        $resorts->image = $imageName; // Corrected line
-        $resorts->price = $request->price;
-        $resorts->location = $request->location;
-        $resorts->latitude = $request->latitude;
-        $resorts->longitude = $request->longitude;
-        $resorts->description = $request->description;
-        $resorts->save();
+            // 发送邮件通知
+            $toEmail = 'ahpin7762@gmail.com'; // 确保这是正确的接收邮箱
+            $messageContent = $request->message;
 
-        return back()->with('success','This Resort has been updated successfully by Admin.');
+            Mail::to($toEmail)->send(new RejectionMail($messageContent));
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            // 捕获并记录异常
+            \Log::error('Reject Resort Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
+        }
     }
 
     public function AdminDeleteResort($id){
@@ -302,28 +269,6 @@ class AdminController extends Controller
 
         return view('admin.ViewAllResort',compact('resorts'));
     }
-
-    // public function AdminSearchResort(Request $request)
-    // {
-    //     // Build your database query based on the input values
-    //     $query = Resort::query();
-
-    //     if ($request->has('name')) {
-    //         $query->where('name', 'LIKE', '%' . $request->input('name') . '%');
-    //     }
-
-    //     // Execute the query and retrieve the results
-    //     // $resorts = $query->get();
-    //     $resorts = $query->paginate(10);
-
-    //     // Check if it's an AJAX request
-    //     if ($request->ajax()) {
-    //         return view('admin.AllResort', compact('resorts'));
-    //     }
-
-    //     // For non-AJAX requests, return the appropriate view
-    //     return view('admin.AllResort', compact('resorts'));
-    // }
 
     public function AdminSearchResort(Request $request)
     {
@@ -349,13 +294,52 @@ class AdminController extends Controller
         return view('admin.AllResort', compact('resorts', 'resortsData'));
     }
 
-
-    //Admin Control Restaurant Area
+    //------------------------------------------------- Admin Control Restaurant Area -----------------------------------------------//
     public function showAllRestaurant(){
 
-        $restaurants = Restaurant::paginate(10);
+        $restaurants = Restaurant::with('images')->paginate(10);
 
         return view('admin.AllRestaurant',compact('restaurants'));
+    }
+
+    public function updateRestaurantRegisterStatus($id, Request $request)
+    {
+        $restaurant = Restaurant::find($id);
+        if (!$restaurant) {
+            return response()->json(['success' => false, 'message' => 'Restaurant not found']);
+        }
+
+        $restaurant->register_status = $request->status;
+        $restaurant->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function rejectRestaurant($id, Request $request)
+    {
+        try {
+            \Log::info('Reject Restaurant Method Called', ['id' => $id, 'message' => $request->message]);
+
+            $restaurant = Restaurant::find($id);
+            if (!$restaurant) {
+                return response()->json(['success' => false, 'message' => 'Restaurant not found']);
+            }
+
+            $restaurant->register_status = 2; // 标记为拒绝
+            $restaurant->save();
+
+            // 发送邮件通知
+            $toEmail = 'ahpin7762@gmail.com'; // 确保这是正确的接收邮箱
+            $messageContent = $request->message;
+
+            Mail::to($toEmail)->send(new RejectionMail($messageContent));
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            // 捕获并记录异常
+            \Log::error('Reject Restaurant Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
+        }
     }
 
     public function AdminViewRestaurant($id)
@@ -424,12 +408,53 @@ class AdminController extends Controller
         return view('admin.AllRestaurant', compact('restaurants', 'restaurantsData'));
     }
 
-    //Admin Control Hotel Area
+    //------------------------------------------------- Admin Control Hotel Area -----------------------------------------------//
     public function showAllHotel(){
 
-        $hotels = Hotel::paginate(10);
+        $hotels = Hotel::with('images')->paginate(10);
 
         return view('admin.AllHotel',compact('hotels'));
+    }
+
+    public function updateHotelRegisterStatus($id, Request $request) {
+
+        $hotel = Hotel::find($id);
+        
+        if (!$hotel) {
+            return response()->json(['success' => false, 'message' => 'Hotel not found']);
+        }
+
+        $hotel->register_status = $request->status;
+        $hotel->save();
+
+        return response()->json(['success' => true]);
+    }
+
+    public function rejectHotel($id, Request $request)
+    {
+        try {
+            \Log::info('Reject Hotel Method Called', ['id' => $id, 'message' => $request->message]);
+
+            $hotel = Hotel::find($id);
+            if (!$hotel) {
+                return response()->json(['success' => false, 'message' => 'Hotel not found']);
+            }
+
+            $hotel->register_status = 2; // 标记为拒绝
+            $hotel->save();
+
+            // 发送邮件通知
+            $toEmail = 'ahpin7762@gmail.com'; // 确保这是正确的接收邮箱
+            $messageContent = $request->message;
+
+            Mail::to($toEmail)->send(new RejectionMail($messageContent));
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            // 捕获并记录异常
+            \Log::error('Reject Hotel Error: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
+        }
     }
 
     public function AdminViewHotel($id)
@@ -437,38 +462,6 @@ class AdminController extends Controller
         $hotels = Hotel::find($id);
 
         return view('admin.ViewAllHotel',compact('hotels'));
-    }
-
-    public function AdminEditHotel($id){
-
-        $hotels = Hotel::find($id);
-
-        return view('admin.AllHotel', compact('hotels'));
-    }
-
-    public function AdminUpdateHotel(Request $request, $id){
-
-        $hotels = Hotel::find($id);
-
-        // Handle image upload
-        $image = $request->file('image');
-        $image->move('images', $image->getClientOriginalName());
-        $imageName = $image->getClientOriginalName();
-
-        $hotels->name = $request->name;
-        $hotels->image = $imageName; // Corrected line
-        $hotels->email = $request->email;
-        $hotels->price = $request->price;
-        $hotels->phone = $request->phone;
-        $hotels->country = $request->country;
-        $hotels->state = $request->state;
-        $hotels->map = $request->map;
-        $hotels->address = $request->address;
-        $hotels->description = $request->description;
-        $hotels->save();
-        // dd($hotels);
-
-        return back()->with('success','This Hotel has been updated successfully by Admin.');
     }
 
     public function AdminDeleteHotel($id){
@@ -501,7 +494,6 @@ class AdminController extends Controller
         // For non-AJAX requests, return the appropriate view
         return view('admin.AllHotel', compact('hotels'));
     }
-
 
     //Admin Control Table Area
     public function showAllTable(){

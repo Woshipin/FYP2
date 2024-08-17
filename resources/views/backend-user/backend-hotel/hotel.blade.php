@@ -528,89 +528,72 @@
                                     <tr>
                                         <th><input type="checkbox" name="" id="select_all_ids"
                                                 onclick="checkAll(this)"></th>
+                                        <th>Hotel ID</th>
                                         <th>Hotel Name</th>
                                         <th>Hotel Image</th>
-                                        <th>Hotel Country</th>
                                         <th>Hotel Type</th>
+                                        <th>Hotel Country</th>
                                         <th>Hotel State</th>
                                         <th>Hotel Address</th>
                                         <th>Open / Close</th>
+                                        <th>Register Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if ($hotelss !== null && count($hotelss) > 0)
                                         @foreach ($hotelss as $hotel)
-                                            <tr id="hotel_ids{{ $hotel->id }}">
-                                                <td><input type="checkbox" name="ids" class="checkbox_ids"
-                                                        value="{{ $hotel->id }}"></td>
-                                                <td>{{ $hotel->id }}</td>
-                                                <td>{{ $hotel->name }}</td>
-                                                <td
-                                                    style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
-                                                    @if ($hotel->images->count() > 0)
-                                                        <div id="carousel{{ $hotel->id }}" class="carousel slide"
-                                                            data-ride="carousel">
-                                                            <div class="carousel-inner"
-                                                                style="width: 100%; height: 100%;">
-                                                                @foreach ($hotel->images as $key => $image)
-                                                                    <div
-                                                                        class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                                                        <img src="{{ asset('images/' . $image->image) }}"
-                                                                            class="d-block w-100" alt="Hotel Image"
-                                                                            style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
-                                                                    </div>
-                                                                @endforeach
+                                            @if ($hotel->register_status === 1)
+                                                <tr id="hotel_ids{{ $hotel->id }}">
+                                                    <td><input type="checkbox" name="ids" class="checkbox_ids" value="{{ $hotel->id }}"></td>
+                                                    <td>{{ $hotel->id }}</td>
+                                                    <td>{{ $hotel->name }}</td>
+                                                    <td style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
+                                                        @if ($hotel->images->count() > 0)
+                                                            <div id="carousel{{ $hotel->id }}" class="carousel slide" data-ride="carousel">
+                                                                <div class="carousel-inner" style="width: 100%; height: 100%;">
+                                                                    @foreach ($hotel->images as $key => $image)
+                                                                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                                                            <img src="{{ asset('images/' . $image->image) }}" class="d-block w-100" alt="Hotel Image" style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                                <a class="carousel-control-prev" href="#carousel{{ $hotel->id }}" role="button" data-slide="prev" style="width: 20px;">
+                                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                                    <span class="sr-only">Previous</span>
+                                                                </a>
+                                                                <a class="carousel-control-next" href="#carousel{{ $hotel->id }}" role="button" data-slide="next" style="width: 20px;">
+                                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                                    <span class="sr-only">Next</span>
+                                                                </a>
                                                             </div>
-                                                            <a class="carousel-control-prev"
-                                                                href="#carousel{{ $hotel->id }}" role="button"
-                                                                data-slide="prev" style="width: 20px;">
-                                                                <span class="carousel-control-prev-icon"
-                                                                    aria-hidden="true"></span>
-                                                                <span class="sr-only">Previous</span>
-                                                            </a>
-                                                            <a class="carousel-control-next"
-                                                                href="#carousel{{ $hotel->id }}" role="button"
-                                                                data-slide="next" style="width: 20px;">
-                                                                <span class="carousel-control-next-icon"
-                                                                    aria-hidden="true"></span>
-                                                                <span class="sr-only">Next</span>
-                                                            </a>
-                                                        </div>
-                                                    @else
-                                                        <span
-                                                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No
-                                                            Image</span>
-                                                    @endif
-                                                </td>
-                                                <td>{{ $hotel->type }}</td>
-                                                <td>{{ $hotel->country }}</td>
-                                                <td>{{ $hotel->state }}</td>
-                                                <td>{{ $hotel->address }}</td>
-                                                <td>
-                                                    @if ($hotel->status == 0)
-                                                        <a href="{{ url('changehotel-status/' . $hotel->id) }}"
-                                                            class="btn btn-sm btn-success"
-                                                            onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
-                                                    @else
-                                                        <a href="{{ url('changehotel-status/' . $hotel->id) }}"
-                                                            class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <a href="{{ url('viewHotel/' . $hotel->id) . '/view' }}"
-                                                        class="btn btn-info btn-sm"><i
-                                                            class="fas fa-eye"></i>&nbsp;View</a>
-                                                    <a href="" class="btn btn-primary btn-sm" data-toggle="modal"
-                                                        data-target="#hoteleditModal{{ $hotel->id }}"><i
-                                                            class="fa fa-edit"></i>&nbsp;Edit</a>
-                                                    <a onclick="return confirm('Are you sure to delete this data?')"
-                                                        href="{{ url('deleteHotel/' . $hotel->id) . '/delete' }}"
-                                                        class="btn btn-danger btn-sm"><i
-                                                            class="fa fa-trash"></i>&nbsp;Delete</a>
-                                                </td>
-                                            </tr>
+                                                        @else
+                                                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>{{ $hotel->type }}</td>
+                                                    <td>{{ $hotel->country }}</td>
+                                                    <td>{{ $hotel->state }}</td>
+                                                    <td>{{ $hotel->address }}</td>
+                                                    <td>
+                                                        @if ($hotel->status == 0)
+                                                            <a href="{{ url('changehotel-status/' . $hotel->id) }}" class="btn btn-sm btn-success" onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
+                                                        @else
+                                                            <a href="{{ url('changehotel-status/' . $hotel->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        @if ($hotel->register_status === 1)
+                                                            <span class="text-success">Approved</span>
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <a href="{{ url('viewHotel/' . $hotel->id) . '/view' }}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>&nbsp;View</a>
+                                                        <a href="" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#hoteleditModal{{ $hotel->id }}"><i class="fa fa-edit"></i>&nbsp;Edit</a>
+                                                        <a onclick="return confirm('Are you sure to delete this data?')" href="{{ url('deleteHotel/' . $hotel->id) . '/delete' }}" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
+                                                    </td>
+                                                </tr>
+                                            @endif
                                         @endforeach
                                     @else
                                         <tr>
@@ -618,7 +601,6 @@
                                         </tr>
                                     @endif
                                 </tbody>
-
                             </table>
                         </div>
                     </form>
@@ -857,8 +839,7 @@
                             <table id="example" class="table table-striped table-bordered">
                                 {{-- Button to delete all selected items --}}
                                 <button type="submit" class="btn btn-danger m-1" id="deleteAllSelectedRecords">Delete
-                                    All
-                                    Selected Rooms</button>
+                                    All Selected Rooms</button>
                                 {{-- Add Room --}}
                                 <button type="button" class="btn btn-info m-1" data-toggle="modal"
                                     data-target="#roomModal">Add Room</button>
@@ -1160,6 +1141,50 @@
 
                     // 开始读取文件内容（以二进制字符串形式）
                     fileReader.readAsBinaryString(selectedFile);
+                }
+            });
+        });
+    </script>
+
+    {{-- Delete Hotel Mutliple Image --}}
+    <script>
+        $(document).ready(function() {
+            $('.delete-image').click(function() {
+                var imageId = $(this).data('image-id');
+                var imageElement = $(this).closest('div'); // 获取图片元素的父级 div
+                var modalContent = $(this).closest('.modal-content');
+                var modal = modalContent.closest('.modal');
+                var modalId = modal.attr('id');
+
+                if (modalId) {
+                    var hotelId = modalId.split('hoteleditModal')[1];
+                    console.log('hotelId', hotelId);
+
+                    if (hotelId) {
+                        var confirmation = confirm('Are you sure you want to delete this image?');
+                        if (confirmation) {
+                            $.ajax({
+                                url: '/hotel-image/' + imageId,
+                                type: 'DELETE',
+                                data: {
+                                    "_token": "{{ csrf_token() }}", // Ensure CSRF token is included
+                                    "id": imageId,
+                                },
+                                success: function(data) {
+                                    console.log(data.message);
+                                    // 从DOM中移除图片元素
+                                    imageElement.remove();
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error(xhr.responseText);
+                                }
+                            });
+                        }
+                    } else {
+                        console.error('Hotel ID not found in modal ID');
+                    }
+                } else {
+                    console.error('Modal ID not found');
                 }
             });
         });
