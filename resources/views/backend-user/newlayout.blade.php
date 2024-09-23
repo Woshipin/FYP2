@@ -339,18 +339,18 @@
             </li>
 
             <!-- Nav Item - User Deposit -->
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link" href="{{ url('deposit') }}">
                     <i class="fas fa-user-circle"></i>
                     <span>User Deposit</span></a>
-            </li>
+            </li> --}}
 
             <!-- Nav Item - Refund Deposit -->
-            <li class="nav-item">
+            {{-- <li class="nav-item">
                 <a class="nav-link" href="{{ url('viewrefund') }}">
                     <i class="fas fa-money-check"></i>
                     <span>Refund Deposit</span></a>
-            </li>
+            </li> --}}
 
             <!-- Nav Item - User Wishlist -->
             <li class="nav-item">

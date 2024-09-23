@@ -284,6 +284,7 @@
                             <table class="table table-bordered" width="100%" cellspacing="0">
                                 <thead>
                                     <tr>
+                                        <th>Hotel ID</th>
                                         <th>Name</th>
                                         <th>Image</th>
                                         <th>Country</th>
@@ -534,8 +535,8 @@
                                 </div>` :
                                 `<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>`}
                             </td>
-                            <td>${hotel.price}</td>
-                            <td>${hotel.location}</td>
+                            <td>${hotel.country}</td>
+                            <td>${hotel.address}</td>
                             <td>${hotel.description}</td>
                             <td>
                                 ${isDisabled ?

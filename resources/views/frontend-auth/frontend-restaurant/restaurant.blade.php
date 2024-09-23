@@ -53,6 +53,10 @@
             color: black;
         }
 
+        #wishlist {
+            margin-right: 10px;
+        }
+
         #wishlist:hover {
             color: red;
         }
@@ -583,47 +587,49 @@
 
                 if (Array.isArray(filteredRestaurants) && filteredRestaurants.length > 0) {
                     filteredRestaurants.forEach(function(restaurant) {
-                        var isDisabled = restaurant.status === 1;
-                        var restaurantImages = restaurant.images || []; // Default to empty array
+                        if (restaurant.register_status === 1) {
+                            var isDisabled = restaurant.status === 1;
+                            var restaurantImages = restaurant.images || []; // Default to empty array
 
-                        // Display only the first image
-                        var firstImageHTML = restaurantImages.length > 0 && restaurantImages[0].image ?
-                            `<img class="concert-image" src="{{ asset('images/') }}/${restaurantImages[0].image}" alt="Image" />` :
-                            `<img class="concert-image" src="path/to/placeholder-image.jpg" alt="No Image" />`;
+                            // Display only the first image
+                            var firstImageHTML = restaurantImages.length > 0 && restaurantImages[0].image ?
+                                `<img class="concert-image" src="{{ asset('images/') }}/${restaurantImages[0].image}" alt="Image" />` :
+                                `<img class="concert-image" src="path/to/placeholder-image.jpg" alt="No Image" />`;
 
-                        var restaurantHTML = `
-                            <div class="concert ${isDisabled ? 'disabled' : ''}">
-                                <div class="concert-main" id="restaurantcard_${restaurant.id}">
-                                    ${firstImageHTML} <!-- Display only the first image here -->
-                                    <div class="concert-content">
-                                        <h2 class="concert-title">
-                                            <i class="fas fa-utensils"></i> ${restaurant.name}
-                                        </h2>
-                                        <p class="concert-description">
-                                            <i class="fas fa-info-circle"></i> ${restaurant.description}
-                                        </p>
-                                        <div class="concert-creator">
-                                            <p><i class="fas fa-map-marker-alt"></i> ${restaurant.address}</p>
-                                        </div>
+                            var restaurantHTML = `
+                                <div class="concert ${isDisabled ? 'disabled' : ''}">
+                                    <div class="concert-main" id="restaurantcard_${restaurant.id}">
+                                        ${firstImageHTML} <!-- Display only the first image here -->
+                                        <div class="concert-content">
+                                            <h2 class="concert-title">
+                                                <i class="fas fa-utensils"></i> ${restaurant.name}
+                                            </h2>
+                                            <p class="concert-description">
+                                                <i class="fas fa-info-circle"></i> ${restaurant.description}
+                                            </p>
+                                            <div class="concert-creator">
+                                                <p><i class="fas fa-map-marker-alt"></i> ${restaurant.address}</p>
+                                            </div>
 
-                                        <div class="concert-action-container">
-                                            <p>${new Date().toLocaleString('en-US', {
-                                                timeZone: 'Asia/Kuala_Lumpur'
-                                            })}</p>
-                                            ${isDisabled ?
-                                                `<a href="{{ url('Restaurantdetail/') }}/${restaurant.id}/view" class="concert-action disabled">Closed</a>` :
-                                                `<form id="wishlistForm" action="{{ url('/wishlist/add/restaurant') }}/${restaurant.id}" method="POST">
-                                                        @csrf
-                                                        <button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button>
-                                                    </form>
-                                                    <a href="{{ url('Restaurantdetail/') }}/${restaurant.id}/view" class="concert-action" id="viewrestaurant${restaurant.id}">Book Now</a>`
-                                            }
+                                            <div class="concert-action-container">
+                                                <p>${new Date().toLocaleString('en-US', {
+                                                    timeZone: 'Asia/Kuala_Lumpur'
+                                                })}</p>
+                                                ${isDisabled ?
+                                                    `<a href="{{ url('Restaurantdetail/') }}/${restaurant.id}/view" class="concert-action disabled">Closed</a>` :
+                                                    `<form id="wishlistForm" action="{{ url('/wishlist/add/restaurant') }}/${restaurant.id}" method="POST">
+                                                            @csrf
+                                                            <button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button>
+                                                        </form>
+                                                        <a href="{{ url('Restaurantdetail/') }}/${restaurant.id}/view" class="concert-action" id="viewrestaurant${restaurant.id}">Book Now</a>`
+                                                }
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        `;
-                        resultsContainer.append(restaurantHTML);
+                            `;
+                            resultsContainer.append(restaurantHTML);
+                        }
                     });
                 } else {
                     resultsContainer.html(

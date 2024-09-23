@@ -97,9 +97,9 @@ Route::post('/commentus',[CommentController::class,'commentus'])->name('commentu
 //------------------------------------------------------Admin Control Area------------------------------------------------------//
 //Admin Area
 //Display Admin Login Page
-Route::get('/admin/login',[AdminController::class,'login'])->middleware('alreadyLoggedIn');
-//Display Admin Register Page
-Route::get('/admin/register',[AdminController::class,'registration'])->middleware('alreadyLoggedIn');
+// 登录和注册页面使用 alreadyLoggedIn 中间件
+Route::get('/admin/login', [AdminController::class, 'login'])->middleware('alreadyLoggedIn');
+Route::get('/admin/register', [AdminController::class, 'registration'])->middleware('alreadyLoggedIn');
 
 //Register Admin Function
 Route::post('/admin/register',[AdminController::class,'registerAdmin'])->name('register-user');
@@ -107,7 +107,7 @@ Route::post('/admin/register',[AdminController::class,'registerAdmin'])->name('r
 Route::post('/admin/login',[AdminController::class,'loginAdmin'])->name('login-user');
 
 //Display Admin Dashboard Page
-Route::get('/admin/dashboard',[AdminController::class,'admindashboard'])->middleware('isLoggedIn');
+Route::get('/admin/dashboard', [AdminController::class, 'admindashboard'])->middleware('isLoggedIn');
 
 //Display Admin Wallet Page
 Route::get('/admin/wallet',[AdminController::class,'AdminWallet'])->middleware('isLoggedIn');

@@ -44,10 +44,19 @@ class UserController extends Controller
         return view('frontend-auth.register');
     }
 
-    public function loadLogin(){
-        // 检查用户是否已经登录，如果已登录，则重定向到其他页面
+    public function loadLogin()
+    {
         if (auth()->check()) {
-            return redirect()->route('home'); // 例如重定向到主页
+            $user = auth()->user();
+
+            if ($user->status == 0) {
+                // 用户未验证邮箱，重定向到登录页面
+                Auth::logout();
+                return redirect('/login')->with('fail', "Your account is not verified. Please verify your email first.");
+            }
+
+            // 用户已验证邮箱，重定向到主页或其他页面
+            return redirect('/')->with('success', "You are logged in successfully!");
         }
 
         return view('frontend-auth.login');
@@ -66,17 +75,19 @@ class UserController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if ($user && $user->status == 0) {
-            return back()->withInput()->with('fail', "Your account is not verified. Please verify your email first.");
+        if (!$user) {
+            $errors = ['fail' => "User email or password is incorrect."];
+            return back()->withInput()->withErrors($errors);
         }
 
+        // if ($user->status == 0) {
+        //     return back()->withInput()->with('fail', "Your account is not verified. Please verify your email first.");
+        // }
+
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-
             return redirect('/')->with('success', "You are logged in successfully!");
-
         } else {
-
-            $errors = ['fail' => "UserEmail or password are incorrect."];
+            $errors = ['fail' => "User email or password is incorrect."];
             return back()->withInput()->withErrors($errors);
         }
     }
@@ -113,7 +124,7 @@ class UserController extends Controller
             $user->email = $request->email;
             // 不再使用 Hash::make() 对密码进行哈希处理
             $user->password = $request->password;
-            $user->status = 1; // 设置用户状态为未激活
+            $user->status = 0; // 设置用户状态为未激活
             $user->save();
 
             // 创建用户钱包记录

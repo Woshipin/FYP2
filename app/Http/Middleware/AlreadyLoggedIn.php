@@ -15,7 +15,7 @@ class AlreadyLoggedIn
     public function handle(Request $request, Closure $next)
     {
         if(Session()->has('loginId') && (url('admin/login')==$request->url() || url('admin/register')==$request->url())){
-            return back();
+            return redirect('admin/dashboard');  // 改为重定向到仪表板
         }
         return $next($request);
     }

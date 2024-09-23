@@ -67,7 +67,16 @@
         }
 
         .pin {
-            background: #021526;
+            /* background: #292a46; */
+            background: black;
+        }
+
+        .review {
+            background: black;
+        }
+
+        .box {
+            background: white;
         }
 
         #wishlist {
@@ -473,9 +482,9 @@
     {{-- About CSS --}}
     <style>
         /* .about {
-                                            background-image: linear-gradient(#1f83c9, #b6dfd4, #1957ad);
-                                            padding: 20px;
-                                        } */
+                                                                                        background-image: linear-gradient(#1f83c9, #b6dfd4, #1957ad);
+                                                                                        padding: 20px;
+                                                                                    } */
 
         .about .row {
             display: flex;
@@ -1226,8 +1235,19 @@
         }
     </style>
 
+    {{-- Home Text CSS --}}
+    <style>
+        .awaits {
+            color: white;
+            font-size: 20px;
+        }
+    </style>
+
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+
+    {{-- CSRF Token --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     {{-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"> --}}
 
@@ -1260,13 +1280,39 @@
         </div>
     </div>
 
+    {{-- <div class="container">
+        <div class="chatbox">
+            <div class="chatbox__support">
+                <div class="chatbox__header">
+                    <div class="chatbox__image--header">
+                        <img src="chatbot/images/image.png" alt="image">
+                    </div>
+                    <div class="chatbox__content--header">
+                        <h4 class="chatbox__heading--header">Chat support</h4>
+                        <p class="chatbox__description--header">Ask us anything about our services</p>
+                    </div>
+                </div>
+                <div class="chatbox__messages" id="content-box"></div>
+                <div class="chatbox__footer">
+                    <input type="text" id="chat-input" placeholder="Write a message...">
+                    <p class="chatbox__send--footer" onclick="sendMessage()">Send</p>
+                </div>
+            </div>
+            <div class="chatbox__button">
+                <button>
+                    <img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat">
+                </button>
+            </div>
+        </div>
+    </div> --}}
+
     {{-- Scroll Reveal effect  --}}
     <!-- Home Section Starts -->
     <section class="home" id="home">
 
         <div class="content">
             <h3>Welcome to A global icon of luxury</h3>
-            <p>Discover new places with us, luxury awaits</p>
+            <p class="awaits">Discover new places with us, luxury awaits</p>
             <a href="{{ url('/') }}" class="btn">Discover More</a>
         </div>
 
@@ -1292,13 +1338,17 @@
                 <img src="{{ asset('new-card-ui/images/about.jpg') }}" alt="">
             </div>
             <div class="content" data-sr>
-                <h3>About us</h3>
-                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ratione nesciunt blanditiis maxime natus
-                    repudiandae veritatis alias laboriosam neque cum! Est adipisci assumenda, ad debitis iusto laudantium
-                    repellat aliquam dolore voluptates.</p>
-                <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ratione nesciunt blanditiis maxime natus
-                    repudiandae veritatis alias laboriosam neque cum! Est adipisci assumenda, ad debitis iusto laudantium
-                    repellat aliquam dolore voluptates.</p>
+                <h3>About Us</h3>
+                <p>Welcome to SUC Travel Website, your premier platform for finding and booking the perfect getaway. Whether
+                    you're searching for a cozy resort, a luxurious hotel, or a delightful restaurant, our system provides
+                    you with a seamless experience from registration to booking.</p>
+                <p>At SUC Travel Website, we empower users to not only discover the best accommodations and dining options
+                    but also to take control of their experiences. With an easy-to-use dashboard, users can register and
+                    manage their own resorts, hotels, and restaurants, making it simple to share their unique offerings with
+                    the world.</p>
+                <p>Whether you are planning a weekend escape or a special dining experience, SUC Travel Website connects you
+                    with a wide range of options to suit your needs. Our mission is to make booking and managing
+                    accommodations and restaurants as effortless and enjoyable as possible.</p>
             </div>
         </div>
     </section>
@@ -1361,7 +1411,8 @@
                                 </div>
                             @endforeach
                         @else
-                            <p style="margin-top:40px; font-size:24px; display:block">No Recommendations Found</p>
+                            <p class="show" style="margin-top:40px; font-size:24px; display:block; color:white;">No
+                                Recommendations Found</p>
                         @endif
                     </div>
                     <div class="swiper-pagination"></div>
@@ -1392,39 +1443,9 @@
         <section class="room" id="resort-room" data-sr>
             <div class="swiper room-slider">
                 <div class="swiper-wrapper" data-sr="slide-up">
-                    @if ($resorts->count() > 0)
-                        @foreach ($resorts as $resort)
+                    @if ($resorts->where('register_status', 1)->count() > 0)
+                        @foreach ($resorts->where('register_status', 1) as $resort)
                             <div class="swiper-slide slide" id="resortcard_{{ $resort->id }}">
-
-                                {{-- <div class="image">
-                                    <span class="price" id="price">${{ $resort->price }}</span>
-                                    @if ($resort->images->count() > 0)
-                                        <div id="carousel{{ $resort->id }}" class="carousel slide"
-                                            data-ride="carousel">
-                                            <div class="carousel-inner">
-                                                @foreach ($resort->images as $key => $image)
-                                                    <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                                        <img src="{{ asset('images/' . $image->image) }}"
-                                                            class="d-block w-100" alt="Resort Image"
-                                                            style="width: 100%; height: 250px;">
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                            <a class="carousel-control-prev" href="#carousel{{ $resort->id }}"
-                                                role="button" data-slide="prev">
-                                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                <span class="sr-only">Previous</span>
-                                            </a>
-                                            <a class="carousel-control-next" href="#carousel{{ $resort->id }}"
-                                                role="button" data-slide="next">
-                                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                <span class="sr-only">Next</span>
-                                            </a>
-                                        </div>
-                                    @else
-                                        <span>No Image</span>
-                                    @endif
-                                </div> --}}
 
                                 <span class="price" id="price">${{ $resort->price }}</span>
 
@@ -1493,7 +1514,7 @@
                             </div>
                         @endforeach
                     @else
-                        <p style="margin-top:40px; font-size:24px; display:block">No Resort Found</p>
+                        <p style="margin-top:40px; font-size:24px; display:block; color:white;">No Resort Found</p>
                     @endif
                 </div>
                 <div class="swiper-pagination"></div>
@@ -1514,8 +1535,8 @@
             <div class="swiper room-slider">
                 <div class="swiper-wrapper" data-sr="slide-up">
                     <!-- Add data-sr="slide-up" to trigger Scroll Reveal effect on the whole swiper-wrapper -->
-                    @if ($hotels->count() > 0)
-                        @foreach ($hotels as $hotel)
+                    @if ($hotels->where('register_status', 1)->count() > 0)
+                        @foreach ($hotels->where('register_status', 1) as $hotel)
                             <div class="swiper-slide slide" id="hotelcard_{{ $hotel->id }}">
 
                                 <div class="image"
@@ -1575,8 +1596,7 @@
                                             </div>
                                         </div>
                                     @else
-                                        <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}
-                                        </p>
+                                        <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}</p>
                                         <a href="#" class="btn" id="closed">Closed</a>
                                     @endif
                                 </div>
@@ -1584,7 +1604,7 @@
                             </div>
                         @endforeach
                     @else
-                        <p style="margin-top:40px; font-size:24px; display:block">No Hotel Found</p>
+                        <p style="margin-top:40px; font-size:24px; display:block; color:white;">No Hotel Found</p>
                     @endif
                 </div>
                 <div class="swiper-pagination"></div>
@@ -1605,8 +1625,8 @@
             <div class="swiper room-slider">
                 <div class="swiper-wrapper" data-sr="slide-up">
                     <!-- Add data-sr="slide-up" to trigger Scroll Reveal effect on the whole swiper-wrapper -->
-                    @if ($restaurants->count() > 0)
-                        @foreach ($restaurants as $restaurant)
+                    @if ($restaurants->where('register_status', 1)->count() > 0)
+                        @foreach ($restaurants->where('register_status', 1) as $restaurant)
                             <div class="swiper-slide slide" id="restaurantcard_{{ $restaurant->id }}">
 
                                 <div class="image"
@@ -1663,13 +1683,11 @@
                                                     </button>
                                                 </form>
                                                 <a href="{{ url('Restaurantdetail/' . $restaurant->id) . '/view' }}"
-                                                    class="btn" id="viewrestaurant{{ $restaurant->id }}">Book
-                                                    Now</a>
+                                                    class="btn" id="viewrestaurant{{ $restaurant->id }}">Book Now</a>
                                             </div>
                                         </div>
                                     @else
-                                        <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}
-                                        </p>
+                                        <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}</p>
                                         <a href="#" class="btn" id="closed">Closed</a>
                                     @endif
                                 </div>
@@ -1677,7 +1695,7 @@
                             </div>
                         @endforeach
                     @else
-                        <p style="margin-top:40px; font-size:24px; display:block">No Restaurant Found</p>
+                        <p style="margin-top:40px; font-size:24px; display:block; color:white;">No Restaurant Found</p>
                     @endif
                 </div>
                 <div class="swiper-pagination"></div>
@@ -1723,8 +1741,8 @@
                     <div class="swiper-slide">
                         <div class="box">
                             <img src="{{ asset('new/img/p-1.jpg') }}" alt="">
-                            <h3>{{ $comment->name }}</h3>
-                            <p>{{ $comment->comment }}</p>
+                            <h3 style="color: black">{{ $comment->name }}</h3>
+                            <p style="color: black">{{ $comment->comment }}</p>
                             <div class="stars">
                                 <i class="fas fa-star"></i>
                                 <i class="fas fa-star"></i>
@@ -2371,6 +2389,9 @@
 
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
         crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="path/to/slick.min.js"></script>
+
     <script>
         class InteractiveChatbox { // 定义交互式聊天框类
             constructor(button, chatbox, icons) { // 构造函数，接收按钮、聊天框和图标参数
@@ -2469,5 +2490,113 @@
                 });
         }
     </script>
+    {{-- <script>
+        class InteractiveChatbox { // 定义交互式聊天框类
+            constructor(button, chatbox, icons) { // 构造函数，接收按钮、聊天框和图标参数
+                this.button = button; // 按钮元素
+                this.chatbox = chatbox; // 聊天框元素
+                this.icons = icons; // 图标对象
+                this.state = false; // 初始状态为关闭
+            }
+
+            display() { // 显示聊天框方法
+                this.button.addEventListener('click', () => this.toggleState()); // 监听按钮点击事件
+            }
+
+            toggleState() { // 切换状态方法
+                this.state = !this.state; // 状态取反
+                this.showOrHideChatBox(); // 调用显示或隐藏聊天框方法
+            }
+
+            showOrHideChatBox() { // 显示或隐藏聊天框方法
+                if (this.state) { // 如果状态为打开
+                    this.chatbox.classList.add('chatbox--active'); // 添加活动类
+                    this.toggleIcon(true); // 切换图标为打开状态
+                } else { // 否则
+                    this.chatbox.classList.remove('chatbox--active'); // 移除活动类
+                    this.toggleIcon(false); // 切换图标为关闭状态
+                }
+            }
+
+            toggleIcon(state) { // 切换图标方法
+                if (state) { // 如果状态为打开
+                    this.button.innerHTML = this.icons.isClicked; // 设置按钮 HTML 为打开图标
+                } else { // 否则
+                    this.button.innerHTML = this.icons.isNotClicked; // 设置按钮 HTML 为关闭图标
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { // 文档加载完成后执行
+            const chatButton = document.querySelector('.chatbox__button button'); // 获取聊天框按钮元素
+            const chatContent = document.querySelector('.chatbox__support'); // 获取聊天内容元素
+            const icons = { // 图标对象
+                isClicked: '<img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat">', // 打开状态图标 HTML
+                isNotClicked: '<img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat">' // 关闭状态图标 HTML
+            };
+
+            const chatbox = new InteractiveChatbox(chatButton, chatContent, icons); // 创建聊天框实例
+            chatbox.display(); // 显示聊天框
+
+            // 确保页面加载时聊天框关闭
+            chatbox.state = false; // 将状态设为关闭
+            chatbox.showOrHideChatBox(); // 显示或隐藏聊天框
+
+            const inputField = document.getElementById('chat-input');
+            inputField.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (message === '') return;
+
+            const contentBox = document.getElementById('content-box');
+            const visitorMessage = document.createElement('div');
+            visitorMessage.className = 'messages__item messages__item--visitor';
+            visitorMessage.textContent = message;
+            contentBox.appendChild(visitorMessage);
+            contentBox.scrollTop = contentBox.scrollHeight;
+
+            fetch('/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    message: message
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(JSON.stringify(err));
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                const operatorMessage = document.createElement('div');
+                operatorMessage.className = 'messages__item messages__item--operator';
+                operatorMessage.textContent = data.response;
+                contentBox.appendChild(operatorMessage);
+                contentBox.scrollTop = contentBox.scrollHeight;
+                input.value = '';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const operatorMessage = document.createElement('div');
+                operatorMessage.className = 'messages__item messages__item--operator';
+                operatorMessage.textContent = 'Error: ' + error.message;
+                contentBox.appendChild(operatorMessage);
+            });
+        }
+
+    </script> --}}
 
 @endsection

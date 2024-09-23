@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use App\Models\Admin;
 
 class AuthCheck
 {
@@ -17,6 +18,14 @@ class AuthCheck
         if(!Session()->has('loginId')){
             return redirect('admin/login')->with('fail', 'You need to login first');
         }
+
+        // 添加数据库检查
+        $admin = Admin::find(Session()->get('loginId'));
+        if(!$admin){
+            Session()->forget('loginId');
+            return redirect('admin/login')->with('fail', 'Admin not found. Please login again.');
+        }
+
         return $next($request);
     }
 }

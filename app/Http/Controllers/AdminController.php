@@ -23,8 +23,9 @@ use App\Mail\RejectionMail;
 
 class AdminController extends Controller
 {
-    public function login(){
-
+    public function login()
+    {
+        // \Log::info('Accessing login page. Session status: ' . (Session()->has('loginId') ? 'Logged in' : 'Not logged in'));
         return view('admin/login');
     }
 
@@ -58,26 +59,37 @@ class AdminController extends Controller
     public function loginAdmin(Request $request){
 
         $request->validate([
-            'email'=>'required|email',
-            'password'=>'required|min:5|max:12'
+            'email' => 'required|email',
+            'password' => 'required|min:5|max:12'
         ]);
 
         $admin = Admin::where('email', '=', $request->email)->first();
 
         if($admin){
+            // 检查密码是否匹配
             if(Hash::check($request->password, $admin->password)){
                 $request->session()->put('loginId', $admin->id);
                 $request->session()->put('loginName', $admin->name);
                 return redirect('admin/dashboard');
-            }else{
-                return back()->with('fail','Password not matches.');
+            } else {
+                return back()->with('fail', 'Password not matches.');
             }
-        }else{
-            return back()->with('fail','This email is not registered.');
+        } else {
+            return back()->with('fail', 'This email is not registered.');
         }
     }
 
     public function admindashboard(){
+
+        if(!Session::has('loginId')){
+            return redirect('admin/login');
+        }
+
+        $admin = Admin::find(Session::get('loginId'));
+        if(!$admin){
+            Session::forget('loginId');
+            return redirect('admin/login')->with('fail', 'Admin not found. Please login again.');
+        }
 
         $users = User::all();
 
@@ -165,7 +177,7 @@ class AdminController extends Controller
 
         return view('admin/dashboard', compact('data','users','labels','data','totalbookedrestaurant','todaybookedrestaurant','thisMonthbookedrestaurant','thisYearbookedrestaurant',
         'totalbookedresort','todaybookedresort','thisMonthbookedresort','thisYearbookedresort','totalbookedhotel','todaybookedhotel'
-        ,'thisMonthbookedhotel','thisYearbookedhotel'));
+        ,'thisMonthbookedhotel','thisYearbookedhotel'))->with('success','Admin is Login Successfully!');
     }
 
     public function AdminWallet()
@@ -183,10 +195,15 @@ class AdminController extends Controller
 
     public function logout(){
         if(Session::has('loginId')){
-            Session::pull('loginId');
-            return redirect('admin/login');
+            Session::forget('loginId');  // 使用 forget 而不是 pull
+            return redirect('admin/login')->with('fail', "You are Logout Successfully!");
         }
     }
+
+    // public function logout(){
+    //     Session::flush();
+    //     return redirect('admin/login');
+    // }
 
     public function changeStatus($id){
 
@@ -419,7 +436,7 @@ class AdminController extends Controller
     public function updateHotelRegisterStatus($id, Request $request) {
 
         $hotel = Hotel::find($id);
-        
+
         if (!$hotel) {
             return response()->json(['success' => false, 'message' => 'Hotel not found']);
         }

@@ -163,7 +163,7 @@
         }
 
         span {
-            color: black
+            /* color: black */
         }
     </style>
 

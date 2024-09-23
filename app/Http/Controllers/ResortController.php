@@ -39,8 +39,6 @@ class ResortController extends Controller
         $resort->email = $request->email;
         $resort->country = $request->country;
         $resort->state = $request->state;
-        $resort->latitude = $request->latitude;
-        $resort->longitude = $request->longitude;
         $resort->map = $request->map;
         $resort->location = $request->location;
         $resort->description = $request->description;

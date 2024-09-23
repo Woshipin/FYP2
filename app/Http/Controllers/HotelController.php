@@ -11,10 +11,11 @@ use App\Events\HotelStatus;
 use App\Models\HotelImage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class HotelController extends Controller
 {
-    
+
     public function index(){
         return view('user.hotel.hotel');
     }

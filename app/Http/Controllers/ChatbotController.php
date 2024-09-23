@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Resort;
 use App\Models\Hotel;
 use App\Models\Restaurant;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Log;
 use OpenAI\Laravel\Facades\OpenAI;
 
 class ChatBotController extends Controller
@@ -30,6 +33,69 @@ class ChatBotController extends Controller
             return '抱歉,我无法理解您的请求。请尝试询问关于resort, hotel或restaurant的信息。';
         }
     }
+
+    // Processing API KEY
+    // function getOAuthClient() {
+    //     $oauth2 = new OAuth2([
+    //         'clientId' => env('GOOGLE_CLIENT_ID'),
+    //         'clientSecret' => env('GOOGLE_CLIENT_SECRET'),
+    //         'refreshToken' => env('GOOGLE_REFRESH_TOKEN'),
+    //         'scope' => ['https://www.googleapis.com/auth/cloud-platform'],
+    //     ]);
+
+    //     $stack = HandlerStack::create();
+    //     $stack->push(new AuthTokenMiddleware($oauth2));
+
+    //     return new Client(['handler' => $stack]);
+    // }
+
+    // public function chat(Request $request)
+    // {
+    //     $message = $request->input('message');
+
+    //     try {
+    //         Log::info("Attempting to send message to Gemini API: " . $message);
+
+    //         $client = new Client();
+    //         $response = $client->post('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', [
+    //             'headers' => [
+    //                 'Authorization' => 'Bearer ' . env('GEMINI_API_KEY'),
+    //                 'Content-Type' => 'application/json',
+    //             ],
+    //             'json' => [
+    //                 'contents' => [
+    //                     ['parts' => [['text' => $message]]],
+    //                 ],
+    //             ],
+    //             'http_errors' => false,
+    //         ]);
+
+    //         $statusCode = $response->getStatusCode();
+    //         $responseBody = $response->getBody()->getContents();
+
+    //         Log::info("Gemini API Response - Status: $statusCode, Body: $responseBody");
+
+    //         if ($statusCode !== 200) {
+    //             throw new \Exception("Gemini API Error - Status: $statusCode, Response: $responseBody");
+    //         }
+
+    //         $responseData = json_decode($responseBody, true);
+    //         if (json_last_error() !== JSON_ERROR_NONE) {
+    //             throw new \Exception('JSON Decode Error: ' . json_last_error_msg());
+    //         }
+
+    //         $reply = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? 'Sorry, no valid response from Gemini API.';
+    //         return response()->json(['response' => $reply]);
+
+    //     } catch (\Exception $e) {
+    //         Log::error('Chat Exception: ' . $e->getMessage());
+    //         Log::error('Stack trace: ' . $e->getTraceAsString());
+    //         return response()->json([
+    //             'response' => 'Error: Server encountered an issue.',
+    //             'details' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     // -------------------------------------------------------------Resort-------------------------------------------------------------
     // Original Code
@@ -715,5 +781,5 @@ class ChatBotController extends Controller
 
         return $response;
     }
-    
+
 }

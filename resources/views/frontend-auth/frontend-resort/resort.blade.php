@@ -50,6 +50,10 @@
             color: rgb(0, 0, 0);
         }
 
+        #wishlist {
+            margin-right: 10px;
+        }
+
         #wishlist:hover {
             color: red;
         }
@@ -836,52 +840,54 @@
 
                 if (Array.isArray(filteredResorts) && filteredResorts.length > 0) {
                     filteredResorts.forEach(function(resort) {
-                        var isDisabled = resort.status === 1;
-                        const resortId = resort.id;
-                        var resortName = resort.name;
-                        var resortLocation = resort.location;
-                        var resortState = resort.state;
-                        var resortCountry = resort.country;
-                        var resortDescription = resort.description;
-                        var resortImages = resort.images || []; // Default to empty array
+                        if (resort.register_status === 1) {
+                            var isDisabled = resort.status === 1;
+                            const resortId = resort.id;
+                            var resortName = resort.name;
+                            var resortLocation = resort.location;
+                            var resortState = resort.state;
+                            var resortCountry = resort.country;
+                            var resortDescription = resort.description;
+                            var resortImages = resort.images || []; // Default to empty array
 
-                        // Display only the first image
-                        var firstImageHTML = resortImages.length > 0 && resortImages[0].image ?
-                            `<img class="concert-image" src="{{ asset('images/') }}/${resortImages[0].image}" alt="Image" />` :
-                            `<img class="concert-image" src="path/to/placeholder-image.jpg" alt="No Image" />`;
+                            // Display only the first image
+                            var firstImageHTML = resortImages.length > 0 && resortImages[0].image ?
+                                `<img class="concert-image" src="{{ asset('images/') }}/${resortImages[0].image}" alt="Image" />` :
+                                `<img class="concert-image" src="path/to/placeholder-image.jpg" alt="No Image" />`;
 
-                        var resortHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') + '">' +
-                            '<div class="concert-main" id="resortcard_' + resortId + '">' +
-                            firstImageHTML + // Display only the first image here
-                            '<div class="concert-content">' +
-                            '<h2 class="concert-title">' +
-                            '<i class="fas fa-hotel"></i> ' + resortName + ' ' +
-                            '<i class="fas fa-resort"></i>' +
-                            '</h2>' +
-                            '<p class="concert-description">' +
-                            '<i class="fas fa-info-circle"></i> ' + resortDescription +
-                            '</p>' +
-                            '<div class="concert-creator">' +
-                            '<p><i class="fas fa-map-marker-alt"></i> ' + resortLocation + '</p>' +
-                            '</div>' +
-                            '<div class="concert-action-container">' +
-                            '<p>' + new Date().toLocaleString('en-US', {
-                                timeZone: 'Asia/Kuala_Lumpur'
-                            }) + '</p>' +
-                            (isDisabled ?
-                                '<a href="{{ url('Resortdetail/') }}/' + resortId +
-                                '/view" class="concert-action disabled">Closed</a>' :
-                                '<form id="wishlistForm" action="{{ url('/wishlist/add/resort') }}/' +
-                                resortId + '" method="POST">' +
-                                '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
-                                '<a href="{{ url('Resortdetail/') }}/' + resortId +
-                                '/view" class="concert-action" id="viewresort' + resortId + '">Book Now</a>'
-                            ) +
-                            '</div>' +
-                            '</div>' +
-                            '</div>';
+                            var resortHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') + '">' +
+                                '<div class="concert-main" id="resortcard_' + resortId + '">' +
+                                firstImageHTML + // Display only the first image here
+                                '<div class="concert-content">' +
+                                '<h2 class="concert-title">' +
+                                '<i class="fas fa-hotel"></i> ' + resortName + ' ' +
+                                '<i class="fas fa-resort"></i>' +
+                                '</h2>' +
+                                '<p class="concert-description">' +
+                                '<i class="fas fa-info-circle"></i> ' + resortDescription +
+                                '</p>' +
+                                '<div class="concert-creator">' +
+                                '<p><i class="fas fa-map-marker-alt"></i> ' + resortLocation + '</p>' +
+                                '</div>' +
+                                '<div class="concert-action-container">' +
+                                '<p>' + new Date().toLocaleString('en-US', {
+                                    timeZone: 'Asia/Kuala_Lumpur'
+                                }) + '</p>' +
+                                (isDisabled ?
+                                    '<a href="{{ url('Resortdetail/') }}/' + resortId +
+                                    '/view" class="concert-action disabled">Closed</a>' :
+                                    '<form id="wishlistForm" action="{{ url('/wishlist/add/resort') }}/' +
+                                    resortId + '" method="POST">' +
+                                    '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
+                                    '<a href="{{ url('Resortdetail/') }}/' + resortId +
+                                    '/view" class="concert-action" id="viewresort' + resortId + '">Book Now</a>'
+                                ) +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
 
-                        resultsContainer.append(resortHTML);
+                            resultsContainer.append(resortHTML);
+                        }
                     });
                 } else {
                     resultsContainer.html(

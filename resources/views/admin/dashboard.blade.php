@@ -2,6 +2,9 @@
 
 @section('admin-section')
 
+    {{-- Toastr CSS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     <main>
         <div class="page-header">
             <h1>Dashboard</h1>
@@ -14,7 +17,7 @@
                 {{-- User Count --}}
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{App\Models\User::count()}}</h2>
+                        <h2>{{ App\Models\User::count() }}</h2>
                         <span class="las la-user"></span>
                     </div>
                     <div class="card-progress">
@@ -28,7 +31,7 @@
                 {{-- Admin Count --}}
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{App\Models\Admin::count()}}</h2>
+                        <h2>{{ App\Models\Admin::count() }}</h2>
                         <span class="las la-user-tie"></span>
                     </div>
                     <div class="card-progress">
@@ -39,12 +42,13 @@
                     </div>
                 </div>
 
-                <br><hr>
+                <br>
+                <hr>
 
                 {{-- Restaurant Count --}}
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{App\Models\Restaurant::count()}}</h2>
+                        <h2>{{ App\Models\Restaurant::count() }}</h2>
                         <span class="fas fa-utensils"></span>
                     </div>
                     <div class="card-progress">
@@ -58,7 +62,7 @@
                 {{-- Resort Count --}}
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{App\Models\Resort::count()}}</h2>
+                        <h2>{{ App\Models\Resort::count() }}</h2>
                         <span class="fas fa-umbrella-beach"></span>
                     </div>
                     <div class="card-progress">
@@ -72,7 +76,7 @@
                 {{-- Hotel Count --}}
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{App\Models\Hotel::count()}}</h2>
+                        <h2>{{ App\Models\Hotel::count() }}</h2>
                         <span class="fas fa-hotel"></span>
                     </div>
                     <div class="card-progress">
@@ -88,7 +92,7 @@
                 {{-- Restaurant Booked Count --}}
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$totalbookedrestaurant}}</h2>
+                        <h2>{{ $totalbookedrestaurant }}</h2>
                         <span class="fas fa-calendar-check"></span>
                     </div>
                     <div class="card-progress">
@@ -101,7 +105,7 @@
 
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$todaybookedrestaurant}}</h2>
+                        <h2>{{ $todaybookedrestaurant }}</h2>
                         <span class="fas fa-calendar-day"></span>
                     </div>
                     <div class="card-progress">
@@ -114,7 +118,7 @@
 
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$thisMonthbookedrestaurant}}</h2>
+                        <h2>{{ $thisMonthbookedrestaurant }}</h2>
                         <span class="fas fa-calendar-alt"></span>
                     </div>
                     <div class="card-progress">
@@ -127,7 +131,7 @@
 
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$thisYearbookedrestaurant}}</h2>
+                        <h2>{{ $thisYearbookedrestaurant }}</h2>
                         <span class="fas fa-calendar"></span>
                     </div>
                     <div class="card-progress">
@@ -141,7 +145,7 @@
                 {{-- Resort Booked Count --}}
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$totalbookedresort}}</h2>
+                        <h2>{{ $totalbookedresort }}</h2>
                         <span class="fas fa-calendar-check"></span>
                     </div>
                     <div class="card-progress">
@@ -154,7 +158,7 @@
 
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$todaybookedresort}}</h2>
+                        <h2>{{ $todaybookedresort }}</h2>
                         <span class="fas fa-calendar-day"></span>
                     </div>
                     <div class="card-progress">
@@ -167,7 +171,7 @@
 
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$thisMonthbookedresort}}</h2>
+                        <h2>{{ $thisMonthbookedresort }}</h2>
                         <span class="fas fa-calendar-alt"></span>
                     </div>
                     <div class="card-progress">
@@ -180,7 +184,7 @@
 
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$thisYearbookedresort}}</h2>
+                        <h2>{{ $thisYearbookedresort }}</h2>
                         <span class="fas fa-calendar"></span>
                     </div>
                     <div class="card-progress">
@@ -194,7 +198,7 @@
                 {{-- Hotel Booked Count --}}
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$totalbookedrestaurant}}</h2>
+                        <h2>{{ $totalbookedrestaurant }}</h2>
                         <span class="fas fa-calendar-check"></span>
                     </div>
                     <div class="card-progress">
@@ -207,7 +211,7 @@
 
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$todaybookedhotel}}</h2>
+                        <h2>{{ $todaybookedhotel }}</h2>
                         <span class="fas fa-calendar-day"></span>
                     </div>
                     <div class="card-progress">
@@ -220,7 +224,7 @@
 
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$thisMonthbookedhotel}}</h2>
+                        <h2>{{ $thisMonthbookedhotel }}</h2>
                         <span class="fas fa-calendar-alt"></span>
                     </div>
                     <div class="card-progress">
@@ -233,7 +237,7 @@
 
                 <div class="card">
                     <div class="card-head">
-                        <h2>{{$thisYearbookedhotel}}</h2>
+                        <h2>{{ $thisYearbookedhotel }}</h2>
                         <span class="fas fa-calendar"></span>
                     </div>
                     <div class="card-progress">
@@ -432,39 +436,83 @@
     {{-- Chart Js --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 
-    {{--Restaurant Area Chart --}}
+    {{-- Restaurant Area Chart --}}
     {{-- <script type="text/javascript">
         var _restaurantlabels = {!! json_encode($restaurantlabels) !!};
         var _restaurantdata = {!! json_encode($restaurantdata) !!};
     </script> --}}
 
-    {{--Resort Area Chart --}}
+    {{-- Resort Area Chart --}}
     {{-- <script type="text/javascript">
         var _resortlabels = {!! json_encode($resortlabels) !!};
         var _resortdata = {!! json_encode($resortdata) !!};
     </script> --}}
 
-    {{--Hotel Area Chart --}}
+    {{-- Hotel Area Chart --}}
     {{-- <script type="text/javascript">
         var _hotellabels = {!! json_encode($hotellabels) !!};
         var _hoteldata = {!! json_encode($hoteldata) !!};
     </script> --}}
 
-    {{--All Booked Pie Chart --}}
+    {{-- All Booked Pie Chart --}}
     <script type="text/javascript">
         var _labels = {!! json_encode($labels) !!};
         var _data = {!! json_encode($data) !!};
     </script>
 
     <!-- Page level plugins -->
-    <script src="{{ asset ('charts/vendor/chart.js/Chart.min.js') }}"></script>
+    <script src="{{ asset('charts/vendor/chart.js/Chart.min.js') }}"></script>
 
     <!-- Page level custom scripts -->
-    <script src="{{ asset ('charts/demo/admin/restaurantchart-area-demo.js') }}"></script>
-    <script src="{{ asset ('charts/demo/admin/resortchart-area-demo.js') }}"></script>
-    <script src="{{ asset ('charts/demo/admin/hotelchart-area-demo.js') }}"></script>
-    <script src="{{ asset ('charts/demo/admin/chart-pie-demo.js') }}"></script>
-    <script src="{{ asset ('charts/demo/chart-bar-demo.js') }}"></script>
+    <script src="{{ asset('charts/demo/admin/restaurantchart-area-demo.js') }}"></script>
+    <script src="{{ asset('charts/demo/admin/resortchart-area-demo.js') }}"></script>
+    <script src="{{ asset('charts/demo/admin/hotelchart-area-demo.js') }}"></script>
+    <script src="{{ asset('charts/demo/admin/chart-pie-demo.js') }}"></script>
+    <script src="{{ asset('charts/demo/chart-bar-demo.js') }}"></script>
 
+    {{-- Toastr JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        @if (Session::has('success'))
+            Toastify({
+                text: "{{ Session::get('success') }}",
+                duration: 10000,
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)"
+                }
+            }).showToast();
+        @elseif (Session::has('fail'))
+            Toastify({
+                text: "{{ Session::get('fail') }}",
+                duration: 10000,
+                style: {
+                    background: "linear-gradient(to right, #b90000, #c99396)"
+                }
+            }).showToast();
+        @endif
+
+        @if (Session::has('error'))
+            Toastify({
+                text: "{{ Session::get('error') }}",
+                duration: 10000,
+                style: {
+                    background: "linear-gradient(to right, #b90000, #c99396)"
+                }
+            }).showToast();
+        @endif
+
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                Toastify({
+                    text: "{{ $error }}",
+                    duration: 10000,
+                    style: {
+                        background: "linear-gradient(to right, #b90000, #c99396)"
+                    }
+                }).showToast();
+            @endforeach
+        @endif
+    </script>
 
 @endsection

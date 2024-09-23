@@ -31,7 +31,7 @@
         .concert-main {
             color: #C9C3C2;
             /* margin: 10px;
-                                                                                                                                                                        padding: 10px; */
+                                                                                                                                                                            padding: 10px; */
         }
     </style>
 
@@ -54,6 +54,10 @@
         #wishlist {
             /* color: rgb(255, 183, 0); */
             color: black;
+        }
+
+        #wishlist {
+            margin-right: 10px;
         }
 
         #wishlist:hover {
@@ -914,51 +918,53 @@
 
                 if (Array.isArray(filteredHotels) && filteredHotels.length > 0) {
                     filteredHotels.forEach(function(hotel) {
-                        var isDisabled = hotel.status === 1;
-                        const hotelId = hotel.id;
-                        var hotelName = hotel.name;
-                        var hotelLocation = hotel.address;
-                        var hotelState = hotel.state;
-                        var hotelCountry = hotel.country;
-                        var hotelDescription = hotel.description;
-                        var hotelImages = hotel.images || []; // Default to empty array
+                        if (hotel.register_status === 1) {
+                            var isDisabled = hotel.status === 1;
+                            const hotelId = hotel.id;
+                            var hotelName = hotel.name;
+                            var hotelLocation = hotel.address;
+                            var hotelState = hotel.state;
+                            var hotelCountry = hotel.country;
+                            var hotelDescription = hotel.description;
+                            var hotelImages = hotel.images || []; // Default to empty array
 
-                        // Display only the first image
-                        var firstImageHTML = hotelImages.length > 0 && hotelImages[0].image ?
-                            `<img class="concert-image" src="{{ asset('images/') }}/${hotelImages[0].image}" alt="Image" />` :
-                            `<img class="concert-image" src="path/to/placeholder-image.jpg" alt="No Image" />`;
+                            // Display only the first image
+                            var firstImageHTML = hotelImages.length > 0 && hotelImages[0].image ?
+                                `<img class="concert-image" src="{{ asset('images/') }}/${hotelImages[0].image}" alt="Image" />` :
+                                `<img class="concert-image" src="path/to/placeholder-image.jpg" alt="No Image" />`;
 
-                        var hotelHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') + '">' +
-                            '<div class="concert-main" id="hotelcard_' + hotelId + '">' +
-                            firstImageHTML + // Display only the first image here
-                            '<div class="concert-content">' +
-                            '<h2 class="concert-title">' +
-                            '<i class="fas fa-hotel"></i> ' + hotelName + ' ' +
-                            '</h2>' +
-                            '<p class="concert-description">' +
-                            '<i class="fas fa-info-circle"></i> ' + hotelDescription +
-                            '</p>' +
-                            '<div class="concert-creator">' +
-                            '<p><i class="fas fa-map-marker-alt"></i> ' + hotelLocation + '</p>' +
-                            '</div>' +
-                            '<div class="concert-action-container">' +
-                            '<p>' + new Date().toLocaleString('en-US', {
-                                timeZone: 'Asia/Kuala_Lumpur'
-                            }) + '</p>' +
-                            (isDisabled ?
-                                '<a href="{{ url('Hoteldetail/') }}/' + hotelId +
-                                '/view" class="concert-action disabled">Closed</a>' :
-                                '<form id="wishlistForm" action="{{ url('/wishlist/add/hotel') }}/' +
-                                hotelId + '" method="POST">' +
-                                '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
-                                '<a href="{{ url('Hoteldetail/') }}/' + hotelId +
-                                '/view" class="concert-action" id="viewhotel' + hotelId + '">Book Now</a>'
-                            ) +
-                            '</div>' +
-                            '</div>' +
-                            '</div>';
+                            var hotelHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') + '">' +
+                                '<div class="concert-main" id="hotelcard_' + hotelId + '">' +
+                                firstImageHTML + // Display only the first image here
+                                '<div class="concert-content">' +
+                                '<h2 class="concert-title">' +
+                                '<i class="fas fa-hotel"></i> ' + hotelName + ' ' +
+                                '</h2>' +
+                                '<p class="concert-description">' +
+                                '<i class="fas fa-info-circle"></i> ' + hotelDescription +
+                                '</p>' +
+                                '<div class="concert-creator">' +
+                                '<p><i class="fas fa-map-marker-alt"></i> ' + hotelLocation + '</p>' +
+                                '</div>' +
+                                '<div class="concert-action-container">' +
+                                '<p>' + new Date().toLocaleString('en-US', {
+                                    timeZone: 'Asia/Kuala_Lumpur'
+                                }) + '</p>' +
+                                (isDisabled ?
+                                    '<a href="{{ url('Hoteldetail/') }}/' + hotelId +
+                                    '/view" class="concert-action disabled">Closed</a>' :
+                                    '<form id="wishlistForm" action="{{ url('/wishlist/add/hotel') }}/' +
+                                    hotelId + '" method="POST">' +
+                                    '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
+                                    '<a href="{{ url('Hoteldetail/') }}/' + hotelId +
+                                    '/view" class="concert-action" id="viewhotel' + hotelId + '">Book Now</a>'
+                                ) +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
 
-                        resultsContainer.append(hotelHTML);
+                            resultsContainer.append(hotelHTML);
+                        }
                     });
                 } else {
                     resultsContainer.html(
@@ -1128,5 +1134,4 @@
             }).showToast();
         @endif
     </script>
-
 @endsection

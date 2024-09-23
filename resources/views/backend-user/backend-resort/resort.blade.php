@@ -80,6 +80,14 @@
                             </span>
                         </div>
 
+                        <div class="preview-add-image"
+                            style="border: 5px solid #ddd; padding: 5px; width: 470px; height: 200px; overflow-y: auto;">
+                            <label>Preview:</label>
+                            <div id="preview-container" class="d-flex flex-wrap"
+                                style="border: 1px solid #ddd; padding: 5px; width: 100%; height: 100%; overflow-y: auto;">
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label for="price">Resort Price</label>
                             <input type="number" class="form-control" name="price" id="price"
@@ -134,10 +142,23 @@
                                 @enderror
                             </span>
                         </div>
+
+                        {{-- <input type="text" name="latitude">
+                        <input type="text" name="longitude">
+
                         <div class="form-group">
                             <label for="location">Resort Location</label>
-                            <input type="text" class="form-control" name="location" id="location"
-                                placeholder="Enter Resort Address">
+                            <textarea class="form-control" name="location" id="location" rows="10" placeholder="Enter Resort Address"></textarea>
+                            <span class="text-danger">
+                                @error('location')
+                                    {{ $message }}
+                                @enderror
+                            </span>
+                        </div> --}}
+
+                        <div class="form-group">
+                            <label for="location">Resort Location</label>
+                            <textarea class="form-control" name="location" id="location" rows="10" placeholder="Enter Resort Address"></textarea>
                             <span class="text-danger">
                                 @error('location')
                                     {{ $message }}
@@ -146,9 +167,28 @@
                         </div>
 
                         <div class="form-group">
+                            <label for="latitude">Resort Latitude</label>
+                            <input type="text" class="form-control" name="latitude" id="latitude" placeholder="Enter Latitude">
+                            <span class="text-danger">
+                                @error('latitude')
+                                    {{ $message }}
+                                @enderror
+                            </span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="longitude">Resort Longitude</label>
+                            <input type="text" class="form-control" name="longitude" id="longitude" placeholder="Enter Longitude">
+                            <span class="text-danger">
+                                @error('longitude')
+                                    {{ $message }}
+                                @enderror
+                            </span>
+                        </div>
+
+                        <div class="form-group">
                             <label for="description">Resort Description</label>
-                            <input type="text" class="form-control" name="description" id="description"
-                                placeholder="Enter Description ">
+                            <textarea class="form-control" name="description" id="description" rows="10" placeholder="Enter Resort Description"></textarea>
                             <span class="text-danger">
                                 @error('description')
                                     {{ $message }}
@@ -157,9 +197,8 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="map">Hotel Map</label>
-                            <input type="text" class="form-control" name="map" id='map'
-                                placeholder="Enter Hotel Map">
+                            <label for="map">Resort Map</label>
+                            <textarea class="form-control" name="map" id="map" rows="10" placeholder="Enter Resort Map"></textarea>
                             <span class="text-danger">
                                 @error('map')
                                     {{ $message }}
@@ -168,28 +207,26 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="location">Resort Latitude</label>
-                            <input type="text" class="form-control" name="latitude" id='latitude'
-                                placeholder="Enter Latitude">
+                            <label for="state">Resort Digital_Lock_Password</label>
+                            <input type="text" class="form-control" name="digital_lock_password"
+                                id="digital_lock_password" placeholder="Enter Resort Digital_Lock_Password">
                             <span class="text-danger">
-                                @error('latitude')
-                                    {{ $message }}
-                                @enderror
-                            </span>
-                        </div>
-                        <div class="form-group">
-                            <label for="location">Resort Longitude</label>
-                            <input type="text" class="form-control" name="longitude" id='longitude'
-                                placeholder="Enter Longitude">
-                            <span class="text-danger">
-                                @error('longitude')
+                                @error('digital_lock_password')
                                     {{ $message }}
                                 @enderror
                             </span>
                         </div>
 
-                        <!-- <input type="text" id="latitude" name="latitude">
-                                    <input type="text" id="longitude" name="longitude"> -->
+                        <div class="form-group">
+                            <label for="state">Resort Email_Box_Password</label>
+                            <input type="text" class="form-control" name="emailbox_password" id="emailbox_password"
+                                placeholder="Enter Resort Email_Box_Password">
+                            <span class="text-danger">
+                                @error('emailbox_password')
+                                    {{ $message }}
+                                @enderror
+                            </span>
+                        </div>
 
                     </div>
                     <div class="modal-footer">
@@ -503,56 +540,86 @@
                                 <tbody>
                                     @if ($resortss !== null && count($resortss) > 0)
                                         @foreach ($resortss as $resort)
-                                            @if ($resort->register_status === 1)
-                                                <tr id="resort_ids{{ $resort->id }}">
-                                                    <td><input type="checkbox" name="ids" class="checkbox_ids" value="{{ $resort->id }}"></td>
-                                                    <td>{{ $resort->id }}</td>
-                                                    <td>{{ $resort->name }}</td>
-                                                    <td style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
-                                                        @if ($resort->images->count() > 0)
-                                                            <div id="carousel{{ $resort->id }}" class="carousel slide" data-ride="carousel">
-                                                                <div class="carousel-inner" style="width: 100%; height: 100%;">
-                                                                    @foreach ($resort->images as $key => $image)
-                                                                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                                                            <img src="{{ asset('images/' . $image->image) }}" class="d-block w-100" alt="Resort Image" style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
-                                                                        </div>
-                                                                    @endforeach
-                                                                </div>
-                                                                <a class="carousel-control-prev" href="#carousel{{ $resort->id }}" role="button" data-slide="prev" style="width: 20px;">
-                                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                                    <span class="sr-only">Previous</span>
-                                                                </a>
-                                                                <a class="carousel-control-next" href="#carousel{{ $resort->id }}" role="button" data-slide="next" style="width: 20px;">
-                                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                                    <span class="sr-only">Next</span>
-                                                                </a>
+                                            <tr id="resort_ids{{ $resort->id }}">
+                                                <td><input type="checkbox" name="ids" class="checkbox_ids"
+                                                        value="{{ $resort->id }}"></td>
+                                                <td>{{ $resort->id }}</td>
+                                                <td>{{ $resort->name }}</td>
+                                                <td
+                                                    style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
+                                                    @if ($resort->images->count() > 0)
+                                                        <div id="carousel{{ $resort->id }}" class="carousel slide"
+                                                            data-ride="carousel">
+                                                            <div class="carousel-inner"
+                                                                style="width: 100%; height: 100%;">
+                                                                @foreach ($resort->images as $key => $image)
+                                                                    <div
+                                                                        class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                                                        <img src="{{ asset('images/' . $image->image) }}"
+                                                                            class="d-block w-100" alt="Resort Image"
+                                                                            style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
+                                                                    </div>
+                                                                @endforeach
                                                             </div>
-                                                        @else
-                                                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>{{ $resort->price }}</td>
-                                                    <td>{{ $resort->location }}</td>
-                                                    <td>{{ $resort->description }}</td>
-                                                    <td>
-                                                        @if ($resort->status == 0)
-                                                            <a href="{{ url('changeresort-status/' . $resort->id) }}" class="btn btn-sm btn-success" onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
-                                                        @else
-                                                            <a href="{{ url('changeresort-status/' . $resort->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if ($resort->register_status === 1)
-                                                            <span class="text-success">Approved</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ url('showResortMap/' . $resort->id) . '/map' }}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>&nbsp;View</a>
-                                                        <a href="{{ url('editResort/' . $resort->id) . '/edit' }}" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#resorteditModal{{ $resort->id }}"><i class="fa fa-edit"></i>&nbsp;Edit</a><br>
-                                                        <a onclick="return confirm('Are you sure to delete this data?')" href="{{ url('deleteResort/' . $resort->id) . '/delete' }}" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
-                                                    </td>
-                                                </tr>
-                                            @endif
+                                                            <a class="carousel-control-prev"
+                                                                href="#carousel{{ $resort->id }}" role="button"
+                                                                data-slide="prev" style="width: 20px;">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="sr-only">Previous</span>
+                                                            </a>
+                                                            <a class="carousel-control-next"
+                                                                href="#carousel{{ $resort->id }}" role="button"
+                                                                data-slide="next" style="width: 20px;">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="sr-only">Next</span>
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        <span
+                                                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No
+                                                            Image</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $resort->price }}</td>
+                                                <td>{{ $resort->location }}</td>
+                                                <td>{{ $resort->description }}</td>
+                                                <td>
+                                                    @if ($resort->status == 0)
+                                                        <a href="{{ url('changeresort-status/' . $resort->id) }}"
+                                                            class="btn btn-sm btn-success"
+                                                            onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
+                                                    @else
+                                                        <a href="{{ url('changeresort-status/' . $resort->id) }}"
+                                                            class="btn btn-sm btn-danger"
+                                                            onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($resort->register_status === 1)
+                                                        <span class="text-success">Approved</span>
+                                                    @elseif ($resort->register_status === 2)
+                                                        <span class="text-danger">Rejected</span>
+                                                    @elseif ($resort->register_status === 0)
+                                                        <span class="text-warning">Pending</span>
+                                                    @endif
+                                                </td>
+
+                                                <td>
+                                                    <a href="{{ url('showResortMap/' . $resort->id) . '/map' }}"
+                                                        class="btn btn-info btn-sm"><i
+                                                            class="fas fa-eye"></i>&nbsp;View</a>
+                                                    <a href="{{ url('editResort/' . $resort->id) . '/edit' }}"
+                                                        class="btn btn-primary btn-sm" data-toggle="modal"
+                                                        data-target="#resorteditModal{{ $resort->id }}"><i
+                                                            class="fa fa-edit"></i>&nbsp;Edit</a><br>
+                                                    <a onclick="return confirm('Are you sure to delete this data?')"
+                                                        href="{{ url('deleteResort/' . $resort->id) . '/delete' }}"
+                                                        class="btn btn-danger btn-sm"><i
+                                                            class="fa fa-trash"></i>&nbsp;Delete</a>
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     @else
                                         <tr>
@@ -793,6 +860,30 @@
         });
     </script>
 
+    {{-- View Selected Image --}}
+    <script>
+        document.getElementById('images').addEventListener('change', function(event) {
+            const previewContainer = document.getElementById('preview-container');
+            previewContainer.innerHTML = ''; // Clear previous previews
+
+            Array.from(event.target.files).forEach(file => {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const image = document.createElement('img');
+                    image.src = e.target.result;
+                    image.style.width = '80px';
+                    image.style.height = '80px';
+                    image.style.objectFit = 'cover';
+                    image.style.margin = '5px';
+                    previewContainer.appendChild(image);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
+
     <!-- Delete Selected Resort -->
     {{-- <script>
         $(function(e){
@@ -832,5 +923,42 @@
     <script src="{{ asset('table/assets/js/pdfmake.min.js') }}"></script>
     <script src="{{ asset('table/assets/js/vfs_fonts.js') }}"></script>
     {{-- <script src="{{ asset('table/assets/js/custom.js') }}"></script> --}}
+
+    {{-- Get Coordinates --}}
+    <script>
+        document.getElementById('location').addEventListener('input', function() {
+            const address = this.value;
+            if (address.trim() === '') {
+                document.getElementById('latitude').value = '';
+                document.getElementById('longitude').value = '';
+                return;
+            }
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`, {
+                headers: {
+                    'User-Agent': 'YourAppName/1.0 (YourContactEmail)'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    const location = data[0];
+                    document.getElementById('latitude').value = location.lat;
+                    document.getElementById('longitude').value = location.lon;
+                } else {
+                    document.getElementById('latitude').value = '';
+                    document.getElementById('longitude').value = '';
+                    // alert('未找到该地址，请检查输入是否正确。');
+                    console.error('No results found for the given address.');
+                }
+            })
+            .catch(error => {
+                document.getElementById('latitude').value = '';
+                document.getElementById('longitude').value = '';
+                // alert('获取地理编码数据时发生错误。');
+                console.error('Error fetching geocoding data:', error);
+            });
+        });
+    </script>
 
 @endsection

@@ -112,10 +112,12 @@
                             </span>
                         </div>
 
-                        <div class="preview-add-image">
+                        <div class="preview-add-image"
+                            style="border: 5px solid #ddd; padding: 5px; width: 470px; height: 200px; overflow-y: auto;">
                             <label>Preview:</label>
-                            <img id="add-preview" src="#" alt="Preview"
-                                style="max-width: 200px; max-height: 200px; display: none;">
+                            <div id="preview-container" class="d-flex flex-wrap"
+                                style="border: 1px solid #ddd; padding: 5px; width: 100%; height: 100%; overflow-y: auto;">
+                            </div>
                         </div>
 
                         <div class="form-group">
@@ -164,8 +166,7 @@
 
                         <div class="form-group">
                             <label for="address">Hotel Address</label>
-                            <input type="text" class="form-control" name="address" id="address"
-                                placeholder="Enter Hotel Address">
+                            <textarea class="form-control" name="address" id="address" rows="10" placeholder="Enter Hotel Address"></textarea>
                             <span class="text-danger">
                                 @error('address')
                                     {{ $message }}
@@ -173,30 +174,12 @@
                             </span>
                         </div>
 
-                        <div class="form-group">
-                            <label for="description">Hotel Description</label>
-                            <textarea class="form-control" name="description" id="description" rows="10" placeholder="Enter Hotel Description"></textarea>
-                            <span class="text-danger">
-                                @error('description')
-                                    {{ $message }}
-                                @enderror
-                            </span>
-                        </div>
+                        {{-- <input type="text" class="form-control" name="latitude" id="latitude" placeholder="Enter Latitude">
+                        <input type="text" class="form-control" name="longitude" id="longitude" placeholder="Enter Longitude"> --}}
 
                         <div class="form-group">
-                            <label for="map">Hotel Map</label>
-                            <input type="text" class="form-control" name="map" id='map'
-                                placeholder="Enter Hotel Map">
-                            <span class="text-danger">
-                                @error('map')
-                                    {{ $message }}
-                                @enderror
-                            </span>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="location">Hotel Latitude</label>
-                            <input type="text" class="form-control" name="latitude" id='latitude'
+                            <label for="latitude">Hotel Latitude</label>
+                            <input type="text" class="form-control" name="latitude" id="latitude"
                                 placeholder="Enter Latitude">
                             <span class="text-danger">
                                 @error('latitude')
@@ -206,11 +189,33 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="location">Hotel Longitude</label>
-                            <input type="text" class="form-control" name="longitude" id='longitude'
+                            <label for="longitude">Hotel Longitude</label>
+                            <input type="text" class="form-control" name="longitude" id="longitude"
                                 placeholder="Enter Longitude">
                             <span class="text-danger">
                                 @error('longitude')
+                                    {{ $message }}
+                                @enderror
+                            </span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Hotel Description</label>
+                            <textarea class="form-control" name="description" id="description" rows="10"
+                                placeholder="Enter Hotel Description"></textarea>
+                            <span class="text-danger">
+                                @error('description')
+                                    {{ $message }}
+                                @enderror
+                            </span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="map">Hotel Map</label>
+                            <textarea class="form-control" name="map" id="map"  rows="10"
+                                placeholder="Enter Hotel Map"></textarea>
+                            <span class="text-danger">
+                                @error('map')
                                     {{ $message }}
                                 @enderror
                             </span>
@@ -250,7 +255,7 @@
 
     {{-- edit new hotels --}}
     @foreach ($hotels as $hotel)
-        <!-- Modal content for each Resort -->
+        <!-- Modal content for each Hotel -->
         <div class="modal fade" id="hoteleditModal{{ $hotel->id }}" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -469,7 +474,7 @@
         <div class="row">
             <div class="col-12">
 
-                {{-- Search Resort Function --}}
+                {{-- Search Hotel Function --}}
                 <form action="{{ route('HotelSearch') }}" method="GET"
                     class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
                     <div class="input-group">
@@ -511,13 +516,13 @@
                                 {{-- Button to delete all selected items --}}
                                 <button type="submit" class="btn btn-danger m-1" id="deleteAllSelectedRecord">Delete All
                                     Selected Hotels</button>
-                                {{-- Add Resort --}}
+                                {{-- Add Hotel --}}
                                 <button type="button" class="btn btn-info m-1" data-toggle="modal"
                                     data-target="#hotelModal">Add Hotel</button>
                                 <!-- Import Hotel Model -->
                                 <button type="button" class="btn btn-primary m-1" data-toggle="modal"
                                     data-target="#hotelexcelModal">Import Hotel</button>
-                                {{-- Export Resort --}}
+                                {{-- Export Hotel --}}
                                 <a href="{{ url('export-hotel') }}"><button type="button"
                                         class="btn btn-primary m-1">Export Hotel</button></a>
                                 {{-- Hotel Excel Template --}}
@@ -543,57 +548,85 @@
                                 <tbody>
                                     @if ($hotelss !== null && count($hotelss) > 0)
                                         @foreach ($hotelss as $hotel)
-                                            @if ($hotel->register_status === 1)
-                                                <tr id="hotel_ids{{ $hotel->id }}">
-                                                    <td><input type="checkbox" name="ids" class="checkbox_ids" value="{{ $hotel->id }}"></td>
-                                                    <td>{{ $hotel->id }}</td>
-                                                    <td>{{ $hotel->name }}</td>
-                                                    <td style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
-                                                        @if ($hotel->images->count() > 0)
-                                                            <div id="carousel{{ $hotel->id }}" class="carousel slide" data-ride="carousel">
-                                                                <div class="carousel-inner" style="width: 100%; height: 100%;">
-                                                                    @foreach ($hotel->images as $key => $image)
-                                                                        <div class="carousel-item {{ $key == 0 ? 'active' : '' }}">
-                                                                            <img src="{{ asset('images/' . $image->image) }}" class="d-block w-100" alt="Hotel Image" style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
-                                                                        </div>
-                                                                    @endforeach
-                                                                </div>
-                                                                <a class="carousel-control-prev" href="#carousel{{ $hotel->id }}" role="button" data-slide="prev" style="width: 20px;">
-                                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                                                    <span class="sr-only">Previous</span>
-                                                                </a>
-                                                                <a class="carousel-control-next" href="#carousel{{ $hotel->id }}" role="button" data-slide="next" style="width: 20px;">
-                                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                                                    <span class="sr-only">Next</span>
-                                                                </a>
+                                            <tr id="hotel_ids{{ $hotel->id }}">
+                                                <td><input type="checkbox" name="ids" class="checkbox_ids"
+                                                        value="{{ $hotel->id }}"></td>
+                                                <td>{{ $hotel->id }}</td>
+                                                <td>{{ $hotel->name }}</td>
+                                                <td
+                                                    style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
+                                                    @if ($hotel->images->count() > 0)
+                                                        <div id="carousel{{ $hotel->id }}" class="carousel slide"
+                                                            data-ride="carousel">
+                                                            <div class="carousel-inner"
+                                                                style="width: 100%; height: 100%;">
+                                                                @foreach ($hotel->images as $key => $image)
+                                                                    <div
+                                                                        class="carousel-item {{ $key == 0 ? 'active' : '' }}">
+                                                                        <img src="{{ asset('images/' . $image->image) }}"
+                                                                            class="d-block w-100" alt="Hotel Image"
+                                                                            style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
+                                                                    </div>
+                                                                @endforeach
                                                             </div>
-                                                        @else
-                                                            <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>{{ $hotel->type }}</td>
-                                                    <td>{{ $hotel->country }}</td>
-                                                    <td>{{ $hotel->state }}</td>
-                                                    <td>{{ $hotel->address }}</td>
-                                                    <td>
-                                                        @if ($hotel->status == 0)
-                                                            <a href="{{ url('changehotel-status/' . $hotel->id) }}" class="btn btn-sm btn-success" onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
-                                                        @else
-                                                            <a href="{{ url('changehotel-status/' . $hotel->id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if ($hotel->register_status === 1)
-                                                            <span class="text-success">Approved</span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <a href="{{ url('viewHotel/' . $hotel->id) . '/view' }}" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>&nbsp;View</a>
-                                                        <a href="" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#hoteleditModal{{ $hotel->id }}"><i class="fa fa-edit"></i>&nbsp;Edit</a>
-                                                        <a onclick="return confirm('Are you sure to delete this data?')" href="{{ url('deleteHotel/' . $hotel->id) . '/delete' }}" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
-                                                    </td>
-                                                </tr>
-                                            @endif
+                                                            <a class="carousel-control-prev"
+                                                                href="#carousel{{ $hotel->id }}" role="button"
+                                                                data-slide="prev" style="width: 20px;">
+                                                                <span class="carousel-control-prev-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="sr-only">Previous</span>
+                                                            </a>
+                                                            <a class="carousel-control-next"
+                                                                href="#carousel{{ $hotel->id }}" role="button"
+                                                                data-slide="next" style="width: 20px;">
+                                                                <span class="carousel-control-next-icon"
+                                                                    aria-hidden="true"></span>
+                                                                <span class="sr-only">Next</span>
+                                                            </a>
+                                                        </div>
+                                                    @else
+                                                        <span
+                                                            style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No
+                                                            Image</span>
+                                                    @endif
+                                                </td>
+                                                <td>{{ $hotel->type }}</td>
+                                                <td>{{ $hotel->country }}</td>
+                                                <td>{{ $hotel->state }}</td>
+                                                <td>{{ $hotel->address }}</td>
+                                                <td>
+                                                    @if ($hotel->status == 0)
+                                                        <a href="{{ url('changehotel-status/' . $hotel->id) }}"
+                                                            class="btn btn-sm btn-success"
+                                                            onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
+                                                    @else
+                                                        <a href="{{ url('changehotel-status/' . $hotel->id) }}"
+                                                            class="btn btn-sm btn-danger"
+                                                            onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    @if ($hotel->register_status === 1)
+                                                        <span class="text-success">Approved</span>
+                                                    @elseif ($hotel->register_status === 2)
+                                                        <span class="text-danger">Rejected</span>
+                                                    @elseif ($hotel->register_status === 0)
+                                                        <span class="text-warning">Pending</span>
+                                                    @endif
+                                                </td>
+                                                <td>
+                                                    <a href="{{ url('viewHotel/' . $hotel->id) . '/view' }}"
+                                                        class="btn btn-info btn-sm"><i
+                                                            class="fas fa-eye"></i>&nbsp;View</a>
+                                                    <a href="" class="btn btn-primary btn-sm" data-toggle="modal"
+                                                        data-target="#hoteleditModal{{ $hotel->id }}"><i
+                                                            class="fa fa-edit"></i>&nbsp;Edit</a>
+                                                    <a onclick="return confirm('Are you sure to delete this data?')"
+                                                        href="{{ url('deleteHotel/' . $hotel->id) . '/delete' }}"
+                                                        class="btn btn-danger btn-sm"><i
+                                                            class="fa fa-trash"></i>&nbsp;Delete</a>
+                                                </td>
+                                            </tr>
                                         @endforeach
                                     @else
                                         <tr>
@@ -698,7 +731,7 @@
 
     {{-- Edit New Room Model --}}
     @foreach ($rooms as $room)
-        <!-- Modal content for each Resort -->
+        <!-- Modal content for each Hotel -->
         <div class="modal fade" id="roomeditModal{{ $room->id }}" tabindex="-1" role="dialog"
             aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -903,7 +936,7 @@
                                         @endforeach
                                     @else
                                         <tr>
-                                            <td colspan="9">No Resorts Found</td>
+                                            <td colspan="9">No Hotels Found</td>
                                         </tr>
                                     @endif
                                 </tbody>
@@ -1187,6 +1220,65 @@
                     console.error('Modal ID not found');
                 }
             });
+        });
+    </script>
+
+    {{-- View Selected Image --}}
+    <script>
+        document.getElementById('images').addEventListener('change', function(event) {
+            const previewContainer = document.getElementById('preview-container');
+            previewContainer.innerHTML = ''; // Clear previous previews
+
+            Array.from(event.target.files).forEach(file => {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    const image = document.createElement('img');
+                    image.src = e.target.result;
+                    image.style.width = '80px';
+                    image.style.height = '80px';
+                    image.style.objectFit = 'cover';
+                    image.style.margin = '5px';
+                    previewContainer.appendChild(image);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+    </script>
+
+    {{-- Get Coordinates --}}
+    <script>
+        document.getElementById('address').addEventListener('input', function() {
+            const address = this.value;
+            if (address.trim() === '') {
+                document.getElementById('latitude').value = '';
+                document.getElementById('longitude').value = '';
+                return;
+            }
+
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`, {
+                    headers: {
+                        'User-Agent': 'YourAppName/1.0 (YourContactEmail)'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const location = data[0];
+                        document.getElementById('latitude').value = location.lat; // 设置纬度
+                        document.getElementById('longitude').value = location.lon; // 设置经度
+                    } else {
+                        document.getElementById('latitude').value = '';
+                        document.getElementById('longitude').value = '';
+                        console.error('No results found for the given address.');
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('latitude').value = '';
+                    document.getElementById('longitude').value = '';
+                    console.error('Error fetching geocoding data:', error);
+                });
         });
     </script>
 
