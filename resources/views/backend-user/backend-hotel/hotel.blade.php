@@ -174,9 +174,6 @@
                             </span>
                         </div>
 
-                        {{-- <input type="text" class="form-control" name="latitude" id="latitude" placeholder="Enter Latitude">
-                        <input type="text" class="form-control" name="longitude" id="longitude" placeholder="Enter Longitude"> --}}
-
                         <div class="form-group">
                             <label for="latitude">Hotel Latitude</label>
                             <input type="text" class="form-control" name="latitude" id="latitude"

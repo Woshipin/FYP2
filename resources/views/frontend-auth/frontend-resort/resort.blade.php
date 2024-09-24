@@ -791,7 +791,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     {{-- Full Real Time Search, Detection Image and GPS Function --}}
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             var map = null;
             var markers = [];
@@ -855,7 +855,8 @@
                                 `<img class="concert-image" src="{{ asset('images/') }}/${resortImages[0].image}" alt="Image" />` :
                                 `<img class="concert-image" src="path/to/placeholder-image.jpg" alt="No Image" />`;
 
-                            var resortHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') + '">' +
+                            var resortHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') +
+                                '">' +
                                 '<div class="concert-main" id="resortcard_' + resortId + '">' +
                                 firstImageHTML + // Display only the first image here
                                 '<div class="concert-content">' +
@@ -880,7 +881,8 @@
                                     resortId + '" method="POST">' +
                                     '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
                                     '<a href="{{ url('Resortdetail/') }}/' + resortId +
-                                    '/view" class="concert-action" id="viewresort' + resortId + '">Book Now</a>'
+                                    '/view" class="concert-action" id="viewresort' + resortId +
+                                    '">Book Now</a>'
                                 ) +
                                 '</div>' +
                                 '</div>' +
@@ -1009,6 +1011,493 @@
             });
 
         });
+    </script> --}}
+
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = null;
+            var markers = [];
+            var resorts = <?php echo json_encode($resort); ?>;
+
+            // Initialize map function
+            function initMap() {
+                if (map === null) {
+                    map = L.map('map').setView([4.2105, 101.9758], 7);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                }
+            }
+
+            // Update map markers function
+            function updateMapMarkers(resorts) {
+                if (map === null) {
+                    console.error('Map not initialized');
+                    return;
+                }
+
+                markers.forEach(function(marker) {
+                    map.removeLayer(marker);
+                });
+                markers = [];
+
+                if (Array.isArray(resorts)) {
+                    resorts.forEach(function(resort) {
+                        if (resort.latitude && resort.longitude) {
+                            var marker = L.marker([resort.latitude, resort.longitude]).addTo(map)
+                                .bindPopup('<b>' + resort.name + '</b><br>' + resort.location + '<br>' +
+                                    resort.price);
+                            markers.push(marker);
+                        }
+                    });
+                } else {
+                    console.error('Expected an array of resorts but received:', resorts);
+                }
+            }
+
+            // Update search results function
+            function updateSearchResults(filteredResorts) {
+                var resultsContainer = $('#searchResultsContainer');
+                resultsContainer.empty();
+
+                if (Array.isArray(filteredResorts) && filteredResorts.length > 0) {
+                    filteredResorts.forEach(function(resort) {
+                        if (resort.register_status === 1) {
+                            var isDisabled = resort.status === 1;
+                            const resortId = resort.id;
+                            var resortName = resort.name;
+                            var resortLocation = resort.location;
+                            var resortState = resort.state;
+                            var resortCountry = resort.country;
+                            var resortDescription = resort.description;
+                            var resortImages = resort.images || [];
+
+                            // Use the first image from the resort object if available, otherwise use a placeholder
+                            var imageHTML = (resort.image || (resortImages.length > 0 && resortImages[0]
+                                    .image)) ?
+                                `<img class="concert-image" src="{{ asset('images/') }}/${resort.image || resortImages[0].image}" alt="${resortName}" />` :
+                                `<img class="concert-image" src="{{ asset('images/placeholder-image.jpg') }}" alt="No Image" />`;
+
+                            var resortHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') +
+                                '">' +
+                                '<div class="concert-main" id="resortcard_' + resortId + '">' +
+                                imageHTML +
+                                '<div class="concert-content">' +
+                                '<h2 class="concert-title">' +
+                                '<i class="fas fa-hotel"></i> ' + resortName + ' ' +
+                                '<i class="fas fa-resort"></i>' +
+                                '</h2>' +
+                                '<p class="concert-description">' +
+                                '<i class="fas fa-info-circle"></i> ' + resortDescription +
+                                '</p>' +
+                                '<div class="concert-creator">' +
+                                '<p><i class="fas fa-map-marker-alt"></i> ' + resortLocation + '</p>' +
+                                '</div>' +
+                                '<div class="concert-action-container">' +
+                                '<p>' + new Date().toLocaleString('en-US', {
+                                    timeZone: 'Asia/Kuala_Lumpur'
+                                }) + '</p>' +
+                                (isDisabled ?
+                                    '<a href="{{ url('Resortdetail/') }}/' + resortId +
+                                    '/view" class="concert-action disabled">Closed</a>' :
+                                    '<form id="wishlistForm" action="{{ url('/wishlist/add/resort') }}/' +
+                                    resortId + '" method="POST">' +
+                                    '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
+                                    '<a href="{{ url('Resortdetail/') }}/' + resortId +
+                                    '/view" class="concert-action" id="viewresort' + resortId +
+                                    '">Book Now</a>'
+                                ) +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
+
+                            resultsContainer.append(resortHTML);
+                        }
+                    });
+                } else {
+                    resultsContainer.html(
+                        '<p style="margin-top:40px; font-size:24px; display:block">No Resorts Found</p>');
+                }
+            }
+
+            // Perform search function
+            function performSearch() {
+                var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
+                var filteredResorts = resorts.filter(function(resort) {
+                    return resort.name.toLowerCase().includes(searchInputValue) ||
+                        resort.country.toLowerCase().includes(searchInputValue) ||
+                        resort.state.toLowerCase().includes(searchInputValue) ||
+                        resort.location.toLowerCase().includes(searchInputValue) ||
+                        resort.description.toLowerCase().includes(searchInputValue);
+                });
+
+                updateMapMarkers(filteredResorts);
+                updateSearchResults(filteredResorts);
+            }
+
+            // Listen for search input changes
+            document.getElementById('searchInput').addEventListener('input', function() {
+                performSearch();
+            });
+
+            // Listen for image upload form submit event
+            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                fetch('{{ route('uploadAndSearch') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Upload and search data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            // Initialize map
+            initMap();
+
+            // Display all resorts on page load
+            if (Array.isArray(resorts)) {
+                updateMapMarkers(resorts);
+                updateSearchResults(resorts);
+            } else {
+                console.error('resorts is not an array:', resorts);
+            }
+
+            // Fetch nearby resorts function
+            function fetchNearbyResorts(latitude, longitude) {
+                fetch(`/gps-search?latitude=${latitude}&longitude=${longitude}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Nearby resorts data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching nearby resorts:', error));
+            }
+
+            // Listen for Open GPS button click event
+            // document.getElementById('openGPSButton').addEventListener('click', function() {
+            //     if (navigator.geolocation) {
+            //         navigator.geolocation.getCurrentPosition(function(position) {
+            //             var latitude = position.coords.latitude;
+            //             var longitude = position.coords.longitude;
+
+            //             if (map === null) {
+            //                 initMap();
+            //             }
+            //             var userMarker = L.marker([latitude, longitude], {
+            //                     color: 'red'
+            //                 }).addTo(map)
+            //                 .bindPopup('<b>You are here</b>').openPopup();
+            //             map.setView([latitude, longitude], 10);
+            //             markers.push(userMarker);
+
+            //             fetchNearbyResorts(latitude, longitude);
+            //         }, function(error) {
+            //             console.error('Geolocation error:', error);
+            //         });
+            //     } else {
+            //         console.error('This browser does not support geolocation.');
+            //     }
+            // });
+
+            // 监听打开GPS按钮点击事件
+            document.getElementById('openGPSButton').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+
+                        if (map === null) {
+                            initMap();
+                        }
+
+                        // 使用默认图标添加用户标记
+                        var userMarker = L.marker([latitude, longitude]).addTo(map)
+                            .bindPopup('<b>您在这里</b>').openPopup();
+                        markers.push(userMarker);
+
+                        // 在用户位置绘制圆圈代表搜索半径
+                        var searchRadius = L.circle([latitude, longitude], {
+                            color: 'red',
+                            fillColor: '#f03',
+                            fillOpacity: 0.5,
+                            radius: 150000 // 半径单位为米，150公里需要转换为米
+                        }).addTo(map);
+
+                        map.setView([latitude, longitude], 10); // 调整视图焦点到用户位置
+
+                        // 请求附近度假村数据
+                        fetchNearbyResorts(latitude, longitude);
+                    }, function(error) {
+                        console.error('地理定位错误:', error);
+                    });
+                } else {
+                    console.error('此浏览器不支持地理定位。');
+                }
+            });
+
+        });
+    </script> --}}
+
+    {{-- New Full Real Time Search, Detection Image and GPS Function --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = null;
+            var markers = [];
+            var userMarker = null; // 存储用户标记
+            var resorts = <?php echo json_encode($resort); ?>;
+
+            // Initialize map function
+            function initMap() {
+                if (map === null) {
+                    map = L.map('map').setView([4.2105, 101.9758], 7);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                }
+            }
+
+            // Update map markers function
+            function updateMapMarkers(resorts) {
+                if (map === null) {
+                    console.error('Map not initialized');
+                    return;
+                }
+
+                // 移除所有度假村标记
+                markers.forEach(function(marker) {
+                    if (marker !== userMarker) { // 跳过用户标记
+                        map.removeLayer(marker);
+                    }
+                });
+                markers = markers.filter(marker => marker !== userMarker); // 过滤掉用户标记
+
+                if (Array.isArray(resorts)) {
+                    resorts.forEach(function(resort) {
+                        if (resort.latitude && resort.longitude) {
+                            var marker = L.marker([resort.latitude, resort.longitude]).addTo(map)
+                                .bindPopup('<b>' + resort.name + '</b><br>' + resort.location + '<br>' +
+                                    resort.price);
+                            markers.push(marker);
+                        }
+                    });
+                } else {
+                    console.error('Expected an array of resorts but received:', resorts);
+                }
+            }
+
+            // Update search results function
+            function updateSearchResults(filteredResorts) {
+                var resultsContainer = $('#searchResultsContainer');
+                resultsContainer.empty();
+
+                if (Array.isArray(filteredResorts) && filteredResorts.length > 0) {
+                    filteredResorts.forEach(function(resort) {
+                        if (resort.register_status === 1) {
+                            var isDisabled = resort.status === 1;
+                            const resortId = resort.id;
+                            var resortName = resort.name;
+                            var resortLocation = resort.location;
+                            var resortState = resort.state;
+                            var resortCountry = resort.country;
+                            var resortDescription = resort.description;
+                            var resortImages = resort.images || [];
+
+                            // Use the first image from the resort object if available, otherwise use a placeholder
+                            var imageHTML = (resort.image || (resortImages.length > 0 && resortImages[0]
+                                    .image)) ?
+                                `<img class="concert-image" src="{{ asset('images/') }}/${resort.image || resortImages[0].image}" alt="${resortName}" />` :
+                                `<img class="concert-image" src="{{ asset('images/placeholder-image.jpg') }}" alt="No Image" />`;
+
+                            var resortHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') +
+                                '">' +
+                                '<div class="concert-main" id="resortcard_' + resortId + '">' +
+                                imageHTML +
+                                '<div class="concert-content">' +
+                                '<h2 class="concert-title">' +
+                                '<i class="fas fa-hotel"></i> ' + resortName + ' ' +
+                                '<i class="fas fa-resort"></i>' +
+                                '</h2>' +
+                                '<p class="concert-description">' +
+                                '<i class="fas fa-info-circle"></i> ' + resortDescription +
+                                '</p>' +
+                                '<div class="concert-creator">' +
+                                '<p><i class="fas fa-map-marker-alt"></i> ' + resortLocation + '</p>' +
+                                '</div>' +
+                                '<div class="concert-action-container">' +
+                                '<p>' + new Date().toLocaleString('en-US', {
+                                    timeZone: 'Asia/Kuala_Lumpur'
+                                }) + '</p>' +
+                                (isDisabled ?
+                                    '<a href="{{ url('Resortdetail/') }}/' + resortId +
+                                    '/view" class="concert-action disabled">Closed</a>' :
+                                    '<form id="wishlistForm" action="{{ url('/wishlist/add/resort') }}/' +
+                                    resortId + '" method="POST">' +
+                                    '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
+                                    '<a href="{{ url('Resortdetail/') }}/' + resortId +
+                                    '/view" class="concert-action" id="viewresort' + resortId +
+                                    '">Book Now</a>'
+                                ) +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
+
+                            resultsContainer.append(resortHTML);
+                        }
+                    });
+                } else {
+                    resultsContainer.html(
+                        '<p style="margin-top:40px; font-size:24px; display:block">No Resorts Found</p>');
+                }
+            }
+
+            // Perform search function
+            function performSearch() {
+                var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
+                var filteredResorts = resorts.filter(function(resort) {
+                    return resort.name.toLowerCase().includes(searchInputValue) ||
+                        resort.country.toLowerCase().includes(searchInputValue) ||
+                        resort.state.toLowerCase().includes(searchInputValue) ||
+                        resort.location.toLowerCase().includes(searchInputValue) ||
+                        resort.description.toLowerCase().includes(searchInputValue);
+                });
+
+                updateMapMarkers(filteredResorts);
+                updateSearchResults(filteredResorts);
+            }
+
+            // Listen for search input changes
+            document.getElementById('searchInput').addEventListener('input', function() {
+                performSearch();
+            });
+
+            // Listen for image upload form submit event
+            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                fetch('{{ route('uploadAndSearch') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Upload and search data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            // Initialize map
+            initMap();
+
+            // Display all resorts on page load
+            if (Array.isArray(resorts)) {
+                updateMapMarkers(resorts);
+                updateSearchResults(resorts);
+            } else {
+                console.error('resorts is not an array:', resorts);
+            }
+
+            // Fetch nearby resorts function
+            function fetchNearbyResorts(latitude, longitude) {
+                fetch(`/gps-search?latitude=${latitude}&longitude=${longitude}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Nearby resorts data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching nearby resorts:', error));
+            }
+
+            // Listen for Open GPS button click event
+            document.getElementById('openGPSButton').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+
+                        if (map === null) {
+                            initMap();
+                        }
+
+                        // 使用默认图标添加用户标记
+                        if (userMarker) {
+                            map.removeLayer(userMarker); // 移除之前的用户标记
+                        }
+                        userMarker = L.marker([latitude, longitude]).addTo(map)
+                            .bindPopup('<b>您在这里</b>').openPopup();
+                        markers.push(userMarker);
+
+                        // 在用户位置绘制圆圈代表搜索半径
+                        var searchRadius = L.circle([latitude, longitude], {
+                            color: 'red',
+                            fillColor: '#f03',
+                            fillOpacity: 0.5,
+                            radius: 150000 // 半径单位为米，150公里需要转换为米
+                        }).addTo(map);
+
+                        map.setView([latitude, longitude], 10); // 调整视图焦点到用户位置
+
+                        // 请求附近度假村数据
+                        fetchNearbyResorts(latitude, longitude);
+                    }, function(error) {
+                        console.error('地理定位错误:', error);
+                    });
+                } else {
+                    console.error('此浏览器不支持地理定位。');
+                }
+            });
+        });
     </script>
 
     // {{-- Pusher JS Disabled Function --}}
@@ -1055,5 +1544,5 @@
             }).showToast();
         @endif
     </script>
-
+    
 @endsection

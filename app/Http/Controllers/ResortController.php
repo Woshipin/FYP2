@@ -383,37 +383,78 @@ class ResortController extends Controller
     //     return response()->json($resorts);
     // }
 
+    // public function gpsSearch(Request $request)
+    // {
+    //     $latitude = $request->query('latitude');
+    //     $longitude = $request->query('longitude');
+    //     $radius = 500; // 50 km 范围
+
+    //     try {
+
+    //         $resorts = DB::select(
+    //             'SELECT *,
+    //             (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
+    //             FROM resorts
+    //             HAVING distance < ?
+    //             ORDER BY distance',
+    //             [$latitude, $longitude, $latitude, $radius]
+    //         );
+
+    //         return response()->json($resorts);
+
+    //     } catch (\Exception $e) {
+
+    //         return response()->json([
+    //             'message' => $e->getMessage(),
+    //             'exception' => get_class($e),
+    //             'file' => $e->getFile(),
+    //             'line' => $e->getLine(),
+    //             'trace' => $e->getTrace()
+    //         ], 500);
+    //     }
+    // }
+
     public function gpsSearch(Request $request)
     {
         $latitude = $request->query('latitude');
         $longitude = $request->query('longitude');
-        $radius = 50; // 50 km 范围
+        $radius = 150; // 50 km range
 
         try {
+            $resorts = DB::table('resorts')
+                ->select('resorts.*',
+                    DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
+                ->having('distance', '<', $radius)
+                ->orderBy('distance')
+                ->setBindings([$latitude, $longitude, $latitude])
+                ->get();
 
-            $resorts = DB::select(
-                'SELECT *,
-                (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
-                FROM resorts
-                HAVING distance < ?
-                ORDER BY distance',
-                [$latitude, $longitude, $latitude, $radius]
-            );
+            // Fetch the first image for each resort
+            foreach ($resorts as $resort) {
+                $image = DB::table('resort_images')
+                    ->where('resort_id', $resort->id)
+                    ->value('image');
+                $resort->image = $image;
+            }
 
             return response()->json($resorts);
 
         } catch (\Exception $e) {
-
-            return response()->json([
+            // Log the error to Laravel's log files
+            \Log::error('Error in GPS Search:', [
                 'message' => $e->getMessage(),
                 'exception' => get_class($e),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'trace' => $e->getTrace()
+                'trace' => $e->getTraceAsString(), // Using getTraceAsString to limit the output
+            ]);
+
+            // Return a JSON response indicating failure
+            return response()->json([
+                'error' => 'Internal Server Error',
+                'message' => 'An error occurred while processing your request. Please try again.'
             ], 500);
         }
     }
-
-
 
 }
