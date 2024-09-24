@@ -302,7 +302,7 @@ Route::get('/ResortSearch',[ResortController::class, 'ResortSearch'])->name('Res
 //View Booked Resort Detail Follow ID Function
 Route::get('/viewBookedResort/{id}/view',[BookingController::class,'viewBookedResort'])->name('viewBookedResort');
 // GPS Auto Search Resort
-Route::get('/gps-search', [ResortController::class, 'gpsSearch'])->name('gps.search');
+Route::get('/resort-gps-search', [ResortController::class, 'ResortgpsSearch'])->name('resort.gps.search');
 
 //---------------------------------------------------Restaurant Area-------------------------------------------------------------//
 //Display Restaurant Page
@@ -343,6 +343,8 @@ Route::post('/mutlipledeletebookedrestaurant/delete', [BookingController::class,
 Route::get('/BookedRestaurantSearch',[BookingController::class, 'BookedRestaurantSearch'])->name('BookedRestaurantSearch');
 //View Booked Restaurant Detail Follow ID Function
 Route::get('/viewBookedRestaurant/{id}/view',[BookingController::class,'viewBookedRestaurant'])->name('viewBookedRestaurant');
+// GPS Auto Search Restaurant
+Route::get('/restaurant-gps-search', [RestaurantController::class, 'RestaurantgpsSearch'])->name('restaurant.gps.search');
 
 //---------------------------------------------------My Restaurant Area---------------------------------------------------------------//
 //show Customer bookeds restaurant
@@ -399,6 +401,8 @@ Route::post('/mutlipledeletebookedhotel/delete', [BookingController::class, 'del
 Route::get('/HotelSearch',[HotelController::class, 'HotelSearch'])->name('HotelSearch');
 //View Booked Hotel Detail Follow ID Function
 Route::get('/viewBookedHotel/{id}/view',[BookingController::class,'viewBookedHotel'])->name('viewBookedHotel');
+// GPS Auto Search Hotel
+Route::get('/hotel-gps-search', [HotelController::class, 'HotelgpsSearch'])->name('hotel.gps.search');
 
 //---------------------------------------------------Table Area--------------------------------------------------------------//
 //Display Table Page

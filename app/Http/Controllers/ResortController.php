@@ -414,7 +414,7 @@ class ResortController extends Controller
     //     }
     // }
 
-    public function gpsSearch(Request $request)
+    public function ResortgpsSearch(Request $request)
     {
         $latitude = $request->query('latitude');
         $longitude = $request->query('longitude');

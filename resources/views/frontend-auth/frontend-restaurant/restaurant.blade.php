@@ -524,7 +524,7 @@
     </script> --}}
 
     {{-- Image Search and display Google map position function --}}
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             var map = null;
             var markers = [];
@@ -750,6 +750,495 @@
             });
 
         });
+    </script> --}}
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = null;
+            var markers = [];
+            var userMarker = null; // 存储用户标记
+            var restaurants = <?php echo json_encode($restaurant); ?>;
+
+            // Initialize map function
+            function initMap() {
+                if (map === null) {
+                    map = L.map('map').setView([4.2105, 101.9758], 7);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                }
+            }
+
+            // Update map markers function
+            function updateMapMarkers(restaurants) {
+                if (map === null) {
+                    console.error('地图尚未初始化');
+                    return;
+                }
+
+                // 移除所有餐馆标记
+                markers.forEach(function(marker) {
+                    if (marker !== userMarker) { // 跳过用户标记
+                        map.removeLayer(marker);
+                    }
+                });
+                markers = markers.filter(marker => marker !== userMarker); // 过滤掉用户标记
+
+                if (Array.isArray(restaurants)) {
+                    restaurants.forEach(function(restaurant) {
+                        var mapIframe = restaurant.map;
+                        var coordinates = getCoordinatesFromIframe(mapIframe);
+                        if (coordinates) {
+                            var marker = L.marker([coordinates.lat, coordinates.lng]).addTo(map)
+                                .bindPopup('<b>' + restaurant.name + '</b><br>' + restaurant.address +
+                                    '<br>' + restaurant.state);
+                            markers.push(marker);
+                        }
+                    });
+                } else {
+                    console.error('Expected an array of restaurants but received:', restaurants);
+                }
+            }
+
+            // 从 iframe URL 提取坐标函数
+            function getCoordinatesFromIframe(iframe) {
+                var match = iframe.match(/!2d([-0-9.]+)!3d([-0-9.]+)/);
+                if (match) {
+                    return {
+                        lat: parseFloat(match[2]),
+                        lng: parseFloat(match[1])
+                    };
+                }
+                return null;
+            }
+
+            // Update search results function
+            function updateSearchResults(filteredRestaurants) {
+                var resultsContainer = $('#searchResultsContainer');
+                resultsContainer.empty(); // Clear existing content
+
+                if (Array.isArray(filteredRestaurants) && filteredRestaurants.length > 0) {
+                    filteredRestaurants.forEach(function(restaurant) {
+                        if (restaurant.register_status === 1) {
+                            var isDisabled = restaurant.status === 1;
+                            var restaurantImages = restaurant.images || []; // Default to empty array
+
+                            // Display only the first image
+                            var firstImageHTML = restaurant.image ?
+                                `<img class="concert-image" src="{{ asset('images/') }}/${restaurant.image}" alt="Image" />` :
+                                `<img class="concert-image" src="path/to/placeholder-image.jpg" alt="No Image" />`;
+
+                            var restaurantHTML = `
+                        <div class="concert ${isDisabled ? 'disabled' : ''}">
+                            <div class="concert-main" id="restaurantcard_${restaurant.id}">
+                                ${firstImageHTML} <!-- Display only the first image here -->
+                                <div class="concert-content">
+                                    <h2 class="concert-title">
+                                        <i class="fas fa-utensils"></i> ${restaurant.name}
+                                    </h2>
+                                    <p class="concert-description">
+                                        <i class="fas fa-info-circle"></i> ${restaurant.description}
+                                    </p>
+                                    <div class="concert-creator">
+                                        <p><i class="fas fa-map-marker-alt"></i> ${restaurant.address}</p>
+                                    </div>
+
+                                    <div class="concert-action-container">
+                                        <p>${new Date().toLocaleString('en-US', {
+                                            timeZone: 'Asia/Kuala_Lumpur'
+                                        })}</p>
+                                        ${isDisabled ?
+                                            `<a href="{{ url('Restaurantdetail/') }}/${restaurant.id}/view" class="concert-action disabled">Closed</a>` :
+                                            `<form id="wishlistForm" action="{{ url('/wishlist/add/restaurant') }}/${restaurant.id}" method="POST">
+                                                            @csrf
+                                                            <button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button>
+                                                        </form>
+                                                        <a href="{{ url('Restaurantdetail/') }}/${restaurant.id}/view" class="concert-action" id="viewrestaurant${restaurant.id}">Book Now</a>`
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                            resultsContainer.append(restaurantHTML);
+                        }
+                    });
+                } else {
+                    resultsContainer.html(
+                        '<p style="margin-top:40px; font-size:24px; display:block">No Restaurants Found</p>');
+                }
+            }
+
+            // Perform search function
+            function performSearch() {
+                var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
+                var filteredRestaurants = restaurants.filter(function(restaurant) {
+                    return (restaurant.name && restaurant.name.toLowerCase().includes(searchInputValue)) ||
+                        (restaurant.country && restaurant.country.toLowerCase().includes(
+                            searchInputValue)) ||
+                        (restaurant.state && restaurant.state.toLowerCase().includes(searchInputValue)) ||
+                        (restaurant.address && restaurant.address.toLowerCase().includes(
+                            searchInputValue)) ||
+                        (restaurant.description && restaurant.description.toLowerCase().includes(
+                            searchInputValue));
+                });
+
+                // 更新地图标记和搜索结果
+                updateMapMarkers(filteredRestaurants);
+                updateSearchResults(filteredRestaurants);
+            }
+
+            // Listen for search input changes
+            document.getElementById('searchInput').addEventListener('input', function() {
+                performSearch();
+            });
+
+            // Listen for image upload form submission
+            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                fetch('{{ route('uploadAndSearchRestaurants') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('上传和搜索数据:', data); // Log the data from upload and search
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.error('获取的数据不是数组:', data);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            // Initialize map
+            initMap();
+
+            // Show all restaurants on page load
+            if (Array.isArray(restaurants)) {
+                updateMapMarkers(restaurants);
+                updateSearchResults(restaurants);
+            } else {
+                console.error('restaurants is not an array:', restaurants);
+            }
+
+            // Fetch nearby restaurants function
+            function fetchNearbyRestaurants(latitude, longitude) {
+                fetch(`/restaurant-gps-search?latitude=${latitude}&longitude=${longitude}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('附近餐馆数据:', data); // 调试输出
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.error('获取的数据不是数组:', data);
+                        }
+                    })
+                    .catch(error => console.error('获取附近餐馆时发生错误:', error));
+            }
+
+            // Listen for open GPS button click event
+            document.getElementById('openGPSButton').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+
+                        if (map === null) {
+                            initMap();
+                        }
+
+                        // 使用默认图标添加用户标记
+                        if (userMarker) {
+                            map.removeLayer(userMarker); // 移除之前的用户标记
+                        }
+                        userMarker = L.marker([latitude, longitude]).addTo(map)
+                            .bindPopup('<b>您在这里</b>').openPopup();
+                        markers.push(userMarker);
+
+                        // 在用户位置绘制圆圈代表搜索半径
+                        var searchRadius = L.circle([latitude, longitude], {
+                            color: 'red',
+                            fillColor: '#f03',
+                            fillOpacity: 0.5,
+                            radius: 150000 // 半径单位为米，150公里需要转换为米
+                        }).addTo(map);
+
+                        map.setView([latitude, longitude], 10); // 调整视图焦点到用户位置
+
+                        // 请求附近餐馆数据
+                        fetchNearbyRestaurants(latitude, longitude);
+                    }, function(error) {
+                        console.error('地理定位错误:', error);
+                    });
+                } else {
+                    console.error('此浏览器不支持地理定位。');
+                }
+            });
+        });
+    </script> --}}
+
+    {{-- New Full Real Time Search, Detection Image and GPS Function --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = null;
+            var markers = [];
+            var userMarker = null; // 存储用户标记
+            var restaurants = <?php echo json_encode($restaurant); ?>;
+
+            // Initialize map function
+            function initMap() {
+                if (map === null) {
+                    map = L.map('map').setView([4.2105, 101.9758], 7);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                }
+            }
+
+            // Update map markers function
+            function updateMapMarkers(restaurants) {
+                if (map === null) {
+                    console.error('Map not initialized');
+                    return;
+                }
+
+                // 移除所有餐馆标记
+                markers.forEach(function(marker) {
+                    if (marker !== userMarker) { // 跳过用户标记
+                        map.removeLayer(marker);
+                    }
+                });
+                markers = markers.filter(marker => marker !== userMarker); // 过滤掉用户标记
+
+                if (Array.isArray(restaurants)) {
+                    restaurants.forEach(function(restaurant) {
+                        var mapIframe = restaurant.map;
+                        var coordinates = getCoordinatesFromIframe(mapIframe);
+                        if (coordinates) {
+                            var marker = L.marker([coordinates.lat, coordinates.lng]).addTo(map)
+                                .bindPopup('<b>' + restaurant.name + '</b><br>' + restaurant.address +
+                                    '<br>' + restaurant.state);
+                            markers.push(marker);
+                        }
+                    });
+                } else {
+                    console.error('Expected an array of restaurants but received:', restaurants);
+                }
+            }
+
+            // 从 iframe URL 提取坐标函数
+            function getCoordinatesFromIframe(iframe) {
+                var match = iframe.match(/!2d([-0-9.]+)!3d([-0-9.]+)/);
+                if (match) {
+                    return {
+                        lat: parseFloat(match[2]),
+                        lng: parseFloat(match[1])
+                    };
+                }
+                return null;
+            }
+
+            // Update search results function
+            function updateSearchResults(filteredRestaurants) {
+                var resultsContainer = $('#searchResultsContainer');
+                resultsContainer.empty();
+
+                if (Array.isArray(filteredRestaurants) && filteredRestaurants.length > 0) {
+                    filteredRestaurants.forEach(function(restaurant) {
+                        if (restaurant.register_status === 1) {
+                            var isDisabled = restaurant.status === 1;
+                            const restaurantId = restaurant.id;
+                            var restaurantName = restaurant.name;
+                            var restaurantAddress = restaurant.address;
+                            var restaurantState = restaurant.state;
+                            var restaurantCountry = restaurant.country;
+                            var restaurantDescription = restaurant.description;
+                            var restaurantImages = restaurant.images || [];
+
+                            // Use the first image from the restaurant object if available, otherwise use a placeholder
+                            var imageHTML = (restaurant.image || (restaurantImages.length > 0 &&
+                                    restaurantImages[0].image)) ?
+                                `<img class="concert-image" src="{{ asset('images/') }}/${restaurant.image || restaurantImages[0].image}" alt="${restaurantName}" />` :
+                                `<img class="concert-image" src="{{ asset('images/placeholder-image.jpg') }}" alt="No Image" />`;
+
+                            var restaurantHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') +
+                                '">' +
+                                '<div class="concert-main" id="restaurantcard_' + restaurantId + '">' +
+                                imageHTML +
+                                '<div class="concert-content">' +
+                                '<h2 class="concert-title">' +
+                                '<i class="fas fa-utensils"></i> ' + restaurantName + ' ' +
+                                '</h2>' +
+                                '<p class="concert-description">' +
+                                '<i class="fas fa-info-circle"></i> ' + restaurantDescription +
+                                '</p>' +
+                                '<div class="concert-creator">' +
+                                '<p><i class="fas fa-map-marker-alt"></i> ' + restaurantAddress + '</p>' +
+                                '</div>' +
+                                '<div class="concert-action-container">' +
+                                '<p>' + new Date().toLocaleString('en-US', {
+                                    timeZone: 'Asia/Kuala_Lumpur'
+                                }) + '</p>' +
+                                (isDisabled ?
+                                    '<a href="{{ url('Restaurantdetail/') }}/' + restaurantId +
+                                    '/view" class="concert-action disabled">Closed</a>' :
+                                    '<form id="wishlistForm" action="{{ url('/wishlist/add/restaurant') }}/' +
+                                    restaurantId + '" method="POST">' +
+                                    '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
+                                    '<a href="{{ url('Restaurantdetail/') }}/' + restaurantId +
+                                    '/view" class="concert-action" id="viewrestaurant' + restaurantId +
+                                    '">Book Now</a>'
+                                ) +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
+
+                            resultsContainer.append(restaurantHTML);
+                        }
+                    });
+                } else {
+                    resultsContainer.html(
+                        '<p style="margin-top:40px; font-size:24px; display:block">No Restaurants Found</p>');
+                }
+            }
+
+            // Perform search function
+            function performSearch() {
+                var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
+                var filteredRestaurants = restaurants.filter(function(restaurant) {
+                    return restaurant.name.toLowerCase().includes(searchInputValue) ||
+                        restaurant.country.toLowerCase().includes(searchInputValue) ||
+                        restaurant.state.toLowerCase().includes(searchInputValue) ||
+                        restaurant.address.toLowerCase().includes(searchInputValue) ||
+                        restaurant.description.toLowerCase().includes(searchInputValue);
+                });
+
+                updateMapMarkers(filteredRestaurants);
+                updateSearchResults(filteredRestaurants);
+            }
+
+            // Listen for search input changes
+            document.getElementById('searchInput').addEventListener('input', function() {
+                performSearch();
+            });
+
+            // Listen for image upload form submit event
+            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                fetch('{{ route('uploadAndSearchRestaurants') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Upload and search data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            // Initialize map
+            initMap();
+
+            // Display all restaurants on page load
+            if (Array.isArray(restaurants)) {
+                updateMapMarkers(restaurants);
+                updateSearchResults(restaurants);
+            } else {
+                console.error('restaurants is not an array:', restaurants);
+            }
+
+            // Fetch nearby restaurants function
+            function fetchNearbyRestaurants(latitude, longitude) {
+                fetch(`/restaurant-gps-search?latitude=${latitude}&longitude=${longitude}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Nearby restaurants data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching nearby restaurants:', error));
+            }
+
+            // Listen for Open GPS button click event
+            document.getElementById('openGPSButton').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+
+                        if (map === null) {
+                            initMap();
+                        }
+
+                        // 使用默认图标添加用户标记
+                        if (userMarker) {
+                            map.removeLayer(userMarker); // 移除之前的用户标记
+                        }
+                        userMarker = L.marker([latitude, longitude]).addTo(map)
+                            .bindPopup('<b>您在这里</b>').openPopup();
+                        markers.push(userMarker);
+
+                        // 在用户位置绘制圆圈代表搜索半径
+                        var searchRadius = L.circle([latitude, longitude], {
+                            color: 'red',
+                            fillColor: '#f03',
+                            fillOpacity: 0.5,
+                            radius: 150000 // 半径单位为米，150公里需要转换为米
+                        }).addTo(map);
+
+                        map.setView([latitude, longitude], 10); // 调整视图焦点到用户位置
+
+                        // 请求附近餐馆数据
+                        fetchNearbyRestaurants(latitude, longitude);
+                    }, function(error) {
+                        console.error('地理定位错误:', error);
+                    });
+                } else {
+                    console.error('此浏览器不支持地理定位。');
+                }
+            });
+        });
     </script>
 
     {{-- Pusher JS Disabled Function --}}
@@ -799,5 +1288,4 @@
             }).showToast();
         @endif
     </script>
-
 @endsection

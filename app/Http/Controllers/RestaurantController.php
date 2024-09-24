@@ -368,4 +368,47 @@ class RestaurantController extends Controller
         return Restaurant::where('image', $imageName)->get();
     }
 
+    public function RestaurantgpsSearch(Request $request)
+    {
+        $latitude = $request->query('latitude');
+        $longitude = $request->query('longitude');
+        $radius = 150; // 150 km range
+
+        try {
+            $restaurants = DB::table('restaurants')
+                ->select('restaurants.*',
+                    DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
+                ->having('distance', '<', $radius)
+                ->orderBy('distance')
+                ->setBindings([$latitude, $longitude, $latitude])
+                ->get();
+
+            // Fetch the first image for each restaurant
+            foreach ($restaurants as $restaurant) {
+                $image = DB::table('restaurant_images')
+                    ->where('restaurant_id', $restaurant->id)
+                    ->value('image');
+                $restaurant->image = $image;
+            }
+
+            return response()->json($restaurants);
+
+        } catch (\Exception $e) {
+            // Log the error to Laravel's log files
+            \Log::error('Error in GPS Search:', [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(), // Using getTraceAsString to limit the output
+            ]);
+
+            // Return a JSON response indicating failure
+            return response()->json([
+                'error' => 'Internal Server Error',
+                'message' => 'An error occurred while processing your request. Please try again.'
+            ], 500);
+        }
+    }
+
 }

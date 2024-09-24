@@ -427,4 +427,47 @@ class HotelController extends Controller
         return Hotel::where('image', $imageName)->get();
     }
 
+    public function HotelgpsSearch(Request $request)
+    {
+        $latitude = $request->query('latitude');
+        $longitude = $request->query('longitude');
+        $radius = 150; // 150 km range
+
+        try {
+            $hotels = DB::table('hotels')
+                ->select('hotels.*',
+                    DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
+                ->having('distance', '<', $radius)
+                ->orderBy('distance')
+                ->setBindings([$latitude, $longitude, $latitude])
+                ->get();
+
+            // Fetch the first image for each hotel
+            foreach ($hotels as $hotel) {
+                $image = DB::table('hotel_images')
+                    ->where('hotel_id', $hotel->id)
+                    ->value('image');
+                $hotel->image = $image;
+            }
+
+            return response()->json($hotels);
+
+        } catch (\Exception $e) {
+            // Log the error to Laravel's log files
+            \Log::error('Error in GPS Search:', [
+                'message' => $e->getMessage(),
+                'exception' => get_class($e),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(), // Using getTraceAsString to limit the output
+            ]);
+
+            // Return a JSON response indicating failure
+            return response()->json([
+                'error' => 'Internal Server Error',
+                'message' => 'An error occurred while processing your request. Please try again.'
+            ], 500);
+        }
+    }
+
 }

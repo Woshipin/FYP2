@@ -1439,7 +1439,7 @@
 
             // Fetch nearby resorts function
             function fetchNearbyResorts(latitude, longitude) {
-                fetch(`/gps-search?latitude=${latitude}&longitude=${longitude}`, {
+                fetch(`/resort-gps-search?latitude=${latitude}&longitude=${longitude}`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1544,5 +1544,5 @@
             }).showToast();
         @endif
     </script>
-    
+
 @endsection
