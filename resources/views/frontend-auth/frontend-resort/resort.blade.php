@@ -168,7 +168,7 @@
     </style>
 
     {{-- Image,GPS and Search CSS --}}
-    <style>
+    {{-- <style>
         body {
             background-color: #f8f9fa;
             font-family: 'Arial', sans-serif;
@@ -268,6 +268,102 @@
             --dark-blue: #0056b3;
             --grey: #f8f9fa;
         }
+
+        .image-display-container {
+            margin-top: 20px;
+            border: 2px solid #ccc;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .uploaded-image {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    </style> --}}
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .custom-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .upload-form {
+            width: 30%;
+        }
+
+        .upload-form input[type="file"] {
+            display: none;
+        }
+
+        .upload-form label {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            border-radius: 15px;
+            background: var(--blue);
+            color: #fff;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all .3s ease;
+        }
+
+        .upload-form label:hover {
+            background: var(--dark-blue);
+        }
+
+        .upload-form button {
+            width: 100%;
+            padding: 16px;
+            border-radius: 15px;
+            background: var(--blue);
+            color: #fff;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all .3s ease;
+            margin-top: 10px;
+        }
+
+        .upload-form button:hover {
+            background: var(--dark-blue);
+        }
+
+        .image-display-container {
+            /* margin-top: 20px; */
+            border: 2px solid black;
+            padding: 10px;
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        :root {
+            --blue: #007bff;
+            --dark-blue: #0056b3;
+        }
     </style>
 
     {{-- GPS CSS and JS --}}
@@ -361,6 +457,7 @@
                     @csrf
                     <label for="imageInput">Select Image</label>
                     <input type="file" name="image" id="imageInput" required>
+                    <div class="image-display-container" id="imageDisplayContainer"></div>
                     <button type="submit" class="btn btn-primary">Detect Image</button>
                 </form>
             </div>
@@ -377,6 +474,37 @@
 
         </div>
     </div>
+
+    {{-- <div class="container">
+        <div class="custom-container">
+
+            <!-- Image Upload Form -->
+            <div class="upload-form">
+                <form id="imageUploadForm" enctype="multipart/form-data">
+                    @csrf
+                    <label for="imageInput">Select Image</label>
+                    <input type="file" name="image" id="imageInput" required>
+                    <button type="submit" class="btn btn-primary">Detect Image</button>
+                </form>
+            </div>
+
+            <!-- Open GPS Button -->
+            <div class="gps-button">
+                <button type="button" name="gps" id="openGPSButton" class="btn btn-primary">Open GPS</button>
+            </div>
+
+            <!-- Search Bar -->
+            <div class="search-bar">
+                <input type="search" name="search" id="searchInput" class="form-control" placeholder="Search Resorts">
+            </div>
+
+            <!-- Image Display Container -->
+            <div class="image-display-container">
+                <div id="uploadedImage" class="uploaded-image"></div>
+            </div>
+
+        </div>
+    </div> --}}
 
     <br>
 
@@ -1267,6 +1395,274 @@
     </script> --}}
 
     {{-- New Full Real Time Search, Detection Image and GPS Function --}}
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = null;
+            var markers = [];
+            var userMarker = null; // 存储用户标记
+            var resorts = <?php echo json_encode($resort); ?>;
+
+            // Initialize map function
+            function initMap() {
+                if (map === null) {
+                    map = L.map('map').setView([4.2105, 101.9758], 7);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                }
+            }
+
+            // Update map markers function
+            function updateMapMarkers(resorts) {
+                if (map === null) {
+                    console.error('Map not initialized');
+                    return;
+                }
+
+                // 移除所有度假村标记
+                markers.forEach(function(marker) {
+                    if (marker !== userMarker) { // 跳过用户标记
+                        map.removeLayer(marker);
+                    }
+                });
+                markers = markers.filter(marker => marker !== userMarker); // 过滤掉用户标记
+
+                if (Array.isArray(resorts)) {
+                    resorts.forEach(function(resort) {
+                        if (resort.latitude && resort.longitude) {
+                            var marker = L.marker([resort.latitude, resort.longitude]).addTo(map)
+                                .bindPopup('<b>' + resort.name + '</b><br>' + resort.location + '<br>' +
+                                    resort.price);
+                            markers.push(marker);
+                        }
+                    });
+                } else {
+                    console.error('Expected an array of resorts but received:', resorts);
+                }
+            }
+
+            // Update search results function
+            function updateSearchResults(filteredResorts) {
+                var resultsContainer = $('#searchResultsContainer');
+                resultsContainer.empty();
+
+                if (Array.isArray(filteredResorts) && filteredResorts.length > 0) {
+                    filteredResorts.forEach(function(resort) {
+                        if (resort.register_status === 1) {
+                            var isDisabled = resort.status === 1;
+                            const resortId = resort.id;
+                            var resortName = resort.name;
+                            var resortLocation = resort.location;
+                            var resortState = resort.state;
+                            var resortCountry = resort.country;
+                            var resortDescription = resort.description;
+                            var resortImages = resort.images || [];
+
+                            // Use the first image from the resort object if available, otherwise use a placeholder
+                            var imageHTML = (resort.image || (resortImages.length > 0 && resortImages[0]
+                                    .image)) ?
+                                `<img class="concert-image" src="{{ asset('images/') }}/${resort.image || resortImages[0].image}" alt="${resortName}" />` :
+                                `<img class="concert-image" src="{{ asset('images/placeholder-image.jpg') }}" alt="No Image" />`;
+
+                            var resortHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') +
+                                '">' +
+                                '<div class="concert-main" id="resortcard_' + resortId + '">' +
+                                imageHTML +
+                                '<div class="concert-content">' +
+                                '<h2 class="concert-title">' +
+                                '<i class="fas fa-hotel"></i> ' + resortName + ' ' +
+                                '<i class="fas fa-resort"></i>' +
+                                '</h2>' +
+                                '<p class="concert-description">' +
+                                '<i class="fas fa-info-circle"></i> ' + resortDescription +
+                                '</p>' +
+                                '<div class="concert-creator">' +
+                                '<p><i class="fas fa-map-marker-alt"></i> ' + resortLocation + '</p>' +
+                                '</div>' +
+                                '<div class="concert-action-container">' +
+                                '<p>' + new Date().toLocaleString('en-US', {
+                                    timeZone: 'Asia/Kuala_Lumpur'
+                                }) + '</p>' +
+                                (isDisabled ?
+                                    '<a href="{{ url('Resortdetail/') }}/' + resortId +
+                                    '/view" class="concert-action disabled">Closed</a>' :
+                                    '<form id="wishlistForm" action="{{ url('/wishlist/add/resort') }}/' +
+                                    resortId + '" method="POST">' +
+                                    '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
+                                    '<a href="{{ url('Resortdetail/') }}/' + resortId +
+                                    '/view" class="concert-action" id="viewresort' + resortId +
+                                    '">Book Now</a>'
+                                ) +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
+
+                            resultsContainer.append(resortHTML);
+                        }
+                    });
+                } else {
+                    resultsContainer.html(
+                        '<p style="margin-top:40px; font-size:24px; display:block">No Resorts Found</p>');
+                }
+            }
+
+            // Perform search function
+            function performSearch() {
+                var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
+                var filteredResorts = resorts.filter(function(resort) {
+                    return resort.name.toLowerCase().includes(searchInputValue) ||
+                        resort.country.toLowerCase().includes(searchInputValue) ||
+                        resort.state.toLowerCase().includes(searchInputValue) ||
+                        resort.location.toLowerCase().includes(searchInputValue) ||
+                        resort.description.toLowerCase().includes(searchInputValue);
+                });
+
+                updateMapMarkers(filteredResorts);
+                updateSearchResults(filteredResorts);
+            }
+
+            // Listen for search input changes
+            document.getElementById('searchInput').addEventListener('input', function() {
+                performSearch();
+            });
+
+            // Listen for image upload form submit event
+            // document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+            //     event.preventDefault();
+
+            //     var formData = new FormData(this);
+
+            //     fetch('{{ route('uploadAndSearch') }}', {
+            //             method: 'POST',
+            //             body: formData,
+            //             headers: {
+            //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+            //                     .getAttribute('content'),
+            //                 'X-Requested-With': 'XMLHttpRequest'
+            //             }
+            //         })
+            //         .then(response => response.json())
+            //         .then(data => {
+            //             console.log('Upload and search data:', data);
+            //             if (Array.isArray(data)) {
+            //                 updateMapMarkers(data);
+            //                 updateSearchResults(data);
+            //             } else {
+            //                 console.error('Received data is not an array:', data);
+            //             }
+            //         })
+            //         .catch(error => console.error('Error:', error));
+            // });
+
+            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                // 检查文件是否存在
+                var fileInput = document.getElementById('image');
+                if (!fileInput.files[0]) {
+                    console.error('No file selected');
+                    return;
+                }
+
+                fetch('{{ route('uploadAndSearch') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Upload and search data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else if (data.error) {
+                            console.error('Server error:', data.error);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            // Initialize map
+            initMap();
+
+            // Display all resorts on page load
+            if (Array.isArray(resorts)) {
+                updateMapMarkers(resorts);
+                updateSearchResults(resorts);
+            } else {
+                console.error('resorts is not an array:', resorts);
+            }
+
+            // Fetch nearby resorts function
+            function fetchNearbyResorts(latitude, longitude) {
+                fetch(`/resort-gps-search?latitude=${latitude}&longitude=${longitude}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Nearby resorts data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching nearby resorts:', error));
+            }
+
+            // Listen for Open GPS button click event
+            document.getElementById('openGPSButton').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+
+                        if (map === null) {
+                            initMap();
+                        }
+
+                        // 使用默认图标添加用户标记
+                        if (userMarker) {
+                            map.removeLayer(userMarker); // 移除之前的用户标记
+                        }
+                        userMarker = L.marker([latitude, longitude]).addTo(map)
+                            .bindPopup('<b>您在这里</b>').openPopup();
+                        markers.push(userMarker);
+
+                        // 在用户位置绘制圆圈代表搜索半径
+                        var searchRadius = L.circle([latitude, longitude], {
+                            color: 'red',
+                            fillColor: '#f03',
+                            fillOpacity: 0.5,
+                            radius: 150000 // 半径单位为米，150公里需要转换为米
+                        }).addTo(map);
+
+                        map.setView([latitude, longitude], 10); // 调整视图焦点到用户位置
+
+                        // 请求附近度假村数据
+                        fetchNearbyResorts(latitude, longitude);
+                    }, function(error) {
+                        console.error('地理定位错误:', error);
+                    });
+                } else {
+                    console.error('此浏览器不支持地理定位。');
+                }
+            });
+        });
+    </script> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var map = null;
@@ -1404,6 +1800,12 @@
 
                 var formData = new FormData(this);
 
+                var fileInput = document.getElementById('imageInput');
+                if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                    console.error('No file selected');
+                    return;
+                }
+
                 fetch('{{ route('uploadAndSearch') }}', {
                         method: 'POST',
                         body: formData,
@@ -1416,14 +1818,18 @@
                     .then(response => response.json())
                     .then(data => {
                         console.log('Upload and search data:', data);
-                        if (Array.isArray(data)) {
+                        if (Array.isArray(data) && data.length > 0) {
                             updateMapMarkers(data);
                             updateSearchResults(data);
                         } else {
-                            console.error('Received data is not an array:', data);
+                            console.log('No matching resorts found');
+                            updateSearchResults([]); // Update UI to show no results
                         }
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch(error => {
+                        console.error('Error:', error);
+                        updateSearchResults([]); // Update UI to show error state
+                    });
             });
 
             // Initialize map
@@ -1545,4 +1951,21 @@
         @endif
     </script>
 
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#imageInput').change(function(event) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.style.maxWidth = "100%";
+                    img.style.maxHeight = "100%";
+                    document.getElementById("imageDisplayContainer").innerHTML = '';
+                    document.getElementById("imageDisplayContainer").appendChild(img);
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            });
+        });
+    </script>
 @endsection

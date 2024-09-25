@@ -719,7 +719,7 @@ Route::get('/recommendations', [RecommendationController::class, 'getRecommendat
     ->name('recommendations');
 
 //------------------------------------------------------ AI Chat Bot Area------------------------------------------------------//
-Route::post('/chat', [ChatBotController::class, 'chat']);
+Route::post('/chat', [ChatbotController::class, 'chat']);
 
 //------------------------------------------------------ Fail Area------------------------------------------------------//
 
