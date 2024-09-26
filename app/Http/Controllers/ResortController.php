@@ -283,9 +283,15 @@ class ResortController extends Controller
     // -------------------------------------------------Frontend----------------------------------------------------------- //
 
     //Frontend Function
+    // public function AllResort()
+    // {
+    //     $resort = Resort::with('images')->get();
+    //     return view('frontend-auth.frontend-resort.resort', compact('resort'));
+    // }
+
     public function AllResort()
     {
-        $resort = Resort::with('images')->get();
+        $resort = Resort::with('images')->where('register_status', 1)->get();
         return view('frontend-auth.frontend-resort.resort', compact('resort'));
     }
 
@@ -370,23 +376,68 @@ class ResortController extends Controller
 
     public function uploadAndSearch(Request $request)
     {
-        // 验证请求
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
         try {
             $image = $request->file('image');
             $matchedResorts = $this->findMatchingResorts($image);
-
-            // 调试信息
             \Log::info('Matched resorts:', $matchedResorts);
-
             return response()->json($matchedResorts);
         } catch (\Exception $e) {
             \Log::error('Error in uploadAndSearch:', ['error' => $e->getMessage()]);
             return response()->json(['error' => $e->getMessage()], 500);
         }
+    }
+
+    private function findMatchingResorts($image)
+    {
+        $hasher = new ImageHash(new DifferenceHash());
+        $uploadedImagePath = $image->getRealPath();
+        if (!file_exists($uploadedImagePath)) {
+            \Log::error('Uploaded image file does not exist: ' . $uploadedImagePath);
+            throw new \Exception('Uploaded image file does not exist');
+        }
+        $uploadedImageHash = $hasher->hash($uploadedImagePath);
+        $resortImages = ResortImage::all();
+        $matchedResortIds = [];
+        $threshold = 10;
+        foreach ($resortImages as $resortImage) {
+            $dbImagePath = public_path('images/' . $resortImage->image);
+            if (!file_exists($dbImagePath)) {
+                \Log::warning('Database image file does not exist: ' . $dbImagePath);
+                continue;
+            }
+            try {
+                $dbImageHash = $hasher->hash($dbImagePath);
+                $distance = $hasher->distance($uploadedImageHash, $dbImageHash);
+                \Log::info("Image comparison:", [
+                    'uploaded_image' => $uploadedImagePath,
+                    'db_image' => $dbImagePath,
+                    'distance' => $distance
+                ]);
+                if ($distance <= $threshold) {
+                    $matchedResortIds[] = $resortImage->resort_id;
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error processing image: ' . $dbImagePath, ['error' => $e->getMessage()]);
+            }
+        }
+        $matchedResortIds = array_unique($matchedResortIds);
+        $matchedResorts = Resort::with('images')->whereIn('id', $matchedResortIds)->get();
+        $matchedResortsArray = $matchedResorts->map(function ($resort) {
+            $resortArray = $resort->toArray();
+            $resortArray['images'] = $resort->images->map(function ($image) {
+                return [
+                    'id' => $image->id,
+                    'image' => $image->image,
+                    'url' => asset('images/' . $image->image)
+                ];
+            });
+            return $resortArray;
+        })->toArray();
+        \Log::info('Matched resorts:', $matchedResortsArray);
+        return $matchedResortsArray;
     }
 
     // private function findMatchingResorts($image)
@@ -438,56 +489,6 @@ class ResortController extends Controller
 
     //     return $matchedResorts->toArray();
     // }
-
-    private function findMatchingResorts($image)
-{
-    $hasher = new ImageHash(new DifferenceHash());
-
-    $uploadedImagePath = $image->getRealPath();
-    if (!file_exists($uploadedImagePath)) {
-        \Log::error('Uploaded image file does not exist: ' . $uploadedImagePath);
-        throw new \Exception('Uploaded image file does not exist');
-    }
-
-    $uploadedImageHash = $hasher->hash($uploadedImagePath);
-
-    $resortImages = ResortImage::all();
-
-    $matchedResortIds = [];
-    $threshold = 10; // Increased threshold for more matches
-
-    foreach ($resortImages as $resortImage) {
-        $dbImagePath = public_path('images/' . $resortImage->image); // 确保路径正确
-        if (!file_exists($dbImagePath)) {
-            \Log::warning('Database image file does not exist: ' . $dbImagePath);
-            continue;
-        }
-
-        try {
-            $dbImageHash = $hasher->hash($dbImagePath);
-            $distance = $hasher->distance($uploadedImageHash, $dbImageHash);
-
-            \Log::info("Image comparison:", [
-                'uploaded_image' => $uploadedImagePath,
-                'db_image' => $dbImagePath,
-                'distance' => $distance
-            ]);
-
-            if ($distance <= $threshold) {
-                $matchedResortIds[] = $resortImage->resort_id;
-            }
-        } catch (\Exception $e) {
-            \Log::error('Error processing image: ' . $dbImagePath, ['error' => $e->getMessage()]);
-        }
-    }
-
-    $matchedResortIds = array_unique($matchedResortIds);
-    $matchedResorts = Resort::whereIn('id', $matchedResortIds)->get();
-
-    \Log::info('Matched resorts:', $matchedResorts->toArray());
-
-    return $matchedResorts->toArray();
-}
 
     // public function gpsSearch(Request $request)
     // {
