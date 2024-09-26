@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+use Intervention\Image\Facades\Image;
+use Jenssegers\ImageHash\ImageHash;
+use Jenssegers\ImageHash\Implementations\DifferenceHash;
+
 class HotelController extends Controller
 {
 
@@ -342,7 +346,7 @@ class HotelController extends Controller
     //Frontend Function
     public function AllHotel(){
 
-        $hotels = Hotel::with('images')->get();
+        $hotels = Hotel::with('images')->where('register_status', 1)->get();
 
         return view('frontend-auth.frontend-hotel.hotel',compact('hotels'));
     }
@@ -410,22 +414,110 @@ class HotelController extends Controller
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
-        $image = $request->file('image');
-        $matchedHotels = $this->findMatchingHotels($image);
-
-        return response()->json($matchedHotels);
+        try {
+            $image = $request->file('image');
+            $matchedHotels = $this->findMatchingHotels($image);
+            \Log::info('Matched hotels:', $matchedHotels);
+            return response()->json($matchedHotels);
+        } catch (\Exception $e) {
+            \Log::error('Error in uploadAndSearchHotels:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     private function findMatchingHotels($image)
     {
-        // 你的图片匹配逻辑
-        // 示例：通过图片名匹配
-        $imageName = $image->getClientOriginalName();
+        $hasher = new ImageHash(new DifferenceHash());
+        $uploadedImagePath = $image->getRealPath();
+        if (!file_exists($uploadedImagePath)) {
+            \Log::error('Uploaded image file does not exist: ' . $uploadedImagePath);
+            throw new \Exception('Uploaded image file does not exist');
+        }
+        $uploadedImageHash = $hasher->hash($uploadedImagePath);
+        $hotelImages = HotelImage::all();
+        $matchedHotelIds = [];
+        $threshold = 5; // 调整阈值以提高匹配准确性
 
-        // 假设 Resort 模型中有一个 image 字段存储图片名
-        return Hotel::where('image', $imageName)->get();
+        foreach ($hotelImages as $hotelImage) {
+            $dbImagePath = public_path('images/' . $hotelImage->image);
+            if (!file_exists($dbImagePath)) {
+                \Log::warning('Database image file does not exist: ' . $dbImagePath);
+                continue;
+            }
+            try {
+                $dbImageHash = $hasher->hash($dbImagePath);
+                $distance = $hasher->distance($uploadedImageHash, $dbImageHash);
+                \Log::info("Image comparison:", [
+                    'uploaded_image' => $uploadedImagePath,
+                    'db_image' => $dbImagePath,
+                    'distance' => $distance
+                ]);
+                if ($distance <= $threshold) {
+                    $matchedHotelIds[] = $hotelImage->hotel_id;
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error processing image: ' . $dbImagePath, ['error' => $e->getMessage()]);
+            }
+        }
+        $matchedHotelIds = array_unique($matchedHotelIds);
+        $matchedHotels = Hotel::with('images')->whereIn('id', $matchedHotelIds)->get();
+        $matchedHotelsArray = $matchedHotels->map(function ($hotel) {
+            $hotelArray = $hotel->toArray();
+            $hotelArray['images'] = $hotel->images->map(function ($image) {
+                return [
+                    'id' => $image->id,
+                    'image' => $image->image,
+                    'url' => asset('images/' . $image->image)
+                ];
+            });
+            return $hotelArray;
+        })->toArray();
+        \Log::info('Matched hotels:', $matchedHotelsArray);
+        return $matchedHotelsArray;
     }
+
+    // public function HotelgpsSearch(Request $request)
+    // {
+    //     $latitude = $request->query('latitude');
+    //     $longitude = $request->query('longitude');
+    //     $radius = 150; // 150 km range
+
+    //     try {
+    //         $hotels = DB::table('hotels')
+    //             ->select('hotels.*',
+    //                 DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
+    //             ->having('distance', '<', $radius)
+    //             ->orderBy('distance')
+    //             ->setBindings([$latitude, $longitude, $latitude])
+    //             ->get();
+
+    //         // Fetch the first image for each hotel
+    //         foreach ($hotels as $hotel) {
+    //             $image = DB::table('hotel_images')
+    //                 ->where('hotel_id', $hotel->id)
+    //                 ->value('image');
+    //             $hotel->image = $image;
+    //         }
+
+    //         return response()->json($hotels);
+
+    //     } catch (\Exception $e) {
+    //         // Log the error to Laravel's log files
+    //         \Log::error('Error in GPS Search:', [
+    //             'message' => $e->getMessage(),
+    //             'exception' => get_class($e),
+    //             'file' => $e->getFile(),
+    //             'line' => $e->getLine(),
+    //             'trace' => $e->getTraceAsString(), // Using getTraceAsString to limit the output
+    //         ]);
+
+    //         // Return a JSON response indicating failure
+    //         return response()->json([
+    //             'error' => 'Internal Server Error',
+    //             'message' => 'An error occurred while processing your request. Please try again.'
+    //         ], 500);
+    //     }
+    // }
 
     public function HotelgpsSearch(Request $request)
     {
@@ -437,12 +529,13 @@ class HotelController extends Controller
             $hotels = DB::table('hotels')
                 ->select('hotels.*',
                     DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
+                // ->where('register_status', 1) // 只选择 register_status 为 1 的酒店
                 ->having('distance', '<', $radius)
                 ->orderBy('distance')
                 ->setBindings([$latitude, $longitude, $latitude])
                 ->get();
 
-            // Fetch the first image for each hotel
+            // 获取每个酒店的第一张图片
             foreach ($hotels as $hotel) {
                 $image = DB::table('hotel_images')
                     ->where('hotel_id', $hotel->id)
@@ -453,19 +546,17 @@ class HotelController extends Controller
             return response()->json($hotels);
 
         } catch (\Exception $e) {
-            // Log the error to Laravel's log files
-            \Log::error('Error in GPS Search:', [
+            \Log::error('GPS 搜索错误:', [
                 'message' => $e->getMessage(),
                 'exception' => get_class($e),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(), // Using getTraceAsString to limit the output
+                'trace' => $e->getTraceAsString(),
             ]);
 
-            // Return a JSON response indicating failure
             return response()->json([
-                'error' => 'Internal Server Error',
-                'message' => 'An error occurred while processing your request. Please try again.'
+                'error' => '内部服务器错误',
+                'message' => '处理您的请求时发生错误。请重试。'
             ], 500);
         }
     }

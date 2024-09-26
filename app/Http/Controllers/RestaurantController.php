@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
+use Intervention\Image\Facades\Image;
+use Jenssegers\ImageHash\ImageHash;
+use Jenssegers\ImageHash\Implementations\DifferenceHash;
+
 class RestaurantController extends Controller
 {
 
@@ -290,7 +294,7 @@ class RestaurantController extends Controller
     //Frontend Function
     public function allRestaurant(){
 
-        $restaurant = Restaurant::with('images')->get();
+        $restaurant = Restaurant::with('images')->where('register_status', 1)->get();
 
         return view('frontend-auth.frontend-restaurant.restaurant',compact('restaurant'));
     }
@@ -351,21 +355,66 @@ class RestaurantController extends Controller
         $request->validate([
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-
-        $image = $request->file('image');
-        $matchedRestaurants = $this->findMatchingRestaurants($image);
-
-        return response()->json($matchedRestaurants);
+        try {
+            $image = $request->file('image');
+            $matchedRestaurants = $this->findMatchingRestaurants($image);
+            \Log::info('Matched restaurants:', $matchedRestaurants);
+            return response()->json($matchedRestaurants);
+        } catch (\Exception $e) {
+            \Log::error('Error in uploadAndSearchRestaurants:', ['error' => $e->getMessage()]);
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
     private function findMatchingRestaurants($image)
     {
-        // 你的图片匹配逻辑
-        // 示例：通过图片名匹配
-        $imageName = $image->getClientOriginalName();
+        $hasher = new ImageHash(new DifferenceHash());
+        $uploadedImagePath = $image->getRealPath();
+        if (!file_exists($uploadedImagePath)) {
+            \Log::error('Uploaded image file does not exist: ' . $uploadedImagePath);
+            throw new \Exception('Uploaded image file does not exist');
+        }
+        $uploadedImageHash = $hasher->hash($uploadedImagePath);
+        $restaurantImages = RestaurantImage::all();
+        $matchedRestaurantIds = [];
+        $threshold = 5; // 调整阈值以提高匹配准确性
 
-        // 假设 Resort 模型中有一个 image 字段存储图片名
-        return Restaurant::where('image', $imageName)->get();
+        foreach ($restaurantImages as $restaurantImage) {
+            $dbImagePath = public_path('images/' . $restaurantImage->image);
+            if (!file_exists($dbImagePath)) {
+                \Log::warning('Database image file does not exist: ' . $dbImagePath);
+                continue;
+            }
+            try {
+                $dbImageHash = $hasher->hash($dbImagePath);
+                $distance = $hasher->distance($uploadedImageHash, $dbImageHash);
+                \Log::info("Image comparison:", [
+                    'uploaded_image' => $uploadedImagePath,
+                    'db_image' => $dbImagePath,
+                    'distance' => $distance
+                ]);
+                if ($distance <= $threshold) {
+                    $matchedRestaurantIds[] = $restaurantImage->restaurant_id;
+                }
+            } catch (\Exception $e) {
+                \Log::error('Error processing image: ' . $dbImagePath, ['error' => $e->getMessage()]);
+            }
+        }
+        $matchedRestaurantIds = array_unique($matchedRestaurantIds);
+        $matchedRestaurants = Restaurant::with('images')->whereIn('id', $matchedRestaurantIds)->get();
+        $matchedRestaurantsArray = $matchedRestaurants->map(function ($restaurant) {
+            $restaurantArray = $restaurant->toArray();
+            $restaurantArray['images'] = $restaurant->images->map(function ($image) {
+                return [
+                    'id' => $image->id,
+                    'image' => $image->image,
+                    'url' => asset('images/' . $image->image)
+                ];
+            });
+            return $restaurantArray;
+        })->toArray();
+        \Log::info('Matched restaurants:', $matchedRestaurantsArray);
+        return $matchedRestaurantsArray;
     }
 
     public function RestaurantgpsSearch(Request $request)
@@ -378,6 +427,7 @@ class RestaurantController extends Controller
             $restaurants = DB::table('restaurants')
                 ->select('restaurants.*',
                     DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
+                // ->where('register_status', 1) // 只选择 register_status 为 1 的酒店
                 ->having('distance', '<', $radius)
                 ->orderBy('distance')
                 ->setBindings([$latitude, $longitude, $latitude])

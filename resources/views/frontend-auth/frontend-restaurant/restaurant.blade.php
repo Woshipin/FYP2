@@ -79,13 +79,11 @@
         body {
             background-color: #f8f9fa;
             font-family: 'Arial', sans-serif;
-            height: 100vh;
-            margin: 0;
         }
 
         .container {
             max-width: 1500px;
-            width: 100%;
+            margin: auto;
             background: #fff;
             padding: 30px;
             border-radius: 30px;
@@ -101,9 +99,7 @@
             width: 100%;
         }
 
-        .upload-form,
-        .gps-button,
-        .search-bar {
+        .upload-form {
             width: 30%;
         }
 
@@ -129,8 +125,8 @@
         }
 
         .upload-form button {
-            width: 50%;
-            padding: 6px;
+            width: 100%;
+            padding: 16px;
             border-radius: 15px;
             background: var(--blue);
             color: #fff;
@@ -145,35 +141,19 @@
             background: var(--dark-blue);
         }
 
-        .gps-button button,
-        .search-bar input {
-            width: 100%;
-            padding: 16px;
-            border-radius: 15px;
-            border: none;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        .gps-button button {
-            background: var(--blue);
-            color: #fff;
-            cursor: pointer;
-            transition: all .3s ease;
-        }
-
-        .gps-button button:hover {
-            background: var(--dark-blue);
-        }
-
-        .search-bar input {
-            border: 1px solid #ccc;
+        .image-display-container {
+            /* margin-top: 20px; */
+            border: 2px solid black;
+            padding: 10px;
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         :root {
             --blue: #007bff;
             --dark-blue: #0056b3;
-            --grey: #f8f9fa;
         }
     </style>
 
@@ -212,6 +192,7 @@
                     @csrf
                     <label for="imageInput">Select Image</label>
                     <input type="file" name="image" id="imageInput" required>
+                    <div class="image-display-container" id="imageDisplayContainer"></div>
                     <button type="submit" class="btn btn-primary">Detect Image</button>
                 </form>
             </div>
@@ -1029,30 +1010,15 @@
 
                 if (Array.isArray(restaurants)) {
                     restaurants.forEach(function(restaurant) {
-                        var mapIframe = restaurant.map;
-                        var coordinates = getCoordinatesFromIframe(mapIframe);
-                        if (coordinates) {
-                            var marker = L.marker([coordinates.lat, coordinates.lng]).addTo(map)
-                                .bindPopup('<b>' + restaurant.name + '</b><br>' + restaurant.address +
-                                    '<br>' + restaurant.state);
+                        if (restaurant.latitude && restaurant.longitude) {
+                            var marker = L.marker([restaurant.latitude, restaurant.longitude]).addTo(map)
+                                .bindPopup('<b>' + restaurant.name + '</b><br>' + restaurant.address);
                             markers.push(marker);
                         }
                     });
                 } else {
                     console.error('Expected an array of restaurants but received:', restaurants);
                 }
-            }
-
-            // 从 iframe URL 提取坐标函数
-            function getCoordinatesFromIframe(iframe) {
-                var match = iframe.match(/!2d([-0-9.]+)!3d([-0-9.]+)/);
-                if (match) {
-                    return {
-                        lat: parseFloat(match[2]),
-                        lng: parseFloat(match[1])
-                    };
-                }
-                return null;
             }
 
             // Update search results function
@@ -1074,7 +1040,8 @@
 
                             // Use the first image from the restaurant object if available, otherwise use a placeholder
                             var imageHTML = (restaurant.image || (restaurantImages.length > 0 &&
-                                    restaurantImages[0].image)) ?
+                                    restaurantImages[0]
+                                    .image)) ?
                                 `<img class="concert-image" src="{{ asset('images/') }}/${restaurant.image || restaurantImages[0].image}" alt="${restaurantName}" />` :
                                 `<img class="concert-image" src="{{ asset('images/placeholder-image.jpg') }}" alt="No Image" />`;
 
@@ -1145,6 +1112,12 @@
 
                 var formData = new FormData(this);
 
+                var fileInput = document.getElementById('imageInput');
+                if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                    console.error('No file selected');
+                    return;
+                }
+
                 fetch('{{ route('uploadAndSearchRestaurants') }}', {
                         method: 'POST',
                         body: formData,
@@ -1157,14 +1130,28 @@
                     .then(response => response.json())
                     .then(data => {
                         console.log('Upload and search data:', data);
-                        if (Array.isArray(data)) {
+
+                        // Display an alert with the detection result
+                        if (Array.isArray(data) && data.length > 0) {
+                            alert('Detected image result: ' + data.length +
+                                ' matching restaurants found.');
+                        } else {
+                            alert('Detected image result: No matching restaurants found.');
+                        }
+
+                        if (Array.isArray(data) && data.length > 0) {
                             updateMapMarkers(data);
                             updateSearchResults(data);
                         } else {
-                            console.error('Received data is not an array:', data);
+                            console.log('No matching restaurants found');
+                            updateSearchResults([]); // Update UI to show no results
                         }
                     })
-                    .catch(error => console.error('Error:', error));
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error occurred during image upload and search.');
+                        updateSearchResults([]); // Update UI to show error state
+                    });
             });
 
             // Initialize map
@@ -1287,5 +1274,24 @@
                 }
             }).showToast();
         @endif
+    </script>
+
+    // Show User Upload Image
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#imageInput').change(function(event) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.style.maxWidth = "100%";
+                    img.style.maxHeight = "100%";
+                    document.getElementById("imageDisplayContainer").innerHTML = '';
+                    document.getElementById("imageDisplayContainer").appendChild(img);
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            });
+        });
     </script>
 @endsection

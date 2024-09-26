@@ -374,6 +374,74 @@ class ResortController extends Controller
     //     return Resort::where('image', $imageName)->get();
     // }
 
+    // New
+    // public function uploadAndSearch(Request $request)
+    // {
+    //     $request->validate([
+    //         'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    //     ]);
+    //     try {
+    //         $image = $request->file('image');
+    //         $matchedResorts = $this->findMatchingResorts($image);
+    //         \Log::info('Matched resorts:', $matchedResorts);
+    //         return response()->json($matchedResorts);
+    //     } catch (\Exception $e) {
+    //         \Log::error('Error in uploadAndSearch:', ['error' => $e->getMessage()]);
+    //         return response()->json(['error' => $e->getMessage()], 500);
+    //     }
+    // }
+
+    // private function findMatchingResorts($image)
+    // {
+    //     $hasher = new ImageHash(new DifferenceHash());
+    //     $uploadedImagePath = $image->getRealPath();
+    //     if (!file_exists($uploadedImagePath)) {
+    //         \Log::error('Uploaded image file does not exist: ' . $uploadedImagePath);
+    //         throw new \Exception('Uploaded image file does not exist');
+    //     }
+    //     $uploadedImageHash = $hasher->hash($uploadedImagePath);
+    //     $resortImages = ResortImage::all();
+    //     $matchedResortIds = [];
+    //     $threshold = 10;
+
+    //     foreach ($resortImages as $resortImage) {
+    //         $dbImagePath = public_path('images/' . $resortImage->image);
+    //         if (!file_exists($dbImagePath)) {
+    //             \Log::warning('Database image file does not exist: ' . $dbImagePath);
+    //             continue;
+    //         }
+    //         try {
+    //             $dbImageHash = $hasher->hash($dbImagePath);
+    //             $distance = $hasher->distance($uploadedImageHash, $dbImageHash);
+    //             \Log::info("Image comparison:", [
+    //                 'uploaded_image' => $uploadedImagePath,
+    //                 'db_image' => $dbImagePath,
+    //                 'distance' => $distance
+    //             ]);
+    //             if ($distance <= $threshold) {
+    //                 $matchedResortIds[] = $resortImage->resort_id;
+    //             }
+    //         } catch (\Exception $e) {
+    //             \Log::error('Error processing image: ' . $dbImagePath, ['error' => $e->getMessage()]);
+    //         }
+    //     }
+    //     $matchedResortIds = array_unique($matchedResortIds);
+    //     $matchedResorts = Resort::with('images')->whereIn('id', $matchedResortIds)->get();
+    //     $matchedResortsArray = $matchedResorts->map(function ($resort) {
+    //         $resortArray = $resort->toArray();
+    //         $resortArray['images'] = $resort->images->map(function ($image) {
+    //             return [
+    //                 'id' => $image->id,
+    //                 'image' => $image->image,
+    //                 'url' => asset('images/' . $image->image)
+    //             ];
+    //         });
+    //         return $resortArray;
+    //     })->toArray();
+    //     \Log::info('Matched resorts:', $matchedResortsArray);
+    //     return $matchedResortsArray;
+    // }
+
     public function uploadAndSearch(Request $request)
     {
         $request->validate([
@@ -401,7 +469,8 @@ class ResortController extends Controller
         $uploadedImageHash = $hasher->hash($uploadedImagePath);
         $resortImages = ResortImage::all();
         $matchedResortIds = [];
-        $threshold = 10;
+        $threshold = 5; // 调整阈值以提高匹配准确性
+
         foreach ($resortImages as $resortImage) {
             $dbImagePath = public_path('images/' . $resortImage->image);
             if (!file_exists($dbImagePath)) {
@@ -550,6 +619,7 @@ class ResortController extends Controller
             $resorts = DB::table('resorts')
                 ->select('resorts.*',
                     DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
+                // ->where('register_status', 1) // 只选择 register_status 为 1 的酒店
                 ->having('distance', '<', $radius)
                 ->orderBy('distance')
                 ->setBindings([$latitude, $longitude, $latitude])

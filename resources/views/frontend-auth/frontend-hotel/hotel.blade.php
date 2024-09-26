@@ -82,13 +82,11 @@
         body {
             background-color: #f8f9fa;
             font-family: 'Arial', sans-serif;
-            height: 100vh;
-            margin: 0;
         }
 
         .container {
             max-width: 1500px;
-            width: 100%;
+            margin: auto;
             background: #fff;
             padding: 30px;
             border-radius: 30px;
@@ -104,9 +102,7 @@
             width: 100%;
         }
 
-        .upload-form,
-        .gps-button,
-        .search-bar {
+        .upload-form {
             width: 30%;
         }
 
@@ -132,8 +128,8 @@
         }
 
         .upload-form button {
-            width: 50%;
-            padding: 6px;
+            width: 100%;
+            padding: 16px;
             border-radius: 15px;
             background: var(--blue);
             color: #fff;
@@ -148,35 +144,19 @@
             background: var(--dark-blue);
         }
 
-        .gps-button button,
-        .search-bar input {
-            width: 100%;
-            padding: 16px;
-            border-radius: 15px;
-            border: none;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        .gps-button button {
-            background: var(--blue);
-            color: #fff;
-            cursor: pointer;
-            transition: all .3s ease;
-        }
-
-        .gps-button button:hover {
-            background: var(--dark-blue);
-        }
-
-        .search-bar input {
-            border: 1px solid #ccc;
+        .image-display-container {
+            /* margin-top: 20px; */
+            border: 2px solid black;
+            padding: 10px;
+            min-height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         :root {
             --blue: #007bff;
             --dark-blue: #0056b3;
-            --grey: #f8f9fa;
         }
     </style>
 
@@ -224,6 +204,7 @@
                     @csrf
                     <label for="imageInput">Select Image</label>
                     <input type="file" name="image" id="imageInput" required>
+                    <div class="image-display-container" id="imageDisplayContainer"></div>
                     <button type="submit" class="btn btn-primary">Detect Image</button>
                 </form>
             </div>
@@ -1087,7 +1068,7 @@
     </script> --}}
 
     {{-- New Full Real Time Search, Detection Image and GPS Function --}}
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             var map = null;
             var markers = [];
@@ -1315,6 +1296,255 @@
                 }
             });
         });
+    </script> --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = null;
+            var markers = [];
+            var userMarker = null; // 存储用户标记
+            var hotels = <?php echo json_encode($hotels); ?>;
+
+            // Initialize map function
+            function initMap() {
+                if (map === null) {
+                    map = L.map('map').setView([4.2105, 101.9758], 7);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                }
+            }
+
+            // Update map markers function
+            function updateMapMarkers(hotels) {
+                if (map === null) {
+                    console.error('Map not initialized');
+                    return;
+                }
+
+                // 移除所有酒店标记
+                markers.forEach(function(marker) {
+                    if (marker !== userMarker) { // 跳过用户标记
+                        map.removeLayer(marker);
+                    }
+                });
+                markers = markers.filter(marker => marker !== userMarker); // 过滤掉用户标记
+
+                if (Array.isArray(hotels)) {
+                    hotels.forEach(function(hotel) {
+                        if (hotel.latitude && hotel.longitude) {
+                            var marker = L.marker([hotel.latitude, hotel.longitude]).addTo(map)
+                                .bindPopup('<b>' + hotel.name + '</b><br>' + hotel.address);
+                            markers.push(marker);
+                        }
+                    });
+                } else {
+                    console.error('Expected an array of hotels but received:', hotels);
+                }
+            }
+
+            // Update search results function
+            function updateSearchResults(filteredHotels) {
+                var resultsContainer = $('#searchResultsContainer');
+                resultsContainer.empty();
+
+                if (Array.isArray(filteredHotels) && filteredHotels.length > 0) {
+                    filteredHotels.forEach(function(hotel) {
+                        if (hotel.register_status === 1) {
+                            var isDisabled = hotel.status === 1;
+                            const hotelId = hotel.id;
+                            var hotelName = hotel.name;
+                            var hotelAddress = hotel.address;
+                            var hotelState = hotel.state;
+                            var hotelCountry = hotel.country;
+                            var hotelDescription = hotel.description;
+                            var hotelImages = hotel.images || [];
+
+                            // Use the first image from the hotel object if available, otherwise use a placeholder
+                            var imageHTML = (hotel.image || (hotelImages.length > 0 && hotelImages[0]
+                                    .image)) ?
+                                `<img class="concert-image" src="{{ asset('images/') }}/${hotel.image || hotelImages[0].image}" alt="${hotelName}" />` :
+                                `<img class="concert-image" src="{{ asset('images/placeholder-image.jpg') }}" alt="No Image" />`;
+
+                            var hotelHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') + '">' +
+                                '<div class="concert-main" id="hotelcard_' + hotelId + '">' +
+                                imageHTML +
+                                '<div class="concert-content">' +
+                                '<h2 class="concert-title">' +
+                                '<i class="fas fa-hotel"></i> ' + hotelName + ' ' +
+                                '</h2>' +
+                                '<p class="concert-description">' +
+                                '<i class="fas fa-info-circle"></i> ' + hotelDescription +
+                                '</p>' +
+                                '<div class="concert-creator">' +
+                                '<p><i class="fas fa-map-marker-alt"></i> ' + hotelAddress + '</p>' +
+                                '</div>' +
+                                '<div class="concert-action-container">' +
+                                '<p>' + new Date().toLocaleString('en-US', {
+                                    timeZone: 'Asia/Kuala_Lumpur'
+                                }) + '</p>' +
+                                (isDisabled ?
+                                    '<a href="{{ url('Hoteldetail/') }}/' + hotelId +
+                                    '/view" class="concert-action disabled">Closed</a>' :
+                                    '<form id="wishlistForm" action="{{ url('/wishlist/add/hotel') }}/' +
+                                    hotelId + '" method="POST">' +
+                                    '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
+                                    '<a href="{{ url('Hoteldetail/') }}/' + hotelId +
+                                    '/view" class="concert-action" id="viewhotel' + hotelId +
+                                    '">Book Now</a>'
+                                ) +
+                                '</div>' +
+                                '</div>' +
+                                '</div>';
+
+                            resultsContainer.append(hotelHTML);
+                        }
+                    });
+                } else {
+                    resultsContainer.html(
+                        '<p style="margin-top:40px; font-size:24px; display:block">No Hotels Found</p>');
+                }
+            }
+
+            // Perform search function
+            function performSearch() {
+                var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
+                var filteredHotels = hotels.filter(function(hotel) {
+                    return hotel.name.toLowerCase().includes(searchInputValue) ||
+                        hotel.country.toLowerCase().includes(searchInputValue) ||
+                        hotel.state.toLowerCase().includes(searchInputValue) ||
+                        hotel.address.toLowerCase().includes(searchInputValue) ||
+                        hotel.description.toLowerCase().includes(searchInputValue);
+                });
+
+                updateMapMarkers(filteredHotels);
+                updateSearchResults(filteredHotels);
+            }
+
+            // Listen for search input changes
+            document.getElementById('searchInput').addEventListener('input', function() {
+                performSearch();
+            });
+
+            // Listen for image upload form submit event
+            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                var fileInput = document.getElementById('imageInput');
+                if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                    console.error('No file selected');
+                    return;
+                }
+
+                fetch('{{ route('uploadAndSearchHotels') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Upload and search data:', data);
+
+                        // Display an alert with the detection result
+                        if (Array.isArray(data) && data.length > 0) {
+                            alert('Detected image result: ' + data.length + ' matching resorts found.');
+                        } else {
+                            alert('Detected image result: No matching resorts found.');
+                        }
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.log('No matching resorts found');
+                            updateSearchResults([]); // Update UI to show no results
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error occurred during image upload and search.');
+                        updateSearchResults([]); // Update UI to show error state
+                    });
+            });
+
+            // Initialize map
+            initMap();
+
+            // Display all hotels on page load
+            if (Array.isArray(hotels)) {
+                updateMapMarkers(hotels);
+                updateSearchResults(hotels);
+            } else {
+                console.error('hotels is not an array:', hotels);
+            }
+
+            // Fetch nearby hotels function
+            function fetchNearbyHotels(latitude, longitude) {
+                fetch(`/hotel-gps-search?latitude=${latitude}&longitude=${longitude}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Nearby hotels data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => console.error('Error fetching nearby hotels:', error));
+            }
+
+            // Listen for Open GPS button click event
+            document.getElementById('openGPSButton').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+
+                        if (map === null) {
+                            initMap();
+                        }
+
+                        // 使用默认图标添加用户标记
+                        if (userMarker) {
+                            map.removeLayer(userMarker); // 移除之前的用户标记
+                        }
+                        userMarker = L.marker([latitude, longitude]).addTo(map)
+                            .bindPopup('<b>您在这里</b>').openPopup();
+                        markers.push(userMarker);
+
+                        // 在用户位置绘制圆圈代表搜索半径
+                        var searchRadius = L.circle([latitude, longitude], {
+                            color: 'red',
+                            fillColor: '#f03',
+                            fillOpacity: 0.5,
+                            radius: 150000 // 半径单位为米，150公里需要转换为米
+                        }).addTo(map);
+
+                        map.setView([latitude, longitude], 10); // 调整视图焦点到用户位置
+
+                        // 请求附近酒店数据
+                        fetchNearbyHotels(latitude, longitude);
+                    }, function(error) {
+                        console.error('地理定位错误:', error);
+                    });
+                } else {
+                    console.error('此浏览器不支持地理定位。');
+                }
+            });
+        });
     </script>
 
     // {{-- Pusher JS Disabled Function --}}
@@ -1345,7 +1575,6 @@
 
     // {{-- Toastr JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
     <script>
         @if (Session::has('success'))
             Toastify({
@@ -1364,5 +1593,24 @@
                 }
             }).showToast();
         @endif
+    </script>
+
+    // {{-- Show User Upload Image --}}
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#imageInput').change(function(event) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var img = document.createElement("img");
+                    img.src = e.target.result;
+                    img.style.maxWidth = "100%";
+                    img.style.maxHeight = "100%";
+                    document.getElementById("imageDisplayContainer").innerHTML = '';
+                    document.getElementById("imageDisplayContainer").appendChild(img);
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            });
+        });
     </script>
 @endsection

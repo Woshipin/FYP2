@@ -2138,6 +2138,7 @@
         });
     </script> --}}
 
+    {{-- Final Full Real Time Search, Detection Image and GPS Function--}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var map = null;
@@ -2298,6 +2299,53 @@
             //         })
             //         .catch(error => {
             //             console.error('Error:', error);
+            //             updateSearchResults([]); // Update UI to show error state
+            //         });
+            // });
+
+            // New
+            // document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+            //     event.preventDefault();
+
+            //     var formData = new FormData(this);
+
+            //     var fileInput = document.getElementById('imageInput');
+            //     if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+            //         console.error('No file selected');
+            //         return;
+            //     }
+
+            //     fetch('{{ route('uploadAndSearch') }}', {
+            //             method: 'POST',
+            //             body: formData,
+            //             headers: {
+            //                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+            //                     .getAttribute('content'),
+            //                 'X-Requested-With': 'XMLHttpRequest'
+            //             }
+            //         })
+            //         .then(response => response.json())
+            //         .then(data => {
+            //             console.log('Upload and search data:', data);
+
+            //             // Display an alert with the detection result
+            //             if (Array.isArray(data) && data.length > 0) {
+            //                 alert('Detected image result: ' + data.length + ' matching resorts found.');
+            //             } else {
+            //                 alert('Detected image result: No matching resorts found.');
+            //             }
+
+            //             if (Array.isArray(data) && data.length > 0) {
+            //                 updateMapMarkers(data);
+            //                 updateSearchResults(data);
+            //             } else {
+            //                 console.log('No matching resorts found');
+            //                 updateSearchResults([]); // Update UI to show no results
+            //             }
+            //         })
+            //         .catch(error => {
+            //             console.error('Error:', error);
+            //             alert('Error occurred during image upload and search.');
             //             updateSearchResults([]); // Update UI to show error state
             //         });
             // });
@@ -2478,4 +2526,5 @@
             });
         });
     </script>
+    
 @endsection
