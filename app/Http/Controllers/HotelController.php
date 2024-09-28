@@ -344,11 +344,49 @@ class HotelController extends Controller
     // -------------------------------------------------Frontend----------------------------------------------------------- //
 
     //Frontend Function
-    public function AllHotel(){
+    // public function AllHotel(){
 
-        $hotels = Hotel::with('images')->where('register_status', 1)->get();
+    //     $hotels = Hotel::with('images')->where('register_status', 1)->get();
 
-        return view('frontend-auth.frontend-hotel.hotel',compact('hotels'));
+    //     return view('frontend-auth.frontend-hotel.hotel',compact('hotels'));
+    // }
+
+    // public function AllHotel(Request $request){
+    //     $latitude = $request->query('latitude');
+    //     $longitude = $request->query('longitude');
+    //     $radius = 150; // 150 km range
+
+    //     if ($latitude && $longitude) {
+    //         $hotels = Hotel::select('hotels.*')
+    //             ->selectRaw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$latitude, $longitude, $latitude])
+    //             ->where('register_status', 1)
+    //             ->having('distance', '<', $radius)
+    //             ->orderBy('distance')
+    //             ->with('images')
+    //             ->get();
+    //     } else {
+    //         $hotels = Hotel::with('images')->where('register_status', 1)->get();
+    //     }
+
+    //     return view('frontend-auth.frontend-hotel.hotel', compact('hotels'));
+    // }
+
+    public function AllHotel(Request $request){
+        $latitude = $request->query('latitude');
+        $longitude = $request->query('longitude');
+        $radius = 150; // 150 km range
+        if ($latitude && $longitude) {
+            $hotels = Hotel::select('hotels.*')
+                ->selectRaw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$latitude, $longitude, $latitude])
+                ->where('register_status', 1)
+                ->having('distance', '<', $radius)
+                ->orderBy('distance')
+                ->with('images')
+                ->get();
+        } else {
+            $hotels = Hotel::with('images')->where('register_status', 1)->get();
+        }
+        return view('frontend-auth.frontend-hotel.hotel', compact('hotels'));
     }
 
     public function HotelDetail($id)
@@ -529,7 +567,7 @@ class HotelController extends Controller
             $hotels = DB::table('hotels')
                 ->select('hotels.*',
                     DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
-                // ->where('register_status', 1) // 只选择 register_status 为 1 的酒店
+                ->where('register_status', 1) // 只选择 register_status 为 1 的酒店
                 ->having('distance', '<', $radius)
                 ->orderBy('distance')
                 ->setBindings([$latitude, $longitude, $latitude])

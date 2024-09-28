@@ -31,7 +31,7 @@
         .concert-main {
             color: #C9C3C2;
             /* margin: 10px;
-                                                                                                                                                                                        padding: 10px; */
+                                                                                                                                                                                                padding: 10px; */
         }
     </style>
 
