@@ -57,23 +57,17 @@
 
         .wallet-card.grey-color {
             border: 2px solid #a2c2e2;
-            /* Light blue border */
             box-shadow: 0 0 15px rgba(162, 194, 226, 0.7);
-            /* Light blue glow */
         }
 
         .wallet-card.yellow-color {
             border: 2px solid #f6e6a1;
-            /* Light yellow border */
             box-shadow: 0 0 15px rgba(246, 230, 161, 0.7);
-            /* Light yellow glow */
         }
 
         .wallet-card.plain-color {
             border: 2px solid #f0f0f0;
-            /* Light white border */
             box-shadow: 0 0 15px rgba(240, 240, 240, 0.7);
-            /* Light white glow */
         }
 
         .wallet-card .info {
@@ -138,7 +132,6 @@
             background-color: var(--table-row-odd-bg-color);
         }
 
-        /* Toggle Button */
         .toggle-btn {
             position: absolute;
             top: 10%;
@@ -160,7 +153,6 @@
             font-size: 20px;
         }
 
-        /* Dark mode styles */
         .dark-mode {
             background-color: #59596f;
             color: white;
@@ -175,7 +167,6 @@
             color: white;
         }
 
-        /* Light mode styles */
         .light-mode {
             background-color: #f0f0f0;
             color: black;
@@ -198,7 +189,7 @@
     <div class="container">
         <h3>Admin Wallet Dashboard</h3>
 
-        @if ($adminwallets)
+        @if ($adminwallets->count() > 0)
             <div class="wallet-card-container">
                 <div class="wallet-card grey-color">
                     <div class="info">
@@ -231,21 +222,29 @@
             <table>
                 <thead>
                     <tr>
-                        <th class="night">Transaction ID</th>
-                        <th class="night">Type</th>
-                        <th class="night">Amount</th>
-                        <th class="night">Date</th>
+                        <th class="night">ID</th>
+                        <th class="night">Balance</th>
+                        <th class="night">Tax</th>
+                        <th class="night">User Deposit</th>
+                        <th class="night">Transfer Balance To Owner</th>
+                        <th class="night">Transfer Deposit To Owner</th>
+                        <th class="night">Transfer Date</th>
+                        <th class="night">Transfer Time</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {{-- @foreach ($transactions as $transaction) --}}
-                    <tr>
-                        <td class="night" style="padding-left: 10px">aaa</td>
-                        <td class="night" style="padding-left: 10px">aaa</td>
-                        <td class="night" style="padding-left: 10px">aaa</td>
-                        <td class="night" style="padding-left: 10px">aaa</td>
-                    </tr>
-                    {{-- @endforeach --}}
+                    @foreach ($adminwallets as $wallet)
+                        <tr>
+                            <td class="night" style="padding-left: 10px">{{ $wallet->id }}</td>
+                            <td class="night" style="padding-left: 10px">RM{{ $wallet->balance }}</td>
+                            <td class="night" style="padding-left: 10px">RM{{ $wallet->tax }}</td>
+                            <td class="night" style="padding-left: 10px">RM{{ $wallet->user_deposit }}</td>
+                            <td class="night" style="padding-left: 10px">RM{{ $wallet->refund_user_balance }}</td>
+                            <td class="night" style="padding-left: 10px">RM{{ $wallet->refund_user_deposit }}</td>
+                            <td class="night" style="padding-left: 10px">{{ \Carbon\Carbon::parse($wallet->created_at)->format('Y-m-d') }}</td>
+                            <td class="night" style="padding-left: 10px">{{ \Carbon\Carbon::parse($wallet->updated_at)->format('H:i:s') }}</td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         @else
@@ -257,7 +256,6 @@
         </button>
     </div>
 
-    {{-- Dark Mode and White Mode --}}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const toggleBtn = document.getElementById("toggle-mode");
@@ -302,10 +300,8 @@
                 }
             });
 
-            // Set initial mode to dark mode or light mode based on preference
             const initialMode = localStorage.getItem('mode') || 'dark-mode';
             applyMode(initialMode === 'dark-mode' ? darkMode : lightMode, initialMode);
         });
     </script>
-
 @endsection

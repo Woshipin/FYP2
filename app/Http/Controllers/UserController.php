@@ -13,6 +13,7 @@ use App\Models\Restaurant;
 use App\Models\Resort;
 use App\Models\Hotel;
 use App\Models\MyWallet;
+use App\Models\AdminWallet;
 use App\Models\FaceRecognition;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
@@ -523,6 +524,23 @@ class UserController extends Controller
     }
 
     // 显示用户钱包
+    // public function wallet($id)
+    // {
+    //     $user = User::findOrFail($id);
+    //     $wallet = MyWallet::firstOrCreate(
+    //         ['user_id' => $id],
+    //         [
+    //             'user_name' => $user->name,
+    //             'profit' => 0,
+    //             'balance' => 0,
+    //             'refund_price' => 0,
+    //             'refund_deposit' => 0
+    //         ]
+    //     );
+    //     // 在这里添加逻辑来处理钱包页面的显示
+    //     return view('backend-user.MyWallet', compact('user', 'wallet'));
+    // }
+
     public function wallet($id)
     {
         $user = User::findOrFail($id);
@@ -536,8 +554,19 @@ class UserController extends Controller
                 'refund_deposit' => 0
             ]
         );
-        // 在这里添加逻辑来处理钱包页面的显示
-        return view('backend-user.MyWallet', compact('user', 'wallet'));
+
+        // 获取所有钱包记录
+        $walletRecords = MyWallet::where('user_id', $id)->get();
+
+        // 计算总和
+        $totalBalance = $walletRecords->sum('balance');
+        $totalProfit = $walletRecords->sum('profit');
+        $totalRefundDeposit = $walletRecords->sum('refund_deposit');
+
+        $adminwallets = AdminWallet::all();
+
+        return view('backend-user.MyWallet', compact('user', 'wallet', 'walletRecords', 'totalBalance', 'totalProfit',
+         'totalRefundDeposit','adminwallets'));
     }
 
     // public function showUploadPhotoForm()

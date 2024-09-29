@@ -187,7 +187,7 @@ class AdminController extends Controller
         $totalTax = AdminWallet::sum('tax');
         $totalUserDeposit = AdminWallet::sum('user_deposit');
 
-        return view('admin.AdminWallet', compact('adminwallets', 'totalBalance','totalTax','totalUserDeposit'));
+        return view('admin.AdminWallet', compact('adminwallets', 'totalBalance', 'totalTax', 'totalUserDeposit'));
     }
 
     // 'restaurantlabels', 'restaurantdata','resortlabels','resortdata',
