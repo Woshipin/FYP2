@@ -17,7 +17,7 @@ class BookingResort extends Model
 
     public function resort()
     {
-        return $this->belongsTo(Resort::class);
+        return $this->belongsTo(Resort::class, 'resort_id');
     }
 
     public function user()

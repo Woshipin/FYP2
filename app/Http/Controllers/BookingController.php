@@ -27,6 +27,9 @@ use Illuminate\Support\Collection;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
+use App\Mail\ResortPaymentVerification;
+use App\Mail\HotelPaymentVerification;
+use App\Mail\RestaurantPaymentVerification;
 
 class BookingController extends Controller
 {
@@ -371,7 +374,7 @@ class BookingController extends Controller
 
     public function verifyRestaurantPayment(Request $request, $id)
     {
-        $VerifyRestaurant = BookingRestaurant::findOrFail($id);
+        $VerifyRestaurant = BookingRestaurant::with('restaurant', 'user')->findOrFail($id);
 
         // 获取从请求中传递过来的验证信息
         $user_id = $request->input('user_id');
@@ -386,14 +389,16 @@ class BookingController extends Controller
             $VerifyRestaurant->checkin_date == $checkin_date &&
             $VerifyRestaurant->checkout_date == $checkout_date &&
             $VerifyRestaurant->verify_code == $verify_code
-            )
-        {
-
+        ) {
             // 如果匹配，则更新支付状态
             $VerifyRestaurant->payment_status = 1;
             $VerifyRestaurant->save();
 
-            return view('backend-user.verify.verifyrestaurant',['VerifyRestaurant' => $VerifyRestaurant])->with('success', 'Payment status updated successfully.');
+            // 发送邮件到 ahpin7762@gmail.com
+            Mail::to('ahpin7762@gmail.com')->send(new RestaurantPaymentVerification($VerifyRestaurant));
+
+            // 返回之前的页面，并显示成功消息
+            return redirect()->back()->with('success', 'Payment status updated successfully and verification information sent to your email.');
         } else {
             // 如果不匹配，则返回验证失败的信息
             return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
@@ -963,7 +968,7 @@ class BookingController extends Controller
 
     public function verifyResortPayment(Request $request, $id)
     {
-        $VerifyResort = BookingResort::findOrFail($id);
+        $VerifyResort = BookingResort::with('resort', 'user')->findOrFail($id);
 
         // 获取从请求中传递过来的验证信息
         $user_id = $request->input('user_id');
@@ -980,14 +985,16 @@ class BookingController extends Controller
             $VerifyResort->checkout_date == $checkout_date &&
             $VerifyResort->total_price == $total_price &&
             $VerifyResort->verify_code == $verify_code
-            )
-        {
-
+        ) {
             // 如果匹配，则更新支付状态
             $VerifyResort->payment_status = 1;
             $VerifyResort->save();
 
-            return view('backend-user.verify.verifyresort',['VerifyResort' => $VerifyResort])->with('success', 'Payment status updated successfully.');
+            // 发送邮件到 ahpin7762@gmail.com
+            Mail::to('ahpin7762@gmail.com')->send(new ResortPaymentVerification($VerifyResort));
+
+            // 返回之前的页面，并显示成功消息
+            return redirect()->back()->with('success', 'Payment status updated successfully and verification information sent to your email.');
         } else {
             // 如果不匹配，则返回验证失败的信息
             return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
@@ -1695,7 +1702,7 @@ class BookingController extends Controller
 
     public function verifyHotelPayment(Request $request, $id)
     {
-        $VerifyHotel = BookingHotel::findOrFail($id);
+        $VerifyHotel = BookingHotel::with('hotel', 'user')->findOrFail($id);
 
         // 获取从请求中传递过来的验证信息
         $user_id = $request->input('user_id');
@@ -1712,14 +1719,16 @@ class BookingController extends Controller
             $VerifyHotel->checkout_date == $checkout_date &&
             $VerifyHotel->total_price == $total_price &&
             $VerifyHotel->verify_code == $verify_code
-            )
-        {
-
+        ) {
             // 如果匹配，则更新支付状态
             $VerifyHotel->payment_status = 1;
             $VerifyHotel->save();
 
-            return view('backend-user.verify.verifyhotel',['VerifyHotel' => $VerifyHotel])->with('success', 'Payment status updated successfully.');
+            // 发送邮件到 ahpin7762@gmail.com
+            Mail::to('ahpin7762@gmail.com')->send(new HotelPaymentVerification($VerifyHotel));
+
+            // 返回之前的页面，并显示成功消息
+            return redirect()->back()->with('success', 'Payment status updated successfully and verification information sent to your email.');
         } else {
             // 如果不匹配，则返回验证失败的信息
             return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
