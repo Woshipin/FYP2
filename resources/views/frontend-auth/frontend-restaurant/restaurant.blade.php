@@ -980,10 +980,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             var map = null;
             var markers = [];
-            var userMarker = null; // 存储用户标记
+            var userMarker = null;
             var restaurants = <?php echo json_encode($restaurant); ?>;
 
-            // Initialize map function
             function initMap() {
                 if (map === null) {
                     map = L.map('map').setView([4.2105, 101.9758], 7);
@@ -993,26 +992,25 @@
                 }
             }
 
-            // Update map markers function
             function updateMapMarkers(restaurants) {
                 if (map === null) {
                     console.error('Map not initialized');
                     return;
                 }
 
-                // 移除所有餐馆标记
                 markers.forEach(function(marker) {
-                    if (marker !== userMarker) { // 跳过用户标记
+                    if (marker !== userMarker) {
                         map.removeLayer(marker);
                     }
                 });
-                markers = markers.filter(marker => marker !== userMarker); // 过滤掉用户标记
+                markers = markers.filter(marker => marker !== userMarker);
 
                 if (Array.isArray(restaurants)) {
                     restaurants.forEach(function(restaurant) {
-                        if (restaurant.latitude && restaurant.longitude) {
+                        if (restaurant.latitude && restaurant.longitude && restaurant.register_status === 1) {
                             var marker = L.marker([restaurant.latitude, restaurant.longitude]).addTo(map)
-                                .bindPopup('<b>' + restaurant.name + '</b><br>' + restaurant.address);
+                                .bindPopup('<b>' + restaurant.name + '</b><br>' + restaurant.address + '<br>' +
+                                    restaurant.price);
                             markers.push(marker);
                         }
                     });
@@ -1021,7 +1019,6 @@
                 }
             }
 
-            // Update search results function
             function updateSearchResults(filteredRestaurants) {
                 var resultsContainer = $('#searchResultsContainer');
                 resultsContainer.empty();
@@ -1038,12 +1035,13 @@
                             var restaurantDescription = restaurant.description;
                             var restaurantImages = restaurant.images || [];
 
-                            // Use the first image from the restaurant object if available, otherwise use a placeholder
-                            var imageHTML = (restaurant.image || (restaurantImages.length > 0 &&
-                                    restaurantImages[0]
+                            var imageURL = (restaurant.image || (restaurantImages.length > 0 && restaurantImages[0]
                                     .image)) ?
-                                `<img class="concert-image" src="{{ asset('images/') }}/${restaurant.image || restaurantImages[0].image}" alt="${restaurantName}" />` :
-                                `<img class="concert-image" src="{{ asset('images/placeholder-image.jpg') }}" alt="No Image" />`;
+                                "{{ asset('images/') }}/" + (restaurant.image || restaurantImages[0].image) :
+                                "{{ asset('images/placeholder-image.jpg') }}";
+
+                            var imageHTML =
+                                `<img class="concert-image" src="${imageURL}" alt="${restaurantName}" />`;
 
                             var restaurantHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') +
                                 '">' +
@@ -1086,7 +1084,6 @@
                 }
             }
 
-            // Perform search function
             function performSearch() {
                 var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
                 var filteredRestaurants = restaurants.filter(function(restaurant) {
@@ -1101,12 +1098,10 @@
                 updateSearchResults(filteredRestaurants);
             }
 
-            // Listen for search input changes
             document.getElementById('searchInput').addEventListener('input', function() {
                 performSearch();
             });
 
-            // Listen for image upload form submit event
             document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
                 event.preventDefault();
 
@@ -1131,10 +1126,8 @@
                     .then(data => {
                         console.log('Upload and search data:', data);
 
-                        // Display an alert with the detection result
                         if (Array.isArray(data) && data.length > 0) {
-                            alert('Detected image result: ' + data.length +
-                                ' matching restaurants found.');
+                            alert('Detected image result: ' + data.length + ' matching restaurants found.');
                         } else {
                             alert('Detected image result: No matching restaurants found.');
                         }
@@ -1144,20 +1137,18 @@
                             updateSearchResults(data);
                         } else {
                             console.log('No matching restaurants found');
-                            updateSearchResults([]); // Update UI to show no results
+                            updateSearchResults([]);
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
                         alert('Error occurred during image upload and search.');
-                        updateSearchResults([]); // Update UI to show error state
+                        updateSearchResults([]);
                     });
             });
 
-            // Initialize map
             initMap();
 
-            // Display all restaurants on page load
             if (Array.isArray(restaurants)) {
                 updateMapMarkers(restaurants);
                 updateSearchResults(restaurants);
@@ -1165,7 +1156,6 @@
                 console.error('restaurants is not an array:', restaurants);
             }
 
-            // Fetch nearby restaurants function
             function fetchNearbyRestaurants(latitude, longitude) {
                 fetch(`/restaurant-gps-search?latitude=${latitude}&longitude=${longitude}`, {
                         method: 'GET',
@@ -1187,7 +1177,6 @@
                     .catch(error => console.error('Error fetching nearby restaurants:', error));
             }
 
-            // Listen for Open GPS button click event
             document.getElementById('openGPSButton').addEventListener('click', function() {
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(function(position) {
@@ -1198,31 +1187,28 @@
                             initMap();
                         }
 
-                        // 使用默认图标添加用户标记
                         if (userMarker) {
-                            map.removeLayer(userMarker); // 移除之前的用户标记
+                            map.removeLayer(userMarker);
                         }
                         userMarker = L.marker([latitude, longitude]).addTo(map)
-                            .bindPopup('<b>您在这里</b>').openPopup();
+                            .bindPopup('<b>You are here</b>').openPopup();
                         markers.push(userMarker);
 
-                        // 在用户位置绘制圆圈代表搜索半径
                         var searchRadius = L.circle([latitude, longitude], {
                             color: 'red',
                             fillColor: '#f03',
                             fillOpacity: 0.5,
-                            radius: 150000 // 半径单位为米，150公里需要转换为米
+                            radius: 150000
                         }).addTo(map);
 
-                        map.setView([latitude, longitude], 10); // 调整视图焦点到用户位置
+                        map.setView([latitude, longitude], 10);
 
-                        // 请求附近餐馆数据
                         fetchNearbyRestaurants(latitude, longitude);
                     }, function(error) {
-                        console.error('地理定位错误:', error);
+                        console.error('Geolocation error:', error);
                     });
                 } else {
-                    console.error('此浏览器不支持地理定位。');
+                    console.error('This browser does not support geolocation.');
                 }
             });
         });
@@ -1294,4 +1280,5 @@
             });
         });
     </script>
+
 @endsection

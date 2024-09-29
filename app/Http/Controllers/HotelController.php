@@ -371,21 +371,9 @@ class HotelController extends Controller
     //     return view('frontend-auth.frontend-hotel.hotel', compact('hotels'));
     // }
 
-    public function AllHotel(Request $request){
-        $latitude = $request->query('latitude');
-        $longitude = $request->query('longitude');
-        $radius = 150; // 150 km range
-        if ($latitude && $longitude) {
-            $hotels = Hotel::select('hotels.*')
-                ->selectRaw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance', [$latitude, $longitude, $latitude])
-                ->where('register_status', 1)
-                ->having('distance', '<', $radius)
-                ->orderBy('distance')
-                ->with('images')
-                ->get();
-        } else {
-            $hotels = Hotel::with('images')->where('register_status', 1)->get();
-        }
+    public function AllHotel()
+    {
+        $hotels = Hotel::with('images')->where('register_status', 1)->get();
         return view('frontend-auth.frontend-hotel.hotel', compact('hotels'));
     }
 
@@ -561,19 +549,19 @@ class HotelController extends Controller
     {
         $latitude = $request->query('latitude');
         $longitude = $request->query('longitude');
-        $radius = 150; // 150 km range
+        $radius = 150; // 50 km range
 
         try {
             $hotels = DB::table('hotels')
                 ->select('hotels.*',
                     DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
-                ->where('register_status', 1) // 只选择 register_status 为 1 的酒店
+                // ->where('register_status', 1) // 只选择 register_status 为 1 的酒店
                 ->having('distance', '<', $radius)
                 ->orderBy('distance')
                 ->setBindings([$latitude, $longitude, $latitude])
                 ->get();
 
-            // 获取每个酒店的第一张图片
+            // Fetch the first image for each hotel
             foreach ($hotels as $hotel) {
                 $image = DB::table('hotel_images')
                     ->where('hotel_id', $hotel->id)
@@ -584,17 +572,19 @@ class HotelController extends Controller
             return response()->json($hotels);
 
         } catch (\Exception $e) {
-            \Log::error('GPS 搜索错误:', [
+            // Log the error to Laravel's log files
+            \Log::error('Error in GPS Search:', [
                 'message' => $e->getMessage(),
                 'exception' => get_class($e),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
+                'trace' => $e->getTraceAsString(), // Using getTraceAsString to limit the output
             ]);
 
+            // Return a JSON response indicating failure
             return response()->json([
-                'error' => '内部服务器错误',
-                'message' => '处理您的请求时发生错误。请重试。'
+                'error' => 'Internal Server Error',
+                'message' => 'An error occurred while processing your request. Please try again.'
             ], 500);
         }
     }

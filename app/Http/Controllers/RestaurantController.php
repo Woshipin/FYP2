@@ -427,7 +427,7 @@ class RestaurantController extends Controller
             $restaurants = DB::table('restaurants')
                 ->select('restaurants.*',
                     DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
-                // ->where('register_status', 1) // 只选择 register_status 为 1 的酒店
+                // ->where('register_status', 1) // 只选择 register_status 为 1 的餐馆
                 ->having('distance', '<', $radius)
                 ->orderBy('distance')
                 ->setBindings([$latitude, $longitude, $latitude])

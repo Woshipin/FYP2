@@ -523,7 +523,7 @@
                                         <th>Restaurant Time</th>
                                         <th>Restaurant Type</th>
                                         <th>Restaurant Address</th>
-                                        <th>Restaurant Description</th>
+                                        {{-- <th>Restaurant Description</th> --}}
                                         <th>Open / Close</th>
                                         <th>Register Status</th>
                                         <th>ACTIONS</th>
@@ -578,7 +578,7 @@
                                                 <td>{{ $restaurant->time }}</td>
                                                 <td>{{ $restaurant->type }}</td>
                                                 <td>{{ $restaurant->address }}</td>
-                                                <td>{{ $restaurant->description }}</td>
+                                                {{-- <td>{{ $restaurant->description }}</td> --}}
                                                 <td>
                                                     @if ($restaurant->status == 0)
                                                         <a href="{{ url('changerestaurant-status/' . $restaurant->id) }}"
