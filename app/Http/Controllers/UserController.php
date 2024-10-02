@@ -563,10 +563,11 @@ class UserController extends Controller
         $totalProfit = $walletRecords->sum('profit');
         $totalRefundDeposit = $walletRecords->sum('refund_deposit');
 
-        $adminwallets = AdminWallet::all();
+        // 对 adminwallets 进行分页处理
+        $adminwallets = AdminWallet::paginate(10); // 每页显示10条记录
 
         return view('backend-user.MyWallet', compact('user', 'wallet', 'walletRecords', 'totalBalance', 'totalProfit',
-         'totalRefundDeposit','adminwallets'));
+        'totalRefundDeposit', 'adminwallets'));
     }
 
     // public function showUploadPhotoForm()

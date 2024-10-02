@@ -1,6 +1,7 @@
 @extends('frontend-auth.newlayout')
 
 @section('frontend-section')
+
     {{-- Payment Card CSS --}}
     <link rel="stylesheet" href="{{ asset('paymentcard/css/style.css') }}">
 
@@ -70,6 +71,11 @@
         }
     </style>
 
+    {{-- progress bar CSS --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- 在 head 标签中引入 Bootstrap CSS -->
+    {{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> --}}
+
     <br><br><br><br><br><br>
 
     <!-- Book Section Starts -->
@@ -94,7 +100,7 @@
                     <li class="custom-tab" data-tab="payment">Payment</li>
                 </ul>
 
-                <form action="{{ url('bookings') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ url('bookings') }}" method="post" enctype="multipart/form-data" id="bookingForm">
                     @csrf
 
                     {{-- Booking Restaurant Area --}}
@@ -287,6 +293,12 @@
                         </div>
                     </div>
 
+                    <!-- Porgress Bar -->
+                    <div class="progress mt-3" id="progressBarContainer" style="display: none;">
+                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
+                            aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+
                 </form>
             </div>
         </div>
@@ -294,6 +306,82 @@
     <!-- Book Section Ends -->
 
     <!-- /.container-fluid -->
+
+    <!------------------------------------------------------------ /.Js Area -------------------------------------------------------->
+
+    {{-- progress bar JS --}}
+    <!-- 在 body 标签底部引入 Bootstrap JS 和 jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    {{-- progress bar JS --}}
+    <script>
+        document.getElementById('submit-button').addEventListener('click', function(event) {
+            event.preventDefault(); // 阻止表单默认提交行为
+
+            // 显示进度条
+            let progressBarContainer = document.getElementById('progressBarContainer');
+            progressBarContainer.style.display = 'block';
+            let progressBar = document.querySelector('.progress-bar');
+            let width = 0;
+
+            let interval = setInterval(function() {
+                if (width >= 100) {
+                    clearInterval(interval);
+
+                    // 使用 AJAX 提交表单
+                    let form = document.getElementById('bookingForm');
+                    let formData = new FormData(form);
+
+                    fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Toastify({
+                                    text: data.message,
+                                    duration: 10000,
+                                    style: {
+                                        background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                    }
+                                }).showToast();
+                                window.location.href = "{{ route('home') }}";
+                            } else {
+                                Toastify({
+                                    text: data.message,
+                                    duration: 10000,
+                                    style: {
+                                        background: "linear-gradient(to right, #b90000, #c99396)"
+                                    }
+                                }).showToast();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Toastify({
+                                text: 'An error occurred while processing your request.',
+                                duration: 10000,
+                                style: {
+                                    background: "linear-gradient(to right, #b90000, #c99396)"
+                                }
+                            }).showToast();
+                        });
+                } else {
+                    width += 10;
+                    progressBar.style.width = width + '%';
+                    progressBar.setAttribute('aria-valuenow', width);
+                    progressBar.textContent = width + '%';
+                }
+            }, 500);
+        });
+    </script>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -430,134 +518,6 @@
             }
         }
     </script>
-
-    {{-- Jian An Slove Booking Restaurant Cheked --}}
-    {{-- <script>
-        $(document).ready(function() {
-
-            function stringToIntegerArray(array) {
-                return array.map(function(str) {
-                    return parseInt(str, 10);
-                });
-            }
-
-            // Define open and close times
-            var openTime = '08:00';
-            var closeTime = '20:00';
-
-            //disable
-            $('#check_in_time').prop('disabled', true);
-            $('#check_out_time').prop('disabled', true);
-            $('#table-select').prop('disabled', true);
-
-            //on change booking_date
-            $('#booking_date').change(function() {
-                $('#check_in_time').prop('disabled', false);
-
-            });
-
-            //on change check_in_time and get value from BookingController
-            $('#check_in_time').change(function() {
-                var date = $('#booking_date').val();
-                var time = $('#check_in_time').val();
-                var booked = @json($booked);
-                var results = @json($results);
-                var dateTime = date + ' ' + time + ':00';
-
-                console.log('booked', booked);
-                console.log('time', time);
-                console.log('datetime', dateTime);
-                console.log('results', results);
-
-                //Array
-                var excludedTableIds = [];
-
-                for (var key in booked) {
-                    if (booked.hasOwnProperty(key)) {
-                        var bookingDate = key;
-                        var tableIds = booked[key]; // Assuming tableIds is an array
-
-                        for (var i = 0; i < tableIds.length; i++) {
-                            if (bookingDate == dateTime) {
-                                excludedTableIds.push(tableIds[i]);
-                            }
-                        }
-                    }
-                }
-                console.log("Excluded Table IDs:", excludedTableIds);
-
-                // Convert check_in_time to a Date object for comparison
-                var checkInDateTime = new Date(dateTime);
-                var openTimeDateTime = new Date(date + ' ' + openTime);
-                var closeTimeDateTime = new Date(date + ' ' + closeTime);
-
-                // Check if check_in_time is within open and close times
-                if (checkInDateTime < openTimeDateTime || checkInDateTime >= closeTimeDateTime) {
-                    alert('Check-in time must be between ' + openTime + ' and ' + closeTime);
-                    $('#check_in_time').val(''); // Clear the input
-                    return;
-                }
-
-                var intExcludedTableIds = stringToIntegerArray(excludedTableIds);
-                console.log("Excluded Table IDs as Integers:", intExcludedTableIds);
-
-                var selectOptions = '<option value="" disabled selected>Choose a table</option>';
-                selectOptions += Object.entries(results).reduce(function(options, [id, title]) {
-                    if (!intExcludedTableIds.includes(+title)) {
-                        return options + '<option value="' + title + '">' + id + '</option>';
-                    }
-                    return options;
-                }, '');
-
-                if (selectOptions === '') {
-                    selectOptions =
-                        '<option disabled selected> No available table. Please select another time. Thank You. </option>';
-                }
-
-                $('#check_out_time').prop('disabled', false);
-                $('#table-select').html(selectOptions);
-
-                var selectedTableTitle, selectedTableId;
-
-                $('#table-select').change(function() {
-                    // 获取所选表格的标题和id
-                    selectedTableTitle = $(this).val();
-                    selectedTableId = $(this).find(':selected').data(
-                        'id'); // Use data('id') to get the data-id attribute
-
-                    // 将所选表格标题和id设置为隐藏输入字段的值
-                    $('input[name="table_title"]').val(selectedTableTitle);
-                    // $('input[name="table_id"]').val(selectedTableId);
-
-                    console.log('Selected Table Title:', selectedTableTitle);
-                    // console.log('Selected Table Id:', selectedTableId);
-                });
-
-            });
-
-            $('#check_out_time').change(function() {
-                var date = $('#booking_date').val();
-                var checkInTime = $('#check_in_time').val();
-                var checkOutTime = $('#check_out_time').val();
-                var closeTimeDateTime = new Date(date + ' ' + closeTime);
-
-                // Convert check_out_time to a Date object for comparison
-                var checkOutDateTime = new Date(date + ' ' + checkOutTime);
-
-                // Check if check_out_time is greater than check_in_time
-                if (checkOutDateTime >= closeTimeDateTime) {
-                    alert('Check-out time must be less than ' + closeTime);
-                    $('#check_out_time').val(''); // Clear the input
-                    return;
-                } else if (checkOutTime <= checkInTime) {
-                    alert('Check-out time must be Grater than ' + checkInTime);
-                    $('#check_out_time').val(''); // Clear the input
-                    return;
-                }
-                $('#table-select').prop('disabled', false);
-            });
-        });
-    </script> --}}
 
     <!-- Include jQuery from the CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

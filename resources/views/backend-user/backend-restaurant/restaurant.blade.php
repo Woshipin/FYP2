@@ -2,21 +2,85 @@
 
 @section('newuser-section')
 
+    {{-- Modal CSS --}}
     <style>
-        /* Set a maximum height for the modal body */
-        .modal-body {
-            max-height: 500px;
-            /* Adjust the height as needed */
-            overflow-y: auto;
-            /* Add vertical scroll if content overflows */
+        .modal-dialog {
+            max-width: 80%;
+            width: 80%;
+            margin: 30px auto;
         }
 
+        .modal-content {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-        img {
-            width: 80px;
-            /* 设置所有图片的宽度为 80 像素 */
-            height: auto;
-            /* 保持宽高比例 */
+        .modal-header,
+        .modal-footer {
+            flex-shrink: 0;
+        }
+
+        .modal-body {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            max-height: calc(90vh - 120px);
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+        }
+
+        /* 调整预览区域 */
+        .preview-add-image {
+            width: 100%;
+            height: 300px;
+            /* 可以根据需要调整 */
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        #preview-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        #preview-container img {
+            width: 100px;
+            /* 调整预览图片的大小 */
+            height: 100px;
+            object-fit: cover;
+            margin: 5px;
+        }
+
+        @media (max-height: 600px) {
+            .modal-dialog {
+                margin: 10px auto;
+            }
+
+            .modal-content {
+                height: 95vh;
+            }
+
+            .modal-body {
+                max-height: calc(95vh - 100px);
+            }
+
+            .preview-add-image {
+                height: 200px;
+                /* 在小屏幕上减小高度 */
+            }
         }
     </style>
 
@@ -149,7 +213,8 @@
 
                         <div class="form-group">
                             <label for="latitude">Restaurant Latitude</label>
-                            <input type="text" class="form-control" name="latitude" id="latitude" placeholder="Enter Latitude">
+                            <input type="text" class="form-control" name="latitude" id="latitude"
+                                placeholder="Enter Latitude">
                             <span class="text-danger">
                                 @error('latitude')
                                     {{ $message }}
@@ -159,7 +224,8 @@
 
                         <div class="form-group">
                             <label for="longitude">Restaurant Longitude</label>
-                            <input type="text" class="form-control" name="longitude" id="longitude" placeholder="Enter Longitude">
+                            <input type="text" class="form-control" name="longitude" id="longitude"
+                                placeholder="Enter Longitude">
                             <span class="text-danger">
                                 @error('longitude')
                                     {{ $message }}
@@ -179,8 +245,7 @@
                         </div>
                         <div class="form-group">
                             <label for="map">Restaurant Map</label>
-                            <textarea class="form-control" name="map" id="map" rows="10"
-                                placeholder="Enter Map"></textarea>
+                            <textarea class="form-control" name="map" id="map" rows="10" placeholder="Enter Map"></textarea>
                             <span class="text-danger">
                                 @error('map')
                                     {{ $message }}
@@ -241,8 +306,8 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label for="name">Restaurant Name</label>
-                                <input type="text" class="form-control" name="name"
-                                    id="name"value="{{ $restaurant->name }}">
+                                <input type="text" class="form-control" name="name" id="name"
+                                    value="{{ old('name', $restaurant->name) }}">
                                 <span class="text-danger">
                                     @error('name')
                                         {{ $message }}
@@ -285,96 +350,103 @@
                             <div class="form-group">
                                 <label for="email">Restaurant Email </label>
                                 <input type="text" class="form-control" name="email" id="email"
-                                    value="{{ $restaurant->email }}">
+                                    value="{{ old('email', $restaurant->email) }}">
                                 <span class="text-danger">
                                     @error('email')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
                             <div class="form-group">
                                 <label for="phone">Restaurant Phone Number</label>
                                 <input type="text" class="form-control" name="phone" id="phone"
-                                    value="{{ $restaurant->phone }}">
+                                    value="{{ old('phone', $restaurant->phone) }}">
                                 <span class="text-danger">
                                     @error('phone')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
                             <div class="form-group">
                                 <label for="type">Restaurant Type</label>
-                                <input type="text" class="form-control" name="type"
-                                    id="type"value="{{ $restaurant->type }}">
+                                <input type="text" class="form-control" name="type" id="type"
+                                    value="{{ old('type', $restaurant->type) }}">
                                 <span class="text-danger">
-                                    @error('map')
+                                    @error('type')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
                             <div class="form-group">
                                 <label for="country">Restaurant Country</label>
                                 <input type="text" class="form-control" name="country" id="country"
-                                    value="{{ $restaurant->country }}">
+                                    value="{{ old('country', $restaurant->country) }}">
                                 <span class="text-danger">
                                     @error('country')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
                             <div class="form-group">
                                 <label for="state">Restaurant State</label>
                                 <input type="text" class="form-control" name="state" id="state"
-                                    value="{{ $restaurant->state }}">
+                                    value="{{ old('state', $restaurant->state) }}">
                                 <span class="text-danger">
-                                    @error('address')
+                                    @error('state')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
                             <div class="form-group">
                                 <label for="date">Restaurant Open Date</label>
-                                <input type="text" class="form-control" name="date"
-                                    id="date"value="{{ $restaurant->date }}">
+                                <input type="text" class="form-control" name="date" id="date"
+                                    value="{{ old('date', $restaurant->date) }}">
                                 <span class="text-danger">
                                     @error('date')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
                             <div class="form-group">
                                 <label for="time">Restaurant Open Time</label>
-                                <input type="text" class="form-control" name="time"
-                                    id="time"value="{{ $restaurant->time }}">
+                                <input type="text" class="form-control" name="time" id="time"
+                                    value="{{ old('time', $restaurant->time) }}">
                                 <span class="text-danger">
                                     @error('time')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
                             <div class="form-group">
                                 <label for="address">Restaurant Address</label>
-                                <input type="text" class="form-control" name="address"
-                                    id="address"value="{{ $restaurant->address }}">
+                                <textarea class="form-control" name="address" id="address" rows="10">{{ old('description', $restaurant->address) }}</textarea>
                                 <span class="text-danger">
                                     @error('address')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
                             <div class="form-group">
                                 <label for="description">Restaurant Description</label>
-                                <textarea class="form-control" name="description" id="description" rows="10">{{ $restaurant->description }}</textarea>
+                                <textarea class="form-control" name="description" id="description" rows="10">{{ old('description', $restaurant->description) }}</textarea>
                                 <span class="text-danger">
                                     @error('description')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
                             <div class="form-group">
                                 <label for="map">Restaurant Map</label>
-                                <input type="text" class="form-control" name="map"
-                                    id="map"value="{{ $restaurant->map }}">
+                                <textarea class="form-control" name="map" id="map" rows="10">{{ old('map', $restaurant->map) }}</textarea>
                                 <span class="text-danger">
                                     @error('map')
                                         {{ $message }}
@@ -385,7 +457,7 @@
                             <div class="form-group">
                                 <label for="longitude">Restaurant Longitude</label>
                                 <input type="text" class="form-control" name="longitude" id="longitude"
-                                    value="{{ $restaurant->longitude }}">
+                                    value="{{ old('longitude', $restaurant->longitude) }}">
                                 <span class="text-danger">
                                     @error('longitude')
                                         {{ $message }}
@@ -396,15 +468,15 @@
                             <div class="form-group">
                                 <label for="latitude">Restaurant Latitude</label>
                                 <input type="text" class="form-control" name="latitude" id="latitude"
-                                    value="{{ $restaurant->latitude }}">
+                                    value="{{ old('latitude', $restaurant->latitude) }}">
                                 <span class="text-danger">
                                     @error('latitude')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
-
                         </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Update Restaurant</button>
@@ -790,11 +862,10 @@
                                                 <td>
                                                     <!-- <a href="" class="btn btn-info btn-sm"><i class="las la-eye"></i></a> -->
                                                     <a href="" class="btn btn-primary btn-sm" data-toggle="modal"
-                                                        data-target="#tableeditModal{{ $table->id }}"><i
-                                                            class="fa fa-edit"></i></a>
+                                                        data-target="#tableeditModal{{ $table->id }}"><i class="fa fa-edit"></i>&nbsp;Edit</a>
                                                     <a onclick="return confirm('Are you sure to delete this data?')"
                                                         href="{{ url('deleteTable/' . $table->id) . '/delete' }}"
-                                                        class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                                        class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -1144,29 +1215,29 @@
             }
 
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`, {
-                headers: {
-                    'User-Agent': 'YourAppName/1.0 (YourContactEmail)'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    const location = data[0];
-                    document.getElementById('latitude').value = location.lat;
-                    document.getElementById('longitude').value = location.lon;
-                } else {
+                    headers: {
+                        'User-Agent': 'YourAppName/1.0 (YourContactEmail)'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const location = data[0];
+                        document.getElementById('latitude').value = location.lat;
+                        document.getElementById('longitude').value = location.lon;
+                    } else {
+                        document.getElementById('latitude').value = '';
+                        document.getElementById('longitude').value = '';
+                        // alert('未找到该地址，请检查输入是否正确。');
+                        console.error('No results found for the given address.');
+                    }
+                })
+                .catch(error => {
                     document.getElementById('latitude').value = '';
                     document.getElementById('longitude').value = '';
-                    // alert('未找到该地址，请检查输入是否正确。');
-                    console.error('No results found for the given address.');
-                }
-            })
-            .catch(error => {
-                document.getElementById('latitude').value = '';
-                document.getElementById('longitude').value = '';
-                // alert('获取地理编码数据时发生错误。');
-                console.error('Error fetching geocoding data:', error);
-            });
+                    // alert('获取地理编码数据时发生错误。');
+                    console.error('Error fetching geocoding data:', error);
+                });
         });
     </script>
 

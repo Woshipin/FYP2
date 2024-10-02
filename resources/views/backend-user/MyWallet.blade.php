@@ -415,6 +415,11 @@
                     @endforeach
                 </tbody>
             </table>
+
+            <!-- 分页链接 -->
+            <div class="d-flex justify-content-center mt-4">
+                {{ $adminwallets->links() }}
+            </div>
         @else
             <p style="text-align: center;">Wallet information is not available.</p>
         @endif
@@ -474,4 +479,3 @@
     </script>
 
 @endsection
-

@@ -34,45 +34,7 @@ use App\Mail\RestaurantPaymentVerification;
 class BookingController extends Controller
 {
 
-    //----------------------------------------------------Frontend Booking Restaurant Area --------------------------------------------//
-
-    // Jian An Full Code
-    // public function bookingpage(Request $request, $id)
-    // {
-    //     if(Auth::check()){
-
-    //         $tables = Table::where('restaurant_id', $id)->pluck('id');
-    //         $bookedData = BookingRestaurant::where('restaurant_id', $id)
-    //             ->get()
-    //             ->groupBy('booking_date')
-    //             ->map(function ($bookings) {
-    //                 return $bookings->pluck('table_id')->toArray();
-    //             });
-
-    //         $booked = $bookedData->toArray();
-    //         $results = Table::where('restaurant_id',$id)->pluck('id', 'title');
-    //         $genders = Gender::all();
-    //         $restaurants = Restaurant::find($id);
-
-    //         // 设置 $booking_date 变量，例如：
-    //         $booking_date = date('Y-m-d'); // 以当前日期为例
-
-    //         $restaurant_price = $request->restaurant_price;
-    //         $deposit_price = $restaurant_price * 0.1;
-
-    //         // $tablesJson = json_encode($tables);
-    //         // $bookedJson = json_encode($booked);
-    //         // $resultsJson = json_encode($results);
-
-    //         // event(new BookingStatus());
-
-    //     }else{
-
-    //         return redirect()->route('frontend-auth.login')->with('error', 'You need to log in first.');
-    //     }
-    //         return view('frontend-auth.frontend-restaurant.bookingrestaurant', compact('tables', 'restaurants', 'booked', 'results','genders','booking_date','deposit_price'));
-    // }
-
+    //------------------------------------------------ Frontend Booking Restaurant Area --------------------------------------------------//
     // Special Full Code
     public function bookingpage(Request $request, $id)
     {
@@ -115,144 +77,8 @@ class BookingController extends Controller
         return $bookingDetails;
     }
 
-    // public function bookingpage($id)
-    // {
-    //     $tables = Table::where('restaurant_id', $id)->pluck('id');
-    //     $booked = BookingRestaurant::where('restaurant_id', $id)->pluck('booking_date', 'table_id'); // 注意这里的键值对顺序
-    //     $results = Table::where('restaurant_id',$id)->pluck('id', 'title');
-    //     $genders = Gender::all();
-    //     $restaurants = Restaurant::find($id);
-
-    //     // 设置 $booking_date 变量，例如：
-    //     $booking_date = date('Y-m-d'); // 以当前日期为例
-
-    //     $tablesJson = json_encode($tables);
-    //     $bookedJson = json_encode($booked);
-    //     $resultsJson = json_encode($results);
-
-    //     return view('auth.bookingrestaurant', compact('tables', 'restaurants', 'booked', 'results', 'genders', 'tablesJson', 'bookedJson', 'resultsJson', 'booking_date'));
-    // }
-
-    // // 将 isCheckInTimeExpired() 函数移到控制器类的顶部
-    // function isCheckInTimeExpired($checkInTime)
-    // {
-    //     $checkInDateTime = Carbon::createFromFormat('Y-m-d H:i:s', $checkInTime);
-    //     $currentDateTime = Carbon::now();
-
-    //     return $currentDateTime->diffInMinutes($checkInDateTime) >= 30;
-    // }
-
-    // public function booking(Request $request){
-
-    //     $validator = Validator::make($request->all(), [
-    //         'card_number' => 'required',
-    //         'card_holder' => 'required',
-    //         'card_month' => 'required',
-    //         'card_year' => 'required',
-    //         'cvv' => 'required',
-    //         'booking_date' => 'required',
-    //         'checkin_time' => 'required',
-    //         'checkout_time' => 'required',
-    //         'gender' => 'required',
-    //         'quantity' => 'required|numeric|between:1,20', // 最小1，最大20
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return redirect()->back()->withErrors($validator)->withInput();
-    //     }
-
-    //     if(Auth::check()){
-
-    //         try {
-    //             // 验证用户输入数据
-
-    //             // 开启数据库事务
-    //             // DB::beginTransaction();
-
-    //             // $resort_price = $request->resort_price;
-    //             // $deposit_price = $resort_price * 0.1; // 获取resort_price的10
-
-    //             // dd($deposit_price);
-
-    //             // 存储支付卡信息
-    //             $payment = new Deposit();
-    //             $payment->user_name = $request->user()->name;
-    //             $payment->user_email = $request->user()->email;
-    //             $payment->type_name = $request->type_name;
-    //             $payment->deposit_price = $request->deposit_price;
-    //             $payment->card_number = $request->card_number;
-    //             $payment->card_holder = $request->card_holder;
-    //             $payment->card_month = $request->card_month;
-    //             $payment->card_year = $request->card_year;
-    //             $payment->cvv = $request->cvv;
-    //             $payment->save();
-
-    //             // Booking Restaurant save
-    //             $restaurantId = $request->input('restaurant_id');
-
-    //             $bookings = new BookingRestaurant();
-    //             $bookings->user_id = auth()->id();
-    //             $bookings->user_name = $request->user_name;
-    //             $bookings->restaurant_id = $request->restaurant_id;
-    //             $bookings->restaurant_name = $request->restaurant_name;
-    //             $bookings->table_id = $request->table_id;
-
-    //             $date = $request->booking_date;
-    //             $time = $request->checkin_time;
-    //             $dateTime = $date . ' ' . $time . ':00';
-    //             $bookings->booking_date = $dateTime;
-    //             $bookings->checkin_time = $request->checkin_time;
-    //             $bookings->checkout_time = $request->checkout_time;
-    //             $bookings->gender = $request->gender;
-    //             $bookings->quantity = $request->quantity;
-    //             $bookings->save();
-
-    //             // 在保存后获取关联表格的标题
-    //             $tableTitle = $bookings->table->title;
-
-    //             $data = [
-    //                 'subject' => 'You Booking Restaurant Detail',
-    //                 'user_name' => $payment->user_name, // 使用 $payment->user_name
-    //                 'email' => $payment->user_email, // 使用 $payment->user_email
-    //                 'booking_date' => $dateTime,
-    //                 'check_in_time' => $request->checkin_time,
-    //                 'check_out_time' => $request->checkout_time,
-    //                 'quantity' => $request->quantity,
-    //                 'owner_name' => $request->owner_name,
-    //                 'restaurant_email' => $request->restaurant_email,
-    //                 'restaurant_phone' => $request->restaurant_phone,
-    //                 'restaurant_name' => $request->restaurant_name,
-    //                 'restaurant_type' => $request->restaurant_type,
-    //                 'table_title' => $tableTitle,
-    //             ];
-
-
-    //             Mail::send('email.restaurantemail', $data, function($message) use ($data) {
-    //                 $message->to('ahpin7762@gmail.com')
-    //                 ->subject($data['subject']);
-    //             });
-
-    //             event(new BookingStatus());
-
-    //             // return response()->json(['success' => '预订成功']);
-
-    //             return back()->with('success', 'Booking created successfully!');
-
-    //         }catch (\Exception $e) {
-    //             // 发生异常时回滚事务
-    //             DB::rollback();
-
-    //             return back()->with('error', 'Booking failed: ' . $e->getMessage());
-    //         }
-
-    //     }else{
-
-    //         return redirect()->route('frontend-auth.login')->with('error', 'You need to log in first.');
-    //     }
-    // }
-
-    public function booking(Request $request){
-
+    public function booking(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'card_number' => 'required|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
             'card_holder' => 'required',
@@ -267,12 +93,12 @@ class BookingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
         }
 
-        if(Auth::check()){
-
+        if (Auth::check()) {
             try {
+                DB::beginTransaction();
 
                 $deposit = $request->deposit_price;
                 $tax = $deposit * 0.10;
@@ -295,8 +121,6 @@ class BookingController extends Controller
                 $payment->save();
 
                 // Booking Restaurant save
-                $restaurantId = $request->input('restaurant_id');
-
                 $bookings = new BookingRestaurant();
                 $bookings->user_id = auth()->id();
                 $bookings->user_name = $request->user_name;
@@ -347,28 +171,21 @@ class BookingController extends Controller
                     'table_title' => $tableTitle,
                 ];
 
-                Mail::send('email.restaurantemail', $data, function($message) use ($data) {
-                    $message->to('ahpin7762@gmail.com')
-                    ->subject($data['subject']);
+                Mail::send('email.restaurantemail', $data, function ($message) use ($data) {
+                    $message->to('ahpin7762@gmail.com')->subject($data['subject']);
                 });
+
+                DB::commit();
 
                 event(new BookingStatus());
 
-                // return response()->json(['success' => '预订成功']);
-
-                return redirect()->route('frontend-restaurant')->with('success', "Restaurant {$bookings->restaurant_name} Booking successfully!");
-                // return redirect()->route('frontend-restaurant')->with('success', "Restaurant {$bookings->restaurant_name} Booking successfully!");
-
-            }catch (\Exception $e) {
-                // 发生异常时回滚事务
+                return response()->json(['success' => true, 'message' => "Restaurant {$bookings->restaurant_name} Booking successfully!"]);
+            } catch (\Exception $e) {
                 DB::rollback();
-
-                return back()->with('error', 'Booking failed: ' . $e->getMessage());
+                return response()->json(['success' => false, 'message' => 'Booking failed: ' . $e->getMessage()], 500);
             }
-
-        }else{
-
-            return redirect()->route('frontend-auth.login')->with('error', 'You need to log in first.');
+        } else {
+            return response()->json(['success' => false, 'message' => 'You need to log in first.'], 401);
         }
     }
 
@@ -500,76 +317,6 @@ class BookingController extends Controller
             return back()->with('error', 'Cancellation failed: ' . $e->getMessage());
         }
     }
-
-    // Checkin_time Avaiable Table
-    // public function checkBookings(Request $request)
-    // {
-    //     $checkInTime = $request->input('check_in_time');
-
-    //     // Query the database to get the available tables based on the check-in time
-    //     $availableTables = DB::table('tables')
-    //         ->whereNotIn('id', function ($query) use ($checkInTime) {
-    //             $query->select('table_id')
-    //                   ->from('booking_restaurants')
-    //                   ->where('check_in_time', $checkInTime);
-    //         })
-    //         ->get();
-
-    //     $response = [
-    //         'tables' => $availableTables,
-    //     ];
-
-    //     return response()->json($response);
-    // }
-
-    // Checkin_time Avaiable Table
-    // public function checkdateBookings(Request $request)
-    // {
-    //     $CheckBookingTime = $request->input('booking_date');
-
-    //     // Query the database to get the available tables based on the check-in time
-    //     $availableTables = DB::table('tables')
-    //         ->whereNotIn('id', function ($query) use ($CheckBookingTime) {
-    //             $query->select('table_id')
-    //                   ->from('booking_restaurants')
-    //                   ->where('booking_date', $CheckBookingTime);
-    //         })
-    //         ->get();
-
-    //     $response = [
-    //         'tables' => $availableTables,
-    //     ];
-
-    //     return response()->json($response);
-    // }
-
-    // public function hasbookingRestaurant()
-    // {
-    //     $user = auth()->user();
-
-    //     $restaurantIds = $user->restaurants()->pluck('id')->toArray();
-    //     $hasBooked = BookingRestaurant::whereIn('restaurant_id', $restaurantIds)->get();
-    //     $bookeds = $hasBooked->paginate(10);
-
-    //     return view('user.bookings', compact('hasBooked','bookeds'));
-    // }
-
-    // public function hasbookingRestaurant()
-    // {
-    //     $user = auth()->user();
-
-    //     $restaurantIds = $user->restaurants()->pluck('id')->toArray();
-
-    //     // Get the query builder instance before fetching results
-    //     $hasBookedQuery = BookingRestaurant::whereIn('restaurant_id', $restaurantIds);
-
-    //     // Paginate the query builder instance
-    //     $restaurantbookeds = $hasBookedQuery->paginate(10);
-
-    //     // $bookedss = Restaurant::with('bookings', 'bookings.table')->get();
-
-    //     return view('backend-user.hasbooked.bookedrestaurant', compact('restaurantbookeds'));
-    // }
 
     public function hasbookingRestaurant()
     {
@@ -780,47 +527,6 @@ class BookingController extends Controller
         }
     }
 
-    // 在需要的地方设置Stripe API密钥，例如在控制器的构造函数中
-    // public function __construct()
-    // {
-    //     $stripeSecretKey = config('services.stripe.sk');
-    //     // dd([
-    //     //     'stripe_key_from_env' => env('STRIPE_KEY'),
-    //     //     'stripe_secret_from_env' => env('STRIPE_SECRET'),
-    //     //     'stripe_key_from_config' => config('services.stripe.pk'),
-    //     //     'stripe_secret_from_config' => $stripeSecretKey,
-    //     // ]);
-
-    //     Stripe::setApiKey($stripeSecretKey);
-    //     Log::info('Stripe API Key set: ' . $stripeSecretKey);
-    // }
-
-    // public function bookingresortpage(Request $request, $id)
-    // {
-    //     if (Auth::check()) {
-    //         $resorts = Resort::find($id);
-    //         $genders = Gender::all();
-
-    //         // 获取已预订的日期范围
-    //         $bookedDates = $this->getBookedResortDates($id);
-
-    //         // 获取Stripe的Publishable Key
-    //         $stripeKey = env('STRIPE_KEY');  // 直接从环境变量获取
-
-    //         // 确保 $resorts、$genders、$bookedDates 和 $stripeKey 都有值
-    //         $data = [
-    //             'resorts' => $resorts,
-    //             'genders' => $genders,
-    //             'bookedDates' => $bookedDates,
-    //             'stripeKey' => $stripeKey, // 确保这里赋值了正确的Stripe公钥
-    //         ];
-
-    //         return view('frontend-auth.frontend-resort.bookingresort', $data);
-    //     } else {
-    //         return redirect()->route('frontend-auth.login')->with('error', 'You need to log in first.');
-    //     }
-    // }
-
     // 获取指定度假村的已预订的日期范围
     public function getBookedResortDates($resortId)
     {
@@ -846,6 +552,7 @@ class BookingController extends Controller
 
     public function bookingresort(Request $request)
     {
+        // 验证请求数据
         $validator = Validator::make($request->all(), [
             'card_number' => 'required|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
             'card_holder' => 'required',
@@ -861,7 +568,7 @@ class BookingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
         }
 
         if (Auth::check()) {
@@ -956,13 +663,13 @@ class BookingController extends Controller
 
                 event(new BookingStatus());
 
-                return redirect()->route('home')->with('success', "Resort {$booking->resort_name} booked successfully!");
+                return response()->json(['success' => true, 'message' => "Resort {$booking->resort_name} booked successfully!"]);
             } catch (\Exception $e) {
                 DB::rollback();
-                return back()->with('error', 'Booking failed: ' . $e->getMessage());
+                return response()->json(['success' => false, 'message' => 'Booking failed: ' . $e->getMessage()], 500);
             }
         } else {
-            return redirect()->route('login')->with('error', 'You need to log in first.');
+            return response()->json(['success' => false, 'message' => 'You need to log in first.'], 401);
         }
     }
 
@@ -1079,145 +786,6 @@ class BookingController extends Controller
             return back()->with('error', 'Cancellation failed: ' . $e->getMessage());
         }
     }
-
-    // public function bookingresort(Request $request)
-    // {
-    //     $validator = Validator::make($request->all(), [
-    //         'card_number' => 'required|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
-    //         'card_holder' => 'required',
-    //         'card_month' => 'required',
-    //         'card_year' => 'required',
-    //         'cvv' => 'required',
-    //         'checkin_date' => 'required',
-    //         'checkout_date' => 'required',
-    //         'checkin_time' => 'required',
-    //         'checkout_time' => 'required',
-    //         'gender' => 'required',
-    //         'quantity' => 'required|numeric|between:1,20',
-    //     ]);
-
-    //     if ($validator->fails()) {
-    //         return redirect()->back()->withErrors($validator)->withInput();
-    //     }
-
-    //     if (Auth::check()) {
-    //         try {
-    //             DB::beginTransaction();
-
-    //             // Calculate booking days and total price
-    //             $checkinDate = Carbon::parse($request->checkin_date);
-    //             $checkoutDate = Carbon::parse($request->checkout_date);
-    //             $bookingDays = $checkoutDate->diffInDays($checkinDate);
-    //             $totalPrice = $bookingDays * $request->resort_price * 100; // Convert to cents
-
-    //             dd($totalPrice);
-
-    //             \Log::debug('Total Price in Cents: ', ['totalPrice' => $totalPrice]);
-
-    //             // 设置Stripe API密钥
-    //             Stripe::setApiKey(config('services.stripe.sk'));
-
-    //             // 创建PaymentIntent
-    //             $paymentIntent = PaymentIntent::create([
-    //                 'amount' => $totalPrice,
-    //                 'currency' => 'myr',
-    //                 'description' => 'Resort Booking: ' . $request->resort_name,
-    //                 'payment_method_types' => ['card'],
-    //             ]);
-
-    //             \Log::info('PaymentIntent Created: ', ['paymentIntentId' => $paymentIntent->id]);
-
-    //             // 将PaymentIntent的client_secret返回给前端
-    //             $clientSecret = $paymentIntent->client_secret;
-
-    //             // 存储payment_intent_id以便稍后查找和确认支付
-    //             $paymentIntentId = $paymentIntent->id;
-
-    //             // 暂时保存用户的预定信息，等待支付完成
-    //             $payment = new Deposit();
-    //             $payment->user_name = $request->user()->name;
-    //             $payment->user_email = $request->user()->email;
-    //             $payment->type_name = $request->type_name;
-    //             $payment->deposit_price = $request->deposit_price;
-    //             $payment->card_number = $request->card_number;
-    //             $payment->card_holder = $request->card_holder;
-    //             $payment->card_month = $request->card_month;
-    //             $payment->card_year = $request->card_year;
-    //             $payment->cvv = $request->cvv;
-    //             $payment->payment_intent_id = $paymentIntentId;
-    //             $payment->save();
-
-    //             // Store booking info
-    //             $booking = new BookingResort();
-    //             $booking->user_id = auth()->id();
-    //             $booking->user_name = $request->user()->name;
-    //             $booking->resort_id = $request->resort_id;
-    //             $booking->resort_name = $request->resort_name;
-    //             $booking->gender = $request->gender;
-    //             $booking->quantity = $request->quantity;
-    //             $booking->checkin_date = $request->checkin_date;
-    //             $booking->checkout_date = $request->checkout_date;
-    //             $booking->booking_days = $bookingDays;
-    //             $booking->checkin_time = $request->checkin_time;
-    //             $booking->checkout_time = $request->checkout_time;
-    //             $booking->deposit_price = $request->deposit_price;
-    //             $booking->card_number = $request->card_number;
-    //             $booking->card_holder = $request->card_holder;
-    //             $booking->card_month = $request->card_month;
-    //             $booking->card_year = $request->card_year;
-    //             $booking->cvv = $request->cvv;
-    //             $booking->payment_intent_id = $paymentIntentId;
-    //             $booking->save();
-
-    //             // Send email
-    //             $data = [
-    //                 'subject' => 'Your Booking Resort Details',
-    //                 'user_name' => $request->user()->name,
-    //                 'email' => $request->user()->email,
-    //                 'booking_days' => $bookingDays,
-    //                 'check_in_date' => $request->checkin_date,
-    //                 'check_out_date' => $request->checkout_date,
-    //                 'check_in_time' => $request->checkin_time,
-    //                 'check_out_time' => $request->checkout_time,
-    //                 'quantity' => $request->quantity,
-    //                 'gender' => $request->gender,
-    //                 'owner_name' => $request->owner_name,
-    //                 'resort_name' => $request->resort_name,
-    //                 'resort_phone' => $request->resort_phone,
-    //                 'resort_email' => $request->resort_email,
-    //                 'resort_price' => $request->resort_price,
-    //                 'total_price' => $totalPrice / 100,
-    //                 'resort_type' => $request->resort_type,
-    //             ];
-
-    //             Mail::send('email.resortemail', $data, function ($message) use ($data) {
-    //                 $message->to($data['email'])->subject($data['subject']);
-    //             });
-
-    //             DB::commit();
-
-    //             event(new BookingStatus());
-
-    //             return redirect()->route('home')->with('success', "Resort {$booking->resort_name} Booking successfully!");
-
-    //             // return response()->json([
-    //             //     'client_secret' => $clientSecret,
-    //             //     'message' => 'Payment Intent created. Please complete the payment.',
-    //             // ]);
-
-    //         } catch (ApiErrorException $e) {
-    //             DB::rollback();
-    //             \Log::error('Stripe API Error: ', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-    //             return response()->json(['error' => 'Payment failed: ' . $e->getMessage()], 500);
-    //         } catch (\Exception $e) {
-    //             DB::rollback();
-    //             \Log::error('General Error: ', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
-    //             return response()->json(['error' => 'Booking failed: ' . $e->getMessage()], 500);
-    //         }
-    //     } else {
-    //         return response()->json(['error' => 'You need to log in first.'], 401);
-    //     }
-    // }
 
     public function hasbookingResort()
     {
@@ -1409,76 +977,6 @@ class BookingController extends Controller
 
     // -------------------------------------------------Frontend Booking Hotel Area-----------------------------------------------------//
 
-    // public function bookinghotelpage(Request $request, $id)
-    // {
-    //     if(Auth::check()){
-
-    //         // $genders = Gender::all();
-    //         // $hotels = Hotel::find($id);
-
-    //         $rooms = Room::where('hotel_id', $id)->pluck('id');
-    //         // $rooms = Room::where('hotel_id', $id)->select('id', 'name', 'price')->get();
-
-    //         $bookedData = BookingHotel::where('hotel_id', $id)
-    //             ->get()
-    //             ->groupBy('booking_date')
-    //             ->map(function ($bookings) {
-    //                 return $bookings->pluck('room_id')->toArray();
-    //             });
-
-    //         $booked = $bookedData->toArray();
-    //         // $results = Room::where('hotel_id',$id)->pluck('id','name');
-    //         // $roomprice = Room::where('hotel_id',$id)->pluck('id','price');
-    //         // $item1=Room::where('hotel_id', $id)->pluck('id','price');
-    //         // $item2=Room::where('hotel_id', $id)->pluck('name');
-    //         // $results = $item1 -> merge($item2);
-
-    //         $results = Room::where('hotel_id', $id)->select('id', 'name', 'price','type')->get();
-    //         $collectionBooked = collect($booked);
-    //         $collectionResults = collect($results);
-
-    //         // dd($results);
-    //         $genders = Gender::all();
-    //         $hotels = Hotel::find($id);
-
-    //         // dd($booking_date);
-    //         // dd($results);
-
-    //         // 设置 $booking_date 变量，例如：
-    //         $booking_date = date('Y-m-d'); // 以当前日期为例
-
-    //         // $hotel_price = $request->hotel_price;
-    //         // $deposit_price = $hotel_price * 0.1;
-
-    //     }else{
-
-    //         return redirect()->route('frontend-auth.login')->with('error', 'You need to log in first.');
-    //     }
-    //         return view('frontend-auth.frontend-hotel.bookinghotel',compact('hotels','genders','rooms','results','booked','collectionBooked','collectionResults'));
-    // }
-
-    // Special Code
-    // public function bookinghotelpage(Request $request, $id)
-    // {
-    //     if (Auth::check())
-    //     {
-    //         $rooms = Room::where('hotel_id', $id)
-    //             ->where('status', 0)
-    //             ->get();
-
-    //         $genders = Gender::all();
-    //         $hotels = Hotel::find($id);
-
-    //         // 获取已预订的日期范围
-    //         $bookedDates = $this->getBookedHotelDates($id);
-
-    //     } else {
-
-    //         return redirect()->route('frontend-auth.login')->with('error', 'You need to log in first.');
-    //     }
-    //         return view('frontend-auth.special.bookinghotel',compact('hotels','genders','rooms','bookedDates'));
-    // }
-
     public function bookinghotelpage(Request $request, $id)
     {
         if (Auth::check())
@@ -1500,29 +998,6 @@ class BookingController extends Controller
             return redirect()->route('frontend-auth.login')->with('error', 'You need to log in first.');
         }
     }
-
-    // 获取指定度假村的已预订的日期范围
-    // public function getBookedHotelDates($hotelId)
-    // {
-    //     // 查询数据库中指定度假村已预订的日期范围
-    //     $bookings = BookingHotel::where('hotel_id', $hotelId)->get(); // 获取指定度假村的所有预订信息
-
-    //     $bookedDates = [];
-
-    //     // 遍历所有预订信息，将日期范围添加到 $bookedDates 数组中
-    //     foreach ($bookings as $booking) {
-    //         $checkinDate = Carbon::parse($booking->checkin_date); // 转换为 Carbon 对象
-    //         $checkoutDate = Carbon::parse($booking->checkout_date); // 转换为 Carbon 对象
-
-    //         // 将日期范围添加到 $bookedDates 数组中
-    //         while ($checkinDate->lte($checkoutDate)) {
-    //             $bookedDates[] = $checkinDate->format('Y-m-d');
-    //             $checkinDate->addDay(); // 将日期增加一天
-    //         }
-    //     }
-
-    //     return $bookedDates;
-    // }
 
     public function getBookedHotelDates($hotelId)
     {
@@ -1554,8 +1029,8 @@ class BookingController extends Controller
         return $bookedDates;
     }
 
-    public function bookinghotel(Request $request){
-
+    public function bookinghotel(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'card_number' => 'required|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
             'card_holder' => 'required',
@@ -1571,20 +1046,15 @@ class BookingController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
         }
 
         // Convert card_month to integer
         $cardMonth = (int) $request->card_month;
         $cardYear = (int) $request->card_year;
 
-        if(Auth::check()){
-
-            try{
-
-                // 验证用户输入数据
-
-                // 开启数据库事务
+        if (Auth::check()) {
+            try {
                 DB::beginTransaction();
 
                 // 获取入住日期和退房日期并转换为 Carbon 对象
@@ -1676,27 +1146,21 @@ class BookingController extends Controller
                     'total_price' => $totalPrice,
                 ];
 
-                Mail::send('email.hotelemail', $data, function($message) use ($data) {
-                    $message->to('ahpin7762@gmail.com')
-                    ->subject($data['subject']);
+                Mail::send('email.hotelemail', $data, function ($message) use ($data) {
+                    $message->to('ahpin7762@gmail.com')->subject($data['subject']);
                 });
 
-                // 提交数据库事务
                 DB::commit();
 
                 event(new BookingStatus());
 
-                return redirect()->route('frontend-hotel')->with('success', "Hotel {$bookings->hotel_name} Booking successfully!");
-
-            } catch (Exception $e) {
-                // 发生异常时回滚事务
+                return response()->json(['success' => true, 'message' => "Hotel {$bookings->hotel_name} Booking successfully!"]);
+            } catch (\Exception $e) {
                 DB::rollback();
-
-                return back()->with('error', 'Booking failed: ' . $e->getMessage());
+                return response()->json(['success' => false, 'message' => 'Booking failed: ' . $e->getMessage()], 500);
             }
-
         } else {
-            return redirect()->route('frontend-auth.login')->with('error', 'You need to log in first.');
+            return response()->json(['success' => false, 'message' => 'You need to log in first.'], 401);
         }
     }
 
@@ -2010,7 +1474,6 @@ class BookingController extends Controller
             return back()->withInput();
         }
     }
-
 
     public function verifyHotel(Request $request, $hotelId)
     {

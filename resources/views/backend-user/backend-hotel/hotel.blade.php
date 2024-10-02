@@ -2,24 +2,89 @@
 
 @section('newuser-section')
 
+    {{-- Modal CSS --}}
     <style>
-        /* Set a maximum height for the modal body */
-        .modal-body {
-            max-height: 500px;
-            /* Adjust the height as needed */
-            overflow-y: auto;
-            /* Add vertical scroll if content overflows */
+        .modal-dialog {
+            max-width: 80%;
+            width: 80%;
+            margin: 30px auto;
         }
 
-        img {
-            width: 80px;
-            /* 设置所有图片的宽度为 80 像素 */
-            height: auto;
-            /* 保持宽高比例 */
+        .modal-content {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header,
+        .modal-footer {
+            flex-shrink: 0;
+        }
+
+        .modal-body {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            max-height: calc(90vh - 120px);
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+        }
+
+        /* 调整预览区域 */
+        .preview-add-image {
+            width: 100%;
+            height: 300px;
+            /* 可以根据需要调整 */
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        #preview-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        #preview-container img {
+            width: 100px;
+            /* 调整预览图片的大小 */
+            height: 100px;
+            object-fit: cover;
+            margin: 5px;
+        }
+
+        @media (max-height: 600px) {
+            .modal-dialog {
+                margin: 10px auto;
+            }
+
+            .modal-content {
+                height: 95vh;
+            }
+
+            .modal-body {
+                max-height: calc(95vh - 100px);
+            }
+
+            .preview-add-image {
+                height: 200px;
+                /* 在小屏幕上减小高度 */
+            }
         }
     </style>
 
-    <style>
+    {{-- <style>
         /* Add Image Preview */
         .preview-add-image {
             border: 2px solid #ccc;
@@ -65,7 +130,7 @@
             border-radius: 5px;
             margin-top: 10px;
         }
-    </style>
+    </style> --}}
 
     {{-- Hotel Area --}}
     {{-- Add new hotels --}}
@@ -209,8 +274,7 @@
 
                         <div class="form-group">
                             <label for="map">Hotel Map</label>
-                            <textarea class="form-control" name="map" id="map"  rows="10"
-                                placeholder="Enter Hotel Map"></textarea>
+                            <textarea class="form-control" name="map" id="map" rows="10" placeholder="Enter Hotel Map"></textarea>
                             <span class="text-danger">
                                 @error('map')
                                     {{ $message }}
@@ -272,7 +336,7 @@
                             <div class="form-group">
                                 <label for="name">Hotel Name</label>
                                 <input type="text" class="form-control" name="name" id="name"
-                                    value="{{ $hotel->name }}">
+                                    value="{{ old('name', $hotel->name) }}">
                                 <span class="text-danger">
                                     @error('name')
                                         {{ $message }}
@@ -315,7 +379,7 @@
                             <div class="form-group">
                                 <label for="email">Hotel Email </label>
                                 <input type="text" class="form-control" name="email" id="email"
-                                    value="{{ $hotel->email }}">
+                                    value="{{ old('email', $hotel->email) }}">
                                 <span class="text-danger">
                                     @error('email')
                                         {{ $message }}
@@ -325,8 +389,8 @@
 
                             <div class="form-group">
                                 <label for="type">Hotel Type</label>
-                                <input type="text" class="form-control" name="type"
-                                    id="type"value="{{ $hotel->type }}">
+                                <input type="text" class="form-control" name="type" id="type"
+                                    value="{{ old('type', $hotel->type) }}">
                                 <span class="text-danger">
                                     @error('type')
                                         {{ $message }}
@@ -337,29 +401,31 @@
                             <div class="form-group">
                                 <label for="phone">Hotel Phone Number</label>
                                 <input type="text" class="form-control" name="phone" id="phone"
-                                    value="{{ $hotel->phone }}">
+                                    value="{{ old('phone', $hotel->phone) }}">
                                 <span class="text-danger">
                                     @error('phone')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
                             <div class="form-group">
                                 <label for="country">Hotel Country</label>
                                 <input type="text" class="form-control" name="country" id="country"
-                                    value="{{ $hotel->country }}">
+                                    value="{{ old('country', $hotel->country) }}">
                                 <span class="text-danger">
                                     @error('country')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
                             <div class="form-group">
                                 <label for="state">Hotel State</label>
                                 <input type="text" class="form-control" name="state" id="state"
-                                    value="{{ $hotel->state }}">
+                                    value="{{ old('state', $hotel->state) }}">
                                 <span class="text-danger">
-                                    @error('address')
+                                    @error('state')
                                         {{ $message }}
                                     @enderror
                                 </span>
@@ -368,7 +434,7 @@
                             <div class="form-group">
                                 <label for="address">Hotel Address</label>
                                 <input type="text" class="form-control" name="address" id="address"
-                                    value="{{ $hotel->address }}">
+                                    value="{{ old('address', $hotel->address) }}">
                                 <span class="text-danger">
                                     @error('address')
                                         {{ $message }}
@@ -378,7 +444,7 @@
 
                             <div class="form-group">
                                 <label for="description">Hotel Description</label>
-                                <textarea class="form-control" name="description" id="description" rows="10">{{ $hotel->description }}</textarea>
+                                <textarea class="form-control" name="description" id="description" rows="10">{{ old('description', $hotel->description) }}</textarea>
                                 <span class="text-danger">
                                     @error('description')
                                         {{ $message }}
@@ -388,38 +454,62 @@
 
                             <div class="form-group">
                                 <label for="map">Hotel Map</label>
-                                <input type="text" class="form-control" name="map"
-                                    id="map"value="{{ $hotel->map }}">
+                                <textarea class="form-control" name="map" id="map" rows="10">{{ old('map', $hotel->map) }}</textarea>
                                 <span class="text-danger">
                                     @error('map')
                                         {{ $message }}
                                     @enderror
                                 </span>
+                            </div>
 
-                                <div class="form-group">
-                                    <label for="longitude">Hotel Longitude</label>
-                                    <input type="text" class="form-control" name="longitude" id="longitude"
-                                        value="{{ $hotel->longitude }}">
-                                    <span class="text-danger">
-                                        @error('longitude')
-                                            {{ $message }}
-                                        @enderror
-                                    </span>
-                                </div>
+                            <div class="form-group">
+                                <label for="longitude">Hotel Longitude</label>
+                                <input type="text" class="form-control" name="longitude" id="longitude"
+                                    value="{{ old('longitude', $hotel->longitude) }}">
+                                <span class="text-danger">
+                                    @error('longitude')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
+                            </div>
 
-                                <div class="form-group">
-                                    <label for="latitude">Hotel Latitude</label>
-                                    <input type="text" class="form-control" name="latitude" id="latitude"
-                                        value="{{ $hotel->latitude }}">
-                                    <span class="text-danger">
-                                        @error('latitude')
-                                            {{ $message }}
-                                        @enderror
-                                    </span>
-                                </div>
+                            <div class="form-group">
+                                <label for="latitude">Hotel Latitude</label>
+                                <input type="text" class="form-control" name="latitude" id="latitude"
+                                    value="{{ old('latitude', $hotel->latitude) }}">
+                                <span class="text-danger">
+                                    @error('latitude')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="digital_lock_password">Hotel Digital Lock Password</label>
+                                <input type="text" class="form-control" name="digital_lock_password"
+                                    id="digital_lock_password"
+                                    value="{{ old('digital_lock_password', $hotel->digital_lock_password) }}">
+                                <span class="text-danger">
+                                    @error('digital_lock_password')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="emailbox_password">Hotel Email Box Password</label>
+                                <input type="text" class="form-control" name="emailbox_password"
+                                    id="emailbox_password"
+                                    value="{{ old('emailbox_password', $hotel->emailbox_password) }}">
+                                <span class="text-danger">
+                                    @error('emailbox_password')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
                             </div>
 
                         </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Update Hotel</button>
@@ -924,10 +1014,11 @@
                                                     <!-- <a href="" class="btn btn-info btn-sm"><i class="las la-eye"></i></a> -->
                                                     <a href="" class="btn btn-primary btn-sm" data-toggle="modal"
                                                         data-target="#roomeditModal{{ $room->id }}"><i
-                                                            class="fa fa-edit"></i></a>
+                                                            class="fa fa-edit"></i>&nbsp;Edit</a>
                                                     <a onclick="return confirm('Are you sure to delete this data?')"
                                                         href="{{ url('deleteRoom/' . $room->id) . '/delete' }}"
-                                                        class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
+                                                        class="btn btn-danger btn-sm"><i
+                                                            class="fa fa-trash"></i>&nbsp;Delete</a>
                                                 </td>
                                             </tr>
                                         @endforeach

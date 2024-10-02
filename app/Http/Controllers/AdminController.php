@@ -182,7 +182,10 @@ class AdminController extends Controller
 
     public function AdminWallet()
     {
-        $adminwallets = AdminWallet::all();
+        // 对 adminwallets 进行分页处理
+        $adminwallets = AdminWallet::paginate(10); // 每页显示10条记录
+
+        // 计算总和
         $totalBalance = AdminWallet::sum('balance');
         $totalTax = AdminWallet::sum('tax');
         $totalUserDeposit = AdminWallet::sum('user_deposit');

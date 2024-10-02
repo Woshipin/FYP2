@@ -2,11 +2,85 @@
 
 @section('newuser-section')
 
+    {{-- Modal CSS --}}
     <style>
-        /* Set a maximum height for the modal body */
+        .modal-dialog {
+            max-width: 80%;
+            width: 80%;
+            margin: 30px auto;
+        }
+
+        .modal-content {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header,
+        .modal-footer {
+            flex-shrink: 0;
+        }
+
         .modal-body {
-            max-height: 300px; /* Adjust the height as needed */
-            overflow-y: auto; /* Add vertical scroll if content overflows */
+            flex: 1 1 auto;
+            overflow-y: auto;
+            max-height: calc(90vh - 120px);
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+        }
+
+        /* 调整预览区域 */
+        .preview-add-image {
+            width: 100%;
+            height: 300px;
+            /* 可以根据需要调整 */
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        #preview-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        #preview-container img {
+            width: 100px;
+            /* 调整预览图片的大小 */
+            height: 100px;
+            object-fit: cover;
+            margin: 5px;
+        }
+
+        @media (max-height: 600px) {
+            .modal-dialog {
+                margin: 10px auto;
+            }
+
+            .modal-content {
+                height: 95vh;
+            }
+
+            .modal-body {
+                max-height: calc(95vh - 100px);
+            }
+
+            .preview-add-image {
+                height: 200px;
+                /* 在小屏幕上减小高度 */
+            }
         }
     </style>
 
@@ -175,22 +249,27 @@
     @endforeach
 
     <!-- Import and Export Modal -->
-    <div class="modal fade" id="roomexcelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="roomexcelModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Import Resort Data</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
 
-                <form action="{{ route ('import-room') }}" method="POST" enctype="multipart/form-data">
-                @csrf
+                <form action="{{ route('import-room') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
                     <div class="modal-body">
                         <label>Select File</label>
                         <input type="file" name="file" class="form-control" />
-                        <span class="text-danger">@error('file') {{$message}} @enderror</span>
+                        <span class="text-danger">
+                            @error('file')
+                                {{ $message }}
+                            @enderror
+                        </span>
                         <div class="mt-5">
                             <button type="submit" class="btn btn-info">Submit</button>
                             <!-- <button onclick="readExcelFile()">Read File</button> -->
@@ -232,11 +311,14 @@
                                 <button type="button" class="btn btn-info m-1" data-toggle="modal"
                                     data-target="#roomModal">Add Room</button>
                                 <!-- Import Room Model -->
-                                <button type="button" class="btn btn-primary m-1" data-toggle="modal" data-target="#roomexcelModal">Import Room</button>
+                                <button type="button" class="btn btn-primary m-1" data-toggle="modal"
+                                    data-target="#roomexcelModal">Import Room</button>
                                 {{-- Export Resort --}}
-                                <a href="{{ url('export-room') }}"><button type="button" class="btn btn-primary m-1">Export Room</button></a>
+                                <a href="{{ url('export-room') }}"><button type="button"
+                                        class="btn btn-primary m-1">Export Room</button></a>
                                 {{-- Room Excel Template --}}
-                                <a href="{{ route('Room.Excel.Template') }}"><button type="button" class="btn btn-dark m-1">Room Excel Template</button></a>
+                                <a href="{{ route('Room.Excel.Template') }}"><button type="button"
+                                        class="btn btn-dark m-1">Room Excel Template</button></a>
 
                                 <thead class="table-dark">
                                     <tr>
@@ -282,7 +364,8 @@
                                                             class="fa fa-edit"></i>&nbsp;Edit</a>
                                                     <a onclick="return confirm('Are you sure to delete this data?')"
                                                         href="{{ url('deleteRoom/' . $room->id) . '/delete' }}"
-                                                        class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
+                                                        class="btn btn-danger btn-sm"><i
+                                                            class="fa fa-trash"></i>&nbsp;Delete</a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -343,60 +426,64 @@
 
     {{-- Read Excel File Data --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        // 获取文件输入框和模态框内容区域的元素
-        const fileInput = document.querySelector('#roomexcelModal input[type="file"]');
-        const modalBody = document.querySelector('#roomexcelModal .modal-body');
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取文件输入框和模态框内容区域的元素
+            const fileInput = document.querySelector('#roomexcelModal input[type="file"]');
+            const modalBody = document.querySelector('#roomexcelModal .modal-body');
 
-        // 为文件输入框添加事件监听，当用户选择了文件后触发
-        fileInput.addEventListener('change', function (event) {
-            // 获取用户选择的文件
-            const selectedFile = event.target.files[0];
+            // 为文件输入框添加事件监听，当用户选择了文件后触发
+            fileInput.addEventListener('change', function(event) {
+                // 获取用户选择的文件
+                const selectedFile = event.target.files[0];
 
-            if (selectedFile) {
-                // 创建一个文件阅读器对象
-                const fileReader = new FileReader();
+                if (selectedFile) {
+                    // 创建一个文件阅读器对象
+                    const fileReader = new FileReader();
 
-                // 当文件加载完成时，会执行这个回调函数
-                fileReader.onload = function (e) {
-                    // 获取文件的内容（以二进制形式）
-                    const data = e.target.result;
+                    // 当文件加载完成时，会执行这个回调函数
+                    fileReader.onload = function(e) {
+                        // 获取文件的内容（以二进制形式）
+                        const data = e.target.result;
 
-                    // 使用 XLSX 库将二进制内容解析成工作簿对象
-                    const workbook = XLSX.read(data, { type: 'binary' });
+                        // 使用 XLSX 库将二进制内容解析成工作簿对象
+                        const workbook = XLSX.read(data, {
+                            type: 'binary'
+                        });
 
-                    // 假设你使用第一个工作表名字
-                    const sheetName = workbook.SheetNames[0];
+                        // 假设你使用第一个工作表名字
+                        const sheetName = workbook.SheetNames[0];
 
-                    // 将工作表的数据解析成 JSON 格式
-                    const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+                        // 将工作表的数据解析成 JSON 格式
+                        const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {
+                            header: 1
+                        });
 
-                    // 创建一个 HTML 表格元素
-                    const table = document.createElement('table');
-                    table.classList.add('table', 'table-bordered');
+                        // 创建一个 HTML 表格元素
+                        const table = document.createElement('table');
+                        table.classList.add('table', 'table-bordered');
 
-                    // 循环遍历数据，创建表格行和单元格
-                    for (let i = 0; i < sheetData.length; i++) {
-                        const row = document.createElement('tr');
-                        for (let j = 0; j < sheetData[i].length; j++) {
-                            const cell = document.createElement(i === 0 ? 'th' : 'td');
-                            cell.textContent = sheetData[i][j];
-                            row.appendChild(cell);
+                        // 循环遍历数据，创建表格行和单元格
+                        for (let i = 0; i < sheetData.length; i++) {
+                            const row = document.createElement('tr');
+                            for (let j = 0; j < sheetData[i].length; j++) {
+                                const cell = document.createElement(i === 0 ? 'th' : 'td');
+                                cell.textContent = sheetData[i][j];
+                                row.appendChild(cell);
+                            }
+                            table.appendChild(row);
                         }
-                        table.appendChild(row);
-                    }
 
-                    console.log(sheetData);
+                        console.log(sheetData);
 
-                    // 将表格添加到模态框内容区域中
-                    modalBody.appendChild(table);
-                };
+                        // 将表格添加到模态框内容区域中
+                        modalBody.appendChild(table);
+                    };
 
-                // 开始读取文件内容（以二进制字符串形式）
-                fileReader.readAsBinaryString(selectedFile);
-            }
+                    // 开始读取文件内容（以二进制字符串形式）
+                    fileReader.readAsBinaryString(selectedFile);
+                }
+            });
         });
-    });
     </script>
 
 @endsection

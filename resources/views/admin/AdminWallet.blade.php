@@ -1,15 +1,15 @@
 @extends('admin.layout')
 
 @section('admin-section')
+
+    <br><br><br><br><br><br><br><br><br>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
 
         body {
             font-family: 'Nunito', sans-serif;
             margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
             align-items: center;
             min-height: 100vh;
             color: var(--text-color);
@@ -185,7 +185,7 @@
             color: var(--text-color);
         }
     </style>
-
+    
     <div class="container">
         <h3>Admin Wallet Dashboard</h3>
 
@@ -247,6 +247,11 @@
                     @endforeach
                 </tbody>
             </table>
+
+            <!-- 分页链接 -->
+            <div class="d-flex justify-content-center mt-4">
+                {{ $adminwallets->links() }}
+            </div>
         @else
             <p style="text-align: center;">Admin Wallet information is not available.</p>
         @endif

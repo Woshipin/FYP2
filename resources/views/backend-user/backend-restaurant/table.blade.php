@@ -2,11 +2,85 @@
 
 @section('newuser-section')
 
+{{-- Modal CSS --}}
 <style>
-    /* Set a maximum height for the modal body */
+    .modal-dialog {
+        max-width: 80%;
+        width: 80%;
+        margin: 30px auto;
+    }
+
+    .modal-content {
+        height: 90vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-header,
+    .modal-footer {
+        flex-shrink: 0;
+    }
+
     .modal-body {
-        max-height: 500px; /* Adjust the height as needed */
-        overflow-y: auto; /* Add vertical scroll if content overflows */
+        flex: 1 1 auto;
+        overflow-y: auto;
+        max-height: calc(90vh - 120px);
+        padding: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+    }
+
+    /* 调整预览区域 */
+    .preview-add-image {
+        width: 100%;
+        height: 300px;
+        /* 可以根据需要调整 */
+        border: 1px solid #ddd;
+        padding: 10px;
+        margin-bottom: 15px;
+        overflow: hidden;
+    }
+
+    #preview-container {
+        width: 100%;
+        height: 100%;
+        overflow-y: auto;
+        display: flex;
+        flex-wrap: wrap;
+        align-content: flex-start;
+    }
+
+    #preview-container img {
+        width: 100px;
+        /* 调整预览图片的大小 */
+        height: 100px;
+        object-fit: cover;
+        margin: 5px;
+    }
+
+    @media (max-height: 600px) {
+        .modal-dialog {
+            margin: 10px auto;
+        }
+
+        .modal-content {
+            height: 95vh;
+        }
+
+        .modal-body {
+            max-height: calc(95vh - 100px);
+        }
+
+        .preview-add-image {
+            height: 200px;
+            /* 在小屏幕上减小高度 */
+        }
     }
 </style>
 

@@ -56,17 +56,25 @@
                         <th>Resort State</th>
                         <td>{{$resorts->state}}</td>
                     </tr>
-                    {{-- <tr>
+                    <tr>
                         <th>Resort Longitude</th>
                         <td>{{$resorts->longitude}}</td>
                     </tr>
                     <tr>
                         <th>Resort Latitude</th>
                         <td>{{$resorts->latitude}}</td>
-                    </tr> --}}
+                    </tr>
                     <tr>
                         <th>Resort Description</th>
                         <td>{{$resorts->description}}</td>
+                    </tr>
+                    <tr>
+                        <th>Resort Longitude</th>
+                        <td>{{$resorts->digital_lock_password}}</td>
+                    </tr>
+                    <tr>
+                        <th>Resort Latitude</th>
+                        <td>{{$resorts->emailbox_password}}</td>
                     </tr>
                 </table>
             </div>

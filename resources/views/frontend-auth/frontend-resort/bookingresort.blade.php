@@ -197,6 +197,13 @@
         });
     </script>
 
+    {{-- progress bar CSS --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- 在 head 标签中引入 Bootstrap CSS -->
+    {{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> --}}
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <br><br><br><br><br><br>
 
     <!------------------------------------------------------------ Book Area ------------------------------------------------------->
@@ -223,7 +230,7 @@
                     <li class="custom-tab" data-tab="payment">Payment</li>
                 </ul>
 
-                <form action="{{ url('bookingsresort') }}" method="post" enctype="multipart/form-data">
+                <form action="{{ url('bookingsresort') }}" method="post" enctype="multipart/form-data" id="bookingForm">
                     @csrf
 
                     {{-- Booking Resort Area --}}
@@ -396,20 +403,101 @@
                                         <span>cvv</span>
                                         <input type="text" name="cvv" maxlength="4" class="cvv-input">
                                     </div>
+
                                 </div>
 
                                 <input type="submit" class="btn" id="submit-button">
+
                             </div>
                         </div>
+                    </div>
+
+                    <!-- 进度条 -->
+                    <div class="progress mt-3" id="progressBarContainer" style="display: none;">
+                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                     </div>
 
                 </form>
             </div>
         </div>
+
     </section>
     <!-- Book Section Ends -->
 
     <!------------------------------------------------------------ /.Js Area -------------------------------------------------------->
+
+    {{-- progress bar JS --}}
+    <!-- 在 body 标签底部引入 Bootstrap JS 和 jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    {{-- progress bar JS --}}
+    <script>
+        document.getElementById('submit-button').addEventListener('click', function(event) {
+            event.preventDefault(); // 阻止表单默认提交行为
+
+            // 显示进度条
+            let progressBarContainer = document.getElementById('progressBarContainer');
+            progressBarContainer.style.display = 'block';
+            let progressBar = document.querySelector('.progress-bar');
+            let width = 0;
+
+            let interval = setInterval(function() {
+                if (width >= 100) {
+                    clearInterval(interval);
+
+                    // 使用 AJAX 提交表单
+                    let form = document.getElementById('bookingForm');
+                    let formData = new FormData(form);
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Toastify({
+                                text: data.message,
+                                duration: 10000,
+                                style: {
+                                    background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                }
+                            }).showToast();
+                            window.location.href = "{{ route('home') }}";
+                        } else {
+                            Toastify({
+                                text: data.message,
+                                duration: 10000,
+                                style: {
+                                    background: "linear-gradient(to right, #b90000, #c99396)"
+                                }
+                            }).showToast();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Toastify({
+                            text: 'An error occurred while processing your request.',
+                            duration: 10000,
+                            style: {
+                                background: "linear-gradient(to right, #b90000, #c99396)"
+                            }
+                        }).showToast();
+                    });
+                } else {
+                    width += 10;
+                    progressBar.style.width = width + '%';
+                    progressBar.setAttribute('aria-valuenow', width);
+                    progressBar.textContent = width + '%';
+                }
+            }, 500);
+        });
+    </script>
 
     {{-- Calculate Resort Total Price --}}
     <script>
@@ -645,7 +733,7 @@
         // JavaScript to handle tab switching
         $(document).ready(function() {
             $('.custom-tab').click(function() {
-                console.log('aaa');
+                console.log('Tab clicked');
                 var tab = $(this).data('tab');
                 $('.custom-tab').removeClass('active');
                 $('.custom-tab[data-tab="' + tab + '"]').toggleClass('active');

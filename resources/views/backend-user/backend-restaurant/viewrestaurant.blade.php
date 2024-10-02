@@ -63,13 +63,22 @@
                         <td>{{$restaurants->state}}</td>
                     </tr>
                     <tr>
+                        <th>Restaurant Description</th>
+                        <td>{{$restaurants->description}}</td>
+                    </tr>
+                    <tr>
                         <th>Restaurant Address</th>
                         <td>{{$restaurants->address}}</td>
                     </tr>
                     <tr>
-                        <th>Restaurant Description</th>
-                        <td>{{$restaurants->description}}</td>
+                        <th>Restaurant Latitude</th>
+                        <td>{{ $restaurants->latitude }}</td>
                     </tr>
+                    <tr>
+                        <th>Restaurant Longitude</th>
+                        <td>{{ $restaurants->longitude }}</td>
+                    </tr>
+
                 </table>
             </div>
         </div>

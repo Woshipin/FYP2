@@ -15,19 +15,83 @@
 
     {{-- Modal CSS --}}
     <style>
-        /* Set a maximum height for the modal body */
-        .modal-body {
-            max-height: 500px;
-            /* Adjust the height as needed */
-            overflow-y: auto;
-            /* Add vertical scroll if content overflows */
+        .modal-dialog {
+            max-width: 80%;
+            width: 80%;
+            margin: 30px auto;
         }
 
-        img {
-            width: 80px;
-            /* 设置所有图片的宽度为 80 像素 */
-            height: auto;
-            /* 保持宽高比例 */
+        .modal-content {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header,
+        .modal-footer {
+            flex-shrink: 0;
+        }
+
+        .modal-body {
+            flex: 1 1 auto;
+            overflow-y: auto;
+            max-height: calc(90vh - 120px);
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+        }
+
+        /* 调整预览区域 */
+        .preview-add-image {
+            width: 100%;
+            height: 300px;
+            /* 可以根据需要调整 */
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        #preview-container {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+        }
+
+        #preview-container img {
+            width: 100px;
+            /* 调整预览图片的大小 */
+            height: 100px;
+            object-fit: cover;
+            margin: 5px;
+        }
+
+        @media (max-height: 600px) {
+            .modal-dialog {
+                margin: 10px auto;
+            }
+
+            .modal-content {
+                height: 95vh;
+            }
+
+            .modal-body {
+                max-height: calc(95vh - 100px);
+            }
+
+            .preview-add-image {
+                height: 200px;
+                /* 在小屏幕上减小高度 */
+            }
         }
     </style>
 
@@ -168,7 +232,8 @@
 
                         <div class="form-group">
                             <label for="latitude">Resort Latitude</label>
-                            <input type="text" class="form-control" name="latitude" id="latitude" placeholder="Enter Latitude">
+                            <input type="text" class="form-control" name="latitude" id="latitude"
+                                placeholder="Enter Latitude">
                             <span class="text-danger">
                                 @error('latitude')
                                     {{ $message }}
@@ -178,7 +243,8 @@
 
                         <div class="form-group">
                             <label for="longitude">Resort Longitude</label>
-                            <input type="text" class="form-control" name="longitude" id="longitude" placeholder="Enter Longitude">
+                            <input type="text" class="form-control" name="longitude" id="longitude"
+                                placeholder="Enter Longitude">
                             <span class="text-danger">
                                 @error('longitude')
                                     {{ $message }}
@@ -188,7 +254,8 @@
 
                         <div class="form-group">
                             <label for="description">Resort Description</label>
-                            <textarea class="form-control" name="description" id="description" rows="10" placeholder="Enter Resort Description"></textarea>
+                            <textarea class="form-control" name="description" id="description" rows="10"
+                                placeholder="Enter Resort Description"></textarea>
                             <span class="text-danger">
                                 @error('description')
                                     {{ $message }}
@@ -262,7 +329,7 @@
                             <div class="form-group">
                                 <label for="name">Resort Name</label>
                                 <input type="text" class="form-control" name="name" id="name"
-                                    value="{{ $resort->name }}">
+                                    value="{{ old('name', $resort->name) }}">
                                 <span class="text-danger">
                                     @error('name')
                                         {{ $message }}
@@ -305,7 +372,7 @@
                             <div class="form-group">
                                 <label for="price">Resort Price</label>
                                 <input type="number" class="form-control" name="price" id="price"
-                                    value="{{ $resort->price }}">
+                                    value="{{ old('price', $resort->price) }}">
                                 <span class="text-danger">
                                     @error('price')
                                         {{ $message }}
@@ -316,7 +383,7 @@
                             <div class="form-group">
                                 <label for="type">Resort Type</label>
                                 <input type="text" class="form-control" name="type" id="type"
-                                    value="{{ $resort->type }}">
+                                    value="{{ old('type', $resort->type) }}">
                                 <span class="text-danger">
                                     @error('type')
                                         {{ $message }}
@@ -326,7 +393,7 @@
                             <div class="form-group">
                                 <label for="email">Resort Email </label>
                                 <input type="text" class="form-control" name="email" id="email"
-                                    value="{{ $resort->email }}">
+                                    value="{{ old('email', $resort->email) }}">
                                 <span class="text-danger">
                                     @error('email')
                                         {{ $message }}
@@ -336,7 +403,7 @@
                             <div class="form-group">
                                 <label for="phone">Resort Phone Number</label>
                                 <input type="text" class="form-control" name="phone" id="phone"
-                                    value="{{ $resort->phone }}">
+                                    value="{{ old('phone', $resort->phone) }}">
                                 <span class="text-danger">
                                     @error('phone')
                                         {{ $message }}
@@ -346,7 +413,7 @@
                             <div class="form-group">
                                 <label for="country">Resort Country</label>
                                 <input type="text" class="form-control" name="country" id="country"
-                                    value="{{ $resort->country }}">
+                                    value="{{ old('country', $resort->country) }}">
                                 <span class="text-danger">
                                     @error('country')
                                         {{ $message }}
@@ -356,9 +423,9 @@
                             <div class="form-group">
                                 <label for="state">Resort State</label>
                                 <input type="text" class="form-control" name="state" id="state"
-                                    value="{{ $resort->state }}">
+                                    value="{{ old('state', $resort->state) }}">
                                 <span class="text-danger">
-                                    @error('address')
+                                    @error('state')
                                         {{ $message }}
                                     @enderror
                                 </span>
@@ -366,8 +433,7 @@
 
                             <div class="form-group">
                                 <label for="location">Resort Location</label>
-                                <input type="text" class="form-control" name="location" id="location"
-                                    value="{{ $resort->location }}">
+                                <textarea class="form-control" name="location" id="location" rows="10">{{ old('location', $resort->location) }}</textarea>
                                 <span class="text-danger">
                                     @error('location')
                                         {{ $message }}
@@ -376,8 +442,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="description">Resort Description</label>
-                                <input type="text" class="form-control" name="description" id="description"
-                                    value="{{ $resort->description }}">
+                                <textarea class="form-control" name="description" id="description" rows="10">{{ old('description', $resort->description) }}</textarea>
                                 <span class="text-danger">
                                     @error('description')
                                         {{ $message }}
@@ -387,8 +452,7 @@
 
                             <div class="form-group">
                                 <label for="map">Resort Map</label>
-                                <input type="text" class="form-control" name="map"
-                                    id="map"value="{{ $resort->map }}">
+                                <textarea class="form-control" name="map" rows="10" id="map">{{ old('map', $resort->map) }}</textarea>
                                 <span class="text-danger">
                                     @error('map')
                                         {{ $message }}
@@ -399,7 +463,7 @@
                             <div class="form-group">
                                 <label for="longitude">Resort Longitude</label>
                                 <input type="text" class="form-control" name="longitude" id="longitude"
-                                    value="{{ $resort->longitude }}">
+                                    value="{{ old('longitude', $resort->longitude) }}">
                                 <span class="text-danger">
                                     @error('longitude')
                                         {{ $message }}
@@ -410,13 +474,38 @@
                             <div class="form-group">
                                 <label for="latitude">Resort Latitude</label>
                                 <input type="text" class="form-control" name="latitude" id="latitude"
-                                    value="{{ $resort->latitude }}">
+                                    value="{{ old('latitude', $resort->latitude) }}">
                                 <span class="text-danger">
                                     @error('latitude')
                                         {{ $message }}
                                     @enderror
                                 </span>
                             </div>
+
+                            <div class="form-group">
+                                <label for="digital_lock_password">Resort Digital Lock Password</label>
+                                <input type="text" class="form-control" name="digital_lock_password"
+                                    id="digital_lock_password"
+                                    value="{{ old('digital_lock_password', $resort->digital_lock_password) }}">
+                                <span class="text-danger">
+                                    @error('digital_lock_password')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="emailbox_password">Resort Email Box Password</label>
+                                <input type="text" class="form-control" name="emailbox_password"
+                                    id="emailbox_password"
+                                    value="{{ old('emailbox_password', $resort->emailbox_password) }}">
+                                <span class="text-danger">
+                                    @error('emailbox_password')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
+                            </div>
+
                         </div>
 
                         <div class="modal-footer">
@@ -935,29 +1024,29 @@
             }
 
             fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`, {
-                headers: {
-                    'User-Agent': 'YourAppName/1.0 (YourContactEmail)'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.length > 0) {
-                    const location = data[0];
-                    document.getElementById('latitude').value = location.lat;
-                    document.getElementById('longitude').value = location.lon;
-                } else {
+                    headers: {
+                        'User-Agent': 'YourAppName/1.0 (YourContactEmail)'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        const location = data[0];
+                        document.getElementById('latitude').value = location.lat;
+                        document.getElementById('longitude').value = location.lon;
+                    } else {
+                        document.getElementById('latitude').value = '';
+                        document.getElementById('longitude').value = '';
+                        // alert('未找到该地址，请检查输入是否正确。');
+                        console.error('No results found for the given address.');
+                    }
+                })
+                .catch(error => {
                     document.getElementById('latitude').value = '';
                     document.getElementById('longitude').value = '';
-                    // alert('未找到该地址，请检查输入是否正确。');
-                    console.error('No results found for the given address.');
-                }
-            })
-            .catch(error => {
-                document.getElementById('latitude').value = '';
-                document.getElementById('longitude').value = '';
-                // alert('获取地理编码数据时发生错误。');
-                console.error('Error fetching geocoding data:', error);
-            });
+                    // alert('获取地理编码数据时发生错误。');
+                    console.error('Error fetching geocoding data:', error);
+                });
         });
     </script>
 
