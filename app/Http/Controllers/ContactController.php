@@ -12,6 +12,8 @@ use App\Models\Hotel;
 use Mail;
 use Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\ContactReply;
+use App\Mail\UserContactReply;
 
 class ContactController extends Controller
 {
@@ -20,6 +22,22 @@ class ContactController extends Controller
         $contacts = Contact::paginate(10);
 
         return view('admin.contact',compact('contacts'));
+    }
+
+    public function sendReply(Request $request)
+    {
+        $request->validate([
+            'contact_id' => 'required|integer',
+            'reply_message' => 'required|string',
+        ]);
+
+        // 获取联系人信息（假设你有一个Contact模型）
+        $contact = \App\Models\Contact::find($request->contact_id);
+
+        // 发送邮件
+        Mail::to('ahpin7762@gmail.com')->send(new ContactReply($contact, $request->reply_message));
+
+        return redirect()->back()->with('success', 'Reply sent successfully!');
     }
 
     public function contact(){
@@ -154,7 +172,7 @@ class ContactController extends Controller
 
     }
 
-    public function viewhotelcontact()
+    public function viewusercontact()
     {
         // Get the currently authenticated user
         $user = auth()->user();
@@ -163,15 +181,13 @@ class ContactController extends Controller
         $ownername = $user->name;
 
         // Retrieve contacts where ownername matches the authenticated user's name
-        $hotelscontact = UserContact::where('ownername', $ownername);
-
-        $hotelscontacts = $hotelscontact->paginate(10);
+        $userscontacts = UserContact::where('ownername', $ownername)->paginate(10);
 
         // Use dd() for debugging
-        // dd($hotelscontact);
+        // dd($userscontacts);
 
         // Return the view with the retrieved contacts
-        return view('backend-user.viewusercontact.viewusercontact', compact('hotelscontacts'));
+        return view('backend-user.viewusercontact.viewusercontact', compact('userscontacts'));
     }
 
 //-------------------------------------------------------- User Contact Restaurant Area --------------------------------------------------//
@@ -245,23 +261,23 @@ class ContactController extends Controller
 
     }
 
-    public function viewrestaurantcontact()
-    {
-        // Get the currently authenticated user
-        $user = auth()->user();
+    // public function viewrestaurantcontact()
+    // {
+    //     // Get the currently authenticated user
+    //     $user = auth()->user();
 
-        // Get the owner name of the user
-        $ownername = $user->name;
+    //     // Get the owner name of the user
+    //     $ownername = $user->name;
 
-        // Retrieve contacts where ownername matches the authenticated user's name
-        $restaurantscontact = UserContact::where('ownername', $ownername)->get();
+    //     // Retrieve contacts where ownername matches the authenticated user's name
+    //     $restaurantscontact = UserContact::where('ownername', $ownername)->get();
 
-        // Use dd() for debugging
-        // dd($hotelscontact);
+    //     // Use dd() for debugging
+    //     // dd($hotelscontact);
 
-        // Return the view with the retrieved contacts
-        return view('backend-user.viewusercontact.viewrestaurantcontact', compact('restaurantscontact'));
-    }
+    //     // Return the view with the retrieved contacts
+    //     return view('backend-user.viewusercontact.viewrestaurantcontact', compact('restaurantscontact'));
+    // }
 
 //-------------------------------------------------------- User Contact Restaurant Area --------------------------------------------------//
 
@@ -334,37 +350,87 @@ class ContactController extends Controller
 
     }
 
-    public function viewresortcontact()
+    // public function viewresortcontact()
+    // {
+    //     // Get the currently authenticated user
+    //     $user = auth()->user();
+
+    //     // Get the owner name of the user
+    //     $ownername = $user->name;
+
+    //     // Retrieve contacts where ownername matches the authenticated user's name
+    //     $resortscontact = UserContact::where('ownername', $ownername)->get();
+
+    //     // Use dd() for debugging
+    //     // dd($hotelscontact);
+
+    //     // Return the view with the retrieved contacts
+    //     return view('backend-user.viewusercontact.viewresortcontact', compact('resortscontact'));
+    // }
+
+    // public function mutlipledeletecontact(Request $request)
+    // {
+
+    //     $ids = json_decode($request->input('ids'));
+
+    //     if (is_array($ids) && count($ids) > 0) {
+
+    //         UserContact::whereIn('id', $ids)->delete();
+
+    //         return back()->with('success', 'Selected User Contacts have been deleted successfully!');
+
+    //     } else {
+
+    //         return back()->with('error', 'Invalid input. No Booked Restaurants were deleted.');
+    //     }
+    // }
+
+    public function CustomerSendReply(Request $request)
     {
-        // Get the currently authenticated user
-        $user = auth()->user();
+        $request->validate([
+            'contact_id' => 'required|integer',
+            'reply_message' => 'required|string',
+        ]);
 
-        // Get the owner name of the user
-        $ownername = $user->name;
+        $contact = UserContact::find($request->contact_id);
 
-        // Retrieve contacts where ownername matches the authenticated user's name
-        $resortscontact = UserContact::where('ownername', $ownername)->get();
+        if (!$contact) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Contact not found.',
+            ], 404);
+        }
 
-        // Use dd() for debugging
-        // dd($hotelscontact);
+        try {
+            Mail::to('ahpin7762@gmail.com')->send(new UserContactReply($contact, $request->reply_message));
 
-        // Return the view with the retrieved contacts
-        return view('backend-user.viewusercontact.viewresortcontact', compact('resortscontact'));
-    }
+            // $contact->email
 
-    public function mutlipledeletecontact(Request $request){
-
-        $ids = json_decode($request->input('ids'));
-
-        if (is_array($ids) && count($ids) > 0) {
-
-            UserContact::whereIn('id', $ids)->delete();
-
-            return back()->with('success', 'Selected User Contacts have been deleted successfully!');
-
-        } else {
-
-            return back()->with('error', 'Invalid input. No Booked Restaurants were deleted.');
+            return response()->json([
+                'success' => true,
+                'message' => 'Reply sent successfully!',
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to send email: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to send email. Please try again later.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
+
+    public function DeleteContact(Request $request, $id)
+    {
+        $contact = UserContact::find($id);
+
+        if (!$contact) {
+            return redirect()->back()->with('error', 'Contact not found.');
+        }
+
+        $contact->delete();
+
+        return redirect()->back()->with('success', 'Contact deleted successfully.');
+    }
+
 }

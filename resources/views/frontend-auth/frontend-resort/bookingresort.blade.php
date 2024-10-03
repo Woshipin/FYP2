@@ -202,8 +202,6 @@
     <!-- 在 head 标签中引入 Bootstrap CSS -->
     {{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> --}}
 
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
     <br><br><br><br><br><br>
 
     <!------------------------------------------------------------ Book Area ------------------------------------------------------->

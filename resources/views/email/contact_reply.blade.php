@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Comment Email</title>
+    <title>Reply to Your Contact Message</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -35,17 +35,6 @@
             line-height: 1.6;
             margin-bottom: 20px;
         }
-        .content strong {
-            font-weight: bold;
-            color: #007BFF;
-        }
-        .comment {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-left: 5px solid #007BFF;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
         .footer {
             text-align: center;
             padding: 10px 0;
@@ -61,15 +50,16 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>User Comment Information</h1>
+            <h1>Reply to Your Contact Message</h1>
         </div>
         <div class="content">
-            <p><strong>User Name:</strong> {{ $user_name }}</p>
-            <p><strong>Email:</strong> {{ $email }}</p>
-            <div class="comment">
-                <p><strong>Comment:</strong></p>
-                <p>{{ $comment }}</p>
-            </div>
+            <p>Dear {{ $contact->name }},</p>
+            <p>Here is the reply to your message:</p>
+            <p style="background-color: #f9f9f9; padding: 15px; border-left: 5px solid #007BFF; border-radius: 5px;">
+                {{ $replyMessage }}
+            </p>
+            <p>Best regards,</p>
+            <p>Admin</p>
         </div>
         <div class="footer">
             <p>If you have any questions, please <a href="mailto:support@example.com">contact us</a>.</p>

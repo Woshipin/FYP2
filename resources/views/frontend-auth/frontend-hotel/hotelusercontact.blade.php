@@ -27,11 +27,11 @@
                 <input type="text" name="name" placeholder="name">
                 <input type="email" name="email" placeholder="email">
             </div> --}}
-            <input type="text" name="name" value="{{ auth()->user()->name }}">
-            <input type="text" name="email" value="{{ auth()->user()->email }}">
+            <input type="hidden" name="name" value="{{ auth()->user()->name }}">
+            <input type="hidden" name="email" value="{{ auth()->user()->email }}">
 
-            <input type="text" name="ownertype" value="{{$hotels->name}}">
-            <input type="text" name="ownername" value="{{ $hotels->user->name }}">
+            <input type="hidden" name="ownertype" value="{{$hotels->name}}">
+            <input type="hidden" name="ownername" value="{{ $hotels->user->name }}">
 
             <div class="inputBox">
                 <input type="number" name="phone" placeholder="Phone Number">

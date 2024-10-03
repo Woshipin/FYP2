@@ -86,7 +86,7 @@ Route::get('/users/dashboard/{id}',[UserController::class,'userdashboard'])->mid
 //Display User Wallet Page
 Route::get('/users/wallet/{id}', [UserController::class, 'wallet'])->name('users.wallet');
 
-//Contact Page
+// User Contact Page
 Route::get('/admin/contact',[ContactController::class,'viewcontact'])->name('admin/contact');
 
 //User Comment Page
@@ -498,8 +498,11 @@ Route::post('/uploadAndSearchHotels', [HotelController::class, 'uploadAndSearchH
 Route::get('contact',[ContactController::class,'contact'])->name('contact');
 // Contact US
 Route::post('/contactus',[ContactController::class,'contactus'])->name('contactus');
-// New Restaurant Detail Page
-// Route::get('/restaurantdetail', [RestaurantController::class, 'newdetail'])->name('restaurantdetail');
+
+// Admin Reply User
+Route::post('/send-reply', [ContactController::class, 'sendReply'])->name('send.reply');
+Route::post('/customer/send-reply', [ContactController::class, 'CustomerSendReply'])->name('customer.send.reply');
+
 
 //------------------------------------------------------Frontend Booking Restaurant------------------------------------------------------//
 Route::get('/booking/{id}',[BookingController::class,'bookingpage'])->name('bookingrestaurant')->middleware('auth');
@@ -548,9 +551,9 @@ Route::get('hotels/{id}/contact', [ContactController::class, 'hotelusercontact']
 //User Contact Owner Hotel Page
 Route::post('/contacthotel', [ContactController::class, 'contacthotel'])->name('contacthotel');
 //Display Contact User Hotel Page
-Route::get('viewhotelcontact', [ContactController::class, 'viewhotelcontact'])->name('viewhotelcontact');
-//MutlipleDelete User Contact Function
-Route::post('/mutlipledeleteContact/delete', [ContactController::class, 'mutlipledeletecontact'])->name('mutlipledeleteContact');
+Route::get('viewusercontact', [ContactController::class, 'viewusercontact'])->name('viewusercontact');
+//Delete User Contact
+Route::delete('/contact/{id}/delete', [ContactController::class, 'DeleteContact'])->name('contact.delete');
 
 //---------------------------------------------- Frontend User Contact Restaurant Onwer Area------------------------------------------------------//
 //Display Contact User Hotel Page

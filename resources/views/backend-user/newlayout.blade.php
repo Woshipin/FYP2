@@ -333,9 +333,9 @@
 
             <!-- Nav Item - Hotel Contact -->
             <li class="nav-item">
-                <a class="nav-link" href="{{ url('viewhotelcontact') }}">
+                <a class="nav-link" href="{{ url('viewusercontact') }}">
                     <i class="fas fa-address-book"></i>
-                    <span>Contact</span></a>
+                    <span>User Contact</span></a>
             </li>
 
             <!-- Nav Item - User Deposit -->
@@ -704,6 +704,8 @@
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
     {{-- JS User Backend UI --}}
     <!-- Bootstrap core JavaScript-->

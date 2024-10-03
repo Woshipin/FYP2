@@ -84,53 +84,105 @@
         }
     </style>
 
-    {{-- <style>
-        /* Add Image Preview */
-        .preview-add-image {
-            border: 2px solid #ccc;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 20px;
-            background-color: #f9f9f9;
+    {{-- Table CSS --}}
+    <style>
+        /* Custom CSS for better aesthetics */
+        .data_table {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .preview-add-image label {
-            display: block;
-            margin-bottom: 5px;
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            width: 100%;
+            border: 1px solid #dee2e6;
+        }
+
+        .table thead th {
+            border-bottom: 2px solid #dee2e6;
+            background-color: #343a40;
+            color: #ffffff;
             font-weight: bold;
+            padding: 12px;
         }
 
-        .preview-add-image img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 5px;
-            margin-top: 10px;
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
         }
 
-        /* Edit Image Preview */
-        .preview-edit-image {
-            border: 2px solid #ccc;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 20px;
-            background-color: #f9f9f9;
+        .table tbody tr.table-light:hover {
+            background-color: #e9ecef;
         }
 
-        .preview-edit-image label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+        .table tbody td {
+            border-top: 1px solid #dee2e6;
+            padding: 12px;
         }
 
-        .preview-edit-image img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 5px;
-            margin-top: 10px;
+        .table tbody tr:first-child td {
+            border-top: none;
         }
-    </style> --}}
+
+        .table tbody tr:last-child td {
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .table tbody tr:last-child td:first-child {
+            border-bottom-left-radius: 10px;
+        }
+
+        .table tbody tr:last-child td:last-child {
+            border-bottom-right-radius: 10px;
+        }
+
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+        }
+
+        .carousel-control-prev:hover,
+        .carousel-control-next:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .carousel-control-prev-icon:hover,
+        .carousel-control-next-icon:hover {
+            background-color: rgba(255, 255, 255, 1);
+        }
+
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-success:focus {
+            box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.5);
+        }
+    </style>
 
     {{-- Hotel Area --}}
     {{-- Add new hotels --}}
@@ -554,8 +606,7 @@
     </div>
 
     {{-- show all hotels --}}
-    <div class="container">
-
+    <div class="container mt-5">
         {{-- <div id="map" style="height: 400px;"></div><br> --}}
 
         <div class="row">
@@ -584,7 +635,7 @@
 
                 <br>
 
-                <div class="data_table">
+                <div class="data_table card shadow-sm p-4">
 
                     @if (\Session::has('error'))
                         <div class="alert alert-danger">{{ Session::get('error') }}</div>
