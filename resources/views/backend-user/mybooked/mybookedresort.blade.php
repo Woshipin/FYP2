@@ -361,7 +361,7 @@
                                 class="navy-blue-button">Verify</a> --}}
 
                             @if($resort->payment_status == 0)
-                            
+
                                 <form action="{{ route('booking.verify.resort', $resort->id) }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="user_id" value="{{ $resort->user_id }}">
@@ -406,7 +406,6 @@
 
     {{-- Toastr JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
     <script>
         @if (Session::has('success'))
             Toastify({
@@ -449,30 +448,6 @@
         @endif
     </script>
 
-    {{-- <script src="https://davidshimjs.github.io/qrcodejs/qrcode.min.js"></script>
-
-    <script>
-        var qrcode = new QRCode("qrcode");
-
-        // Generate QR Code on page load
-        window.onload = function() {
-            var resortId = "{{ $resort->id }}"; // Assuming $resort is available in the view
-            var qrCodeUrl = "{{ route('verify.resort', ['resortId' => ':resortId']) }}";
-            qrCodeUrl = qrCodeUrl.replace(':resortId', resortId);
-
-            qrcode.makeCode(qrCodeUrl);
-        };
-
-        // Function to handle scanning result
-        function handleScanningResult(resortDetails) {
-            // Resort verification successful
-            alert('Verification complete!');
-            // Update or display the resort details as needed
-            // Example: Update a div element with id "resortDetails" content
-            document.getElementById("resortDetails").innerHTML = resortDetails;
-        }
-    </script> --}}
-
     {{-- New Delete Selected All Restaurant Has Booked --}}
     <script>
         // Function to check/uncheck all checkboxes
@@ -507,60 +482,5 @@
             }
         });
     </script>
-
-    {{-- Customer Check Out Function --}}
-    {{-- <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var paymentForm = document.getElementById('paymentForm');
-
-            paymentForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                var resortId = paymentForm.querySelector('.payment-link').getAttribute('data-resort-id');
-
-                // 发送 POST 请求
-                fetch('/paymentresort/' + resortId + '/view', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
-                        },
-                    })
-                    .then(response => {
-                        // 检查响应状态码
-                        if (response.ok) {
-                            // 返回 JSON 数据
-                            return response.json();
-                        } else {
-                            throw new Error('网络响应失败');
-                        }
-                    })
-                    .then(data => {
-                        // 处理成功的响应数据
-                        console.log('支付成功。');
-
-                        // 显示成功消息
-                        var successMessage = document.createElement('div');
-                        successMessage.className = 'alert alert-success';
-                        successMessage.textContent = '支付成功。';
-
-                        // 插入到适当的位置
-                        document.body.appendChild(successMessage);
-
-                        // 这里你可能需要根据实际情况更新页面的其他部分，例如隐藏或禁用按钮等
-                    })
-                    .catch(error => {
-                        // 处理异常
-                        console.error('支付处理出错:', error);
-                    })
-                    .finally(() => {
-                        // 提交表单，如果不手动提交，表单将不会被提交
-                        paymentForm.submit();
-                    });
-            });
-        });
-    </script> --}}
-
 
 @endsection

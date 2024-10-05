@@ -183,29 +183,16 @@
 
                     <hr>
 
-                    <!-- Button to delete all selected items -->
-                    {{-- <form action="{{ route ('restaurants.deleteMultiplebookedrestaurant') }}" method="post" id="deleteMultipleForm">
-                    @csrf --}}
                     <!-- Your table code here -->
                     <div class="table-responsive">
                         <table id="example" class="table table-striped table-bordered">
                             {{-- Button to delete all selected items --}}
                             <button type="submit" class="btn btn-danger m-1" id="deleteAllSelectedRecord">Delete All
                                 Selected Booked Restaurants</button>
-                            {{-- Add Resort --}}
-                            {{-- <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#tableModal">Add Table</button> --}}
-                            {{-- Export Resort --}}
+
                             <a href="{{ url('export-bookedRestaurant') }}"><button type="button"
                                     class="btn btn-primary m-1">Export Booked Restaurants</button></a>
-                            {{-- <form action="{{ route('viewrestaurant-pdf') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-info m-1">View In PDF</button>
-                            </form>
-                            <!-- Export Hotel PDF Model -->
-                            <form action="{{ route ('downloadbookedrestaurant-pdf') }}" method="POST" target="__blank">
-                                @csrf
-                                <button type="submit" class="btn btn-info m-1">Download PDF</button>
-                            </form> --}}
+
                             <thead class="table-dark">
                                 <tr>
                                     <th><input type="checkbox" name="" id="select_all_ids" onclick="checkAll(this)">
@@ -273,8 +260,7 @@
             </div>
         </div>
     </div>
-
-
+    
     {{-- New Delete Selected All Restaurant Has Booked --}}
     <script>
         // Function to check/uncheck all checkboxes
@@ -309,119 +295,5 @@
             }
         });
     </script>
-
-    {{-- Customer Check Out Function --}}
-    {{-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var paymentForm = document.getElementById('paymentForm');
-
-        paymentForm.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            var restaurantId = paymentForm.querySelector('.payment-link').getAttribute(
-                'data-restaurant-id');
-            var tableId = paymentForm.querySelector('.payment-link').getAttribute('data-table-id');
-
-            // 发送 POST 请求
-            fetch('/paymentrestaurant/' + restaurantId + '/view/' + tableId, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                            .getAttribute('content')
-                    },
-                })
-                .then(response => {
-                    // 检查响应状态码
-                    if (response.ok) {
-                        // 返回 JSON 数据
-                        return response.json();
-                    } else {
-                        throw new Error('网络响应失败');
-                    }
-                })
-                .then(data => {
-                    // 处理成功的响应数据
-                    console.log('支付成功。');
-
-                    // 显示成功消息
-                    var successMessage = document.createElement('div');
-                    successMessage.className = 'alert alert-success';
-                    successMessage.textContent = '支付成功。';
-
-                    // 插入到适当的位置
-                    document.body.appendChild(successMessage);
-
-                    // 这里你可能需要根据实际情况更新页面的其他部分，例如隐藏或禁用按钮等
-                })
-                .catch(error => {
-                    // 处理异常
-                    console.error('支付处理出错:', error);
-                })
-                .finally(() => {
-                    // 提交表单，如果不手动提交，表单将不会被提交
-                    paymentForm.submit();
-                });
-        });
-    });
-</script> --}}
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var paymentForm = document.getElementById('paymentForm');
-
-            if (paymentForm) {
-                paymentForm.addEventListener('submit', function(event) {
-                    event.preventDefault();
-
-                    var restaurantId = paymentForm.querySelector('.payment-link').getAttribute(
-                        'data-restaurant-id');
-                    var tableId = paymentForm.querySelector('.payment-link').getAttribute('data-table-id');
-
-                    // 发送 POST 请求
-                    fetch('/paymentrestaurant/' + restaurantId + '/view/' + tableId, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content')
-                            },
-                        })
-                        .then(response => {
-                            // 检查响应状态码
-                            if (response.ok) {
-                                // 返回 JSON 数据
-                                return response.json();
-                            } else {
-                                throw new Error('网络响应失败');
-                            }
-                        })
-                        .then(data => {
-                            // 处理成功的响应数据
-                            console.log('支付成功。');
-
-                            // 显示成功消息
-                            var successMessage = document.createElement('div');
-                            successMessage.className = 'alert alert-success';
-                            successMessage.textContent = '支付成功。';
-
-                            // 插入到适当的位置
-                            document.body.appendChild(successMessage);
-
-                            // 这里你可能需要根据实际情况更新页面的其他部分，例如隐藏或禁用按钮等
-                        })
-                        .catch(error => {
-                            // 处理异常
-                            console.error('支付处理出错:', error);
-                        })
-                        .finally(() => {
-                            // 提交表单，如果不手动提交，表单将不会被提交
-                            paymentForm.submit();
-                        });
-                });
-            }
-        });
-    </script>
-
 
 @endsection

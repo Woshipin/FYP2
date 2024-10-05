@@ -1073,38 +1073,6 @@
         });
     </script>
 
-    <!-- Delete Selected Resort -->
-    {{-- <script>
-        $(function(e){
-
-            $("#select_all_ids").click(function(){
-                $('.checkbox_ids').prop('checked',$(this).prop('checked'));
-            });
-
-            $('#deleteAllSelectedRecord').click(function(e){
-                e.preventDefault();
-                var all_ids = [];
-                $('input:checkbox[name=ids]:checked').each(function(){
-                    all_ids.push($(this).val());
-                });
-
-                $.ajax({
-                    url:"{{ route('resort.delete') }}",
-                    type:"DELETE",
-                    data:{
-                        ids:all_ids,
-                        _token:'{{ csrf_token() }}'
-                    },
-                    success:function(response){
-                        $.each(all_ids,function(key,val){
-                            $('resort_ids'+val).remove();
-                        });
-                    }
-                });
-            });
-        });
-    </script> --}}
-
     {{-- Backend JS --}}
     <script src="{{ asset('table/assets/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('table/assets/js/jquery-3.6.0.min.js') }}"></script>

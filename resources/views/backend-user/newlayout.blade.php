@@ -185,7 +185,7 @@
             <!-- My Place Nav Item - Pages Collapse My Place Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#MyPlace"
-                    aria-expanded="true" aria-controls="collapseTwo">
+                    aria-expanded="true" aria-controls="MyPlace">
                     <i class="fas fa-map-marker-alt"></i>
                     <span>My Place</span>
                 </a>
@@ -208,7 +208,7 @@
             <!-- Customer Booked Nav Item - Pages Collapse My Place Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#CustomerBooked"
-                    aria-expanded="true" aria-controls="collapseTwo">
+                    aria-expanded="true" aria-controls="CustomerBooked">
                     <i class="fas fa-check-circle"></i>
                     <span>Customer Booked</span>
                 </a>
@@ -237,7 +237,7 @@
             <!-- My Booked Nav Item - Pages Collapse My Place Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#MyHasBooked"
-                    aria-expanded="true" aria-controls="collapseTwo">
+                    aria-expanded="true" aria-controls="MyHasBooked">
                     <i class="fas fa-bookmark"></i>&nbsp;
                     <span>My Booked</span>
                 </a>
@@ -259,62 +259,7 @@
                     </div>
                 </div>
             </li>
-
-            <!-- Nav Item - Utilities Collapse Menu -->
-            {{-- <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                    aria-expanded="true" aria-controls="collapseUtilities">
-                    <i class="fas fa-fw fa-wrench"></i>
-                    <span>Utilities</span>
-                </a>
-                <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Custom Utilities:</h6>
-                        <a class="collapse-item" href="utilities-color.html">Colors</a>
-                        <a class="collapse-item" href="utilities-border.html">Borders</a>
-                        <a class="collapse-item" href="utilities-animation.html">Animations</a>
-                        <a class="collapse-item" href="utilities-other.html">Other</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">Addons</div> --}}
-
-            {{-- <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item active">
-                <a class="nav-link" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true"
-                    aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Pages</span>
-                </a>
-                <div id="collapsePages" class="collapse show" aria-labelledby="headingPages"
-                    data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item active" href="blank.html">Blank Page</a>
-                    </div>
-                </div>
-            </li> --}}
-
-            <!-- Nav Item - My Booked -->
-            {{-- <li class="nav-item">
-                <a class="nav-link" href="{{ url('mybookingsrestaurant') }}">
-                    <i class="fas fa-bookmark"></i>
-                    <span>My Booked</span>
-                </a>
-            </li> --}}
-
+            
             <!-- Nav Item - Table -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('showTable') }}">
@@ -338,20 +283,6 @@
                     <span>User Contact</span></a>
             </li>
 
-            <!-- Nav Item - User Deposit -->
-            {{-- <li class="nav-item">
-                <a class="nav-link" href="{{ url('deposit') }}">
-                    <i class="fas fa-user-circle"></i>
-                    <span>User Deposit</span></a>
-            </li> --}}
-
-            <!-- Nav Item - Refund Deposit -->
-            {{-- <li class="nav-item">
-                <a class="nav-link" href="{{ url('viewrefund') }}">
-                    <i class="fas fa-money-check"></i>
-                    <span>Refund Deposit</span></a>
-            </li> --}}
-
             <!-- Nav Item - User Wishlist -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('userwishlist') }}">
@@ -365,20 +296,6 @@
                     <i class="fas fa-arrow-left"></i>
                     <span>Back</span></a>
             </li>
-
-            <!-- Nav Item - Tables -->
-            {{-- <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Hotel</span></a>
-            </li> --}}
-
-            <!-- Nav Item - Tables -->
-            {{-- <li class="nav-item">
-                <a class="nav-link" href="tables.html">
-                    <i class="fas fa-fw fa-table"></i>
-                    <span>Restaurant</span></a>
-            </li> --}}
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
@@ -404,42 +321,8 @@
                     <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i
                             class="fa fa-bars"></i></button>
 
-                    <!-- Topbar Search -->
-                    {{-- <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search">
-                        <div class="input-group">
-                            <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button"><i class="fas fa-search fa-sm"></i></button>
-                            </div>
-                        </div>
-                    </form> --}}
-
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
-
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        {{-- <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small"
-                                            placeholder="Search for..." aria-label="Search"
-                                            aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li> --}}
 
                         <!-- Nav Item - Alerts -->
                         <li class="nav-item dropdown no-arrow mx-1">
@@ -451,49 +334,7 @@
                                 <span
                                     class="badge badge-danger badge-counter">{{ App\Models\UserContact::count() }}</span>
                             </a>
-                            <!-- Dropdown - Alerts -->
-                            {{-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="alertsDropdown">
-                                <h6 class="dropdown-header">
-                                    Alerts Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-primary">
-                                            <i class="fas fa-file-alt text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 12, 2019</div>
-                                        <span class="font-weight-bold">A new monthly report is ready to
-                                            download!</span>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-success">
-                                            <i class="fas fa-donate text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 7, 2019</div>
-                                        $290.29 has been deposited into your account!
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="mr-3">
-                                        <div class="icon-circle bg-warning">
-                                            <i class="fas fa-exclamation-triangle text-white"></i>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div class="small text-gray-500">December 2, 2019</div>
-                                        Spending Alert: We've noticed unusually high spending for your account.
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Show All
-                                    Alerts</a>
-                            </div> --}}
+
                         </li>
 
                         <!-- Nav Item - Messages -->
@@ -506,67 +347,7 @@
                                 <span
                                     class="badge badge-danger badge-counter">{{ App\Models\UserContact::count() }}</span>
                             </a>
-                            <!-- Dropdown - Messages -->
-                            {{-- <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                aria-labelledby="messagesDropdown">
-                                <h6 class="dropdown-header">
-                                    Message Center
-                                </h6>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle"
-                                            src="{{ asset('newuserdashboard/img/undraw_profile_1.svg') }}"
-                                            alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div class="font-weight-bold">
-                                        <div class="text-truncate">Hi there! I am wondering if you can help me with a
-                                            problem I've been having.</div>
-                                        <div class="small text-gray-500">Emily Fowler · 58m</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle"
-                                            src="{{ asset('newuserdashboard/img/undraw_profile_2.svg') }}"
-                                            alt="...">
-                                        <div class="status-indicator"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">I have the photos that you ordered last month, how
-                                            would you like them sent to you?</div>
-                                        <div class="small text-gray-500">Jae Chun · 1d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle"
-                                            src="{{ asset('newuserdashboard/img/undraw_profile_3.svg') }}"
-                                            alt="...">
-                                        <div class="status-indicator bg-warning"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Last month's report looks great, I am very happy
-                                            with
-                                            the progress so far, keep up the good work!</div>
-                                        <div class="small text-gray-500">Morgan Alvarez · 2d</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
-                                    <div class="dropdown-list-image mr-3">
-                                        <img class="rounded-circle"
-                                            src="https://source.unsplash.com/Mv9hjnEUHR4/60x60" alt="...">
-                                        <div class="status-indicator bg-success"></div>
-                                    </div>
-                                    <div>
-                                        <div class="text-truncate">Am I a good boy? The reason I ask is because someone
-                                            told me that people say this to all dogs, even if they aren't good...</div>
-                                        <div class="small text-gray-500">Chicken the Dog · 2w</div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item text-center small text-gray-500" href="#">Read More
-                                    Messages</a>
-                            </div> --}}
+
                         </li>
 
                         <!-- User Profile Model -->
@@ -620,11 +401,6 @@
 
                         <div class="topbar-divider d-none d-sm-block"></div>
 
-                        <!-- Nav Item - User Information -->
-                        {{-- <a href="{{ url('refunduserdeposit/' . $userdeposit->id) }}"
-                            class="btn btn-primary btn-sm" data-toggle="modal"
-                            data-target="#refunduserdepositModal{{ $userdeposit->id }}"><i class="fa fa-reply"></i>Refund</a> --}}
-
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="{{ url('profile/' . $id) }}"
                                 class="btn btn-primary btn-sm" data-toggle="modal"
@@ -633,23 +409,7 @@
                                 <img class="img-profile rounded-circle"
                                     src="{{ asset('newuserdashboard/img/undraw_profile.svg') }}">
                             </a>
-                            <!-- Dropdown - User Information -->
-                            {{-- <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>Profile
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-cogs fa-sm fa-fw mr-2 text-gray-400"></i>Settings
-                                </a>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fas fa-list fa-sm fa-fw mr-2 text-gray-400"></i>Activity Log
-                                </a>
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal"
-                                    data-target="#logoutModal">
-                                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>Logout
-                                </a>
-                            </div> --}}
+
                         </li>
 
                     </ul>
@@ -679,11 +439,6 @@
 
     </div>
     <!-- End of Page Wrapper -->
-
-    <!-- Scroll to Top Button-->
-    {{-- <a class="scroll-to-top rounded" href="#page-top">
-        <i class="fas fa-angle-up"></i>
-    </a> --}}
 
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
@@ -718,10 +473,6 @@
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('newuserdashboard/js/sb-admin-2.min.js') }}"></script>
 
-    <!-- Modal JavaScript -->
-    <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script> -->
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous">
     </script>
@@ -730,92 +481,6 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-    {{-- Count JS --}}
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            fetch('/get-booking-counts')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    updateBookingCount('resort', data.resortCount);
-                    updateBookingCount('hotel', data.hotelCount);
-                    updateBookingCount('restaurant', data.restaurantCount);
-                })
-                .catch(error => {
-                    console.error('Error fetching booking counts:', error);
-                });
-
-            function updateBookingCount(type, count) {
-                var countElement = document.getElementById(type + '-booked-count');
-                if (countElement) {
-                    countElement.textContent = count;
-                }
-            }
-        });
-    </script> --}}
-
-
-
-    {{-- Open and Down Navbar --}}
-    {{-- <script>
-        // 获取要控制的元素
-        var userDropdown = document.querySelector('#userDropdown');
-        var userDropdownMenu = document.querySelector('.dropdown-menu');
-
-        // 添加点击事件监听器
-        userDropdown.addEventListener('click', function (event) {
-            event.preventDefault(); // 防止链接的默认行为
-
-            // 检查下拉菜单的状态
-            if (userDropdownMenu.classList.contains('show')) {
-                // 如果下拉菜单已展开，则关闭它
-                userDropdownMenu.classList.remove('show');
-            } else {
-                // 如果下拉菜单已关闭，则展开它
-                userDropdownMenu.classList.add('show');
-            }
-        });
-
-        // 为了在其他地方点击时关闭下拉菜单，添加全局点击事件监听器
-        document.addEventListener('click', function (event) {
-            if (!userDropdown.contains(event.target)) {
-                // 如果点击事件不在用户下拉菜单内部，关闭下拉菜单
-                userDropdownMenu.classList.remove('show');
-            }
-        });
-
-    </script> --}}
-
-    <!-- JS Table Files -->
-    <!-- Add the necessary JavaScript files here -->
-    {{-- <script src="{{ asset('table/assets/js/jquery-3.6.0.min.js') }}"></script>
-    <script src="{{ asset('table/assets/js/datatables.min.js') }}"></script>
-    <script src="{{ asset('table/assets/js/pdfmake.min.js') }}"></script>
-    <script src="{{ asset('table/assets/js/vfs_fonts.js') }}"></script>
-    <script src="{{ asset('table/assets/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('table/assets/js/custom.js') }}"></script> --}}
-
-    <script>
-        // =============  Data Table - (Start) ================= //
-        // $(document).ready(function() {
-        //     var table = $('#example').DataTable();
-
-        //     // Destroy the existing DataTable instance
-        //     table.destroy();
-
-        //     // Now, you can reinitialize the DataTable with new settings or data
-        //     $('#example').DataTable({
-        //         buttons: ['copy', 'csv', 'excel', 'pdf', 'print']
-        //     });
-        // });
-
-        // =============  Data Table - (End) ================= //
-    </script>
 
 </body>
 

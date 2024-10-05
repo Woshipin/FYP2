@@ -270,7 +270,6 @@
         </div>
     </div>
 
-
     {{-- New Delete Selected All Restaurant Has Booked --}}
     <script>
         // Function to check/uncheck all checkboxes

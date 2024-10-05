@@ -190,31 +190,15 @@
 
                     <hr>
 
-                    {{-- Button to delete all selected items --}}
-                    {{-- <form action="{{ route('resorts.deleteMultiplebookedresort') }}" method="post"
-                        id="deleteMultipleForm">
-                        @csrf --}}
                     {{-- Your table code here --}}
                     <div class="table-responsive">
                         <table id="example" class="table table-striped table-bordered">
-                            {{-- <div class="row"> --}}
+
                             {{-- Button to delete all selected items --}}
                             <button type="submit" class="btn btn-danger m-1" id="deleteAllSelectedRecord">Delete All
                                 Selected Booked Resorts</button>
-                            {{-- Add Resort --}}
-                            {{-- <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#tableModal">Add Table</button> --}}
-                            {{-- Export Resort --}}
                             <a href="{{ url('export-bookedResort') }}"><button type="button"
                                     class="btn btn-primary m-1">Export Booked Resorts</button></a>
-                            {{-- <form action="{{ route('viewresort-pdf') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-info m-1">View In PDF</button>
-                            </form>
-                            <!-- Export Resort PDF Model -->
-                            <form action="{{ route ('downloadbookedresort-pdf') }}" method="POST" target="__blank">
-                                @csrf
-                                <button type="submit" class="btn btn-info m-1">Download PDF</button>
-                            </form> --}}
 
                             <!-- Button to delete all selected items -->
                             <thead class="table-dark">
@@ -373,6 +357,5 @@
             });
         });
     </script>
-
 
 @endsection

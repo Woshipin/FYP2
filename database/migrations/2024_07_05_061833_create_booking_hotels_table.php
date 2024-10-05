@@ -34,6 +34,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('card_month'); // 存储月份的整数
             $table->unsignedSmallInteger('card_year'); // 存储年份的整数
             $table->string('cvv');
+            $table->integer('popular_count')->default(0);
             $table->timestamps();
         });
     }

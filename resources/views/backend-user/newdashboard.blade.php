@@ -2,296 +2,309 @@
 
 @section('newuser-section')
 
-<style>
-    .card-header{
-        background: rgb(63,251,239);
-        background: radial-gradient(circle, rgba(63,251,239,1) 0%, rgba(70,252,88,1) 100%);
-    }
-</style>
+    {{-- CSS --}}
+    <style>
+        .card-header {
+            background: rgb(63, 251, 239);
+            background: radial-gradient(circle, rgba(63, 251, 239, 1) 0%, rgba(70, 252, 88, 1) 100%);
+        }
+    </style>
 
-<!-- Begin Page Content -->
-<div class="container-fluid">
+    <!-- Begin Page Content -->
+    <div class="container-fluid">
 
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-        <form action="{{url ('dashboard/download-pdf')}}" method="post">
-            @csrf
-            <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</button>
-        </form>
-        {{-- <a href="{{url ('dashboard/view-pdf')}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> --}}
-    </div>
+        <!-- Page Heading -->
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+            <form action="{{ url('dashboard/download-pdf') }}" method="post">
+                @csrf
+                <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                        class="fas fa-download fa-sm text-white-50"></i> Generate Report</button>
+            </form>
+            {{-- <a href="{{url ('dashboard/view-pdf')}}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i class="fas fa-download fa-sm text-white-50"></i> Generate Report</a> --}}
+        </div>
 
-    <!-- Content Row -->
-    <div class="row">
+        <!-- Content Row -->
+        <div class="row">
 
-        <!-- All Resort with auth id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Resort</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$bookedResort}}</div>
+            <!-- All Resort with auth id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Resort</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $bookedResort }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-umbrella-beach fa-2x text-success"></i>
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-umbrella-beach fa-2x text-success"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Restaurant with auth id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Restaurant</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $bookedRestaurant }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-utensils fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Hotel with auth id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Hotel</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $bookedHotel }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-hotel fa-2x text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        {{-- All Booked Resort with auth id --}}
+        <div class="row">
+            <!-- Has Booked Resort with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Has Booked Resort
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $bookedResorts }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-umbrella-beach fa-2x text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Has Booked Today Resort with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Today Has Booked
+                                    Resort</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $todaybookedresort }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-umbrella-beach fa-2x text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Has Booked This Month Resort with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">This Month Has Booked
+                                    Resort</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $thisMonthbookedresort }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-umbrella-beach fa-2x text-success"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Has Booked This Year Resort with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">This Year Has Booked
+                                    Resort</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $thisYearbookedresort }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-umbrella-beach fa-2x text-success"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- All Restaurant with auth id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Restaurant</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$bookedRestaurant}}</div>
+        {{-- All Has Booked Restaurant with auth id --}}
+        <div class="row">
+            <!-- Has Booked Restaurant with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Has Booked Restaurant
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $bookedRestaurants }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-utensils fa-2x text-primary"></i>
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-utensils fa-2x text-primary"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Has Booked Today Restaurant with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Today Has Booked
+                                    Restaurant</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $todaybookedrestaurant }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-utensils fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Has Booked This Month Restaurant with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">This Month Has Booked
+                                    Restaurant</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $thisMonthbookedrestaurant }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-utensils fa-2x text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Has Booked This Year Restaurant with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-primary shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">This Year Has Booked
+                                    Restaurant</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $thisYearbookedrestaurant }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-utensils fa-2x text-primary"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- All Hotel with auth id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Hotel</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$bookedHotel}}</div>
+        {{-- All Booked Hotel with auth id --}}
+        <div class="row">
+            <!-- Has Booked Hotel with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Has Booked Hotel</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $bookedHotels }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-hotel fa-2x text-info"></i>
+                            </div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-hotel fa-2x text-info"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Has Booked Today Hotel with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Today Has Booked Hotel
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $todaybookedhotel }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-hotel fa-2x text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Has Booked This Month Hotel with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">This Month Has Booked
+                                    Hotel</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $thisMonthbookedhotel }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-hotel fa-2x text-info"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Has Booked This Year Hotel with user id -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">This Year Has Booked
+                                    Hotel</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $thisYearbookedhotel }}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-hotel fa-2x text-info"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-    </div>
-
-    {{-- All Booked Resort with auth id --}}
-    <div class="row">
-        <!-- Has Booked Resort with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Has Booked Resort</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$bookedResorts}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-umbrella-beach fa-2x text-success"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Has Booked Today Resort with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Today Has Booked Resort</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$todaybookedresort}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-umbrella-beach fa-2x text-success"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Has Booked This Month Resort with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">This Month Has Booked Resort</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$thisMonthbookedresort}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-umbrella-beach fa-2x text-success"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Has Booked This Year Resort with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">This Year Has Booked Resort</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$thisYearbookedresort}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-umbrella-beach fa-2x text-success"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- All Has Booked Restaurant with auth id --}}
-    <div class="row">
-        <!-- Has Booked Restaurant with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Has Booked Restaurant</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$bookedRestaurants}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-utensils fa-2x text-primary"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Has Booked Today Restaurant with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Today Has Booked Restaurant</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$todaybookedrestaurant}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-utensils fa-2x text-primary"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Has Booked This Month Restaurant with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">This Month Has Booked Restaurant</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$thisMonthbookedrestaurant}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-utensils fa-2x text-primary"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Has Booked This Year Restaurant with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">This Year Has Booked Restaurant</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$thisYearbookedrestaurant}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-utensils fa-2x text-primary"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- All Booked Hotel with auth id --}}
-    <div class="row">
-        <!-- Has Booked Hotel with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Has Booked Hotel</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$bookedHotels}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-hotel fa-2x text-info"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Has Booked Today Hotel with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Today Has Booked Hotel</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$todaybookedhotel}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-hotel fa-2x text-info"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Has Booked This Month Hotel with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">This Month Has Booked Hotel</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$thisMonthbookedhotel}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-hotel fa-2x text-info"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Has Booked This Year Hotel with user id -->
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">This Year Has Booked Hotel</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$thisYearbookedhotel}}</div>
-                        </div>
-                        <div class="col-auto">
-                            <i class="fas fa-hotel fa-2x text-info"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{-- <div class="row">
+        {{-- <div class="row">
         <!-- Earnings (Monthly) Card Example -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
@@ -340,14 +353,14 @@
         </div>
     </div> --}}
 
-    <!-- Content Row -->
-
-    <!-- Area Chart -->
-    <div class="row">
+        <!-- Content Row -->
 
         <!-- Area Chart -->
-        <div class="col-xl-8 col-lg-7">
-            {{-- <div class="card shadow mb-4"> --}}
+        <div class="row">
+
+            <!-- Area Chart -->
+            <div class="col-xl-8 col-lg-7">
+                {{-- <div class="card shadow mb-4"> --}}
                 <!-- Card Header - Dropdown -->
                 {{-- <div
                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -412,45 +425,40 @@
                         <code>/js/demo/chart-area-demo.js</code> file. --}}
                     </div>
                 </div>
-            {{-- </div> --}}
-        </div>
+                {{-- </div> --}}
+            </div>
 
-        <!-- Pie Chart -->
-
-
-        <!-- Donut Chart -->
-        <div class="col-xl-4 col-lg-5">
-            <div class="card shadow mb-4">
-                <!-- Card Header - Dropdown -->
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Booked Chart</h6>
-                </div>
-                <!-- Card Body -->
-                <div class="card-body">
-                    <div class="chart-pie pt-4">
-                        <canvas id="myPieChart"></canvas>
+            <!-- Donut Chart -->
+            <div class="col-xl-4 col-lg-5">
+                <div class="card shadow mb-4">
+                    <!-- Card Header - Dropdown -->
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Booked Chart</h6>
                     </div>
-                    <div class="mt-4 text-center small">
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-primary"></i> Restaurant
-                        </span>
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-success"></i> Resort
-                        </span>
-                        <span class="mr-2">
-                            <i class="fas fa-circle text-info"></i> Hotel
-                        </span>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="chart-pie pt-4">
+                            <canvas id="myPieChart"></canvas>
+                        </div>
+                        <div class="mt-4 text-center small">
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-primary"></i> Restaurant
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-success"></i> Resort
+                            </span>
+                            <span class="mr-2">
+                                <i class="fas fa-circle text-info"></i> Hotel
+                            </span>
+                        </div>
                     </div>
-                    {{-- <hr>
-                    Styling for the donut chart can be found in the
-                    <code>/js/demo/chart-pie-demo.js</code> file. --}}
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Content Row -->
-    <div class="row">
+        </div>
+
+        <!-- Content Row -->
+        {{-- <div class="row">
 
         <!-- Content Column -->
         <div class="col-lg-6 mb-4">
@@ -600,48 +608,47 @@
             </div>
 
         </div>
+    </div> --}}
+
     </div>
+    <!-- /.container-fluid -->
 
-</div>
-<!-- /.container-fluid -->
+    {{-- Restaurant Area Chart --}}
+    <script type="text/javascript">
+        var _restaurantlabels = {!! json_encode($restaurantLabels) !!};
+        var _restaurantdata = {!! json_encode($restaurantData) !!};
+    </script>
 
-{{--Restaurant Area Chart --}}
-<script type="text/javascript">
-    var _restaurantlabels = {!! json_encode($restaurantlabels) !!};
-    var _restaurantdata = {!! json_encode($restaurantdata) !!};
-</script>
+    {{-- Resort Area Chart --}}
+    <script type="text/javascript">
+        var _resortlabels = {!! json_encode($resortLabels) !!};
+        var _resortdata = {!! json_encode($resortData) !!};
+    </script>
 
-{{--Resort Area Chart --}}
-<script type="text/javascript">
-    var _resortlabels = {!! json_encode($resortlabels) !!};
-    var _resortdata = {!! json_encode($resortdata) !!};
-</script>
+    {{-- Hotel Area Chart --}}
+    <script type="text/javascript">
+        var _hotellabels = {!! json_encode($hotelLabels) !!};
+        var _hoteldata = {!! json_encode($hotelData) !!};
+    </script>
 
-{{--Hotel Area Chart --}}
-<script type="text/javascript">
-    var _hotellabels = {!! json_encode($hotellabels) !!};
-    var _hoteldata = {!! json_encode($hoteldata) !!};
-</script>
+    {{-- All Booked Pie Chart --}}
+    <script type="text/javascript">
+        var _labels = {!! json_encode($labels) !!};
+        var _data = {!! json_encode($data) !!};
+        console.log(_labels);
+        console.log(_data);
+    </script>
 
-{{--All Booked Pie Chart --}}
-<script type="text/javascript">
-    var _labels = {!! json_encode($labels) !!};
-    var _data = {!! json_encode($data) !!};
-    console.log(_labels);
-    console.log(_data);
-</script>
+    {{-- Chart Js --}}
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script> --}}
 
-{{-- Chart Js --}}
-{{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script> --}}
+    <!-- Page level plugins -->
+    <script src="{{ asset('newuserdashboard/vendor/chart.js/Chart.min.js') }}"></script>
 
-<!-- Page level plugins -->
-<script src="{{ asset('newuserdashboard/vendor/chart.js/Chart.min.js') }}"></script>
-
-<!-- Page level custom scripts -->
-<script src="{{ asset ('charts/demo/user/restaurantchart-area-demo.js') }}"></script>
-<script src="{{ asset ('charts/demo/user/resortchart-area-demo.js') }}"></script>
-<script src="{{ asset ('charts/demo/user/hotelchart-area-demo.js') }}"></script>
-<script src="{{ asset ('charts/demo/user/chart-pie-demo.js') }}"></script>
-<script src="{{ asset ('charts/demo/chart-bar-demo.js') }}"></script>
-
+    <!-- Page level custom scripts -->
+    <script src="{{ asset('charts/demo/user/restaurantchart-area-demo.js') }}"></script>
+    <script src="{{ asset('charts/demo/user/resortchart-area-demo.js') }}"></script>
+    <script src="{{ asset('charts/demo/user/hotelchart-area-demo.js') }}"></script>
+    <script src="{{ asset('charts/demo/user/chart-pie-demo.js') }}"></script>
+    <script src="{{ asset('charts/demo/chart-bar-demo.js') }}"></script>
 @endsection

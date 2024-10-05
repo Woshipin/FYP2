@@ -33,6 +33,7 @@ return new class extends Migration
             $table->unsignedTinyInteger('card_month');
             $table->unsignedSmallInteger('card_year');
             $table->string('cvv')->nullable();
+            $table->integer('popular_count')->default(0);
             $table->timestamps();
 
             // 添加索引

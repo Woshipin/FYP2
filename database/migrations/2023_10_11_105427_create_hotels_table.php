@@ -25,11 +25,12 @@ return new class extends Migration
             $table->text('description'); // 文本类型，用于存储描述信息
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
-            $table->text('map');
+            $table->text('map')->nullable();;
             $table->boolean('status')->default(false); // 布尔类型，表示状态，初始值为假（未激活）
             $table->integer('register_status')->default(0);
             $table->string('digital_lock_password')->nullable();
             $table->string('emailbox_password')->nullable();
+            $table->integer('popular_count')->default(0);
             $table->timestamps(); // 自动管理创建时间和更新时间
             // 如果需要，添加外键约束
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

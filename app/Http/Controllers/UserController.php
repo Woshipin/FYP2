@@ -235,94 +235,97 @@ class UserController extends Controller
         return redirect('/login')->with('fail', "You are Logout Successfully!");
     }
 
-    public function userdashboard(){
-
+    public function userdashboard()
+    {
         if (Auth::check()) {
-
-            // User Restaurant Area Chart
             $userId = auth()->id(); // Get the authenticated user's ID
 
-            $bookedrestaurants = BookingRestaurant::selectRaw('COUNT(id) as total_bookings, DATE_FORMAT(booking_date, "%Y-%m-%d") as booking_month')
-                ->where('user_id', $userId) // Filter by user ID
-                ->groupBy('booking_month')
-                ->orderBy('booking_month')
+            // User Restaurant Area Chart
+            $bookingRestaurants = BookingRestaurant::select('created_at')
+                ->where('user_id', $userId)
+                ->orderBy('created_at')
                 ->get();
 
-            $restaurantlabels = [];
-            $restaurantdata = [];
+            $restaurantLabels = [];
+            $restaurantData = [];
 
-            foreach ($bookedrestaurants as $bookedrestaurant) {
-                // Use the date format "YYYY-MM-dd" as labels
-                $restaurantlabels[] = $bookedrestaurant['booking_month'];
-                $restaurantdata[] = $bookedrestaurant['total_bookings'];
+            foreach ($bookingRestaurants as $bookingRestaurant) {
+                $restaurantLabels[] = $bookingRestaurant['created_at']->format('Y-m-d');
+            }
+
+            $restaurantPopularCounts = Restaurant::select('name', 'popular_count')
+                ->where('user_id', $userId)
+                ->where('popular_count', '>', 0)
+                ->orderBy('name')
+                ->get();
+
+            foreach ($restaurantPopularCounts as $restaurant) {
+                $restaurantData[] = [
+                    'name' => $restaurant['name'],
+                    'popular_count' => $restaurant['popular_count']
+                ];
             }
 
             // User Resort Area Chart
-            $userId = auth()->id(); // Get the authenticated user's ID
-
-            $bookedresorts = BookingResort::selectRaw('COUNT(id) as total_bookings, checkin_date, checkout_date')
-                ->where('user_id', $userId) // Filter by user ID
-                ->groupBy('checkin_date', 'checkout_date')
-                ->orderBy('checkin_date')
+            $bookingResorts = BookingResort::select('created_at')
+                ->where('user_id', $userId)
+                ->orderBy('created_at')
                 ->get();
 
-            $resortlabels = [];
-            $resortdata = [];
+            $resortLabels = [];
+            $resortData = [];
 
-            foreach ($bookedresorts as $bookedresort) {
-                // Combine checkin_date and checkout_date into a single label
-                $label = $bookedresort['checkin_date'] . ' to ' . $bookedresort['checkout_date'];
+            foreach ($bookingResorts as $bookingResort) {
+                $resortLabels[] = $bookingResort['created_at']->format('Y-m-d');
+            }
 
-                // Calculate the number of booking dates between checkin_date and checkout_date
-                $checkin = Carbon::parse($bookedresort['checkin_date']);
-                $checkout = Carbon::parse($bookedresort['checkout_date']);
-                $booking_dates = $checkin->diffInDays($checkout);
+            $resortPopularCounts = Resort::select('name', 'popular_count')
+                ->where('user_id', $userId)
+                ->where('popular_count', '>', 0)
+                ->orderBy('name')
+                ->get();
 
-                // Use the combined label as labels
-                $resortlabels[] = $label;
-                $resortdata[] = $booking_dates;
+            foreach ($resortPopularCounts as $resort) {
+                $resortData[] = [
+                    'name' => $resort['name'],
+                    'popular_count' => $resort['popular_count']
+                ];
             }
 
             // User Hotel Area Chart
-            $userId = auth()->id(); // Get the authenticated user's ID
-
-            $bookedhotels = BookingHotel::selectRaw('COUNT(id) as total_bookings, checkin_date, checkout_date')
-                ->where('user_id', $userId) // Filter by user ID
-                ->groupBy('checkin_date', 'checkout_date')
-                ->orderBy('checkin_date')
+            $bookingHotels = BookingHotel::select('created_at')
+                ->where('user_id', $userId)
+                ->orderBy('created_at')
                 ->get();
 
-            $hotellabels = [];
-            $hoteldata = [];
+            $hotelLabels = [];
+            $hotelData = [];
 
-            foreach ($bookedhotels as $bookedhotel) {
-                // Combine checkin_date and checkout_date into a single label
-                $label = $bookedhotel['checkin_date'] . ' to ' . $bookedhotel['checkout_date'];
+            foreach ($bookingHotels as $bookingHotel) {
+                $hotelLabels[] = $bookingHotel['created_at']->format('Y-m-d');
+            }
 
-                // Calculate the number of booking dates between checkin_date and checkout_date
-                $checkin = Carbon::parse($bookedhotel['checkin_date']);
-                $checkout = Carbon::parse($bookedhotel['checkout_date']);
-                $booking_dates = $checkin->diffInDays($checkout);
+            $hotelPopularCounts = Hotel::select('name', 'popular_count')
+                ->where('user_id', $userId)
+                ->where('popular_count', '>', 0)
+                ->orderBy('name')
+                ->get();
 
-                // Use the combined label as labels
-                $hotellabels[] = $label;
-                $hoteldata[] = $booking_dates;
+            foreach ($hotelPopularCounts as $hotel) {
+                $hotelData[] = [
+                    'name' => $hotel['name'],
+                    'popular_count' => $hotel['popular_count']
+                ];
             }
 
             // All Booked Pie Chart
             // 收集已预订的餐厅、度假村和酒店的总预订数
-            // Get the authenticated user's ID
-            $userId = auth()->id();
-
-            // Collect the total bookings for restaurants, resorts, and hotels for the authenticated user
             $bookedRestaurants = BookingRestaurant::where('user_id', $userId)->count();
             $bookedResorts = BookingResort::where('user_id', $userId)->count();
             $bookedHotels = BookingHotel::where('user_id', $userId)->count();
 
-            // Prepare labels and data arrays
             $labels = ['Restaurants', 'Resorts', 'Hotels'];
             $data = [$bookedRestaurants, $bookedResorts, $bookedHotels];
-
 
             // Get Booked Restaurant with auth id
             $todayDate = Carbon::now()->format('Y-m-d');
@@ -379,17 +382,20 @@ class UserController extends Controller
                 ->whereYear('created_at', $todayYear)
                 ->count();
 
-            return view('backend-user.newdashboard', compact('restaurantlabels', 'restaurantdata','restaurantlabels', 'restaurantdata','resortlabels','resortdata','hotellabels','hoteldata','labels','data',
-            'bookedRestaurants','bookedResorts','bookedHotels','todaybookedrestaurant','thisMonthbookedrestaurant','thisYearbookedrestaurant',
-            'todaybookedresort','thisMonthbookedresort','thisYearbookedresort','todaybookedhotel','thisMonthbookedhotel','thisYearbookedhotel',
-            'bookedRestaurant','bookedResort','bookedHotel'));
-
+            return view('backend-user.newdashboard', compact(
+                'restaurantLabels', 'restaurantData',
+                'resortLabels', 'resortData',
+                'hotelLabels', 'hotelData',
+                'labels', 'data',
+                'bookedRestaurants', 'bookedResorts', 'bookedHotels',
+                'todaybookedrestaurant', 'thisMonthbookedrestaurant', 'thisYearbookedrestaurant',
+                'todaybookedresort', 'thisMonthbookedresort', 'thisYearbookedresort',
+                'todaybookedhotel', 'thisMonthbookedhotel', 'thisYearbookedhotel',
+                'bookedRestaurant', 'bookedResort', 'bookedHotel'
+            ));
         } else {
-
             return redirect('/login')->with('error', "You need to Login first.");
         }
-
-        // return view('user.dashboard');
     }
 
     public function forgetPassword(){

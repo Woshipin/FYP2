@@ -139,6 +139,7 @@ class BookingController extends Controller
                 $bookings->card_year = $request->card_year;
                 $bookings->cvv = Crypt::encryptString($request->cvv);
                 $bookings->verify_code = $verifyCode;
+                $bookings->popular_count = 1;
                 $bookings->save();
 
                 // 在保存后获取关联表格的标题
@@ -154,6 +155,12 @@ class BookingController extends Controller
                 $adminWallet->tax = $tax;
                 $adminWallet->verify_code = $verifyCode;
                 $adminWallet->save();
+
+                // 更新餐厅的 popular_count
+                $restaurant = Restaurant::find($request->restaurant_id);
+                if ($restaurant) {
+                    $restaurant->increment('popular_count');
+                }
 
                 $data = [
                     'subject' => 'You Booking Restaurant Detail',
@@ -622,6 +629,7 @@ class BookingController extends Controller
                 $booking->card_year = $request->card_year;
                 $booking->cvv = Crypt::encryptString($request->cvv);
                 $booking->verify_code = $verifyCode;
+                $booking->popular_count = 1;
                 $booking->save();
 
                 // 更新管理员钱包
@@ -634,6 +642,12 @@ class BookingController extends Controller
                 $adminWallet->tax = $tax;
                 $adminWallet->verify_code = $verifyCode;
                 $adminWallet->save();
+
+                // 更新餐厅的 popular_count
+                $resort = Resort::find($request->resort_id);
+                if ($resort) {
+                    $resort->increment('popular_count');
+                }
 
                 $data = [
                     'subject' => 'Your Booking Resort Details',
@@ -1107,6 +1121,7 @@ class BookingController extends Controller
                 $bookings->card_year = $cardYear; // 使用转换后的整数
                 $bookings->cvv = Crypt::encryptString($request->cvv);
                 $bookings->verify_code = $verifyCode;
+                $bookings->popular_count = 1;
                 $bookings->save();
 
                 // 在保存后获取关联表格的标题
@@ -1124,6 +1139,12 @@ class BookingController extends Controller
                 $adminWallet->tax = $tax;
                 $adminWallet->verify_code = $verifyCode;
                 $adminWallet->save();
+
+                // 更新餐厅的 popular_count
+                $hotel = Hotel::find($request->hotel_id);
+                if ($hotel) {
+                    $hotel->increment('popular_count');
+                }
 
                 $data = [
                     'subject' => 'You Booking Hotel Detail',

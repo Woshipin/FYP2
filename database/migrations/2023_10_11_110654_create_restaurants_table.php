@@ -27,9 +27,10 @@ return new class extends Migration
             $table->string('description');
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
-            $table->text('map');
+            $table->text('map')->nullable();
             $table->boolean('status')->default(false);
             $table->integer('register_status')->default(0);
+            $table->integer('popular_count')->default(0); // 新增 popular_count 列
             $table->timestamps();
         });
     }

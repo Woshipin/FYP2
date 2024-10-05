@@ -5,6 +5,14 @@
     {{-- Toastr CSS --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
+    {{-- CSS --}}
+    <style>
+        .card-header{
+            background: rgb(63,251,239);
+            background: radial-gradient(circle, rgba(63,251,239,1) 0%, rgba(70,252,88,1) 100%);
+        }
+    </style>
+
     <main>
         <div class="page-header">
             <h1>Dashboard</h1>
@@ -436,23 +444,24 @@
     {{-- Chart Js --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 
-    {{-- Restaurant Area Chart --}}
-    {{-- <script type="text/javascript">
-        var _restaurantlabels = {!! json_encode($restaurantlabels) !!};
-        var _restaurantdata = {!! json_encode($restaurantdata) !!};
-    </script> --}}
+    {{-- All Booked Area Chart --}}
+    {{--Restaurant Area Chart --}}
+    <script type="text/javascript">
+        var _restaurantlabels = {!! json_encode($restaurantLabels) !!};
+        var _restaurantdata = {!! json_encode($restaurantData) !!};
+    </script>
 
-    {{-- Resort Area Chart --}}
-    {{-- <script type="text/javascript">
-        var _resortlabels = {!! json_encode($resortlabels) !!};
-        var _resortdata = {!! json_encode($resortdata) !!};
-    </script> --}}
+    {{--Resort Area Chart --}}
+    <script type="text/javascript">
+        var _resortlabels = {!! json_encode($resortLabels) !!};
+        var _resortdata = {!! json_encode($resortData) !!};
+    </script>
 
-    {{-- Hotel Area Chart --}}
-    {{-- <script type="text/javascript">
-        var _hotellabels = {!! json_encode($hotellabels) !!};
-        var _hoteldata = {!! json_encode($hoteldata) !!};
-    </script> --}}
+    {{--Hotel Area Chart --}}
+    <script type="text/javascript">
+        var _hotellabels = {!! json_encode($hotelLabels) !!};
+        var _hoteldata = {!! json_encode($hotelData) !!};
+    </script>
 
     {{-- All Booked Pie Chart --}}
     <script type="text/javascript">

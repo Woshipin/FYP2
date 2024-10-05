@@ -1,8 +1,12 @@
 @extends('backend-user.newlayout')
 
 @section('newuser-section')
+
     {{-- CSRF Token --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    {{-- Toastify CSS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
     <style>
         /* Custom CSS for better aesthetics */
@@ -89,13 +93,13 @@
         <div class="row">
             <div class="col-12">
                 <div class="data_table card shadow-sm p-4">
-                    @if (\Session::has('error'))
+                    {{-- @if (\Session::has('error'))
                         <div class="alert alert-danger">{{ Session::get('error') }}</div>
                     @endif
 
                     @if (\Session::has('success'))
                         <div class="alert alert-success">{{ Session::get('success') }}</div>
-                    @endif
+                    @endif --}}
 
                     <div id="alert-container"></div>
 
@@ -166,20 +170,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    
+    {{-- Reply Customer Contact --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            function showAlert(message, type) {
-                const alertContainer = document.getElementById('alert-container');
-                const alertElement = document.createElement('div');
-                alertElement.className = `alert alert-${type} alert-dismissible fade show`;
-                alertElement.innerHTML = `
-                    ${message}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                `;
-                alertContainer.appendChild(alertElement);
-                setTimeout(() => alertElement.remove(), 5000);
+            function showToast(message, type) {
+                Toastify({
+                    text: message,
+                    duration: 10000,
+                    style: {
+                        background: type === 'success' ? "linear-gradient(to right, #00b09b, #96c93d)" : "linear-gradient(to right, #b90000, #c99396)"
+                    }
+                }).showToast();
             }
 
             document.querySelectorAll('.reply-btn').forEach(function(button) {
@@ -187,8 +190,7 @@
                     event.preventDefault();
                     const contactId = this.getAttribute('data-id');
                     const replyForm = document.querySelector('.reply-form-' + contactId);
-                    replyForm.style.display = replyForm.style.display === 'none' ? 'table-row' :
-                        'none';
+                    replyForm.style.display = replyForm.style.display === 'none' ? 'table-row' : 'none';
                 });
             });
 
@@ -196,11 +198,10 @@
                 button.addEventListener('click', function(event) {
                     event.preventDefault();
                     const contactId = this.getAttribute('data-id');
-                    const replyMessage = document.getElementById('reply-message-' + contactId)
-                    .value;
+                    const replyMessage = document.getElementById('reply-message-' + contactId).value;
 
                     if (!replyMessage) {
-                        showAlert('Reply message cannot be empty.', 'warning');
+                        showToast('Reply message cannot be empty.', 'warning');
                         return;
                     }
 
@@ -209,31 +210,27 @@
                             reply_message: replyMessage
                         }, {
                             headers: {
-                                'X-CSRF-TOKEN': document.querySelector(
-                                    'meta[name="csrf-token"]').getAttribute('content'),
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                                 'X-Requested-With': 'XMLHttpRequest',
                                 'Content-Type': 'application/json'
                             }
                         })
                         .then(function(response) {
                             if (response.data.success) {
-                                showAlert(response.data.message, 'success');
-                                document.getElementById('reply-message-' + contactId).value =
-                                '';
-                                document.querySelector('.reply-form-' + contactId).style
-                                    .display = 'none';
+                                showToast(response.data.message, 'success');
+                                document.getElementById('reply-message-' + contactId).value = '';
+                                document.querySelector('.reply-form-' + contactId).style.display = 'none';
                             } else {
-                                showAlert(response.data.message || 'An error occurred.',
-                                    'danger');
+                                showToast(response.data.message || 'An error occurred.', 'danger');
                             }
                         })
                         .catch(function(error) {
                             console.error('Error:', error);
-                            showAlert(error.response?.data?.message ||
-                                'An error occurred. Please try again.', 'danger');
+                            showToast(error.response?.data?.message || 'An error occurred. Please try again.', 'danger');
                         });
                 });
             });
         });
     </script>
+
 @endsection
