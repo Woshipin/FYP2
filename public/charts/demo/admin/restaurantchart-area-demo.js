@@ -22,6 +22,7 @@ function number_format(number, decimals, dec_point, thousands_sep) {
 }
 
 // 创建区域图表
+// 创建区域图表
 var ctx = document.getElementById("myRestaurantAreaChart");
 var myLineChart = new Chart(ctx, {
     type: "line",
@@ -41,7 +42,7 @@ var myLineChart = new Chart(ctx, {
                 pointHoverBorderColor: "rgba(78, 115, 223, 1)",
                 pointHitRadius: 10,
                 pointBorderWidth: 2,
-                data: _restaurantdata.map((item) => item.popular_count),
+                data: _restaurantcounts,
             },
         ],
     },
@@ -110,14 +111,53 @@ var myLineChart = new Chart(ctx, {
                 label: function (tooltipItem, chart) {
                     var restaurantName = _restaurantdata[tooltipItem.index].name;
                     var popularCount = _restaurantdata[tooltipItem.index].popular_count;
+                    var total = _restaurantcounts.reduce((sum, count) => sum + count, 0);
+                    var count = _restaurantcounts[tooltipItem.index];
                     return (
                         "name: " +
-                        restaurantName + "\n" +
+                        restaurantName +
                         ", popular_booked: " +
-                        number_format(popularCount)
+                        number_format(popularCount) +
+                        ", Total: " +
+                        number_format(total) +
+                        ", Count: " +
+                        number_format(count)
                     );
                 },
             },
         },
     },
 });
+
+// var ctx = document.getElementById('restaurantChart').getContext('2d');
+// var restaurantChart = new Chart(ctx, {
+//     type: 'line',
+//     data: {
+//         labels: _restaurantlabels,
+//         datasets: [{
+//             label: 'Restaurant Popular Count',
+//             data: _restaurantcounts,
+//             borderColor: 'rgba(75, 192, 192, 1)',
+//             borderWidth: 2
+//         }]
+//     },
+//     options: {
+//         tooltips: {
+//             callbacks: {
+//                 label: function(tooltipItem, data) {
+//                     var month = data.labels[tooltipItem.index];
+//                     var popularCount = data.datasets[0].data[tooltipItem.index];
+//                     return month + ': ' + popularCount + ' total popular count';
+//                 }
+//             }
+//         },
+//         scales: {
+//             yAxes: [{
+//                 ticks: {
+//                     beginAtZero: true
+//                 }
+//             }]
+//         }
+//     }
+// });
+

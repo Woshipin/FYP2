@@ -445,22 +445,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 
     {{-- All Booked Area Chart --}}
-    {{--Restaurant Area Chart --}}
+    {{-- Restaurant Area Chart --}}
     <script type="text/javascript">
         var _restaurantlabels = {!! json_encode($restaurantLabels) !!};
-        var _restaurantdata = {!! json_encode($restaurantData) !!};
+        var _restaurantcounts = {!! json_encode($restaurantPopularCounts) !!};
     </script>
 
-    {{--Resort Area Chart --}}
+    {{-- Resort Area Chart --}}
     <script type="text/javascript">
         var _resortlabels = {!! json_encode($resortLabels) !!};
-        var _resortdata = {!! json_encode($resortData) !!};
+        var _resortcounts = {!! json_encode($resortPopularCounts) !!};
     </script>
 
-    {{--Hotel Area Chart --}}
+    {{-- Hotel Area Chart --}}
     <script type="text/javascript">
         var _hotellabels = {!! json_encode($hotelLabels) !!};
-        var _hoteldata = {!! json_encode($hotelData) !!};
+        var _hotelcounts = {!! json_encode($hotelPopularCounts) !!};
     </script>
 
     {{-- All Booked Pie Chart --}}

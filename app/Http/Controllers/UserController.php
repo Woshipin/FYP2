@@ -192,9 +192,21 @@ class UserController extends Controller
 
     public function home() {
 
-        $resorts = Resort::all();
-        $restaurants = Restaurant::all();
-        $hotels = Hotel::all();
+        $resorts = Resort::where('register_status', 1)
+                    ->orderBy('popular_count', 'desc')
+                    ->take(6)
+                    ->get();
+
+        $restaurants = Restaurant::where('register_status', 1)
+                    ->orderBy('popular_count', 'desc')
+                    ->take(6)
+                    ->get();
+
+        $hotels = Hotel::where('register_status', 1)
+                    ->orderBy('popular_count', 'desc')
+                    ->take(6)
+                    ->get();
+
         $comments = Comment::all();
 
         $resortRatings = [];
@@ -235,91 +247,211 @@ class UserController extends Controller
         return redirect('/login')->with('fail', "You are Logout Successfully!");
     }
 
+    // public function userdashboard()
+    // {
+    //     if (Auth::check()) {
+    //         $userId = auth()->id(); // Get the authenticated user's ID
+
+    //         // User Restaurant Area Chart
+    //         $bookingRestaurants = BookingRestaurant::select('created_at')
+    //             ->where('user_id', $userId)
+    //             ->orderBy('created_at')
+    //             ->get();
+
+    //         $restaurantLabels = [];
+    //         $restaurantData = [];
+
+    //         foreach ($bookingRestaurants as $bookingRestaurant) {
+    //             $restaurantLabels[] = $bookingRestaurant['created_at']->format('Y-m-d');
+    //         }
+
+    //         $restaurantPopularCounts = Restaurant::select('name', 'popular_count')
+    //             ->where('user_id', $userId)
+    //             ->where('popular_count', '>', 0)
+    //             ->orderBy('name')
+    //             ->get();
+
+    //         foreach ($restaurantPopularCounts as $restaurant) {
+    //             $restaurantData[] = [
+    //                 'name' => $restaurant['name'],
+    //                 'popular_count' => $restaurant['popular_count']
+    //             ];
+    //         }
+
+    //         // User Resort Area Chart
+    //         $bookingResorts = BookingResort::select('created_at')
+    //             ->where('user_id', $userId)
+    //             ->orderBy('created_at')
+    //             ->get();
+
+    //         $resortLabels = [];
+    //         $resortData = [];
+
+    //         foreach ($bookingResorts as $bookingResort) {
+    //             $resortLabels[] = $bookingResort['created_at']->format('Y-m-d');
+    //         }
+
+    //         $resortPopularCounts = Resort::select('name', 'popular_count')
+    //             ->where('user_id', $userId)
+    //             ->where('popular_count', '>', 0)
+    //             ->orderBy('name')
+    //             ->get();
+
+    //         foreach ($resortPopularCounts as $resort) {
+    //             $resortData[] = [
+    //                 'name' => $resort['name'],
+    //                 'popular_count' => $resort['popular_count']
+    //             ];
+    //         }
+
+    //         // User Hotel Area Chart
+    //         $bookingHotels = BookingHotel::select('created_at')
+    //             ->where('user_id', $userId)
+    //             ->orderBy('created_at')
+    //             ->get();
+
+    //         $hotelLabels = [];
+    //         $hotelData = [];
+
+    //         foreach ($bookingHotels as $bookingHotel) {
+    //             $hotelLabels[] = $bookingHotel['created_at']->format('Y-m-d');
+    //         }
+
+    //         $hotelPopularCounts = Hotel::select('name', 'popular_count')
+    //             ->where('user_id', $userId)
+    //             ->where('popular_count', '>', 0)
+    //             ->orderBy('name')
+    //             ->get();
+
+    //         foreach ($hotelPopularCounts as $hotel) {
+    //             $hotelData[] = [
+    //                 'name' => $hotel['name'],
+    //                 'popular_count' => $hotel['popular_count']
+    //             ];
+    //         }
+
+    //         // All Booked Pie Chart
+    //         // 收集已预订的餐厅、度假村和酒店的总预订数
+    //         $bookedRestaurants = BookingRestaurant::where('user_id', $userId)->count();
+    //         $bookedResorts = BookingResort::where('user_id', $userId)->count();
+    //         $bookedHotels = BookingHotel::where('user_id', $userId)->count();
+
+    //         $labels = ['Restaurants', 'Resorts', 'Hotels'];
+    //         $data = [$bookedRestaurants, $bookedResorts, $bookedHotels];
+
+    //         // Get Booked Restaurant with auth id
+    //         $todayDate = Carbon::now()->format('Y-m-d');
+    //         $todayMonth = Carbon::now()->format('m');
+    //         $todayYear = Carbon::now()->format('Y');
+
+    //         // All Restaurant Resort and Hotel count with auth id
+    //         $bookedRestaurant = Restaurant::where('user_id', $userId)->count();
+    //         $bookedResort = Resort::where('user_id', $userId)->count();
+    //         $bookedHotel = Hotel::where('user_id', $userId)->count();
+
+    //         // Resort bookings for today for the user
+    //         $todaybookedresort = BookingResort::where('user_id', $userId)
+    //             ->whereDate('created_at', $todayDate)
+    //             ->count();
+
+    //         // Resort bookings for the current month for the user
+    //         $thisMonthbookedresort = BookingResort::where('user_id', $userId)
+    //             ->whereMonth('created_at', $todayMonth)
+    //             ->count();
+
+    //         // Resort bookings for the current year for the user
+    //         $thisYearbookedresort = BookingResort::where('user_id', $userId)
+    //             ->whereYear('created_at', $todayYear)
+    //             ->count();
+
+    //         // Restaurant bookings for today for the user
+    //         $todaybookedrestaurant = BookingRestaurant::where('user_id', $userId)
+    //             ->whereDate('created_at', $todayDate)
+    //             ->count();
+
+    //         // Restaurant bookings for the current month for the user
+    //         $thisMonthbookedrestaurant = BookingRestaurant::where('user_id', $userId)
+    //             ->whereMonth('created_at', $todayMonth)
+    //             ->count();
+
+    //         // Restaurant bookings for the current year for the user
+    //         $thisYearbookedrestaurant = BookingRestaurant::where('user_id', $userId)
+    //             ->whereYear('created_at', $todayYear)
+    //             ->count();
+
+    //         // Hotel bookings for today for the user
+    //         $todaybookedhotel = BookingHotel::where('user_id', $userId)
+    //             ->whereDate('created_at', $todayDate)
+    //             ->count();
+
+    //         // Hotel bookings for the current month for the user
+    //         $thisMonthbookedhotel = BookingHotel::where('user_id', $userId)
+    //             ->whereMonth('created_at', $todayMonth)
+    //             ->count();
+
+    //         // Hotel bookings for the current year for the user
+    //         $thisYearbookedhotel = BookingHotel::where('user_id', $userId)
+    //             ->whereYear('created_at', $todayYear)
+    //             ->count();
+
+    //         return view('backend-user.newdashboard', compact(
+    //             'restaurantLabels', 'restaurantData',
+    //             'resortLabels', 'resortData',
+    //             'hotelLabels', 'hotelData',
+    //             'labels', 'data',
+    //             'bookedRestaurants', 'bookedResorts', 'bookedHotels',
+    //             'todaybookedrestaurant', 'thisMonthbookedrestaurant', 'thisYearbookedrestaurant',
+    //             'todaybookedresort', 'thisMonthbookedresort', 'thisYearbookedresort',
+    //             'todaybookedhotel', 'thisMonthbookedhotel', 'thisYearbookedhotel',
+    //             'bookedRestaurant', 'bookedResort', 'bookedHotel'
+    //         ));
+    //     } else {
+    //         return redirect('/login')->with('error', "You need to Login first.");
+    //     }
+    // }
+
     public function userdashboard()
     {
         if (Auth::check()) {
-            $userId = auth()->id(); // Get the authenticated user's ID
+            $userId = auth()->id();
 
             // User Restaurant Area Chart
-            $bookingRestaurants = BookingRestaurant::select('created_at')
+            $restaurantData = BookingRestaurant::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(popular_count) as total_popular_count')
                 ->where('user_id', $userId)
-                ->orderBy('created_at')
+                ->groupBy('month')
+                ->orderBy('month')
                 ->get();
 
-            $restaurantLabels = [];
-            $restaurantData = [];
-
-            foreach ($bookingRestaurants as $bookingRestaurant) {
-                $restaurantLabels[] = $bookingRestaurant['created_at']->format('Y-m-d');
-            }
-
-            $restaurantPopularCounts = Restaurant::select('name', 'popular_count')
-                ->where('user_id', $userId)
-                ->where('popular_count', '>', 0)
-                ->orderBy('name')
-                ->get();
-
-            foreach ($restaurantPopularCounts as $restaurant) {
-                $restaurantData[] = [
-                    'name' => $restaurant['name'],
-                    'popular_count' => $restaurant['popular_count']
-                ];
-            }
+            $restaurantLabels = $restaurantData->pluck('month')->map(function($month) {
+                return Carbon::createFromFormat('Y-m', $month)->format('M');
+            });
+            $restaurantPopularCounts = $restaurantData->pluck('total_popular_count');
 
             // User Resort Area Chart
-            $bookingResorts = BookingResort::select('created_at')
+            $resortData = BookingResort::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(popular_count) as total_popular_count')
                 ->where('user_id', $userId)
-                ->orderBy('created_at')
+                ->groupBy('month')
+                ->orderBy('month')
                 ->get();
 
-            $resortLabels = [];
-            $resortData = [];
-
-            foreach ($bookingResorts as $bookingResort) {
-                $resortLabels[] = $bookingResort['created_at']->format('Y-m-d');
-            }
-
-            $resortPopularCounts = Resort::select('name', 'popular_count')
-                ->where('user_id', $userId)
-                ->where('popular_count', '>', 0)
-                ->orderBy('name')
-                ->get();
-
-            foreach ($resortPopularCounts as $resort) {
-                $resortData[] = [
-                    'name' => $resort['name'],
-                    'popular_count' => $resort['popular_count']
-                ];
-            }
+            $resortLabels = $resortData->pluck('month')->map(function($month) {
+                return Carbon::createFromFormat('Y-m', $month)->format('M');
+            });
+            $resortPopularCounts = $resortData->pluck('total_popular_count');
 
             // User Hotel Area Chart
-            $bookingHotels = BookingHotel::select('created_at')
+            $hotelData = BookingHotel::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(popular_count) as total_popular_count')
                 ->where('user_id', $userId)
-                ->orderBy('created_at')
+                ->groupBy('month')
+                ->orderBy('month')
                 ->get();
 
-            $hotelLabels = [];
-            $hotelData = [];
-
-            foreach ($bookingHotels as $bookingHotel) {
-                $hotelLabels[] = $bookingHotel['created_at']->format('Y-m-d');
-            }
-
-            $hotelPopularCounts = Hotel::select('name', 'popular_count')
-                ->where('user_id', $userId)
-                ->where('popular_count', '>', 0)
-                ->orderBy('name')
-                ->get();
-
-            foreach ($hotelPopularCounts as $hotel) {
-                $hotelData[] = [
-                    'name' => $hotel['name'],
-                    'popular_count' => $hotel['popular_count']
-                ];
-            }
+            $hotelLabels = $hotelData->pluck('month')->map(function($month) {
+                return Carbon::createFromFormat('Y-m', $month)->format('M');
+            });
+            $hotelPopularCounts = $hotelData->pluck('total_popular_count');
 
             // All Booked Pie Chart
-            // 收集已预订的餐厅、度假村和酒店的总预订数
             $bookedRestaurants = BookingRestaurant::where('user_id', $userId)->count();
             $bookedResorts = BookingResort::where('user_id', $userId)->count();
             $bookedHotels = BookingHotel::where('user_id', $userId)->count();
@@ -332,60 +464,48 @@ class UserController extends Controller
             $todayMonth = Carbon::now()->format('m');
             $todayYear = Carbon::now()->format('Y');
 
-            // All Restaurant Resort and Hotel count with auth id
+            // All Restaurant, Resort and Hotel count with auth id
             $bookedRestaurant = Restaurant::where('user_id', $userId)->count();
             $bookedResort = Resort::where('user_id', $userId)->count();
             $bookedHotel = Hotel::where('user_id', $userId)->count();
 
-            // Resort bookings for today for the user
+            // Resort bookings for today, this month, and this year for the user
             $todaybookedresort = BookingResort::where('user_id', $userId)
                 ->whereDate('created_at', $todayDate)
                 ->count();
-
-            // Resort bookings for the current month for the user
             $thisMonthbookedresort = BookingResort::where('user_id', $userId)
                 ->whereMonth('created_at', $todayMonth)
                 ->count();
-
-            // Resort bookings for the current year for the user
             $thisYearbookedresort = BookingResort::where('user_id', $userId)
                 ->whereYear('created_at', $todayYear)
                 ->count();
 
-            // Restaurant bookings for today for the user
+            // Restaurant bookings for today, this month, and this year for the user
             $todaybookedrestaurant = BookingRestaurant::where('user_id', $userId)
                 ->whereDate('created_at', $todayDate)
                 ->count();
-
-            // Restaurant bookings for the current month for the user
             $thisMonthbookedrestaurant = BookingRestaurant::where('user_id', $userId)
                 ->whereMonth('created_at', $todayMonth)
                 ->count();
-
-            // Restaurant bookings for the current year for the user
             $thisYearbookedrestaurant = BookingRestaurant::where('user_id', $userId)
                 ->whereYear('created_at', $todayYear)
                 ->count();
 
-            // Hotel bookings for today for the user
+            // Hotel bookings for today, this month, and this year for the user
             $todaybookedhotel = BookingHotel::where('user_id', $userId)
                 ->whereDate('created_at', $todayDate)
                 ->count();
-
-            // Hotel bookings for the current month for the user
             $thisMonthbookedhotel = BookingHotel::where('user_id', $userId)
                 ->whereMonth('created_at', $todayMonth)
                 ->count();
-
-            // Hotel bookings for the current year for the user
             $thisYearbookedhotel = BookingHotel::where('user_id', $userId)
                 ->whereYear('created_at', $todayYear)
                 ->count();
 
             return view('backend-user.newdashboard', compact(
-                'restaurantLabels', 'restaurantData',
-                'resortLabels', 'resortData',
-                'hotelLabels', 'hotelData',
+                'restaurantLabels', 'restaurantPopularCounts',
+                'resortLabels', 'resortPopularCounts',
+                'hotelLabels', 'hotelPopularCounts',
                 'labels', 'data',
                 'bookedRestaurants', 'bookedResorts', 'bookedHotels',
                 'todaybookedrestaurant', 'thisMonthbookedrestaurant', 'thisYearbookedrestaurant',

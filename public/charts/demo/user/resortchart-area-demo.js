@@ -1,10 +1,6 @@
-// Set new default font family and font color to mimic Bootstrap's default styling
-// Chart.defaults.global.defaultFontFamily = 'Nunito', '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
-// Chart.defaults.global.defaultFontColor = '#858796';
 
+// 设置数字格式函数
 function number_format(number, decimals, dec_point, thousands_sep) {
-    // *     example: number_format(1234.56, 2, ',', ' ');
-    // *     return: '1 234,56'
     number = (number + "").replace(",", "").replace(" ", "");
     var n = !isFinite(+number) ? 0 : +number,
         prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
@@ -15,7 +11,6 @@ function number_format(number, decimals, dec_point, thousands_sep) {
             var k = Math.pow(10, prec);
             return "" + Math.round(n * k) / k;
         };
-    // Fix for IE parseFloat(0.55).toFixed(0) = 0;
     s = (prec ? toFixedFix(n, prec) : "" + Math.round(n)).split(".");
     if (s[0].length > 3) {
         s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
@@ -27,29 +22,27 @@ function number_format(number, decimals, dec_point, thousands_sep) {
     return s.join(dec);
 }
 
-// Area Chart Example
+// Area Chart Example for Resort
 var ctx = document.getElementById("myResortAreaChart");
 var myLineChart = new Chart(ctx, {
     type: "line",
     data: {
         labels: _resortlabels,
-        datasets: [
-            {
-                label: "BookedResort",
-                lineTension: 0.3,
-                backgroundColor: "rgba(78, 115, 223, 0.05)",
-                borderColor: "rgba(78, 115, 223, 1)",
-                pointRadius: 3,
-                pointBackgroundColor: "rgba(78, 115, 223, 1)",
-                pointBorderColor: "rgba(78, 115, 223, 1)",
-                pointHoverRadius: 3,
-                pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-                pointHoverBorderColor: "rgba(78, 115, 223, 1)",
-                pointHitRadius: 10,
-                pointBorderWidth: 2,
-                data: _resortdata.map((item) => item.popular_count),
-            },
-        ],
+        datasets: [{
+            label: "Resort Bookings",
+            lineTension: 0.3,
+            backgroundColor: "rgba(28, 200, 138, 0.05)",
+            borderColor: "rgba(28, 200, 138, 1)",
+            pointRadius: 3,
+            pointBackgroundColor: "rgba(28, 200, 138, 1)",
+            pointBorderColor: "rgba(28, 200, 138, 1)",
+            pointHoverRadius: 3,
+            pointHoverBackgroundColor: "rgba(28, 200, 138, 1)",
+            pointHoverBorderColor: "rgba(28, 200, 138, 1)",
+            pointHitRadius: 10,
+            pointBorderWidth: 2,
+            data: _resortcounts,
+        }],
     },
     options: {
         maintainAspectRatio: false,
@@ -81,7 +74,6 @@ var myLineChart = new Chart(ctx, {
                     ticks: {
                         maxTicksLimit: 5,
                         padding: 10,
-                        // Include a dollar sign in the ticks
                         callback: function (value, index, values) {
                             return +number_format(value);
                         },
@@ -116,17 +108,53 @@ var myLineChart = new Chart(ctx, {
             callbacks: {
                 label: function (tooltipItem, chart) {
                     var resortName = _resortdata[tooltipItem.index].name;
-                    var popularCount =
-                        _resortdata[tooltipItem.index].popular_count;
+                    var popularCount = _resortdata[tooltipItem.index].popular_count;
+                    var total = _resortdata.reduce((sum, item) => sum + item.popular_count, 0);
                     return (
                         "name: " +
-                        resortName +
-                        "\n" +
+                        resortName + "\n" +
                         ", popular_booked: " +
-                        number_format(popularCount)
+                        number_format(popularCount) + "\n" +
+                        "Total: " +
+                        number_format(total)
                     );
                 },
             },
         },
     },
 });
+
+// var ctx = document.getElementById('resortChart').getContext('2d');
+// var resortChart = new Chart(ctx, {
+//     type: 'line',
+//     data: {
+//         labels: _resortlabels,
+//         datasets: [{
+//             label: 'Resort Popular Count',
+//             data: _resortcounts,
+//             borderColor: 'rgba(54, 162, 235, 1)',
+//             borderWidth: 2
+//         }]
+//     },
+//     options: {
+//         tooltips: {
+//             callbacks: {
+//                 label: function(tooltipItem, data) {
+//                     var month = data.labels[tooltipItem.index];
+//                     var popularCount = data.datasets[0].data[tooltipItem.index];
+//                     return month + ': ' + popularCount + ' total popular count';
+//                 }
+//             }
+//         },
+//         scales: {
+//             yAxes: [{
+//                 ticks: {
+//                     beginAtZero: true
+//                 }
+//             }]
+//         }
+//     }
+// });
+
+
+

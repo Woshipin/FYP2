@@ -1,7 +1,6 @@
 @extends('backend-user.newlayout')
 
 @section('newuser-section')
-
     {{-- CSS --}}
     <style>
         .card-header {
@@ -355,7 +354,6 @@
 
         <!-- Content Row -->
 
-        <!-- Area Chart -->
         <div class="row">
 
             <!-- Area Chart -->
@@ -616,19 +614,19 @@
     {{-- Restaurant Area Chart --}}
     <script type="text/javascript">
         var _restaurantlabels = {!! json_encode($restaurantLabels) !!};
-        var _restaurantdata = {!! json_encode($restaurantData) !!};
+        var _restaurantcounts = {!! json_encode($restaurantPopularCounts) !!};
     </script>
 
     {{-- Resort Area Chart --}}
     <script type="text/javascript">
         var _resortlabels = {!! json_encode($resortLabels) !!};
-        var _resortdata = {!! json_encode($resortData) !!};
+        var _resortcounts = {!! json_encode($resortPopularCounts) !!};
     </script>
 
     {{-- Hotel Area Chart --}}
     <script type="text/javascript">
         var _hotellabels = {!! json_encode($hotelLabels) !!};
-        var _hoteldata = {!! json_encode($hotelData) !!};
+        var _hotelcounts = {!! json_encode($hotelPopularCounts) !!};
     </script>
 
     {{-- All Booked Pie Chart --}}

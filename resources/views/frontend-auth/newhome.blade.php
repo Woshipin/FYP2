@@ -481,11 +481,6 @@
 
     {{-- About CSS --}}
     <style>
-        /* .about {
-                                                                                        background-image: linear-gradient(#1f83c9, #b6dfd4, #1957ad);
-                                                                                        padding: 20px;
-                                                                                    } */
-
         .about .row {
             display: flex;
             flex-wrap: wrap;
@@ -1249,6 +1244,96 @@
     {{-- CSRF Token --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    {{-- Recommendation CSS --}}
+    <style>
+        /* 确保每个 card 的宽度和高度一致 */
+        .swiper-slide.slide {
+            width: 300px;
+            /* 设置统一的宽度 */
+            height: 550px;
+            /* 设置统一的高度 */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            /* 内容在左侧对齐 */
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .swiper-slide.slide .image {
+            width: 100%;
+            height: 250px;
+            border: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f9f9f9;
+        }
+
+        .swiper-slide.slide .image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .swiper-slide.slide .content {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-start;
+            /* 内容在左侧对齐 */
+            margin-top: 10px;
+        }
+
+        .swiper-slide.slide .content p {
+            margin: 5px 0;
+            padding: 0;
+            line-height: 1.2;
+            text-align: left;
+            /* 内容在左侧对齐 */
+        }
+
+        .swiper-slide.slide .content .stars {
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-start;
+            /* 内容在左侧对齐 */
+            align-items: center;
+        }
+
+        .swiper-slide.slide .concert-info {
+            width: 100%;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            /* 内容在左侧对齐 */
+        }
+
+        .swiper-slide.slide .concert-info p {
+            margin: 5px 0;
+            padding: 0;
+            line-height: 1.2;
+            text-align: left;
+            /* 内容在左侧对齐 */
+        }
+
+        .swiper-slide.slide .concert-info .actions {
+            margin-top: 10px;
+            display: flex;
+            justify-content: flex-start;
+            /* 内容在左侧对齐 */
+            align-items: center;
+        }
+
+        .swiper-slide.slide .concert-info .actions .btn {
+            margin-right: 10px;
+        }
+    </style>
+
     {{-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"> --}}
 
     {{-- ------------------------------------------------------- CSS Area End ------------------------------------------------------ --}}
@@ -1365,7 +1450,7 @@
         </section>
 
         <!-- 判断用户是否已登录，已登录则显示推荐内容 -->
-        @auth
+        {{-- @auth
             <section class="room" id="room" data-sr>
                 <div class="swiper room-slider">
                     <div class="swiper-wrapper">
@@ -1418,6 +1503,76 @@
                     <div class="swiper-pagination"></div>
                 </div>
             </section>
+        @endauth --}}
+
+        @auth
+            <section class="room" id="recommendation-room" data-sr>
+                <div class="swiper room-slider">
+                    <div class="swiper-wrapper" data-sr="slide-up">
+                        @if ($recommendations)
+                            @foreach ($recommendations as $recommendation)
+                                <div class="swiper-slide slide"
+                                    id="recommendation_card_{{ $recommendation['place_type'] }}_{{ $recommendation['place_id'] }}">
+
+                                    @if (!empty($recommendation['place_price']))
+                                        <span class="price"
+                                            id="price_{{ $recommendation['place_type'] }}_{{ $recommendation['place_id'] }}">${{ $recommendation['place_price'] }}</span>
+                                    @endif
+
+                                    <div class="image"
+                                        style="width: 100%; height: 250px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
+                                        @if (!empty($recommendation['image']))
+                                            <img src="{{ asset('images/' . $recommendation['image']) }}" class="d-block w-100"
+                                                alt="{{ $recommendation['place_type'] }}"
+                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                        @else
+                                            <span style="color: #777;">No Image</span>
+                                        @endif
+                                    </div>
+
+                                    <div class="content">
+                                        <p id="name_{{ $recommendation['place_type'] }}_{{ $recommendation['place_id'] }}">
+                                            {{ $recommendation['place_name'] }}</p>
+                                        <p id="type_{{ $recommendation['place_type'] }}_{{ $recommendation['place_id'] }}">
+                                            {{ $recommendation['place_type'] }}</p>
+                                        <div class="stars">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($i <= $recommendation['averageRating'])
+                                                    <i class="fas fa-star" style="color: gold; font-size: 20px;"></i>
+                                                @elseif ($i - 0.5 <= $recommendation['averageRating'])
+                                                    <i class="fas fa-star-half-alt" style="color: gold; font-size: 20px;"></i>
+                                                @else
+                                                    <i class="far fa-star" style="font-size: 20px; color: black;"></i>
+                                                @endif
+                                            @endfor
+                                            <span>({{ number_format($recommendation['averageRating'], 1) }})</span>
+                                        </div>
+                                    </div>
+
+                                    <div class='concert-info'>
+                                        @if ($recommendation['status'] == 0)
+                                            <div class="concert-action-container">
+                                                <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}
+                                                </p>
+                                                <div class="actions">
+                                                    <a href="{{ url($recommendation['url']) }}" class="btn">Book Now</a>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}</p>
+                                            <a href="#" class="btn" class="concert-action">Closed</a>
+                                        @endif
+                                    </div>
+
+                                </div>
+                            @endforeach
+                        @else
+                            <p style="margin-top:40px; font-size:24px; display:block; color:white;">No Recommendations Found</p>
+                        @endif
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </section>
         @endauth
 
         <!-- 未登录用户显示的内容 -->
@@ -1443,8 +1598,8 @@
         <section class="room" id="resort-room" data-sr>
             <div class="swiper room-slider">
                 <div class="swiper-wrapper" data-sr="slide-up">
-                    @if ($resorts->where('register_status', 1)->count() > 0)
-                        @foreach ($resorts->where('register_status', 1) as $resort)
+                    @if ($resorts->count() > 0)
+                        @foreach ($resorts as $resort)
                             <div class="swiper-slide slide" id="resortcard_{{ $resort->id }}">
 
                                 <span class="price" id="price">${{ $resort->price }}</span>
@@ -1535,8 +1690,8 @@
             <div class="swiper room-slider">
                 <div class="swiper-wrapper" data-sr="slide-up">
                     <!-- Add data-sr="slide-up" to trigger Scroll Reveal effect on the whole swiper-wrapper -->
-                    @if ($hotels->where('register_status', 1)->count() > 0)
-                        @foreach ($hotels->where('register_status', 1) as $hotel)
+                    @if ($hotels->count() > 0)
+                        @foreach ($hotels as $hotel)
                             <div class="swiper-slide slide" id="hotelcard_{{ $hotel->id }}">
 
                                 <div class="image"
@@ -1625,8 +1780,8 @@
             <div class="swiper room-slider">
                 <div class="swiper-wrapper" data-sr="slide-up">
                     <!-- Add data-sr="slide-up" to trigger Scroll Reveal effect on the whole swiper-wrapper -->
-                    @if ($restaurants->where('register_status', 1)->count() > 0)
-                        @foreach ($restaurants->where('register_status', 1) as $restaurant)
+                    @if ($restaurants->count() > 0)
+                        @foreach ($restaurants as $restaurant)
                             <div class="swiper-slide slide" id="restaurantcard_{{ $restaurant->id }}">
 
                                 <div class="image"
@@ -2392,6 +2547,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="path/to/slick.min.js"></script>
 
+    {{-- Chat Bot --}}
     <script>
         class InteractiveChatbox { // 定义交互式聊天框类
             constructor(button, chatbox, icons) { // 构造函数，接收按钮、聊天框和图标参数

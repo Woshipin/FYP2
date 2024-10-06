@@ -99,79 +99,39 @@ class AdminController extends Controller
         }
 
         // Admin Restaurant Area Chart
-        $bookingRestaurants = BookingRestaurant::select('created_at')
-            ->orderBy('created_at')
+        $restaurantData = BookingRestaurant::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(popular_count) as total_popular_count')
+            ->groupBy('month')
+            ->orderBy('month')
             ->get();
 
-        $restaurantLabels = [];
-        $restaurantData = [];
-
-        foreach ($bookingRestaurants as $bookingRestaurant) {
-            $restaurantLabels[] = $bookingRestaurant['created_at']->format('Y-m-d');
-        }
-
-        $restaurantPopularCounts = Restaurant::select('name', 'popular_count')
-            ->where('popular_count', '>', 0)
-            ->orderBy('name')
-            ->get();
-
-        foreach ($restaurantPopularCounts as $restaurant) {
-            $restaurantData[] = [
-                'name' => $restaurant['name'],
-                'popular_count' => $restaurant['popular_count']
-            ];
-        }
+        $restaurantLabels = $restaurantData->pluck('month')->map(function($month) {
+            return Carbon::createFromFormat('Y-m', $month)->format('M');
+        });
+        $restaurantPopularCounts = $restaurantData->pluck('total_popular_count');
 
         // Admin Resort Area Chart
-        $bookingResorts = BookingResort::select('created_at')
-            ->orderBy('created_at')
+        $resortData = BookingResort::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(popular_count) as total_popular_count')
+            ->groupBy('month')
+            ->orderBy('month')
             ->get();
 
-        $resortLabels = [];
-        $resortData = [];
-
-        foreach ($bookingResorts as $bookingResort) {
-            $resortLabels[] = $bookingResort['created_at']->format('Y-m-d');
-        }
-
-        $resortPopularCounts = Resort::select('name', 'popular_count')
-            ->where('popular_count', '>', 0)
-            ->orderBy('name')
-            ->get();
-
-        foreach ($resortPopularCounts as $resort) {
-            $resortData[] = [
-                'name' => $resort['name'],
-                'popular_count' => $resort['popular_count']
-            ];
-        }
+        $resortLabels = $resortData->pluck('month')->map(function($month) {
+            return Carbon::createFromFormat('Y-m', $month)->format('M');
+        });
+        $resortPopularCounts = $resortData->pluck('total_popular_count');
 
         // Admin Hotel Area Chart
-        $bookingHotels = BookingHotel::select('created_at')
-            ->orderBy('created_at')
+        $hotelData = BookingHotel::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(popular_count) as total_popular_count')
+            ->groupBy('month')
+            ->orderBy('month')
             ->get();
 
-        $hotelLabels = [];
-        $hotelData = [];
-
-        foreach ($bookingHotels as $bookingHotel) {
-            $hotelLabels[] = $bookingHotel['created_at']->format('Y-m-d');
-        }
-
-        $hotelPopularCounts = Hotel::select('name', 'popular_count')
-            ->where('popular_count', '>', 0)
-            ->orderBy('name')
-            ->get();
-
-        foreach ($hotelPopularCounts as $hotel) {
-            $hotelData[] = [
-                'name' => $hotel['name'],
-                'popular_count' => $hotel['popular_count']
-            ];
-        }
+        $hotelLabels = $hotelData->pluck('month')->map(function($month) {
+            return Carbon::createFromFormat('Y-m', $month)->format('M');
+        });
+        $hotelPopularCounts = $hotelData->pluck('total_popular_count');
 
         // All Booked Pie Chart
-        // 收集已预订的餐厅、度假村和酒店的总预订数
         $bookedRestaurants = BookingRestaurant::count();
         $bookedResorts = BookingResort::count();
         $bookedHotels = BookingHotel::count();
@@ -206,9 +166,9 @@ class AdminController extends Controller
             'totalbookedrestaurant', 'todaybookedrestaurant', 'thisMonthbookedrestaurant', 'thisYearbookedrestaurant',
             'totalbookedresort', 'todaybookedresort', 'thisMonthbookedresort', 'thisYearbookedresort',
             'totalbookedhotel', 'todaybookedhotel', 'thisMonthbookedhotel', 'thisYearbookedhotel',
-            'restaurantLabels', 'restaurantData',
-            'resortLabels', 'resortData',
-            'hotelLabels', 'hotelData'
+            'restaurantLabels', 'restaurantPopularCounts',
+            'resortLabels', 'resortPopularCounts',
+            'hotelLabels', 'hotelPopularCounts'
         ))->with('success', 'Admin is Login Successfully!');
     }
 
