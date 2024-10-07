@@ -108,39 +108,90 @@ class RecommendationService
     }
 
     // 计算推荐列表
+    // protected function calculateRecommendations($userRatings, $mostBookedPlaces)
+    // {
+    //     $recommendations = [];
+
+    //     foreach ($mostBookedPlaces as $bookingData) {
+
+    //         $place = null;
+    //         $placeId = $bookingData['place_id'];
+    //         $placeType = $bookingData['type'];
+    //         $bookingCount = $bookingData['count'];
+
+    //         // 在相应的数据结构中查找地点（餐厅、酒店或度假村）
+    //         if ($placeType === 'restaurant') {
+    //             $place = Restaurant::find($placeId);
+    //         } elseif ($placeType === 'hotel') {
+    //             $place = Hotel::find($placeId);
+    //         } elseif ($placeType === 'resort') {
+    //             $place = Resort::find($placeId);
+    //         }
+
+    //         if ($place) {
+    //             // 计算平均评分
+    //             $placeRatings = array_filter($userRatings, function ($rating) use ($placeId) {
+    //                 return $rating->rateable_id == $placeId;
+    //             });
+
+    //             $totalRating = array_reduce($placeRatings, function ($carry, $rating) {
+    //                 return $carry + $rating->rating;
+    //             }, 0);
+
+    //             $averageRating = count($placeRatings) > 0 ? $totalRating / count($placeRatings) : 0;
+
+    //             // 创建推荐条目
+    //             $recommendations[] = [
+    //                 'place_type_name' => $placeType,
+    //                 'place_type' => $placeType,
+    //                 'place_name' => $place->name,
+    //                 'place_id' => $place->id,
+    //                 'place_price' => $place->price ?? null,
+    //                 'recommendation_score' => $bookingCount * $averageRating,
+    //                 'image' => $place->image,
+    //                 'description' => $place->description,
+    //                 'averageRating' => $averageRating,
+    //                 'status' => $place->status,
+    //                 'url' => method_exists($place, 'getURL') ? $place->getURL() : null,
+    //             ];
+    //         }
+    //     }
+
+    //     // 按推荐分数排序
+    //     usort($recommendations, function ($a, $b) {
+    //         return $b['recommendation_score'] <=> $a['recommendation_score'];
+    //     });
+
+    //     return $recommendations;
+    // }
+
     protected function calculateRecommendations($userRatings, $mostBookedPlaces)
     {
         $recommendations = [];
 
         foreach ($mostBookedPlaces as $bookingData) {
-
             $place = null;
             $placeId = $bookingData['place_id'];
             $placeType = $bookingData['type'];
             $bookingCount = $bookingData['count'];
 
-            // 在相应的数据结构中查找地点（餐厅、酒店或度假村）
+            // Find the place in the respective data structure (restaurant, hotel, or resort)
             if ($placeType === 'restaurant') {
-                $place = Restaurant::find($placeId);
+                $place = Restaurant::with('images')->find($placeId);
             } elseif ($placeType === 'hotel') {
-                $place = Hotel::find($placeId);
+                $place = Hotel::with('images')->find($placeId);
             } elseif ($placeType === 'resort') {
-                $place = Resort::find($placeId);
+                $place = Resort::with('images')->find($placeId);
             }
 
             if ($place) {
-                // 计算平均评分
-                $placeRatings = array_filter($userRatings, function ($rating) use ($placeId) {
-                    return $rating->rateable_id == $placeId;
-                });
+                // Calculate average rating
+                $averageRating = $this->calculateAverageRating($place, $userRatings);
 
-                $totalRating = array_reduce($placeRatings, function ($carry, $rating) {
-                    return $carry + $rating->rating;
-                }, 0);
+                // Get the first image
+                $firstImage = $place->images->first() ? $place->images->first()->image : null;
 
-                $averageRating = count($placeRatings) > 0 ? $totalRating / count($placeRatings) : 0;
-
-                // 创建推荐条目
+                // Create recommendation entry
                 $recommendations[] = [
                     'place_type_name' => $placeType,
                     'place_type' => $placeType,
@@ -148,7 +199,7 @@ class RecommendationService
                     'place_id' => $place->id,
                     'place_price' => $place->price ?? null,
                     'recommendation_score' => $bookingCount * $averageRating,
-                    'image' => $place->image,
+                    'image' => $firstImage,
                     'description' => $place->description,
                     'averageRating' => $averageRating,
                     'status' => $place->status,
@@ -157,12 +208,24 @@ class RecommendationService
             }
         }
 
-        // 按推荐分数排序
+        // Sort recommendations by recommendation score
         usort($recommendations, function ($a, $b) {
             return $b['recommendation_score'] <=> $a['recommendation_score'];
         });
 
         return $recommendations;
+    }
+
+    // Helper function to calculate average rating
+    protected function calculateAverageRating($place, $userRatings)
+    {
+        // Implement your logic to calculate the average rating based on user ratings
+        // For example, you can sum up all ratings and divide by the number of ratings
+        $ratings = $userRatings[$place->id] ?? [];
+        if (count($ratings) > 0) {
+            return array_sum($ratings) / count($ratings);
+        }
+        return 0; // Default to 0 if no ratings are available
     }
 
     // -----------------------------------------------------完整的 full code 备份------------------------------------------------------

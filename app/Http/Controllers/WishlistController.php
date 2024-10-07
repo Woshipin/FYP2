@@ -94,12 +94,22 @@ class WishlistController extends Controller
     // Show All User Wishlist
     public function showWishlist()
     {
+        // 检查用户是否已登录
+        if (!auth()->check()) {
+            // 如果用户未登录，重定向到登录页面
+            return redirect()->route('login')->with('error', '请先登录以查看您的愿望清单。');
+        }
+
+        // 获取当前登录用户
         $user = auth()->user();
+
+        // 获取用户的愿望清单
         $hotelWishlists = $user->wishlist()->with('hotel')->get();
         $resortWishlists = $user->resortwishlist()->with('resort')->get();
         $restaurantWishlists = $user->restaurantwishlist()->with('restaurant')->get();
 
-        return view('backend-user.user-wishlist.wishlist', compact('resortWishlists','hotelWishlists','restaurantWishlists'));
+        // 返回视图
+        return view('backend-user.user-wishlist.wishlist', compact('resortWishlists', 'hotelWishlists', 'restaurantWishlists'));
     }
 
 }

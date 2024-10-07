@@ -1516,8 +1516,19 @@
 
                                     @if (!empty($recommendation['place_price']))
                                         <span class="price"
-                                            id="price_{{ $recommendation['place_type'] }}_{{ $recommendation['place_id'] }}">${{ $recommendation['place_price'] }}</span>
+                                            id="price_{{ $recommendation['place_type'] }}_{{ $recommendation['place_id'] }}">RM{{ $recommendation['place_price'] }}</span>
                                     @endif
+
+                                    {{-- <div class="image"
+                                        style="width: 100%; height: 250px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
+                                        @if (!empty($recommendation['image']))
+                                            <img src="{{ asset('images/' . $recommendation['image']) }}" class="d-block w-100"
+                                                alt="{{ $recommendation['place_type'] }}"
+                                                style="width: 100%; height: 100%; object-fit: cover;">
+                                        @else
+                                            <span style="color: #777;">No Image</span>
+                                        @endif
+                                    </div> --}}
 
                                     <div class="image"
                                         style="width: 100%; height: 250px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
@@ -1531,10 +1542,14 @@
                                     </div>
 
                                     <div class="content">
-                                        <p id="name_{{ $recommendation['place_type'] }}_{{ $recommendation['place_id'] }}">
-                                            {{ $recommendation['place_name'] }}</p>
-                                        <p id="type_{{ $recommendation['place_type'] }}_{{ $recommendation['place_id'] }}">
-                                            {{ $recommendation['place_type'] }}</p>
+                                        <p id="name_{{ $recommendation['place_type'] }}_{{ $recommendation['place_id'] }}"
+                                            style="font-size: 15px; color: #000000;">
+                                            {{ $recommendation['place_name'] }}
+                                        </p>
+                                        <p id="type_{{ $recommendation['place_type'] }}_{{ $recommendation['place_id'] }}"
+                                            style="font-size: 15px; color: #000000;">
+                                            {{ $recommendation['place_type'] }}
+                                        </p>
                                         <div class="stars">
                                             @for ($i = 1; $i <= 5; $i++)
                                                 @if ($i <= $recommendation['averageRating'])
@@ -1549,11 +1564,40 @@
                                         </div>
                                     </div>
 
+                                    {{-- <div class='concert-info'>
+                                        @if ($recommendation['status'] == 0)
+                                            <div class="concert-action-container">
+                                                <div class="actions">
+                                                    <a href="{{ url($recommendation['url']) }}" class="btn">Book Now</a>
+                                                </div>
+                                                <div class="actions">
+                                                    <a href="{{ url($recommendation['url']) }}" class="btn">Book Now</a>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}</p>
+                                            <a href="#" class="btn" class="concert-action">Closed</a>
+                                        @endif
+                                    </div> --}}
+
                                     <div class='concert-info'>
                                         @if ($recommendation['status'] == 0)
                                             <div class="concert-action-container">
-                                                <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}
-                                                </p>
+                                                <div class="actions">
+                                                    @if ($recommendation['place_type'] == 'resort')
+                                                        <a href="{{ url('Resortdetail/' . $recommendation['place_id']) . '/view' }}"
+                                                            class="btn"
+                                                            id="viewresort{{ $recommendation['place_id'] }}">View Now</a>
+                                                    @elseif ($recommendation['place_type'] == 'hotel')
+                                                        <a href="{{ url('Hoteldetail/' . $recommendation['place_id']) . '/view' }}"
+                                                            class="btn" id="viewhotel{{ $recommendation['place_id'] }}">View
+                                                            Now</a>
+                                                    @elseif ($recommendation['place_type'] == 'restaurant')
+                                                        <a href="{{ url('Restaurantdetail/' . $recommendation['place_id']) . '/view' }}"
+                                                            class="btn"
+                                                            id="viewrestaurant{{ $recommendation['place_id'] }}">View Now</a>
+                                                    @endif
+                                                </div>
                                                 <div class="actions">
                                                     <a href="{{ url($recommendation['url']) }}" class="btn">Book Now</a>
                                                 </div>
@@ -1567,7 +1611,8 @@
                                 </div>
                             @endforeach
                         @else
-                            <p style="margin-top:40px; font-size:24px; display:block; color:white;">No Recommendations Found</p>
+                            <p style="margin-top:40px; font-size:24px; display:block; color:white;">No Recommendations Found
+                            </p>
                         @endif
                     </div>
                     <div class="swiper-pagination"></div>

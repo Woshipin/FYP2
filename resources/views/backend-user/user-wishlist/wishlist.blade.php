@@ -15,113 +15,151 @@
 
     {{-- New Card Ui With Slider --}}
     <style>
-        .btn-danger {
-            background-color: red;
-            color: white;
-            display: inline-block;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            background: red color: #fff;
-            padding: .6rem 1rem;
-            border: .2rem solid var(--red);
+        body {
+            font-family: 'Poppins', sans-serif;
         }
 
-        .btn {
-            display: inline-block;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            /* margin: 10px; */
-            background: var(--orange);
-            color: #fff;
-            padding: .6rem 1rem;
-            border: .2rem solid var(--orange);
-            /* cursor: pointer; */
-            /* font-size: 1.7rem; */
+        .swiper-slide {
+            background: linear-gradient(to bottom right, #ffffff, #f0f0f0);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease-in-out;
+            padding: 0;
+            margin: 0 10px;
+            width: 300px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
         }
 
-        .btn:hover {
-            background: rgba(255, 165, 0, .2);
-            color: var(--orange);
+        .swiper-slide:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.07);
         }
 
-        #price {
-            color: #000;
-            /* 使用深黑色（十六进制颜色代码） */
-            font-size: 150%;
+        .swiper-slide .image {
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
         }
 
-        #closed {
-            border-radius: 8px;
-            /* 调整按钮的边框半径 */
-            color: black;
-            /* 设置按钮的文字颜色为黑色 */
-            background-color: silver;
-            /* 设置按钮的背景颜色为银灰色 */
-            padding: 8px 16px;
-            /* 可选：调整按钮的内边距以增加按钮的大小 */
-        }
-
-        .swiper-slide.slide {
-            /* background-color: black;
-                                                            color: gold; */
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        /* 基础样式 */
-        .room .slide {
-            flex: 0 0 100%;
-            margin-bottom: 2rem;
-            background: linear-gradient(to bottom right, silver, #f0f0f0, #000000);
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        .room .slide .image img {
+        .swiper-slide .image img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .room .slide .content {
+        .swiper-slide .content {
             padding: 1.5rem;
+            background: #ffffff;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .room .slide .content h3 {
-            font-size: 2rem;
+        .swiper-slide .content h3 {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #333;
+            height: 5rem;
+            /* 增加高度 */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            /* 增加到3行 */
+            -webkit-box-orient: vertical;
+            line-height: 1.3;
+            /* 添加行高以改善可读性 */
         }
 
-        .room .slide .content p {
-            font-size: 1.4rem;
-            line-height: 1.6;
+        .swiper-slide .content p {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 15px;
+            flex-grow: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            height: 5rem;
         }
 
-        .room .slide .content .stars i {
-            font-size: 1.5rem;
-            color: var(--primary);
+        .swiper-slide .content .stars {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
         }
 
-        /* 媒体查询：调整样式以适应不同屏幕尺寸 */
-        @media screen and (min-width: 768px) {
-            .room .slide {
-                flex: 0 0 calc(33.333% - 2rem);
-                margin: 1rem;
-            }
+        .swiper-slide .content .stars i {
+            font-size: 16px;
+            color: gold;
+            margin-right: 2px;
+        }
 
-            .room .slide .content {
-                padding: 2rem;
-            }
+        .swiper-slide .content .concert-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-            .room .slide .content h3 {
-                font-size: 2.5rem;
-            }
+        .swiper-slide .content .btn,
+        .swiper-slide .content .btn-danger {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            border-radius: 50px;
+            min-width: 90px;
+            text-align: center;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
 
-            .room .slide .content p {
-                font-size: 1.6rem;
-            }
+        .swiper-slide .content .btn {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            border: none;
+        }
 
-            .room .slide .content .stars i {
-                font-size: 1.7rem;
+        .swiper-slide .content .btn:hover {
+            background: linear-gradient(135deg, #e083eb, #e5475c);
+            transform: translateY(-2px);
+        }
+
+        .swiper-slide .content .btn-danger {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+        }
+
+        .swiper-slide .content .btn-danger:hover {
+            background-color: #e03d3d;
+            transform: translateY(-2px);
+        }
+
+        #price {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 8px;
+        }
+
+        .swiper-wrapper {
+            display: flex;
+            align-items: stretch;
+        }
+
+        @media (min-width: 768px) {
+            .swiper-slide {
+                flex: 0 0 300px;
             }
         }
     </style>
@@ -130,10 +168,11 @@
     <section class="breadcumb-area bg-img bg-overlay"
         style="background-image: url(img/bg-img/breadcumb3.jpg); height: 200px;">
         <div class="bradcumbContent">
-            {{-- <p>See what's new</p> --}}
-            <h2>Wishilist Resort</h2>
+            <h2>Wishlist Resort</h2>
         </div>
     </section>
+
+    <br>
 
     <section class="room" id="room">
         <div class="swiper room-slider">
@@ -141,38 +180,54 @@
                 @if ($resortWishlists->count() > 0)
                     @foreach ($resortWishlists as $resortWishlist)
                         <div class="swiper-slide slide">
-                            <div class="image">
-                                <span class="price" id="price">${{ $resortWishlist->resort->price }}</span>
-                                <img src="{{ asset('images/' . $resortWishlist->resort->image) }}" alt="">
+                            <span class="price" id="price">${{ $resortWishlist->resort->price }}</span>
+
+                            <div class="image"
+                                style="width: 100%; height: 250px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
+                                @if ($resortWishlist->resort->images->count() > 0)
+                                    <img src="{{ asset('images/' . $resortWishlist->resort->images->first()->image) }}"
+                                        class="d-block w-100" alt="Resort Image"
+                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    <span style="color: #777;">No Image</span>
+                                @endif
                             </div>
+
                             <div class="content">
                                 <h3>{{ $resortWishlist->resort->name }}</h3>
                                 <p>{{ $resortWishlist->resort->description }}</p>
                                 <div class="stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
-                                </div>
-                                <div class='concert-info'>
-                                    @if ($resortWishlist->status == 0)
-                                        <div class="concert-action-container" style="display: flex; align-items: center;">
-                                            {{-- <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}</p> --}}
-                                            <a href="{{ url('Resortdetail/' . $resortWishlist->id) . '/view' }}"
-                                                class="btn" id="viewresort{{ $resortWishlist->id }}">Book Now</a>
-                                            <form action="{{ url('/wishlist/remove/' . $resortWishlist->id) }}"
-                                                method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn-danger"
-                                                    id="deleteResort{{ $resortWishlist->id }}"
-                                                    style="margin-left: 10px;">Delete</button>
-                                            </form>
-                                        </div>
+                                    @if (isset($resortRatings[$resortWishlist->resort->id]['averageRating']) &&
+                                            $resortRatings[$resortWishlist->resort->id]['averageRating'] > 0)
+                                        @php $averageRating = $resortRatings[$resortWishlist->resort->id]['averageRating']; @endphp
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($i <= $averageRating)
+                                                <i class="fas fa-star" style="color: gold; font-size: 20px;"></i>
+                                            @elseif ($i - 0.5 <= $averageRating)
+                                                <i class="fas fa-star-half-alt" style="color: gold; font-size: 20px;"></i>
+                                            @else
+                                                <i class="far fa-star" style="font-size: 20px; color: black;"></i>
+                                            @endif
+                                        @endfor
+                                        <span>({{ number_format($averageRating, 1) }})</span>
                                     @else
-                                        <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}</p>
-                                        <a href="#" class="btn" id="closed" class="concert-action">Closed</a>
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i class="far fa-star" style="font-size: 20px; color: black;"></i>
+                                        @endfor
+                                    @endif
+                                </div>
+                                <div class="concert-info"
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                                    @if ($resortWishlist->status == 0)
+                                        <a href="{{ url('Resortdetail/' . $resortWishlist->resort->id) . '/view' }}"
+                                            class="btn">Book Now</a>
+                                        <form action="{{ url('/wishlist/remove/' . $resortWishlist->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-danger">Delete</button>
+                                        </form>
+                                    @else
+                                        <a href="#" class="btn" id="closed">Closed</a>
                                     @endif
                                 </div>
                             </div>
@@ -193,10 +248,11 @@
     <section class="breadcumb-area bg-img bg-overlay"
         style="background-image: url(img/bg-img/breadcumb3.jpg); height: 200px;">
         <div class="bradcumbContent">
-            {{-- <p>See what's new</p> --}}
-            <h2>Wishilist Hotel</h2>
+            <h2>Wishlist Hotel</h2>
         </div>
     </section>
+
+    <br>
 
     <section class="room" id="room">
         <div class="swiper room-slider">
@@ -204,39 +260,58 @@
                 @if ($hotelWishlists->count() > 0)
                     @foreach ($hotelWishlists as $hotelWishlist)
                         <div class="swiper-slide slide">
-                            <div class="image">
-                                {{-- <span class="price" id="price">${{ $resortWishlist->resort->price }}</span> --}}
-                                <img src="{{ asset('images/' . $hotelWishlist->hotel->image) }}" alt="">
+                            <span class="price" id="price">${{ $hotelWishlist->hotel->price }}</span>
+
+                            <div class="image"
+                                style="width: 100%; height: 250px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
+                                @if ($hotelWishlist->hotel->images->count() > 0)
+                                    <img src="{{ asset('images/' . $hotelWishlist->hotel->images->first()->image) }}"
+                                        class="d-block w-100" alt="Hotel Image"
+                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    <span style="color: #777;">No Image</span>
+                                @endif
                             </div>
+
                             <div class="content">
                                 <h3>{{ $hotelWishlist->hotel->name }}</h3>
                                 <p>{{ $hotelWishlist->hotel->description }}</p>
                                 <div class="stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
+                                    @if (isset($hotelRatings[$hotelWishlist->hotel->id]['averageRating']) &&
+                                            $hotelRatings[$hotelWishlist->hotel->id]['averageRating'] > 0)
+                                        @php $averageRating = $hotelRatings[$hotelWishlist->hotel->id]['averageRating']; @endphp
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($i <= $averageRating)
+                                                <i class="fas fa-star" style="color: gold; font-size: 20px;"></i>
+                                            @elseif ($i - 0.5 <= $averageRating)
+                                                <i class="fas fa-star-half-alt" style="color: gold; font-size: 20px;"></i>
+                                            @else
+                                                <i class="far fa-star" style="font-size: 20px; color: black;"></i>
+                                            @endif
+                                        @endfor
+                                        <span>({{ number_format($averageRating, 1) }})</span>
+                                    @else
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i class="far fa-star" style="font-size: 20px; color: black;"></i>
+                                        @endfor
+                                    @endif
                                 </div>
                                 <div class='concert-info'>
                                     @if ($hotelWishlist->status == 0)
                                         <div class="concert-action-container" style="display: flex; align-items: center;">
-                                            {{-- <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}</p> --}}
                                             <a href="{{ url('Hoteldetail/' . $hotelWishlist->id) . '/view' }}"
-                                                class="btn" id="viewhotel{{ $hotelWishlist->id }}">Book Now</a>
+                                                class="btn">Book Now</a>
 
                                             <form action="{{ url('/wishlist/remove/hotel/' . $hotelWishlist->id) }}"
                                                 method="POST">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn-danger"
-                                                    id="viewhotel{{ $hotelWishlist->id }}"
                                                     style="margin-left: 10px;">Delete</button>
                                             </form>
                                         </div>
                                     @else
-                                        <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}</p>
-                                        <a href="#" class="btn" id="closed" class="concert-action">Closed</a>
+                                        <a href="#" class="btn" id="closed">Closed</a>
                                     @endif
                                 </div>
                             </div>
@@ -257,10 +332,11 @@
     <section class="breadcumb-area bg-img bg-overlay"
         style="background-image: url(img/bg-img/breadcumb3.jpg); height: 200px;">
         <div class="bradcumbContent">
-            {{-- <p>See what's new</p> --}}
-            <h2>Wishilist Restaurant</h2>
+            <h2>Wishlist Restaurant</h2>
         </div>
     </section>
+
+    <br>
 
     <section class="room" id="room">
         <div class="swiper room-slider">
@@ -268,27 +344,47 @@
                 @if ($restaurantWishlists->count() > 0)
                     @foreach ($restaurantWishlists as $restaurantWishlist)
                         <div class="swiper-slide slide">
-                            <div class="image">
-                                {{-- <span class="price" id="price">${{ $resortWishlist->resort->price }}</span> --}}
-                                <img src="{{ asset('images/' . $restaurantWishlist->restaurant->image) }}" alt="">
+                            <span class="price" id="price">${{ $restaurantWishlist->restaurant->price }}</span>
+
+                            <div class="image"
+                                style="width: 100%; height: 250px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
+                                @if ($restaurantWishlist->restaurant->images->count() > 0)
+                                    <img src="{{ asset('images/' . $restaurantWishlist->restaurant->images->first()->image) }}"
+                                        class="d-block w-100" alt="Restaurant Image"
+                                        style="width: 100%; height: 100%; object-fit: cover;">
+                                @else
+                                    <span style="color: #777;">No Image</span>
+                                @endif
                             </div>
+
                             <div class="content">
                                 <h3>{{ $restaurantWishlist->restaurant->name }}</h3>
                                 <p>{{ $restaurantWishlist->restaurant->description }}</p>
                                 <div class="stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
+                                    @if (isset($restaurantRatings[$restaurantWishlist->restaurant->id]['averageRating']) &&
+                                            $restaurantRatings[$restaurantWishlist->restaurant->id]['averageRating'] > 0)
+                                        @php $averageRating = $restaurantRatings[$restaurantWishlist->restaurant->id]['averageRating']; @endphp
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            @if ($i <= $averageRating)
+                                                <i class="fas fa-star" style="color: gold; font-size: 20px;"></i>
+                                            @elseif ($i - 0.5 <= $averageRating)
+                                                <i class="fas fa-star-half-alt" style="color: gold; font-size: 20px;"></i>
+                                            @else
+                                                <i class="far fa-star" style="font-size: 20px; color: black;"></i>
+                                            @endif
+                                        @endfor
+                                        <span>({{ number_format($averageRating, 1) }})</span>
+                                    @else
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <i class="far fa-star" style="font-size: 20px; color: black;"></i>
+                                        @endfor
+                                    @endif
                                 </div>
                                 <div class='concert-info'>
                                     @if ($restaurantWishlist->status == 0)
                                         <div class="concert-action-container" style="display: flex; align-items: center;">
-                                            {{-- <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}</p> --}}
                                             <a href="{{ url('Restaurantdetail/' . $restaurantWishlist->id) . '/view' }}"
-                                                class="btn" id="viewrestaurant{{ $restaurantWishlist->id }}">Book
-                                                Now</a>
+                                                class="btn">Book Now</a>
 
                                             <form
                                                 action="{{ url('/wishlist/remove/restaurant/' . $restaurantWishlist->id) }}"
@@ -296,14 +392,11 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn-danger"
-                                                    id="deleteRestaurant{{ $restaurantWishlist->id }}"
                                                     style="margin-left: 10px;">Delete</button>
                                             </form>
                                         </div>
                                     @else
-                                        <p>{{ \Carbon\Carbon::now('Asia/Kuala_Lumpur')->format('D, M d, Y h:i A') }}</p>
-                                        <a href="#" class="btn" id="closed"
-                                            class="concert-action">Closed</a>
+                                        <a href="#" class="btn" id="closed">Closed</a>
                                     @endif
                                 </div>
                             </div>
