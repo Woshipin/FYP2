@@ -167,210 +167,289 @@
         }
     </style>
 
-    {{-- Image,GPS and Search CSS --}}
-    {{-- <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .container {
-            max-width: 1500px;
-            width: 100%;
-            background: #fff;
-            padding: 30px;
-            border-radius: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .custom-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-        }
-
-        .upload-form,
-        .gps-button,
-        .search-bar {
-            width: 30%;
-        }
-
-        .upload-form input[type="file"] {
-            display: none;
-        }
-
-        .upload-form label {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            border-radius: 15px;
-            background: var(--blue);
-            color: #fff;
-            font-weight: 500;
-            text-align: center;
-            cursor: pointer;
-            transition: all .3s ease;
-        }
-
-        .upload-form label:hover {
-            background: var(--dark-blue);
-        }
-
-        .upload-form button {
-            width: 50%;
-            padding: 6px;
-            border-radius: 15px;
-            background: var(--blue);
-            color: #fff;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            transition: all .3s ease;
-            margin-top: 10px;
-        }
-
-        .upload-form button:hover {
-            background: var(--dark-blue);
-        }
-
-        .gps-button button,
-        .search-bar input {
-            width: 100%;
-            padding: 16px;
-            border-radius: 15px;
-            border: none;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        .gps-button button {
-            background: var(--blue);
-            color: #fff;
-            cursor: pointer;
-            transition: all .3s ease;
-        }
-
-        .gps-button button:hover {
-            background: var(--dark-blue);
-        }
-
-        .search-bar input {
-            border: 1px solid #ccc;
-        }
-
-        :root {
-            --blue: #007bff;
-            --dark-blue: #0056b3;
-            --grey: #f8f9fa;
-        }
-
-        .image-display-container {
-            margin-top: 20px;
-            border: 2px solid #ccc;
-            padding: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 200px;
-        }
-
-        .uploaded-image {
-            max-width: 100%;
-            max-height: 100%;
-        }
-    </style> --}}
+    {{-- New Bar Image,GPS and Search CSS --}}
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .container {
-            max-width: 1500px;
-            margin: auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
         .custom-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .upload-form {
-            width: 30%;
+        .upload-section {
+            margin-bottom: 2rem;
         }
 
-        .upload-form input[type="file"] {
-            display: none;
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
         }
 
-        .upload-form label {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            border-radius: 15px;
-            background: var(--blue);
-            color: #fff;
-            font-weight: 500;
-            text-align: center;
+        .file-upload-input {
+            position: absolute;
+            font-size: 100px;
+            opacity: 0;
+            right: 0;
+            top: 0;
+        }
+
+        .file-upload-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all .3s ease;
+            transition: background-color 0.3s;
         }
 
-        .upload-form label:hover {
-            background: var(--dark-blue);
+        .file-upload-label:hover {
+            background-color: #0056b3;
         }
 
-        .upload-form button {
-            width: 100%;
-            padding: 16px;
-            border-radius: 15px;
-            background: var(--blue);
-            color: #fff;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            transition: all .3s ease;
-            margin-top: 10px;
-        }
-
-        .upload-form button:hover {
-            background: var(--dark-blue);
-        }
-
-        .image-display-container {
-            /* margin-top: 20px; */
-            border: 2px solid black;
+        .image-preview {
+            margin-top: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             padding: 10px;
             min-height: 100px;
+        }
+
+        .btn-detect {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .action-section {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
         }
 
-        :root {
-            --blue: #007bff;
-            --dark-blue: #0056b3;
+        .btn-gps {
+            flex: 0 0 auto;
+            margin-right: 1rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            padding-right: 40px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            transition: box-shadow 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+
+    {{-- New Resort Card UI CSS --}}
+    <style>
+        .resort-card {
+            border-radius: 10px;
+            padding: 10px;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            height: 600px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .resort-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 12px 24px rgba(0, 0, 0, 0.2);
+            background-color: #f0f0f0;
+        }
+
+        .resort-image {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .resort-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .resort-image img:hover {
+            transform: scale(1.1);
+        }
+
+        .resort-content {
+            flex: 0 0 auto;
+            height: 400px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: left;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .resort-content p {
+            font-size: 14px;
+            color: #333;
+            margin: 0 0 5px 0;
+            line-height: 1.2;
+            text-align: left;
+        }
+
+        .resort-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .resort-location,
+        .resort-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .resort-amenities {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .resort-amenities span {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .resort-rating {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 10px;
+        }
+
+        .resort-rating i {
+            font-size: 16px;
+            color: gold;
+        }
+
+        .resort-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resort-actions .actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .resort-actions form {
+            margin-right: 10px;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            font-size: 14px;
+            background: var(--orange);
+            color: #fff;
+            border: .2rem solid var(--orange);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(255, 165, 0, .2);
+            color: black;
+        }
+
+        .btn-wishlist {
+            background: #f0f0f0;
+            color: #333;
+            border: .2rem solid #f0f0f0;
+        }
+
+        .btn-book {
+            background: #4CAF50;
+            color: white;
+            border: .2rem solid #4CAF50;
+        }
+
+        .btn-disabled {
+            background: #ccc;
+            color: #666;
+            border: .2rem solid #ccc;
+            cursor: not-allowed;
+        }
+
+        .no-results {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            margin-top: 40px;
         }
     </style>
 
     {{-- GPS CSS and JS --}}
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" />
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -402,28 +481,33 @@
     {{-- Detection Image, Real Time Search and GPS --}}
     <div class="container">
         <div class="custom-container">
-
-            <!-- Image Upload Form -->
-            <div class="upload-form">
+            <!-- Image Upload Section -->
+            <div class="upload-section">
                 <form id="imageUploadForm" enctype="multipart/form-data">
                     @csrf
-                    <label for="imageInput">Select Image</label>
-                    <input type="file" name="image" id="imageInput" required>
-                    <div class="image-display-container" id="imageDisplayContainer"></div>
-                    <button type="submit" class="btn btn-primary">Detect Image</button>
+                    <div class="file-upload-wrapper">
+                        <input type="file" name="image" id="imageInput" class="file-upload-input" required>
+                        <label for="imageInput" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i> Choose an Image
+                        </label>
+                    </div>
+                    <div class="image-preview" id="imageDisplayContainer"></div>
+                    <button type="submit" class="btn btn-primary btn-detect">
+                        <i class="fas fa-search"></i> Detect Image
+                    </button>
                 </form>
             </div>
 
-            <!-- Open GPS Button -->
-            <div class="gps-button">
-                <button type="button" name="gps" id="openGPSButton" class="btn btn-primary">Open GPS</button>
+            <!-- GPS and Search Section -->
+            <div class="action-section">
+                <button type="button" id="openGPSButton" class="btn btn-secondary btn-gps">
+                    <i class="fas fa-map-marker-alt"></i> Open GPS
+                </button>
+                <div class="search-wrapper">
+                    <input type="search" id="searchInput" class="search-input" placeholder="Search Resorts">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
             </div>
-
-            <!-- Search Bar -->
-            <div class="search-bar">
-                <input type="search" name="search" id="searchInput" class="form-control" placeholder="Search Resorts">
-            </div>
-
         </div>
     </div>
 
@@ -451,7 +535,7 @@
 
     {{-- Top --}}
     {{-- Full Image Search Function --}}
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
                 event.preventDefault();
@@ -544,7 +628,7 @@
                 }
             }
         });
-    </script>
+    </script> --}}
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -552,13 +636,22 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    {{-- Final Full Real Time Search, Detection Image and GPS Function --}}
+    {{-- Final Full Resort Real Time Search, Detection Image and GPS Function --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var map = null;
             var markers = [];
             var userMarker = null;
-            var resorts = <?php echo json_encode($resort); ?>;
+            var resorts = @json($resort);
+            var resortRatings = @json($resortRatings);
+
+            console.log('Resorts:', resorts);
+            console.log('Resort Ratings:', resortRatings);
+
+            // 确保 resorts 是一个数组
+            if (!Array.isArray(resorts)) {
+                resorts = [resorts];
+            }
 
             function initMap() {
                 if (map === null) {
@@ -611,56 +704,82 @@
                             var resortCountry = resort.country;
                             var resortDescription = resort.description;
                             var resortImages = resort.images || [];
+                            var resortRating = resortRatings[resortId] || {
+                                averageRating: 0,
+                                count: 0
+                            };
 
-                            // Use the first image from the resort object if available, otherwise use a placeholder
+                            // 确保 averageRating 是有效的数字
+                            var averageRating = resortRating.averageRating !== undefined && !isNaN(
+                                resortRating.averageRating) ? resortRating.averageRating : 0;
+
                             var imageURL = (resort.image || (resortImages.length > 0 && resortImages[0]
                                     .image)) ?
                                 "{{ asset('images/') }}/" + (resort.image || resortImages[0].image) :
                                 "{{ asset('images/placeholder-image.jpg') }}";
 
-                            var imageHTML =
-                                `<img class="concert-image" src="${imageURL}" alt="${resortName}" />`;
-
-                            var resortHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') +
-                                '">' +
-                                '<div class="concert-main" id="resortcard_' + resortId + '">' +
-                                imageHTML +
-                                '<div class="concert-content">' +
-                                '<h2 class="concert-title">' +
-                                '<i class="fas fa-hotel"></i> ' + resortName + ' ' +
-                                '<i class="fas fa-resort"></i>' +
-                                '</h2>' +
-                                '<p class="concert-description">' +
-                                '<i class="fas fa-info-circle"></i> ' + resortDescription +
-                                '</p>' +
-                                '<div class="concert-creator">' +
-                                '<p><i class="fas fa-map-marker-alt"></i> ' + resortLocation + '</p>' +
-                                '</div>' +
-                                '<div class="concert-action-container">' +
-                                '<p>' + new Date().toLocaleString('en-US', {
-                                    timeZone: 'Asia/Kuala_Lumpur'
-                                }) + '</p>' +
-                                (isDisabled ?
-                                    '<a href="{{ url('Resortdetail/') }}/' + resortId +
-                                    '/view" class="concert-action disabled">Closed</a>' :
-                                    '<form id="wishlistForm" action="{{ url('/wishlist/add/resort') }}/' +
-                                    resortId + '" method="POST">' +
-                                    '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
-                                    '<a href="{{ url('Resortdetail/') }}/' + resortId +
-                                    '/view" class="concert-action" id="viewresort' + resortId +
-                                    '">Book Now</a>'
-                                ) +
-                                '</div>' +
-                                '</div>' +
-                                '</div>';
+                            var resortHTML = `
+                                <div class="resort-card ${isDisabled ? 'disabled' : ''}" id="resortcard_${resortId}">
+                                    <div class="resort-image">
+                                        <img src="${imageURL}" alt="${resortName}">
+                                    </div>
+                                    <div class="resort-content">
+                                        <h2 class="resort-title">
+                                            <i class="fas fa-hotel"></i> ${resortName}
+                                        </h2>
+                                        <p class="resort-location">
+                                            <i class="fas fa-map-marker-alt"></i> ${resortLocation}, ${resortState}, ${resortCountry}
+                                        </p>
+                                        <p class="resort-description">
+                                            <i class="fas fa-info-circle"></i> ${resortDescription.length > 100 ? resortDescription.substring(0, 100) + '...' : resortDescription}
+                                        </p>
+                                        <div class="resort-amenities">
+                                            <span><i class="fas fa-swimming-pool"></i> Pool</span>
+                                            <span><i class="fas fa-wifi"></i> Free WiFi</span>
+                                            <span><i class="fas fa-parking"></i> Parking</span>
+                                        </div>
+                                        <div class="resort-rating">
+                                            ${generateStarRating(averageRating)}
+                                            <span>(${averageRating.toFixed(1)})</span>
+                                        </div>
+                                        <div class="resort-actions">
+                                            ${isDisabled ?
+                                                '<button class="btn btn-disabled">Closed</button>' :
+                                                `<div class="actions">
+                                                    <form id="wishlistForm_${resortId}" action="{{ url('/wishlist/add/resort') }}/${resortId}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <button type="submit" id="wishlist" class="btn btn-wishlist">
+                                                            <i class="fas fa-heart"></i> Wishlist
+                                                        </button>
+                                                    </form>
+                                                    <a href="{{ url('Resortdetail/') }}/${resortId}/view" class="btn btn-book" id="viewresort${resortId}">Book Now</a>
+                                                </div>`
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
 
                             resultsContainer.append(resortHTML);
                         }
                     });
                 } else {
-                    resultsContainer.html(
-                        '<p style="margin-top:40px; font-size:24px; display:block">No Resorts Found</p>');
+                    resultsContainer.html('<p class="no-results">No Resorts Found</p>');
                 }
+            }
+
+            function generateStarRating(rating) {
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                        stars += '<i class="fas fa-star" style="color: gold; font-size: 20px;"></i>';
+                    } else if (i - 0.5 <= rating) {
+                        stars += '<i class="fas fa-star-half-alt" style="color: gold; font-size: 20px;"></i>';
+                    } else {
+                        stars += '<i class="far fa-star" style="font-size: 20px; color: black;"></i>';
+                    }
+                }
+                return stars;
             }
 
             function performSearch() {
@@ -857,5 +976,4 @@
             });
         });
     </script>
-
 @endsection

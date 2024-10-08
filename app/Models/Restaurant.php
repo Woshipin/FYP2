@@ -34,7 +34,7 @@ class Restaurant extends Model
 
     public function ratings()
     {
-        return $this->morphMany(Rating::class, 'rateable');
+        return $this->morphMany(RestaurantRating::class, 'rateable');
     }
 
     public function images()

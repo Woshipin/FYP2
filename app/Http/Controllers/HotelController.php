@@ -374,7 +374,21 @@ class HotelController extends Controller
     public function AllHotel()
     {
         $hotels = Hotel::with('images')->where('register_status', 1)->get();
-        return view('frontend-auth.frontend-hotel.hotel', compact('hotels'));
+        $hotelRatings = [];
+
+        foreach ($hotels as $h) {
+            $ratings = $h->ratings;
+            $averageRating = $ratings->avg('rating') ?? 0; // 如果没有评分，默认为 0
+            $hotelRatings[$h->id] = [
+                'averageRating' => $averageRating,
+                'count' => $ratings->count()
+            ];
+        }
+
+        // 确保 $hotels 是一个数组
+        $hotelsArray = $hotels->toArray();
+
+        return view('frontend-auth.frontend-hotel.hotel', compact('hotels', 'hotelsArray', 'hotelRatings'));
     }
 
     public function HotelDetail($id)

@@ -107,7 +107,7 @@
             border-radius: 10px;
             padding: 10px;
             transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
-            height: 500px;
+            height: 550px;
             width: 300px;
             display: flex;
             flex-direction: column;
@@ -159,7 +159,7 @@
 
         .room .content {
             flex: 0 0 auto;
-            height: 200px;
+            height: 250px;
             padding: 15px;
             background: #fff;
             border-radius: 10px;

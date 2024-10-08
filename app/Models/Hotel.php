@@ -33,7 +33,7 @@ class Hotel extends Model
 
     public function ratings()
     {
-        return $this->morphMany(Rating::class, 'rateable');
+        return $this->morphMany(HotelRating::class, 'rateable');
     }
 
     public function images()

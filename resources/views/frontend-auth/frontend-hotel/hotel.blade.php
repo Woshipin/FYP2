@@ -74,86 +74,271 @@
         }
     </style>
 
-    {{-- Image,GPS and Search CSS --}}
+    {{-- New Bar Image,GPS and Search CSS --}}
     <style>
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Arial', sans-serif;
-        }
-
-        .container {
-            max-width: 1500px;
-            margin: auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 30px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
         .custom-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .upload-form {
-            width: 30%;
+        .upload-section {
+            margin-bottom: 2rem;
         }
 
-        .upload-form input[type="file"] {
-            display: none;
+        .file-upload-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
         }
 
-        .upload-form label {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            border-radius: 15px;
-            background: var(--blue);
-            color: #fff;
-            font-weight: 500;
-            text-align: center;
+        .file-upload-input {
+            position: absolute;
+            font-size: 100px;
+            opacity: 0;
+            right: 0;
+            top: 0;
+        }
+
+        .file-upload-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
             cursor: pointer;
-            transition: all .3s ease;
+            transition: background-color 0.3s;
         }
 
-        .upload-form label:hover {
-            background: var(--dark-blue);
+        .file-upload-label:hover {
+            background-color: #0056b3;
         }
 
-        .upload-form button {
-            width: 100%;
-            padding: 16px;
-            border-radius: 15px;
-            background: var(--blue);
-            color: #fff;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-            transition: all .3s ease;
-            margin-top: 10px;
-        }
-
-        .upload-form button:hover {
-            background: var(--dark-blue);
-        }
-
-        .image-display-container {
-            /* margin-top: 20px; */
-            border: 2px solid black;
+        .image-preview {
+            margin-top: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
             padding: 10px;
             min-height: 100px;
+        }
+
+        .btn-detect {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .action-section {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
         }
 
-        :root {
-            --blue: #007bff;
-            --dark-blue: #0056b3;
+        .btn-gps {
+            flex: 0 0 auto;
+            margin-right: 1rem;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            padding-right: 40px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            transition: box-shadow 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+
+    {{-- New Hotel Card UI CSS --}}
+    <style>
+        .hotel-card {
+            border-radius: 10px;
+            padding: 10px;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            height: 600px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .hotel-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), 0 12px 24px rgba(0, 0, 0, 0.2);
+            background-color: #f0f0f0;
+        }
+
+        .hotel-image {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .hotel-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .hotel-image img:hover {
+            transform: scale(1.1);
+        }
+
+        .hotel-content {
+            flex: 0 0 auto;
+            height: 400px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            text-align: left;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hotel-content p {
+            font-size: 14px;
+            color: #333;
+            margin: 0 0 5px 0;
+            line-height: 1.2;
+            text-align: left;
+        }
+
+        .hotel-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .hotel-address,
+        .hotel-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .hotel-amenities {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .hotel-amenities span {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .hotel-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hotel-actions .actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .hotel-actions form {
+            margin-right: 10px;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            font-size: 14px;
+            background: var(--orange);
+            color: #fff;
+            border: .2rem solid var(--orange);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(255, 165, 0, .2);
+            color: black;
+        }
+
+        .btn-wishlist {
+            background: #f0f0f0;
+            color: #333;
+            border: .2rem solid #f0f0f0;
+        }
+
+        .btn-book {
+            background: #4CAF50;
+            color: white;
+            border: .2rem solid #4CAF50;
+        }
+
+        .btn-disabled {
+            background: #ccc;
+            color: #666;
+            border: .2rem solid #ccc;
+            cursor: not-allowed;
+        }
+
+        .no-results {
+            text-align: center;
+            font-size: 1.2em;
+            color: #666;
+            margin-top: 40px;
         }
     </style>
 
@@ -194,28 +379,33 @@
     {{-- Detection Image, Real Time Search and GPS --}}
     <div class="container">
         <div class="custom-container">
-
-            <!-- Image Upload Form -->
-            <div class="upload-form">
+            <!-- Image Upload Section -->
+            <div class="upload-section">
                 <form id="imageUploadForm" enctype="multipart/form-data">
                     @csrf
-                    <label for="imageInput">Select Image</label>
-                    <input type="file" name="image" id="imageInput" required>
-                    <div class="image-display-container" id="imageDisplayContainer"></div>
-                    <button type="submit" class="btn btn-primary">Detect Image</button>
+                    <div class="file-upload-wrapper">
+                        <input type="file" name="image" id="imageInput" class="file-upload-input" required>
+                        <label for="imageInput" class="file-upload-label">
+                            <i class="fas fa-cloud-upload-alt"></i> Choose an Image
+                        </label>
+                    </div>
+                    <div class="image-preview" id="imageDisplayContainer"></div>
+                    <button type="submit" class="btn btn-primary btn-detect">
+                        <i class="fas fa-search"></i> Detect Image
+                    </button>
                 </form>
             </div>
 
-            <!-- Open GPS Button -->
-            <div class="gps-button">
-                <button type="button" name="gps" id="openGPSButton" class="btn btn-primary">Open GPS</button>
+            <!-- GPS and Search Section -->
+            <div class="action-section">
+                <button type="button" id="openGPSButton" class="btn btn-secondary btn-gps">
+                    <i class="fas fa-map-marker-alt"></i> Open GPS
+                </button>
+                <div class="search-wrapper">
+                    <input type="search" id="searchInput" class="search-input" placeholder="Search Resorts">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
             </div>
-
-            <!-- Search Bar -->
-            <div class="search-bar">
-                <input type="search" name="search" id="searchInput" class="form-control" placeholder="Search Hotels">
-            </div>
-
         </div>
     </div>
 
@@ -239,13 +429,22 @@
     {{-- Mutliple Location Google Map JS --}}
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    {{-- Final Full Real Time Search, Detection Image and GPS Function --}}
+    {{-- Final Full Hotel Real Time Search, Detection Image and GPS Function --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var map = null;
             var markers = [];
             var userMarker = null;
-            var hotels = <?php echo json_encode($hotels); ?>;
+            var hotels = @json($hotelsArray);
+            var hotelRatings = @json($hotelRatings);
+
+            console.log('Hotels:', hotels);
+            console.log('Hotel Ratings:', hotelRatings);
+
+            // 确保 hotels 是一个数组
+            if (!Array.isArray(hotels)) {
+                hotels = [hotels];
+            }
 
             function initMap() {
                 if (map === null) {
@@ -298,54 +497,82 @@
                             var hotelCountry = hotel.country;
                             var hotelDescription = hotel.description;
                             var hotelImages = hotel.images || [];
+                            var hotelRating = hotelRatings[hotelId] || {
+                                averageRating: 0,
+                                count: 0
+                            };
+
+                            // 确保 averageRating 是有效的数字
+                            var averageRating = hotelRating.averageRating !== undefined && !isNaN(
+                                hotelRating.averageRating) ? hotelRating.averageRating : 0;
 
                             var imageURL = (hotel.image || (hotelImages.length > 0 && hotelImages[0]
                                     .image)) ?
                                 "{{ asset('images/') }}/" + (hotel.image || hotelImages[0].image) :
                                 "{{ asset('images/placeholder-image.jpg') }}";
 
-                            var imageHTML =
-                                `<img class="concert-image" src="${imageURL}" alt="${hotelName}" />`;
-
-                            var hotelHTML = '<div class="concert ' + (isDisabled ? 'disabled' : '') +
-                                '">' +
-                                '<div class="concert-main" id="hotelcard_' + hotelId + '">' +
-                                imageHTML +
-                                '<div class="concert-content">' +
-                                '<h2 class="concert-title">' +
-                                '<i class="fas fa-hotel"></i> ' + hotelName + ' ' +
-                                '</h2>' +
-                                '<p class="concert-description">' +
-                                '<i class="fas fa-info-circle"></i> ' + hotelDescription +
-                                '</p>' +
-                                '<div class="concert-creator">' +
-                                '<p><i class="fas fa-map-marker-alt"></i> ' + hotelAddress + '</p>' +
-                                '</div>' +
-                                '<div class="concert-action-container">' +
-                                '<p>' + new Date().toLocaleString('en-US', {
-                                    timeZone: 'Asia/Kuala_Lumpur'
-                                }) + '</p>' +
-                                (isDisabled ?
-                                    '<a href="{{ url('Hoteldetail/') }}/' + hotelId +
-                                    '/view" class="concert-action disabled">Closed</a>' :
-                                    '<form id="wishlistForm" action="{{ url('/wishlist/add/hotel') }}/' +
-                                    hotelId + '" method="POST">' +
-                                    '@csrf<button type="submit" id="wishlist" class="concert-action"><i class="fas fa-heart"></i> Wishlist</button></form>' +
-                                    '<a href="{{ url('Hoteldetail/') }}/' + hotelId +
-                                    '/view" class="concert-action" id="viewhotel' + hotelId +
-                                    '">Book Now</a>'
-                                ) +
-                                '</div>' +
-                                '</div>' +
-                                '</div>';
+                            var hotelHTML = `
+                                <div class="hotel-card ${isDisabled ? 'disabled' : ''}" id="hotelcard_${hotelId}">
+                                    <div class="hotel-image">
+                                        <img src="${imageURL}" alt="${hotelName}">
+                                    </div>
+                                    <div class="hotel-content">
+                                        <h2 class="hotel-title">
+                                            <i class="fas fa-hotel"></i> ${hotelName}
+                                        </h2>
+                                        <p class="hotel-address">
+                                            <i class="fas fa-map-marker-alt"></i> ${hotelAddress}, ${hotelState}, ${hotelCountry}
+                                        </p>
+                                        <p class="hotel-description">
+                                            <i class="fas fa-info-circle"></i> ${hotelDescription.length > 100 ? hotelDescription.substring(0, 100) + '...' : hotelDescription}
+                                        </p>
+                                        <div class="hotel-amenities">
+                                            <span><i class="fas fa-swimming-pool"></i> Pool</span>
+                                            <span><i class="fas fa-wifi"></i> Free WiFi</span>
+                                            <span><i class="fas fa-parking"></i> Parking</span>
+                                        </div>
+                                        <div class="resort-rating">
+                                            ${generateStarRating(averageRating)}
+                                            <span>(${averageRating.toFixed(1)})</span>
+                                        </div>
+                                        <div class="hotel-actions">
+                                            ${isDisabled ?
+                                                '<button class="btn btn-disabled">Closed</button>' :
+                                                `<div class="actions">
+                                                    <form id="wishlistForm_${hotelId}" action="{{ url('/wishlist/add/hotel') }}/${hotelId}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <button type="submit" id="wishlist" class="btn btn-wishlist">
+                                                            <i class="fas fa-heart"></i> Wishlist
+                                                        </button>
+                                                    </form>
+                                                    <a href="{{ url('Hoteldetail/') }}/${hotelId}/view" class="btn btn-book" id="viewhotel${hotelId}">Book Now</a>
+                                                </div>`
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
 
                             resultsContainer.append(hotelHTML);
                         }
                     });
                 } else {
-                    resultsContainer.html(
-                        '<p style="margin-top:40px; font-size:24px; display:block">No Hotels Found</p>');
+                    resultsContainer.html('<p class="no-results">No Hotels Found</p>');
                 }
+            }
+
+            function generateStarRating(rating) {
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                        stars += '<i class="fas fa-star" style="color: gold; font-size: 20px;"></i>';
+                    } else if (i - 0.5 <= rating) {
+                        stars += '<i class="fas fa-star-half-alt" style="color: gold; font-size: 20px;"></i>';
+                    } else {
+                        stars += '<i class="far fa-star" style="font-size: 20px; color: black;"></i>';
+                    }
+                }
+                return stars;
             }
 
             function performSearch() {

@@ -292,11 +292,24 @@ class RestaurantController extends Controller
     // -------------------------------------------------Frontend----------------------------------------------------------- //
 
     //Frontend Function
-    public function allRestaurant(){
-
+    public function allRestaurant()
+    {
         $restaurant = Restaurant::with('images')->where('register_status', 1)->get();
+        $restaurantRatings = [];
 
-        return view('frontend-auth.frontend-restaurant.restaurant',compact('restaurant'));
+        foreach ($restaurant as $r) {
+            $ratings = $r->ratings;
+            $averageRating = $ratings->avg('rating') ?? 0; // 如果没有评分，默认为 0
+            $restaurantRatings[$r->id] = [
+                'averageRating' => $averageRating,
+                'count' => $ratings->count()
+            ];
+        }
+
+        // 确保 $restaurant 是一个数组
+        $restaurantArray = $restaurant->toArray();
+
+        return view('frontend-auth.frontend-restaurant.restaurant', compact('restaurant', 'restaurantArray', 'restaurantRatings'));
     }
 
     public function RestaurantDetail($id){
