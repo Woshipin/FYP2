@@ -59,6 +59,23 @@
         }
     </style>
 
+    {{-- No Image CSS --}}
+    <style>
+        .no-image-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 150px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            color: #555;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+
     {{-- Resort Card CSS --}}
     <link rel="stylesheet" href="{{ asset('new/card/resortcard.css') }}">
 
@@ -709,56 +726,58 @@
                                 count: 0
                             };
 
-                            // 确保 averageRating 是有效的数字
                             var averageRating = resortRating.averageRating !== undefined && !isNaN(
                                 resortRating.averageRating) ? resortRating.averageRating : 0;
 
                             var imageURL = (resort.image || (resortImages.length > 0 && resortImages[0]
                                     .image)) ?
                                 "{{ asset('images/') }}/" + (resort.image || resortImages[0].image) :
-                                "{{ asset('images/placeholder-image.jpg') }}";
+                                null;
 
                             var resortHTML = `
-                                <div class="resort-card ${isDisabled ? 'disabled' : ''}" id="resortcard_${resortId}">
-                                    <div class="resort-image">
-                                        <img src="${imageURL}" alt="${resortName}">
-                                    </div>
-                                    <div class="resort-content">
-                                        <h2 class="resort-title">
-                                            <i class="fas fa-hotel"></i> ${resortName}
-                                        </h2>
-                                        <p class="resort-location">
-                                            <i class="fas fa-map-marker-alt"></i> ${resortLocation}, ${resortState}, ${resortCountry}
-                                        </p>
-                                        <p class="resort-description">
-                                            <i class="fas fa-info-circle"></i> ${resortDescription.length > 100 ? resortDescription.substring(0, 100) + '...' : resortDescription}
-                                        </p>
-                                        <div class="resort-amenities">
-                                            <span><i class="fas fa-swimming-pool"></i> Pool</span>
-                                            <span><i class="fas fa-wifi"></i> Free WiFi</span>
-                                            <span><i class="fas fa-parking"></i> Parking</span>
-                                        </div>
-                                        <div class="resort-rating">
-                                            ${generateStarRating(averageRating)}
-                                            <span>(${averageRating.toFixed(1)})</span>
-                                        </div>
-                                        <div class="resort-actions">
-                                            ${isDisabled ?
-                                                '<button class="btn btn-disabled">Closed</button>' :
-                                                `<div class="actions">
-                                                    <form id="wishlistForm_${resortId}" action="{{ url('/wishlist/add/resort') }}/${resortId}" method="POST" style="display: inline;">
-                                                        @csrf
-                                                        <button type="submit" id="wishlist" class="btn btn-wishlist">
-                                                            <i class="fas fa-heart"></i> Wishlist
-                                                        </button>
-                                                    </form>
-                                                    <a href="{{ url('Resortdetail/') }}/${resortId}/view" class="btn btn-book" id="viewresort${resortId}">Book Now</a>
-                                                </div>`
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
+                    <div class="resort-card ${isDisabled ? 'disabled' : ''}" id="resortcard_${resortId}">
+                        <div class="resort-image">
+                            ${imageURL ? `<img src="${imageURL}" alt="${resortName}">` : `
+                                <div class="no-image-box">
+                                    <span>No Image</span>
+                                </div>`}
+                        </div>
+                        <div class="resort-content">
+                            <h2 class="resort-title">
+                                <i class="fas fa-hotel"></i> ${resortName}
+                            </h2>
+                            <p class="resort-location">
+                                <i class="fas fa-map-marker-alt"></i> ${resortLocation}, ${resortState}, ${resortCountry}
+                            </p>
+                            <p class="resort-description">
+                                <i class="fas fa-info-circle"></i> ${resortDescription.length > 100 ? resortDescription.substring(0, 100) + '...' : resortDescription}
+                            </p>
+                            <div class="resort-amenities">
+                                <span><i class="fas fa-swimming-pool"></i> Pool</span>
+                                <span><i class="fas fa-wifi"></i> Free WiFi</span>
+                                <span><i class="fas fa-parking"></i> Parking</span>
+                            </div>
+                            <div class="resort-rating">
+                                ${generateStarRating(averageRating)}
+                                <span>(${averageRating.toFixed(1)})</span>
+                            </div>
+                            <div class="resort-actions">
+                                ${isDisabled ?
+                                    '<button class="btn btn-disabled">Closed</button>' :
+                                    `<div class="actions">
+                                            <form id="wishlistForm_${resortId}" action="{{ url('/wishlist/add/resort') }}/${resortId}" method="POST" style="display: inline;">
+                                                @csrf
+                                                <button type="submit" id="wishlist" class="btn btn-wishlist">
+                                                    <i class="fas fa-heart"></i> Wishlist
+                                                </button>
+                                            </form>
+                                            <a href="{{ url('Resortdetail/') }}/${resortId}/view" class="btn btn-book" id="viewresort${resortId}">Book Now</a>
+                                        </div>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
 
                             resultsContainer.append(resortHTML);
                         }
@@ -767,6 +786,7 @@
                     resultsContainer.html('<p class="no-results">No Resorts Found</p>');
                 }
             }
+
 
             function generateStarRating(rating) {
                 let stars = '';

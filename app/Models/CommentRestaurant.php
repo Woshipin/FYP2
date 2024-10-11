@@ -21,6 +21,6 @@ class CommentRestaurant extends Model
 
     public function replies()
     {
-    	return $this->hasMany(ReplyRestaurantComment::class);
+        return $this->hasMany(ReplyRestaurantComment::class, 'comment_id');
     }
 }

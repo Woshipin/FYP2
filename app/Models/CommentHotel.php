@@ -21,6 +21,6 @@ class CommentHotel extends Model
 
     public function replies()
     {
-    	return $this->hasMany(ReplyHotelComment::class);
+        return $this->hasMany(ReplyHotelComment::class, 'comment_id');
     }
 }

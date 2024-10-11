@@ -17,36 +17,36 @@ use App\Models\User;
 use Mail;
 use Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\ReplyToReplyResortComment;
+use App\Models\ReplyToReplyHotelComment;
+use App\Models\ReplyToReplyRestaurantComment;
 
 class CommentController extends Controller
 {
 
+    //--------------------------------------------------- Restaurant Comment Area ------------------------------------------------------//
     // Restaurant Comment Area
     public function CommentRestaurant($id)
     {
-        if(Auth::check()){
-            $restaurants = Restaurant::find($id);
-            $restaurantId = Restaurant::find($id);
-            $comments = $restaurants->comments;
-            $replies = ReplyRestaurantComment::whereIn('comment_id', $comments->pluck('id'))->get();
-            // dd($comments);
+        if (Auth::check()) {
+            $restaurant = Restaurant::findOrFail($id);
+            $comments = $restaurant->comments()->with(['replies.repliesToReplies'])->get();
 
-            return view('frontend-auth.frontend-restaurant.comment-restaurant', compact('restaurants', 'restaurantId','comments','replies'));
+            $replies = $comments->map(function ($comment) {
+                return $comment->replies;
+            })->flatten()->filter();
 
-        }else{
-
+            return view('frontend-auth.frontend-restaurant.comment-restaurant', compact('restaurant', 'comments', 'id', 'replies'));
+        } else {
             return redirect()->route('login')->with('error', 'You need to log in first.');
         }
-
     }
 
-    public function store(Request $request, $id)
+    public function AddRestaurantComment(Request $request, $id)
     {
         $request->validate([
             'comment' => 'required',
         ]);
-
-        // $restaurantId = $request->input('restaurant_id');
 
         $comment = new CommentRestaurant();
         $comment->user_id = auth()->id();
@@ -54,43 +54,84 @@ class CommentController extends Controller
         $comment->restaurant_id = $id;
         $comment->comment = $request->comment;
         $comment->save();
-        // dd($comment);
 
-        return back()->with('success','You Comment has been Created.', $id);
+        return back()->with('success', 'Your comment has been added successfully.');
     }
 
-    public function deleteComment(CommentRestaurant $comment, $id)
+    public function deleteRestaurantComment($id)
     {
-        if (Auth::check()) {
-
-            CommentRestaurant::where('id', $id)->delete();
-
-            return back()->with('success', 'This Comment and its replies have been deleted.');
-
-        } else {
-
-            return redirect()->route('login')->with('error', 'You need to log in first.');
+        $comment = CommentRestaurant::findOrFail($id);
+        if ($comment->user_id == Auth::id()) {
+            $comment->delete();
+            return response()->json(['success' => true, 'message' => 'Comment deleted successfully.']);
         }
+        return response()->json(['success' => false, 'message' => 'You can only delete your own comments.']);
     }
 
-//-------------------------------------------------------- Resort Comment Area ------------------------------------------------------//
+    public function storeReplyToReplyRestaurant(Request $request)
+    {
+        $request->validate([
+            'reply_id' => 'required|integer',
+            'reply' => 'required|string',
+            'parent_id' => 'nullable|integer',
+            'parent_type' => 'nullable|string',
+        ]);
+
+        // 获取被回复的回复
+        $parent = null;
+        if ($request->has('parent_id') && $request->has('parent_type')) {
+            if ($request->parent_type == 'reply') {
+                $parent = ReplyRestaurantComment::find($request->parent_id);
+            } elseif ($request->parent_type == 'reply_to_reply') {
+                $parent = ReplyToReplyRestaurantComment::find($request->parent_id);
+            }
+        }
+
+        $replyToReply = new ReplyToReplyRestaurantComment();
+        $replyToReply->reply_id = $request->reply_id;
+        $replyToReply->user_id = Auth::id();
+        $replyToReply->name = Auth::user()->name;
+        $replyToReply->reply = $request->reply;
+
+        // 设置 parent_id 和 parent_type
+        if ($parent) {
+            $replyToReply->parent_id = $parent->id;
+            $replyToReply->parent_type = $request->parent_type;
+            $replyToReply->parent_name = $parent->name; // 使用 reply_restaurant_comments 的 name
+        }
+
+        $replyToReply->save();
+
+        return back()->with('success', 'Reply added successfully.');
+    }
+
+    public function deleteReplyToReplyRestaurantComment($id)
+    {
+        $replyToReply = ReplyToReplyRestaurantComment::findOrFail($id);
+        if ($replyToReply->user_id == Auth::id()) {
+            $replyToReply->delete();
+            return response()->json(['success' => true, 'message' => 'Reply deleted successfully.']);
+        }
+        return response()->json(['success' => false, 'message' => 'You can only delete your own replies.']);
+    }
+
+    //------------------------------------------------------ Resort Comment Area -----------------------------------------------------//
 
     // Resort Comment Area
     public function ResortComment($id)
     {
-        if(Auth::check()){
-            $resorts = Resort::find($id);
-            $resortId = Resort::find($id);
-            $comments = $resorts->comments;
-            $replies = ReplyResortComment::whereIn('comment_id', $comments->pluck('id'))->get();
+        if (Auth::check()) {
+            $resort = Resort::findOrFail($id);
+            $comments = $resort->comments()->with(['replies.repliesToReplies'])->get();
 
-            return view('frontend-auth.frontend-resort.comment-resort', compact('resorts', 'resortId','comments','replies'));
+            $replies = $comments->map(function ($comment) {
+                return $comment->replies;
+            })->flatten()->filter();
 
-        }else{
-
+            return view('frontend-auth.frontend-resort.comment-resort', compact('resort', 'comments', 'id', 'replies'));
+        } else {
             return redirect()->route('login')->with('error', 'You need to log in first.');
         }
-
     }
 
     public function AddResortComment(Request $request, $id)
@@ -99,53 +140,90 @@ class CommentController extends Controller
             'comment' => 'required',
         ]);
 
-        // $restaurantId = $request->input('restaurant_id');
-
         $comment = new CommentResort();
         $comment->user_id = auth()->id();
         $comment->user_name = Auth::user()->name;
         $comment->resort_id = $id;
         $comment->comment = $request->comment;
         $comment->save();
-        // dd($comment);
 
-        return back()->with('success','You Comment has been Created.', $id);
-
+        return back()->with('success', 'Your comment has been added successfully.');
     }
 
-    public function DeleteResortComment(CommentResort $comment, $id)
+    public function DeleteResortComment($id)
     {
-        if (Auth::check()) {
-
-            CommentResort::where('id', $id)->delete();
-
-            return back()->with('success', 'This Comment and its replies have been deleted.');
-
-        } else {
-
-            return redirect()->route('login')->with('error', 'You need to log in first.');
+        $comment = CommentResort::findOrFail($id);
+        if ($comment->user_id == Auth::id()) {
+            $comment->delete();
+            return response()->json(['success' => true, 'message' => 'Comment deleted successfully.']);
         }
+        return response()->json(['success' => false, 'message' => 'You can only delete your own comments.']);
     }
 
-    //-------------------------------------------------------- Hotel Comment Area ------------------------------------------------------//
+    public function storeReplyToReply(Request $request)
+    {
+        $request->validate([
+            'reply_id' => 'required|integer',
+            'reply' => 'required|string',
+            'parent_id' => 'nullable|integer',
+            'parent_type' => 'nullable|string',
+        ]);
+
+        // 获取被回复的回复
+        $parent = null;
+        if ($request->has('parent_id') && $request->has('parent_type')) {
+            if ($request->parent_type == 'reply') {
+                $parent = ReplyResortComment::find($request->parent_id);
+            } elseif ($request->parent_type == 'reply_to_reply') {
+                $parent = ReplyToReplyResortComment::find($request->parent_id);
+            }
+        }
+
+        $replyToReply = new ReplyToReplyResortComment();
+        $replyToReply->reply_id = $request->reply_id;
+        $replyToReply->user_id = Auth::id();
+        $replyToReply->name = Auth::user()->name;
+        $replyToReply->reply = $request->reply;
+
+        // 设置 parent_id 和 parent_type
+        if ($parent) {
+            $replyToReply->parent_id = $parent->id;
+            $replyToReply->parent_type = $request->parent_type;
+            $replyToReply->parent_name = $parent->name; // 使用 reply_resort_comments 的 name
+        }
+
+        $replyToReply->save();
+
+        return back()->with('success', 'Reply added successfully.');
+    }
+
+    public function deleteReplyToReplyResortComment($id)
+    {
+        $replyToReply = ReplyToReplyResortComment::findOrFail($id);
+        if ($replyToReply->user_id == Auth::id()) {
+            $replyToReply->delete();
+            return response()->json(['success' => true, 'message' => 'Reply deleted successfully.']);
+        }
+        return response()->json(['success' => false, 'message' => 'You can only delete your own replies.']);
+    }
+
+    //----------------------------------------------------- Hotel Comment Area ------------------------------------------------------//
 
     // Hotel Comment Area
     public function HotelComment($id)
     {
-        if(Auth::check()){
-            $hotels = Hotel::find($id);
-            $hotelId = Hotel::find($id);
-            $comments = $hotels->comments;
-            $replies = ReplyHotelComment::whereIn('comment_id', $comments->pluck('id'))->get();
-            // dd($comments);
+        if (Auth::check()) {
+            $hotel = Hotel::findOrFail($id);
+            $comments = $hotel->comments()->with(['replies.repliesToReplies'])->get();
 
-            return view('frontend-auth.frontend-hotel.comment-hotel', compact('hotels', 'hotelId','comments','replies'));
+            $replies = $comments->map(function ($comment) {
+                return $comment->replies;
+            })->flatten()->filter();
 
-        }else{
-
+            return view('frontend-auth.frontend-hotel.comment-hotel', compact('hotel', 'comments', 'id', 'replies'));
+        } else {
             return redirect()->route('login')->with('error', 'You need to log in first.');
         }
-
     }
 
     public function AddHotelComment(Request $request, $id)
@@ -154,34 +232,74 @@ class CommentController extends Controller
             'comment' => 'required',
         ]);
 
-        // $restaurantId = $request->input('restaurant_id');
-
         $comment = new CommentHotel();
         $comment->user_id = auth()->id();
         $comment->user_name = Auth::user()->name;
         $comment->hotel_id = $id;
         $comment->comment = $request->comment;
         $comment->save();
-        // dd($comment);
 
-        return back()->with('success','You Comment has been Created.', $id);
-
+        return back()->with('success', 'Your comment has been added successfully.');
     }
 
-    public function DeleteHotelComment(CommentHotel $comment, $id)
+    public function DeleteHotelComment($id)
     {
-        if (Auth::check()) {
-
-            CommentHotel::where('id', $id)->delete();
-
-            return back()->with('success', 'This Comment and its replies have been deleted.');
-
-        } else {
-
-            return redirect()->route('login')->with('error', 'You need to log in first.');
+        $comment = CommentHotel::findOrFail($id);
+        if ($comment->user_id == Auth::id()) {
+            $comment->delete();
+            return response()->json(['success' => true, 'message' => 'Comment deleted successfully.']);
         }
+        return response()->json(['success' => false, 'message' => 'You can only delete your own comments.']);
     }
 
+    public function storeReplyToReplyHotel(Request $request)
+    {
+        $request->validate([
+            'reply_id' => 'required|integer',
+            'reply' => 'required|string',
+            'parent_id' => 'nullable|integer',
+            'parent_type' => 'nullable|string',
+        ]);
+
+        // 获取被回复的回复
+        $parent = null;
+        if ($request->has('parent_id') && $request->has('parent_type')) {
+            if ($request->parent_type == 'reply') {
+                $parent = ReplyHotelComment::find($request->parent_id);
+            } elseif ($request->parent_type == 'reply_to_reply') {
+                $parent = ReplyToReplyHotelComment::find($request->parent_id);
+            }
+        }
+
+        $replyToReply = new ReplyToReplyHotelComment();
+        $replyToReply->reply_id = $request->reply_id;
+        $replyToReply->user_id = Auth::id();
+        $replyToReply->name = Auth::user()->name;
+        $replyToReply->reply = $request->reply;
+
+        // 设置 parent_id 和 parent_type
+        if ($parent) {
+            $replyToReply->parent_id = $parent->id;
+            $replyToReply->parent_type = $request->parent_type;
+            $replyToReply->parent_name = $parent->name; // 使用 reply_hotel_comments 的 name
+        }
+
+        $replyToReply->save();
+
+        return back()->with('success', 'Reply added successfully.');
+    }
+
+    public function deleteReplyToReplyHotelComment($id)
+    {
+        $replyToReply = ReplyToReplyHotelComment::findOrFail($id);
+        if ($replyToReply->user_id == Auth::id()) {
+            $replyToReply->delete();
+            return response()->json(['success' => true, 'message' => 'Reply deleted successfully.']);
+        }
+        return response()->json(['success' => false, 'message' => 'You can only delete your own replies.']);
+    }
+
+    //---------------------------------------------------- Frontend Comment Area ------------------------------------------------------//
     public function comment(){
 
         if(Auth::check()){
@@ -236,47 +354,4 @@ class CommentController extends Controller
         }
     }
 
-    // public function deleteComment(CommentRestaurant $comment)
-    // {
-    //     if (Auth::check()) {
-    //         $reply = ReplyRestaurantComment::where('comment_id', $comment->id);
-    //         $commentQuery = CommentRestaurant::where('id', $comment->id);
-
-    //         if ($reply->count() > 0) {
-    //             $reply->delete();
-    //         }
-
-    //         if ($commentQuery->count() > 0) {
-    //             $commentQuery->delete();
-    //             return back()->with('success', 'This Comment has been deleted.');
-    //         } else {
-    //             return back()->with('success', 'No Comment can be deleted.');
-    //         }
-    //     } else {
-    //         return redirect()->route('login-register')->with('error', 'You need to log in first.');
-    //     }
-    // }
-
-    // public function deleteComment(CommentRestaurant $comment, $id)
-    // {
-    //     if (Auth::check()) {
-    //         $commentId = $comment->id;
-
-    //         $replies = ReplyRestaurantComment::where('comment_id', $commentId);
-    //         $commentQuery = CommentRestaurant::where('id', $commentId);
-
-    //         if ($replies->count() > 0) {
-    //             $replies->delete();
-    //         }
-
-    //         if ($commentQuery->count() > 0) {
-    //             $commentQuery->delete();
-    //             return back()->with('success', 'This Comment and its replies have been deleted.');
-    //         } else {
-    //             return back()->with('success', 'No Comment can be deleted.');
-    //         }
-    //     } else {
-    //         return redirect()->route('login-register')->with('error', 'You need to log in first.');
-    //     }
-    // }
 }

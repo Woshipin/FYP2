@@ -16,14 +16,13 @@
                         @endif
 
                         @if (Session::has('fail'))
-                            <p class="text-success">{{ session('fail') }}</p>
+                            <p class="text-danger">{{ session('fail') }}</p>
                         @endif
 
-                        <form action="{{ route('addResortComment', ['id' => $resortId]) }}" id="comment-form" method="post">
-                            {{ csrf_field() }}
-
+                        <form action="{{ route('addResortComment', ['id' => $id]) }}" id="comment-form" method="post">
+                            @csrf
                             <input type="hidden" name="user_id" value="{{ Auth::id() }}">
-                            <input type="hidden" name="resort_id" value="{{ $resorts->id }}">
+                            <input type="hidden" name="resort_id" value="{{ $resort->id }}">
 
                             <div class="row" style="padding: 10px;">
                                 <div class="form-group">
@@ -49,50 +48,74 @@
 
                     <div class="panel-body comment-container">
 
-                        @if ($comments)
+                        @if ($comments->count() > 0)
                             @foreach ($comments as $comment)
                                 <div class="well">
                                     <i><b>{{ $comment->user_name }}</b></i>
                                     <span>{{ $comment->created_at }}</span><br>
                                     <h4>{{ $comment->comment }}</h4>
                                     <div style="margin-left:10px;">
-                                        <a style="cursor: pointer;" cid="{{ $comment->id }}" name_a="{{ Auth::user()->name }}"
-                                            token="{{ csrf_token() }}" class="reply">Reply</a>&nbsp;
-                                        <a onclick="return confirm('Are you sure to delete this Comment?')"
-                                            href="{{ url('deleteResortComment/' . $comment->id) . '/delete' }}" style="cursor: pointer;"
-                                            class="delete-comment" token="{{ csrf_token() }}"
-                                            comment-did="{{ $comment->id }}">Delete</a>
+                                        <a style="cursor: pointer;" cid="{{ $comment->id }}"
+                                            name_a="{{ Auth::user()->name }}" token="{{ csrf_token() }}"
+                                            class="reply" data-parent-id="{{ $comment->id }}" data-parent-type="comment">Reply</a>&nbsp;
+                                        @if($comment->user_id == Auth::id())
+                                            <a href="#" style="cursor: pointer;" class="delete-comment" data-id="{{ $comment->id }}">Delete</a>
+                                        @endif
+
                                         <div class="reply-form">
                                             <!-- Dynamic Reply form -->
-                                            @foreach ($replies as $reply)
-                                                @if ($reply->comment_id === $comment->id)
-                                                    <div class="well">
+                                            @if ($comment->replies && $comment->replies->count() > 0)
+                                                @foreach ($comment->replies as $reply)
+                                                    <div class="well reply-well">
                                                         <i><b>{{ $reply->name }}</b></i>&nbsp;&nbsp;
+                                                        <span>Replied -> {{ $reply->parent_name }}</span>
                                                         <span>{{ $reply->created_at }}</span><br>
                                                         <span>{{ $reply->reply }}</span>
                                                         <div style="margin-left:10px;">
-                                                            <a rname="{{ Auth::user()->name }}" rid="{{ $comment->id }}"
+                                                            <a rname="{{ Auth::user()->name }}" rid="{{ $reply->id }}"
                                                                 style="cursor: pointer;" class="reply-to-reply"
-                                                                token="{{ csrf_token() }}">Reply</a>&nbsp;
-                                                            <a onclick="return confirm('Are you sure to delete this Reply?')"
-                                                                href="{{ url('deletereplyresortcomment/' . $reply->id) . '/delete' }}"
-                                                                class="delete-reply" token="{{ csrf_token() }}">Delete</a>
+                                                                token="{{ csrf_token() }}" data-parent-id="{{ $reply->id }}" data-parent-type="reply">Reply</a>&nbsp;
+                                                            @if($reply->user_id == Auth::id())
+                                                                <a href="#" style="cursor: pointer;" class="delete-reply" data-id="{{ $reply->id }}">Delete</a>
+                                                            @endif
                                                         </div>
+
                                                         <div class="reply-to-reply-form">
                                                             <!-- Dynamic Reply form -->
+                                                            @if ($reply->repliesToReplies && $reply->repliesToReplies->count() > 0)
+                                                                @foreach ($reply->repliesToReplies as $replyToReply)
+                                                                    <div class="well reply-to-reply-well">
+                                                                        <i><b>{{ $replyToReply->name }}</b></i>&nbsp;&nbsp;
+                                                                        <span>Replied -> {{ $replyToReply->parent_name }}</span>
+                                                                        <span>{{ $replyToReply->created_at }}</span><br>
+                                                                        <span>{{ $replyToReply->reply }}</span>
+                                                                        <div style="margin-left:10px;">
+                                                                            <a rname="{{ Auth::user()->name }}" rid="{{ $replyToReply->id }}"
+                                                                                style="cursor: pointer;" class="reply-to-reply"
+                                                                                token="{{ csrf_token() }}" data-parent-id="{{ $replyToReply->id }}" data-parent-type="reply">Reply</a>&nbsp;
+                                                                            @if($replyToReply->user_id == Auth::id())
+                                                                                <a href="#" style="cursor: pointer;" class="delete-reply-to-reply" data-id="{{ $replyToReply->id }}">Delete</a>
+                                                                            @endif
+                                                                        </div>
+                                                                    </div>
+                                                                @endforeach
+                                                            @endif
                                                         </div>
+
                                                     </div>
-                                                @endif
-                                            @endforeach
+                                                @endforeach
+                                            @endif
                                         </div>
+
                                     </div>
                                 </div>
                             @endforeach
                         @else
-                            <p>暂无评论。</p>
+                            <p>No comments yet. Be the first to comment!</p>
                         @endif
 
                     </div>
+
                 </div>
             </div>
         </div>
@@ -105,89 +128,111 @@
 
     <script>
         $(document).ready(function() {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
 
-            $(".comment-container").delegate(".reply", "click", function() {
-
+            $(".comment-container").on("click", ".reply", function() {
                 var well = $(this).parent().parent();
                 var cid = $(this).attr("cid");
                 var name = $(this).attr('name_a');
                 var token = $(this).attr('token');
+                var parentId = $(this).data('parent-id');
+                var parentType = $(this).data('parent-type');
                 var form =
-                    '<form method="post" action="/replyresortcomment"><input type="hidden" name="_token" value="' +
+                    '<form method="post" action="{{ route('replyresortcomment') }}"><input type="hidden" name="_token" value="' +
                     token + '"><input type="hidden" name="comment_id" value="' + cid +
                     '"><input type="hidden" name="name" value="' + name +
+                    '"><input type="hidden" name="parent_id" value="' + parentId +
+                    '"><input type="hidden" name="parent_type" value="' + parentType +
                     '"><div class="form-group"><textarea class="form-control" name="reply" placeholder="Enter your reply" > </textarea> </div> <div class="form-group"> <input class="btn btn-primary" type="submit"> </div></form>';
 
                 well.find(".reply-form").append(form);
-
             });
 
-            // $(".comment-container").delegate(".delete-comment", "click", function() {
+            $(".comment-container").on("click", ".delete-comment", function(e) {
+                e.preventDefault();
+                var commentId = $(this).data('id');
+                var commentElement = $(this).closest('.well');
 
-            //     var cdid = $(this).attr("comment-did");
-            //     var token = $(this).attr("token");
-            //     var well = $(this).parent().parent();
-            //     $.ajax({
-            //         url: "/comments/" + cdid,
-            //         method: "POST",
-            //         data: {
-            //             _method: "delete",
-            //             _token: token
-            //         },
-            //         success: function(response) {
-            //             if (response == 1 || response == 2) {
-            //                 well.hide();
-            //             } else {
-            //                 alert('Oh ! you can delete only your comment');
-            //                 console.log(response);
-            //             }
-            //         }
-            //     });
+                if (confirm("Are you sure you want to delete this comment?")) {
+                    $.ajax({
+                        url: '/resorts/comment/' + commentId,
+                        type: 'DELETE',
+                        success: function(result) {
+                            if (result.success) {
+                                commentElement.remove();
+                                alert(result.message);
+                            } else {
+                                alert(result.message);
+                            }
+                        }
+                    });
+                }
+            });
 
-            // });
+            $(".comment-container").on("click", ".delete-reply", function(e) {
+                e.preventDefault();
+                var replyId = $(this).data('id');
+                var replyElement = $(this).closest('.reply-well');
 
-            $(".comment-container").delegate(".reply-to-reply", "click", function() {
+                if (confirm("Are you sure you want to delete this reply?")) {
+                    $.ajax({
+                        url: '/deletereplyresortcomment/' + replyId,
+                        type: 'DELETE',
+                        success: function(result) {
+                            if (result.success) {
+                                replyElement.remove();
+                                alert(result.message);
+                            } else {
+                                alert(result.message);
+                            }
+                        }
+                    });
+                }
+            });
+
+            $(".comment-container").on("click", ".delete-reply-to-reply", function(e) {
+                e.preventDefault();
+                var replyToReplyId = $(this).data('id');
+                var replyToReplyElement = $(this).closest('.reply-to-reply-well');
+
+                if (confirm("Are you sure you want to delete this reply?")) {
+                    $.ajax({
+                        url: '/deletereplytoreplyresortcomment/' + replyToReplyId,
+                        type: 'DELETE',
+                        success: function(result) {
+                            if (result.success) {
+                                replyToReplyElement.remove();
+                                alert(result.message);
+                            } else {
+                                alert(result.message);
+                            }
+                        }
+                    });
+                }
+            });
+
+            $(".comment-container").on("click", ".reply-to-reply", function() {
                 var well = $(this).parent().parent();
-                var cid = $(this).attr("rid");
+                var rid = $(this).attr("rid");
                 var rname = $(this).attr("rname");
-                var token = $(this).attr("token")
+                var token = $(this).attr("token");
+                var parentId = $(this).data('parent-id');
+                var parentType = $(this).data('parent-type');
                 var form =
-                    '<form method="post" action="/reply/store"><input type="hidden" name="_token" value="' +
-                    token + '"><input type="hidden" name="comment_id" value="' + cid +
+                    '<form method="post" action="{{ route('storeReplyToReply') }}"><input type="hidden" name="_token" value="' +
+                    token + '"><input type="hidden" name="reply_id" value="' + rid +
                     '"><input type="hidden" name="name" value="' + rname +
-                    '"><div class="form-group"><textarea class="form-control" name="reply" placeholder="Enter your reply" > </textarea> </div> <div class="form-group"> <input class="btn btn-primary" type="submit"> </div></form>';
+                    '"><input type="hidden" name="parent_id" value="' + parentId +
+                    '"><input type="hidden" name="parent_type" value="' + parentType +
+                    '"><div class="form-group"><textarea class="form-control" name="reply" placeholder="Enter your reply to ' + rname + '" > </textarea> </div> <div class="form-group"> <input class="btn btn-primary" type="submit"> </div></form>';
 
                 well.find(".reply-to-reply-form").append(form);
-
             });
-
-            // $(".comment-container").delegate(".delete-reply", "click", function() {
-
-            //     var well = $(this).parent().parent();
-
-            //     if (confirm("Are you sure you want to delete this..!")) {
-            //         var did = $(this).attr("did");
-            //         var token = $(this).attr("token");
-            //         $.ajax({
-            //             url: "/replies/" + did,
-            //             method: "POST",
-            //             data: {
-            //                 _method: "delete",
-            //                 _token: token
-            //             },
-            //             success: function(response) {
-            //                 if (response == 1) {
-            //                     well.hide();
-            //                     //alert("Your reply is deleted");
-            //                 } else if (response == 2) {
-            //                     alert('Oh! You can not delete other people comment');
-            //                 } else {
-            //                     alert('Something wrong in project setup');
-            //                 }
-            //             }
-            //         })
-            //     }
-            // });
         });
     </script>
+
 @endsection

@@ -8,49 +8,33 @@
         .btn-success {
             background-color: white;
             padding: 12px;
-            /* Increase padding for larger icon */
             border-radius: 50%;
-            /* Make the button circular */
         }
 
-        /* Style the icon inside the button */
         .btn-success i {
             font-size: 20px;
-            /* Increase the icon size to your desired value */
             color: green;
-            /* Change the icon color to your preference */
-            /* text-align: center; */
         }
 
         .btn-success i:hover {
             font-size: 24px;
-            /* Increase the icon size to your desired value */
             color: white;
-            /* Change the icon color to your preference */
         }
 
         .btn-info {
             background-color: white;
             padding: 12px;
-            /* Increase padding for larger icon */
             border-radius: 50%;
-            /* Make the button circular */
         }
 
-        /* Style the icon inside the button */
         .btn-info i {
             font-size: 20px;
-            /* Increase the icon size to your desired value */
             color: red;
-            /* Change the icon color to your preference */
-            /* text-align: center; */
         }
 
         .btn-info i:hover {
             font-size: 24px;
-            /* Increase the icon size to your desired value */
             color: white;
-            /* Change the icon color to your preference */
         }
     </style>
 
@@ -94,14 +78,12 @@
         .product-detail {
             margin-bottom: 20px;
             color: #333;
-            /* 主要文本颜色，可以根据需要调整 */
         }
 
         .product-detail h2 {
             font-size: 24px;
             margin-bottom: 10px;
             color: #004080;
-            /* 深蓝色，可以根据需要调整 */
         }
 
         .product-detail p {
@@ -109,7 +91,6 @@
             line-height: 1.5;
             margin-bottom: 10px;
             color: black;
-            /* 中灰色，可以根据需要调整 */
         }
 
         .product-detail h3 {
@@ -117,14 +98,9 @@
             font-weight: bold;
             margin-bottom: 10px;
             color: black;
-            /* 深绿色，可以根据需要调整 */
         }
 
-
-        /* 添加响应式设计样式 */
         @media (max-width: 600px) {
-
-            /* 在小屏幕上进行调整 */
             .product-price p,
             .product-detail p {
                 font-size: 14px;
@@ -142,7 +118,6 @@
 
     {{-- Mutliple Image UI CSS --}}
     <style>
-        /* 自定义样式 */
         .product-imgs {
             width: 100%;
             max-width: 600px;
@@ -165,17 +140,28 @@
             height: auto;
             object-fit: cover;
         }
+
+        /* New style for image placeholder */
+        .img-placeholder {
+            width: 100%;
+            height: 300px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: #666;
+            border: 1px solid #ddd;
+        }
     </style>
 
     {{-- Rating CSS --}}
     <style>
-        /* Combined CSS */
         .rating-css {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-bottom: 20px;
-            /* Add some space between stars and button */
         }
 
         .rating-css div {
@@ -192,13 +178,13 @@
             display: none;
         }
 
-        .rating-css input+label {
+        .rating-css input + label {
             font-size: 60px;
             text-shadow: 1px 1px 0 #8f8420;
             cursor: pointer;
         }
 
-        .rating-css input:checked+label~label {
+        .rating-css input:checked + label ~ label {
             color: #b4afaf;
         }
 
@@ -210,7 +196,6 @@
         .star-icon {
             display: flex;
             gap: 5px;
-            /* Adjust the gap between stars if needed */
         }
 
         .submit-button {
@@ -220,16 +205,14 @@
 
         .submit-button button {
             margin-top: 10px;
-            /* Adjust the space between stars and button */
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .rating-css div {
                 font-size: 20px;
             }
 
-            .rating-css input+label {
+            .rating-css input + label {
                 font-size: 40px;
             }
 
@@ -243,7 +226,7 @@
                 font-size: 18px;
             }
 
-            .rating-css input+label {
+            .rating-css input + label {
                 font-size: 30px;
             }
 
@@ -285,68 +268,43 @@
 
     <div class="card-wrapper">
         <div class="card">
-
             {{-- Mutliple Image --}}
-            {{-- <div class="product-imgs">
-                <div class="img-display">
-                    <div class="swiper img-showcase">
-                        <div class="swiper-wrapper">
-                            @foreach ($resort->images as $image)
-                            <div class="swiper-slide">
-                                <img src="{{ asset('images/' . $image->image) }}" alt="resort image"
-                                     onclick="show360Image()" style="max-width: 100%; height: auto;">
-                            </div>
-                            @endforeach
-                        </div>
-
-                        <!-- 分页导航 -->
-                        <div class="swiper-pagination"></div>
-
-                        <!-- 导航按钮 -->
-                        <div class="swiper-button-prev"></div>
-                        <div class="swiper-button-next"></div>
-                    </div>
-                </div>
-            </div> --}}
             <div class="product-imgs">
                 <div class="img-display">
                     <div class="swiper img-showcase">
                         <div class="swiper-wrapper">
-                            @foreach ($resort->images as $image)
+                            @if($resort->images->isNotEmpty())
+                                @foreach ($resort->images as $image)
+                                    <div class="swiper-slide">
+                                        <img src="{{ asset('images/' . $image->image) }}" alt="resort image"
+                                            onclick="show360Image('{{ asset('images/' . $image->image) }}')"
+                                            style="max-width: 100%; height: auto;">
+                                    </div>
+                                @endforeach
+                            @else
                                 <div class="swiper-slide">
-                                    <img src="{{ asset('images/' . $image->image) }}" alt="resort image"
-                                        onclick="show360Image('{{ asset('images/' . $image->image) }}')"
-                                        style="max-width: 100%; height: auto;">
+                                    <div class="img-placeholder">No Image</div>
                                 </div>
-                            @endforeach
+                            @endif
                         </div>
-
-                        <!-- 分页导航 -->
                         <div class="swiper-pagination"></div>
-
-                        <!-- 导航按钮 -->
                         <div class="swiper-button-prev"></div>
                         <div class="swiper-button-next"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- 模态窗口，用于显示360度视图 -->
-            <div id="pannellumModal"
-                style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 1000;">
+            <div id="pannellumModal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 1000;">
                 <div id="panorama" style="width: 100%; height: 100%;"></div>
-                <button onclick="close360View()"
-                    style="position: absolute; top: 10px; right: 10px; padding: 10px; background: #fff; border: none; cursor: pointer;">Close</button>
+                <button onclick="close360View()" style="position: absolute; top: 10px; right: 10px; padding: 10px; background: #fff; border: none; cursor: pointer;">Close</button>
             </div>
 
-            <!-- card right -->
             <div class="product-content">
                 <h2 class="product-title">{{ $resort->name }}</h2>
                 <a href="#" class="product-link">Visit Resort</a>
 
                 <br><br>
 
-                <!-- Resort Rating 显示评分 -->
                 <div class="show-rating-css">
                     <div class="star-icon">
                         @if ($averageRating)
@@ -397,14 +355,10 @@
                 </div>
 
                 <div class="purchase-info">
-                    <a href="{{ url('bookingresort/' . $resort->id) }}" class="btn"><i
-                            class="fas fa-calendar-check"></i>&nbsp;Booking</a>
-                    <a href="{{ route('resorts.comment', ['id' => $resort->id]) }}" class="btn"><i
-                            class="fas fa-comment"></i>&nbsp;Comment</a>
-                    <a href="https://wa.me/601110801649" target="_blank" class="btn-success"><i
-                            class="fab fa-whatsapp"></i></a>
-                    <a href="{{ route('resorts.contact', ['id' => $resort->id]) }}" class="btn-info"><i
-                            class="far fa-envelope"></i></a>
+                    <a href="{{ url('bookingresort/' . $resort->id) }}" class="btn"><i class="fas fa-calendar-check"></i>&nbsp;Booking</a>
+                    <a href="{{ route('resorts.comment', ['id' => $resort->id]) }}" class="btn"><i class="fas fa-comment"></i>&nbsp;Comment</a>
+                    <a href="https://wa.me/601110801649" target="_blank" class="btn-success"><i class="fab fa-whatsapp"></i></a>
+                    <a href="{{ route('resorts.contact', ['id' => $resort->id]) }}" class="btn-info"><i class="far fa-envelope"></i></a>
                 </div>
             </div>
         </div>
@@ -483,60 +437,6 @@
             document.getElementById('pannellumModal').style.display = 'none';
         }
     </script>
-    {{-- <script>
-        function show360Image() {
-            // 获取全景图像容器
-            var photosphereContainer = document.getElementById('photosphere');
-            // 加载全景图像
-            var viewer = new PhotoSphereViewer({
-                container: photosphereContainer,
-                panorama: 'path_to_your_360_image.jpg', // 替换为你的全景图像路径
-                navbar: true
-            });
-            // 显示全景图像容器
-            photosphereContainer.style.display = 'block';
-        }
-    </script> --}}
-
-    {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('.star-icon input').click(function() {
-                // 获取用户点击的星级
-                var rating = $(this).val();
-
-                // 将所有星级恢复为未选中状态
-                $('.star-icon label').removeClass('fa-star').addClass('fa-star-o');
-
-                // 将用户点击的星级及之前的星级设置为选中状态
-                $(this).prevAll('input').addBack().siblings('label').removeClass('fa-star-o').addClass(
-                    'fa-star');
-            });
-        });
-    </script> --}}
-
-    {{-- Multiple image --}}
-    {{-- <script>
-        const imgs = document.querySelectorAll('.img-select a');
-        const imgBtns = [...imgs];
-        let imgId = 1;
-
-        imgBtns.forEach((imgItem) => {
-            imgItem.addEventListener('click', (event) => {
-                event.preventDefault();
-                imgId = imgItem.dataset.id;
-                slideImage();
-            });
-        });
-
-        function slideImage() {
-            const displayWidth = document.querySelector('.img-showcase img:first-child').clientWidth;
-
-            document.querySelector('.img-showcase').style.transform = `translateX(${- (imgId - 1) * displayWidth}px)`;
-        }
-
-        window.addEventListener('resize', slideImage);
-    </script> --}}
 
     {{-- Toastr New JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
@@ -583,19 +483,5 @@
         @endif
     </script>
 
-    {{-- <script>
-        function show360Image() {
-            // 获取全景图像容器
-            var photosphereContainer = document.getElementById('photosphere');
-            // 加载全景图像，替换 'path_to_your_360_image.jpg' 为你的全景图像路径
-            var viewer = new PhotoSphereViewer({
-                container: photosphereContainer,
-                panorama: 'your_360_image.jpg', // 替换为你的全景图像路径
-                navbar: true
-            });
-            // 显示全景图像容器
-            photosphereContainer.style.display = 'block';
-        }
-    </script> --}}
 
 @endsection

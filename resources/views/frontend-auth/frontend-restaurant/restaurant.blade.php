@@ -62,6 +62,23 @@
         }
     </style>
 
+    {{-- No Image CSS --}}
+    <style>
+        .no-image-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 150px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            color: #555;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+
     {{-- Hotel Card CSS --}}
     <link rel="stylesheet" href="{{ asset('new/card/restaurantcard.css') }}">
 
@@ -471,9 +488,11 @@
 
                 if (Array.isArray(restaurants)) {
                     restaurants.forEach(function(restaurant) {
-                        if (restaurant.latitude && restaurant.longitude && restaurant.register_status === 1) {
+                        if (restaurant.latitude && restaurant.longitude && restaurant.register_status ===
+                            1) {
                             var marker = L.marker([restaurant.latitude, restaurant.longitude]).addTo(map)
-                                .bindPopup('<b>' + restaurant.name + '</b><br>' + restaurant.address + '<br>' +
+                                .bindPopup('<b>' + restaurant.name + '</b><br>' + restaurant.address +
+                                    '<br>' +
                                     restaurant.price);
                             markers.push(marker);
                         }
@@ -507,51 +526,56 @@
                             var averageRating = restaurantRating.averageRating !== undefined && !isNaN(
                                 restaurantRating.averageRating) ? restaurantRating.averageRating : 0;
 
-                            var imageURL = (restaurant.image || (restaurantImages.length > 0 && restaurantImages[0]
-                                    .image)) ?
-                                "{{ asset('images/') }}/" + (restaurant.image || restaurantImages[0].image) :
-                                "{{ asset('images/placeholder-image.jpg') }}";
+                            // 判断是否有图片，否则使用占位符
+                            var imageURL = (restaurant.image || (restaurantImages.length > 0 &&
+                                    restaurantImages[0].image)) ?
+                                "{{ asset('images/') }}/" + (restaurant.image || restaurantImages[0]
+                                .image) :
+                                null; // 没有图片时设为 null
 
                             var restaurantHTML = `
-                                <div class="restaurant-card ${isDisabled ? 'disabled' : ''}" id="restaurantcard_${restaurantId}">
-                                    <div class="restaurant-image">
-                                        <img src="${imageURL}" alt="${restaurantName}">
-                                    </div>
-                                    <div class="restaurant-content">
-                                        <h2 class="restaurant-title">
-                                            <i class="fas fa-utensils"></i> ${restaurantName}
-                                        </h2>
-                                        <p class="restaurant-address">
-                                            <i class="fas fa-map-marker-alt"></i> ${restaurantAddress}, ${restaurantState}, ${restaurantCountry}
-                                        </p>
-                                        <p class="restaurant-description">
-                                            <i class="fas fa-info-circle"></i> ${restaurantDescription.length > 100 ? restaurantDescription.substring(0, 100) + '...' : restaurantDescription}
-                                        </p>
-                                        <div class="restaurant-amenities">
-                                            <span><i class="fas fa-wifi"></i> Free WiFi</span>
-                                            <span><i class="fas fa-parking"></i> Parking</span>
-                                        </div>
-                                        <div class="resort-rating">
-                                            ${generateStarRating(averageRating)}
-                                            <span>(${averageRating.toFixed(1)})</span>
-                                        </div>
-                                        <div class="restaurant-actions">
-                                            ${isDisabled ?
-                                                '<button class="btn btn-disabled">Closed</button>' :
-                                                `<div class="actions">
-                                                    <form id="wishlistForm_${restaurantId}" action="{{ url('/wishlist/add/restaurant') }}/${restaurantId}" method="POST" style="display: inline;">
-                                                        @csrf
-                                                        <button type="submit" id="wishlist" class="btn btn-wishlist">
-                                                            <i class="fas fa-heart"></i> Wishlist
-                                                        </button>
-                                                    </form>
-                                                    <a href="{{ url('Restaurantdetail/') }}/${restaurantId}/view" class="btn btn-book" id="viewrestaurant${restaurantId}">Book Now</a>
-                                                </div>`
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
+                    <div class="restaurant-card ${isDisabled ? 'disabled' : ''}" id="restaurantcard_${restaurantId}">
+                        <div class="restaurant-image">
+                            ${imageURL ? `<img src="${imageURL}" alt="${restaurantName}">` : `
+                                <div class="no-image-box">
+                                    <span>No Image</span>
+                                </div>`}
+                        </div>
+                        <div class="restaurant-content">
+                            <h2 class="restaurant-title">
+                                <i class="fas fa-utensils"></i> ${restaurantName}
+                            </h2>
+                            <p class="restaurant-address">
+                                <i class="fas fa-map-marker-alt"></i> ${restaurantAddress}, ${restaurantState}, ${restaurantCountry}
+                            </p>
+                            <p class="restaurant-description">
+                                <i class="fas fa-info-circle"></i> ${restaurantDescription.length > 100 ? restaurantDescription.substring(0, 100) + '...' : restaurantDescription}
+                            </p>
+                            <div class="restaurant-amenities">
+                                <span><i class="fas fa-wifi"></i> Free WiFi</span>
+                                <span><i class="fas fa-parking"></i> Parking</span>
+                            </div>
+                            <div class="resort-rating">
+                                ${generateStarRating(averageRating)}
+                                <span>(${averageRating.toFixed(1)})</span>
+                            </div>
+                            <div class="restaurant-actions">
+                                ${isDisabled ?
+                                    '<button class="btn btn-disabled">Closed</button>' :
+                                    `<div class="actions">
+                                            <form id="wishlistForm_${restaurantId}" action="{{ url('/wishlist/add/restaurant') }}/${restaurantId}" method="POST" style="display: inline;">
+                                                @csrf
+                                                <button type="submit" id="wishlist" class="btn btn-wishlist">
+                                                    <i class="fas fa-heart"></i> Wishlist
+                                                </button>
+                                            </form>
+                                            <a href="{{ url('Restaurantdetail/') }}/${restaurantId}/view" class="btn btn-book" id="viewrestaurant${restaurantId}">Book Now</a>
+                                        </div>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
 
                             resultsContainer.append(restaurantHTML);
                         }
@@ -560,6 +584,7 @@
                     resultsContainer.html('<p class="no-results">No Restaurants Found</p>');
                 }
             }
+
 
             function generateStarRating(rating) {
                 let stars = '';
@@ -618,7 +643,8 @@
                         console.log('Upload and search data:', data);
 
                         if (Array.isArray(data) && data.length > 0) {
-                            alert('Detected image result: ' + data.length + ' matching restaurants found.');
+                            alert('Detected image result: ' + data.length +
+                                ' matching restaurants found.');
                         } else {
                             alert('Detected image result: No matching restaurants found.');
                         }
@@ -771,5 +797,4 @@
             });
         });
     </script>
-
 @endsection

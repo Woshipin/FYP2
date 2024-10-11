@@ -519,31 +519,71 @@ Route::post('/bookingshotel', [BookingController::class, 'bookinghotel'])->middl
 
 
 //------------------------------------------------------Frontend Comment Area------------------------------------------------------//
-//Display Comment Restaurant Page
-Route::get('restaurants/{id}/comment', [CommentController::class, 'CommentRestaurant'])->name('restaurants.comment');
-//Add Comment Restaurant Function
-// Route::post('restaurants/comments/{id}', [CommentController::class, 'store'])->name('comments.store');
-Route::post('restaurants/{id}/comments', [CommentController::class, 'store'])->name('comments.store');
-//Delete Comment Restaurant Function
-Route::get('/deleteComment/{id}/delete', [CommentController::class, 'deleteComment'])->name('deleteComment');
+//------------------------------------------------------Frontend Restaurant Comment and Reply Area------------------------------------------------------//
+// 添加评论
+Route::post('/restaurants/{id}/comment', [CommentController::class, 'AddRestaurantComment'])->name('addRestaurantComment');
 
-//---------------------------------------------------Comment Resort Area------------------------------------------------------//
-//Display Comment Resort Page
-Route::get('resorts/{id}/comment', [CommentController::class, 'ResortComment'])->name('resorts.comment');
-//Add Comment Resort Function
-// Route::post('restaurants/comments/{id}', [CommentController::class, 'store'])->name('comments.store');
-Route::post('resorts/{id}/comments', [CommentController::class, 'AddResortComment'])->name('addResortComment');
-//Delete Comment Resort Function
-Route::get('/deleteResortComment/{id}/delete', [CommentController::class, 'DeleteResortComment'])->name('deleteResortComment');
+// 删除评论
+Route::delete('/restaurants/comment/{id}', [CommentController::class, 'deleteRestaurantComment'])->name('deleteRestaurantComment');
 
-//---------------------------------------------------Comment Hotel Area------------------------------------------------------//
-//Display Comment Hotel Page
-Route::get('hotels/{id}/comment', [CommentController::class, 'HotelComment'])->name('hotels.comment');
-//Add Comment Hotel Function
-// Route::post('restaurants/comments/{id}', [CommentController::class, 'store'])->name('comments.store');
-Route::post('hotels/{id}/comments', [CommentController::class, 'AddHotelComment'])->name('addHotelComment');
-//Delete Comment Hotel Function
-Route::get('/deleteHotelComment/{id}/delete', [CommentController::class, 'DeleteHotelComment'])->name('deleteHotelComment');
+// 回复评论
+Route::post('/replyrestaurantcomment', [RepliesController::class, 'replyrestaurantcomment'])->name('replyrestaurantcomment');
+
+// 删除回复的评论
+Route::delete('/deletereplyrestaurantcomment/{id}', [RepliesController::class, 'deletereplyrestaurantcomment'])->name('deletereplyrestaurantcomment');
+
+// 回复到回复的评论
+Route::post('/restaurants/reply', [CommentController::class, 'storeReplyToReplyRestaurant'])->name('storeReplyToReplyRestaurant');
+
+// 删除"回复到回复"的评论
+Route::delete('/deletereplytoreplyrestaurantcomment/{id}', [CommentController::class, 'deleteReplyToReplyRestaurantComment'])->name('deleteReplyToReplyRestaurantComment');
+
+// 显示评论页面
+Route::get('/restaurants/{id}/comment', [CommentController::class, 'CommentRestaurant'])->name('restaurants.comment');
+
+//--------------------------------------------------- Resort Comment and Reply Area ------------------------------------------------------//
+// 添加评论
+Route::post('/resorts/{id}/comment', [CommentController::class, 'AddResortComment'])->name('addResortComment');
+
+// 删除评论
+Route::delete('/resorts/comment/{id}', [CommentController::class, 'DeleteResortComment'])->name('deleteResortComment');
+
+// 回复评论
+Route::post('/replyresortcomment', [RepliesController::class, 'replyresortcomment'])->name('replyresortcomment');
+
+// 删除回复的评论
+Route::delete('/deletereplyresortcomment/{id}', [RepliesController::class, 'deletereplyresortcomment'])->name('deletereplyresortcomment');
+
+// 回复到回复的评论
+Route::post('/resorts/reply', [CommentController::class, 'storeReplyToReply'])->name('storeReplyToReply');
+
+// 删除"回复到回复"的评论
+Route::delete('/deletereplytoreplyresortcomment/{id}', [CommentController::class, 'deleteReplyToReplyResortComment'])->name('deleteReplyToReplyResortComment');
+
+// 显示评论页面
+Route::get('/resorts/{id}/comment', [CommentController::class, 'ResortComment'])->name('resorts.comment');
+
+//--------------------------------------------------- Hotel Comment and Reply Area------------------------------------------------------//
+// 添加评论
+Route::post('/hotels/{id}/comment', [CommentController::class, 'AddHotelComment'])->name('addHotelComment');
+
+// 删除评论
+Route::delete('/hotels/comment/{id}', [CommentController::class, 'DeleteHotelComment'])->name('deleteHotelComment');
+
+// 回复评论
+Route::post('/replyhotelcomment', [RepliesController::class, 'replyhotelcomment'])->name('replyhotelcomment');
+
+// 删除回复的评论
+Route::delete('/deletereplyhotelcomment/{id}', [RepliesController::class, 'deletereplyhotelcomment'])->name('deletereplyhotelcomment');
+
+// 回复到回复的评论
+Route::post('/hotels/reply', [CommentController::class, 'storeReplyToReplyHotel'])->name('storeReplyToReplyHotel');
+
+// 删除"回复到回复"的评论
+Route::delete('/deletereplytoreplyhotelcomment/{id}', [CommentController::class, 'deleteReplyToReplyHotelComment'])->name('deleteReplyToReplyHotelComment');
+
+// 显示评论页面
+Route::get('/hotels/{id}/comment', [CommentController::class, 'HotelComment'])->name('hotels.comment');
 
 //----------------------------------------------------Frontend User Contact Hotel Onwer Area------------------------------------------------------//
 //Display Contact User Hotel Page
@@ -574,21 +614,26 @@ Route::post('/contactresort', [ContactController::class, 'contactresort'])->name
 //----------------------------------------------------Frontend ReplyComment Area------------------------------------------------------//
 // Reply and delete Restaurant Comment
 // ---------------------------------------------------Reply Comment follow Comment Id in Restaurant-----------------------------------//
-Route::post('/reply/store', [RepliesController::class, 'store'])->name('reply.store');
-//Delete Reply Comment follow comment id Function in Restaurant
-Route::get('/replies/{id}/delete', [RepliesController::class, 'destroy'])->name('deleteReply');
+// Route::post('/reply/store', [RepliesController::class, 'store'])->name('reply.store');
+// //Delete Reply Comment follow comment id Function in Restaurant
+// Route::get('/replies/{id}/delete', [RepliesController::class, 'destroy'])->name('deleteReply');
 
 // Reply and delete Resort Comment
 // ---------------------------------------------------Reply Comment follow Comment Id in Resort---------------------------------------//
-Route::post('/replyresortcomment', [RepliesController::class, 'replyresortcomment'])->name('replyresortcomment');
-//Delete Reply Comment follow comment id Function in Resort
-Route::get('/deletereplyresortcomment/{id}/delete', [RepliesController::class, 'deletereplyresortcomment'])->name('deletereplyresortcomment');
+// Route::post('/replyresortcomment', [RepliesController::class, 'replyresortcomment'])->name('replyresortcomment');
+
+// // 删除回复的评论
+// Route::get('/deletereplyresortcomment/{id}/delete', [RepliesController::class, 'deletereplyresortcomment'])->name('deletereplyresortcomment');
+
+// Route::post('/resorts/reply', [CommentController::class, 'storeReplyToReply'])->name('storeReplyToReply');
+
+// Route::get('/deletereplyresortcomment/{id}/delete', [RepliesController::class, 'deletereplyresortcomment'])->name('deletereplyresortcomment');
 
 // ---------------------------------------------------Reply and delete Hotel Comment---------------------------------------------------//
 // Reply Comment follow Comment Id in Hotel
-Route::post('/replyhotelcomment', [RepliesController::class, 'replyhotelcomment'])->name('replyhotelcomment');
-//Delete Reply Comment follow comment id Function in Hotel
-Route::get('/deletereplyhotelcomment/{id}/delete', [RepliesController::class, 'deletereplyhotelcomment'])->name('deletereplyhotelcomment');
+// Route::post('/replyhotelcomment', [RepliesController::class, 'replyhotelcomment'])->name('replyhotelcomment');
+// //Delete Reply Comment follow comment id Function in Hotel
+// Route::get('/deletereplyhotelcomment/{id}/delete', [RepliesController::class, 'deletereplyhotelcomment'])->name('deletereplyhotelcomment');
 
 //------------------------------------------------------ Export and Import Area------------------------------------------------------//
 //Export and Import Staff Function

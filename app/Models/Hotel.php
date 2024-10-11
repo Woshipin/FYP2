@@ -31,6 +31,11 @@ class Hotel extends Model
         return $this->hasMany(CommentHotel::class);
     }
 
+    public function replies()
+    {
+        return $this->hasMany(ReplyHotelComment::class);
+    }
+
     public function ratings()
     {
         return $this->morphMany(HotelRating::class, 'rateable');
@@ -47,5 +52,5 @@ class Hotel extends Model
         // Adjust this according to your actual URL generation logic
         return route('bookinghotel', ['id' => $this->id]); // Assuming you have a route named 'restaurant.booking'
     }
-
+    
 }

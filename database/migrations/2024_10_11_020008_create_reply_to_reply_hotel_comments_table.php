@@ -9,11 +9,11 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('reply_hotel_comments', function (Blueprint $table) {
+        Schema::create('reply_to_reply_hotel_comments', function (Blueprint $table) {
             $table->id();
-            $table->integer('comment_id');
+            $table->integer('reply_id'); // 这是原始回复的ID
             $table->integer('user_id')->nullable();
             $table->string('name');
             $table->text('reply');
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('reply_hotel_comments');
+        Schema::dropIfExists('reply_to_reply_hotel_comments');
     }
 };

@@ -217,11 +217,24 @@ class RecommendationService
     }
 
     // Helper function to calculate average rating
+    // protected function calculateAverageRating($place, $userRatings)
+    // {
+    //     // Implement your logic to calculate the average rating based on user ratings
+    //     // For example, you can sum up all ratings and divide by the number of ratings
+    //     $ratings = $userRatings[$place->id] ?? [];
+    //     if (count($ratings) > 0) {
+    //         return array_sum($ratings) / count($ratings);
+    //     }
+    //     return 0; // Default to 0 if no ratings are available
+    // }
     protected function calculateAverageRating($place, $userRatings)
     {
-        // Implement your logic to calculate the average rating based on user ratings
-        // For example, you can sum up all ratings and divide by the number of ratings
-        $ratings = $userRatings[$place->id] ?? [];
+        // Check if the key exists in the array and provide a default value
+        $ratings = isset($userRatings[$place->id]) ? $userRatings[$place->id] : [];
+
+        // Ensure $ratings is an array
+        $ratings = is_array($ratings) ? $ratings : (array)$ratings;
+
         if (count($ratings) > 0) {
             return array_sum($ratings) / count($ratings);
         }

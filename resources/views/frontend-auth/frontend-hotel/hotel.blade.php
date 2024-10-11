@@ -31,7 +31,7 @@
         .concert-main {
             color: #C9C3C2;
             /* margin: 10px;
-                                                                                                                                                                                                padding: 10px; */
+                                                                                                                                                                                                    padding: 10px; */
         }
     </style>
 
@@ -59,6 +59,23 @@
 
         #wishlist:hover {
             color: red;
+        }
+    </style>
+
+    {{-- No Image CSS --}}
+    <style>
+        .no-image-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 150px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            color: #555;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
         }
     </style>
 
@@ -344,8 +361,7 @@
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
         integrity="sha512-BxGoSTaGW2MuHiZfxZI6f6pHVC2zTbCspWtZtSfRjJGevW8C3t/Gt9X9i66nTlUxV1dpnh4q9pxGq+Jz4YR6Jw=="
@@ -506,52 +522,56 @@
                             var averageRating = hotelRating.averageRating !== undefined && !isNaN(
                                 hotelRating.averageRating) ? hotelRating.averageRating : 0;
 
+                            // 判断是否有图片，否则使用占位符
                             var imageURL = (hotel.image || (hotelImages.length > 0 && hotelImages[0]
-                                    .image)) ?
+                                .image)) ?
                                 "{{ asset('images/') }}/" + (hotel.image || hotelImages[0].image) :
-                                "{{ asset('images/placeholder-image.jpg') }}";
+                                null; // 没有图片时设为 null
 
                             var hotelHTML = `
-                                <div class="hotel-card ${isDisabled ? 'disabled' : ''}" id="hotelcard_${hotelId}">
-                                    <div class="hotel-image">
-                                        <img src="${imageURL}" alt="${hotelName}">
-                                    </div>
-                                    <div class="hotel-content">
-                                        <h2 class="hotel-title">
-                                            <i class="fas fa-hotel"></i> ${hotelName}
-                                        </h2>
-                                        <p class="hotel-address">
-                                            <i class="fas fa-map-marker-alt"></i> ${hotelAddress}, ${hotelState}, ${hotelCountry}
-                                        </p>
-                                        <p class="hotel-description">
-                                            <i class="fas fa-info-circle"></i> ${hotelDescription.length > 100 ? hotelDescription.substring(0, 100) + '...' : hotelDescription}
-                                        </p>
-                                        <div class="hotel-amenities">
-                                            <span><i class="fas fa-swimming-pool"></i> Pool</span>
-                                            <span><i class="fas fa-wifi"></i> Free WiFi</span>
-                                            <span><i class="fas fa-parking"></i> Parking</span>
-                                        </div>
-                                        <div class="resort-rating">
-                                            ${generateStarRating(averageRating)}
-                                            <span>(${averageRating.toFixed(1)})</span>
-                                        </div>
-                                        <div class="hotel-actions">
-                                            ${isDisabled ?
-                                                '<button class="btn btn-disabled">Closed</button>' :
-                                                `<div class="actions">
-                                                    <form id="wishlistForm_${hotelId}" action="{{ url('/wishlist/add/hotel') }}/${hotelId}" method="POST" style="display: inline;">
-                                                        @csrf
-                                                        <button type="submit" id="wishlist" class="btn btn-wishlist">
-                                                            <i class="fas fa-heart"></i> Wishlist
-                                                        </button>
-                                                    </form>
-                                                    <a href="{{ url('Hoteldetail/') }}/${hotelId}/view" class="btn btn-book" id="viewhotel${hotelId}">Book Now</a>
-                                                </div>`
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
+                    <div class="hotel-card ${isDisabled ? 'disabled' : ''}" id="hotelcard_${hotelId}">
+                        <div class="hotel-image">
+                            ${imageURL ? `<img src="${imageURL}" alt="${hotelName}">` : `
+                                <div class="no-image-box">
+                                    <span>No Image</span>
+                                </div>`}
+                        </div>
+                        <div class="hotel-content">
+                            <h2 class="hotel-title">
+                                <i class="fas fa-hotel"></i> ${hotelName}
+                            </h2>
+                            <p class="hotel-address">
+                                <i class="fas fa-map-marker-alt"></i> ${hotelAddress}, ${hotelState}, ${hotelCountry}
+                            </p>
+                            <p class="hotel-description">
+                                <i class="fas fa-info-circle"></i> ${hotelDescription.length > 100 ? hotelDescription.substring(0, 100) + '...' : hotelDescription}
+                            </p>
+                            <div class="hotel-amenities">
+                                <span><i class="fas fa-swimming-pool"></i> Pool</span>
+                                <span><i class="fas fa-wifi"></i> Free WiFi</span>
+                                <span><i class="fas fa-parking"></i> Parking</span>
+                            </div>
+                            <div class="resort-rating">
+                                ${generateStarRating(averageRating)}
+                                <span>(${averageRating.toFixed(1)})</span>
+                            </div>
+                            <div class="hotel-actions">
+                                ${isDisabled ?
+                                    '<button class="btn btn-disabled">Closed</button>' :
+                                    `<div class="actions">
+                                            <form id="wishlistForm_${hotelId}" action="{{ url('/wishlist/add/hotel') }}/${hotelId}" method="POST" style="display: inline;">
+                                                @csrf
+                                                <button type="submit" id="wishlist" class="btn btn-wishlist">
+                                                    <i class="fas fa-heart"></i> Wishlist
+                                                </button>
+                                            </form>
+                                            <a href="{{ url('Hoteldetail/') }}/${hotelId}/view" class="btn btn-book" id="viewhotel${hotelId}">Book Now</a>
+                                        </div>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
 
                             resultsContainer.append(hotelHTML);
                         }
@@ -560,6 +580,7 @@
                     resultsContainer.html('<p class="no-results">No Hotels Found</p>');
                 }
             }
+
 
             function generateStarRating(rating) {
                 let stars = '';
@@ -771,5 +792,4 @@
             });
         });
     </script>
-
 @endsection

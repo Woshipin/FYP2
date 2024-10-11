@@ -32,6 +32,11 @@ class Restaurant extends Model
         return $this->hasMany(CommentRestaurant::class);
     }
 
+    public function replies()
+    {
+        return $this->hasMany(ReplyRestaurantComment::class);
+    }
+
     public function ratings()
     {
         return $this->morphMany(RestaurantRating::class, 'rateable');
