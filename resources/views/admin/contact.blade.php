@@ -15,7 +15,8 @@
                 </div>
 
                 <div class="browse">
-                    <input type="search" placeholder="Search by name, email, or date" class="record-search m-1" id="searchInput">
+                    <input type="search" placeholder="Search by name, email, or date" class="record-search m-1"
+                        id="searchInput">
                 </div>
             </div>
 
@@ -142,8 +143,8 @@
                         var searchTerm = searchInput.value.toLowerCase();
                         var filteredContacts = initialContacts.filter(function(contact) {
                             return contact.name.toLowerCase().includes(searchTerm) ||
-                                   contact.email.toLowerCase().includes(searchTerm) ||
-                                   formatDate(contact.created_at).toLowerCase().includes(searchTerm);
+                                contact.email.toLowerCase().includes(searchTerm) ||
+                                formatDate(contact.created_at).toLowerCase().includes(searchTerm);
                         });
 
                         updateSearchResults(filteredContacts);
@@ -153,5 +154,5 @@
 
         </div>
     </div>
-    
+
 @endsection

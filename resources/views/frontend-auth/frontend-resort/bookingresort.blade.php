@@ -3,108 +3,6 @@
 @section('frontend-section')
     <!------------------------------------------------------------ Book Area ------------------------------------------------------->
 
-    {{-- Stripe JS --}}
-    {{-- <script src="https://js.stripe.com/v3/"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async function () {
-            const stripe = Stripe('pk_test_51OKaMXGHH2qMLoYnU9V61SH1I7XXSo6nmBfkFSNl4V7RIv17azq7OTT4iwBkT4zQVlVYsRl5X7YrVgSaibcIEyxs003vb0y483');
-            const elements = stripe.elements();
-            const cardElement = elements.create('card');
-            cardElement.mount('#card-element');
-
-            const form = document.getElementById('payment-form');
-            form.addEventListener('submit', async function (event) {
-                event.preventDefault();
-
-                // Make an AJAX request to the server to create the PaymentIntent
-                const response = await fetch('/bookingresort', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        card_number: '4242 4242 4242 4242', // Example data
-                        card_holder: 'John Doe',
-                        card_month: '12',
-                        card_year: '23',
-                        cvv: '123',
-                        checkin_date: '2023-07-01',
-                        checkout_date: '2023-07-05',
-                        checkin_time: '14:00',
-                        checkout_time: '12:00',
-                        gender: 'male',
-                        quantity: 1,
-                        resort_price: 100, // Example data
-                        resort_name: 'Example Resort',
-                        type_name: 'Example Type',
-                        deposit_price: 50,
-                        owner_name: 'Owner Name',
-                        resort_phone: '123456789',
-                        resort_email: 'resort@example.com',
-                        resort_type: 'Example Type'
-                    })
-                });
-
-                const data = await response.json();
-                const clientSecret = data.client_secret;
-
-                if (clientSecret) {
-                    const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
-                        payment_method: {
-                            card: cardElement,
-                            billing_details: {
-                                name: 'John Doe',
-                            },
-                        }
-                    });
-
-                    if (error) {
-                        console.error('Error:', error.message);
-                        alert('Payment failed: ' + error.message);
-                    } else if (paymentIntent.status === 'succeeded') {
-                        alert('Payment succeeded!');
-                        window.location.href = '/payment-success';
-                    }
-                } else {
-                    console.error('Error creating PaymentIntent:', data.message);
-                    alert('Error creating PaymentIntent: ' + data.message);
-                }
-            });
-        });
-    </script> --}}
-
-    {{-- <script>
-        var stripe = Stripe('{{ $stripeKey }}');
-        var elements = stripe.elements();
-        var card = elements.create('card');
-        card.mount('#card-element');
-
-        card.addEventListener('change', function(event) {
-            var displayError = document.getElementById('card-errors');
-            if (event.error) {
-                displayError.textContent = event.error.message;
-            } else {
-                displayError.textContent = '';
-            }
-        });
-
-        var form = document.querySelector('form');
-        form.addEventListener('submit', function(event) {
-            event.preventDefault();
-
-            stripe.createToken(card).then(function(result) {
-                if (result.error) {
-                    var errorElement = document.getElementById('card-errors');
-                    errorElement.textContent = result.error.message;
-                } else {
-                    document.getElementById('stripeToken').value = result.token.id;
-                    form.submit();
-                }
-            });
-        });
-    </script> --}}
-
     {{-- Payment Card CSS --}}
     <link rel="stylesheet" href="{{ asset('paymentcard/css/style.css') }}">
 
@@ -166,18 +64,155 @@
             /* color: black */
         }
     </style>
-
-    {{-- Date Disabled CSS --}}
-    {{-- <style>
-        /* 自定义禁用日期的颜色 */
-        .custom-disabled-date {
-            color: #999 !important;
-            /* 修改日期文字颜色 */
-            background-color: #f5f5f5 !important;
-            /* 修改日期背景色 */
-            /* 其他样式 */
+    <style>
+        #paypal-payment-section {
+            padding: 20px;
+            text-align: center;
         }
-    </style> --}}
+
+        #paypal-button-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .payment-method-select {
+            margin-bottom: 20px;
+        }
+
+        /* Add any additional custom styles you need */
+    </style>
+    <style>
+        .payment-method-selector {
+            margin-bottom: 2rem;
+        }
+
+        .payment-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .payment-option {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        .payment-option img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        .card-input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card-input {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .card-extra-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .payment-summary {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background-color: #2563eb;
+        }
+
+        .progress-container {
+            margin-top: 1.5rem;
+        }
+
+        .progress {
+            height: 0.5rem;
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .paypal-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .paypal-logo img {
+            width: 200px;
+            height: auto;
+        }
+
+        .paypal-description {
+            text-align: center;
+            color: #64748b;
+        }
+    </style>
 
     {{-- BookingStatus Pusher --}}
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
@@ -202,12 +237,16 @@
     <!-- 在 head 标签中引入 Bootstrap CSS -->
     {{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> --}}
 
+    {{-- sweetalert2 --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <br><br><br><br><br><br>
 
     <!------------------------------------------------------------ Book Area ------------------------------------------------------->
 
     <!-- Book Section Starts -->
-    <section class="book" id="book">
+    {{-- <section class="book" id="book">
         <h1 class="heading">
             <span>B</span>
             <span>o</span>
@@ -231,7 +270,6 @@
                 <form action="{{ url('bookingsresort') }}" method="post" enctype="multipart/form-data" id="bookingForm">
                     @csrf
 
-                    {{-- Booking Resort Area --}}
                     <div class="custom-tab-content active" data-tab="booking">
                         <div class="row">
                             <div class="col-md-5">
@@ -242,7 +280,6 @@
                                 <input type="hidden" name="user_name" value="{{ auth()->user()->name }}">
                                 <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                 <input type="hidden" name="resort_id" value="{{ $resorts->id }}">
-                                {{-- <input type="hidden" name="type_name" value="{{ $resorts->name }}"> --}}
                                 <input type="hidden" name="resort_price" id="resort_price" value="{{ $resorts->price }}">
                                 <input type="hidden" name="resort_name" value="{{ $resorts->name }}">
                                 <input type="hidden" name="resort_type" value="{{ $resorts->type }}">
@@ -302,7 +339,6 @@
 
                     <br>
 
-                    {{-- Card Payment Area --}}
                     <div class="container-payment custom-tab-content " data-tab="payment">
 
                         <div class="row">
@@ -410,7 +446,6 @@
                         </div>
                     </div>
 
-                    <!-- 进度条 -->
                     <div class="progress mt-3" id="progressBarContainer" style="display: none;">
                         <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
                     </div>
@@ -419,10 +454,253 @@
             </div>
         </div>
 
+    </section> --}}
+    <section class="book" id="book">
+        <h1 class="heading">
+            <span>B</span>
+            <span>o</span>
+            <span>o</span>
+            <span>k</span>
+            <span class="space"></span>
+            <span>n</span>
+            <span>o</span>
+            <span>w</span>
+        </h1>
+
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="nav nav-tabs custom-tabs">
+                    <li class="custom-tab active" data-tab="booking">Booking</li>
+                    <li class="custom-tab" data-tab="payment">Payment</li>
+                </ul>
+
+                <form action="{{ url('bookingsresort') }}" method="post" enctype="multipart/form-data" id="bookingForm">
+                    @csrf
+
+                    {{-- Booking Resort Area --}}
+                    <div class="custom-tab-content active" data-tab="booking">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <img src="{{ asset('new/img/book-img.jpg') }}" alt="">
+                            </div>
+                            <div class="col-md-6">
+                                {{-- Hidden Fields --}}
+                                <input type="hidden" name="booking_uuid" id="booking_uuid" value="{{ Str::uuid() }}">
+                                <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+                                <input type="hidden" name="user_name" value="{{ auth()->user()->name }}">
+                                <input type="hidden" name="email" value="{{ auth()->user()->email }}">
+                                <input type="hidden" name="resort_id" value="{{ $resorts->id }}">
+                                <input type="hidden" name="resort_price" id="resort_price" value="{{ $resorts->price }}">
+                                <input type="hidden" name="resort_name" value="{{ $resorts->name }}">
+                                <input type="hidden" name="resort_type" value="{{ $resorts->type }}">
+                                <input type="hidden" name="owner_id" value="{{ $resorts->user->id }}">
+                                <input type="hidden" name="owner_name" value="{{ $resorts->user->name }}">
+                                <input type="hidden" name="resort_phone" value="{{ $resorts->phone }}">
+                                <input type="hidden" name="resort_email" value="{{ $resorts->email }}">
+                                <input type="hidden" name="type_id" value="{{ $resorts->id }}">
+                                <input type="hidden" name="type_name" value="{{ $resorts->name }}">
+                                <input type="hidden" name="type_category" value="Resort">
+
+                                <div class="inputBox">
+                                    <h3>Check-In Date</h3>
+                                    <input type="date" required name="checkin_date" id="checkin_date"
+                                        class="form-control">
+                                </div>
+
+                                <div class="inputBox">
+                                    <h3>Check-Out Date</h3>
+                                    <input type="date" required name="checkout_date" id="checkout_date"
+                                        class="form-control">
+                                </div>
+
+                                <div class="inputBox">
+                                    <h3>Check-In Time</h3>
+                                    <input type="time" required name="checkin_time" id="check_in_time"
+                                        class="form-control checkin-time">
+                                </div>
+
+                                <div class="inputBox">
+                                    <h3>Check-Out Time</h3>
+                                    <input type="time" required name="checkout_time" id="check_out_time"
+                                        class="form-control">
+                                </div>
+
+                                <div class="inputBox">
+                                    <h3>Select Gender</h3>
+                                    <select name="gender" id="gender" class="form-control" required>
+                                        @foreach ($genders as $gender)
+                                            <option value="{{ $gender->title }}">{{ $gender->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="inputBox">
+                                    <h3>Total Quantity Person</h3>
+                                    <input type="number" required min="1" max="20" name="quantity"
+                                        id="quantity" class="form-control">
+                                </div>
+
+                                <div class="inputBox">
+                                    <button type="button" id="payment" class="btn">Continue to Payment</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Payment Area --}}
+                    <div class="container-payment custom-tab-content" data-tab="payment">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <img src="{{ asset('new/img/book-img.jpg') }}" alt="">
+                            </div>
+
+                            <div class="col-md-6">
+                                <!-- Payment Method Selection -->
+                                <div class="payment-method-selector">
+                                    <h3>Select Payment Method</h3>
+                                    <div class="payment-options">
+                                        <div class="payment-option" data-method="credit_card">
+                                            <img src="{{ asset('new/img/card-icon.png') }}" alt="Card">
+                                            <span>Credit/Debit Card</span>
+                                        </div>
+                                        <div class="payment-option" data-method="paypal">
+                                            <img src="{{ asset('new/img/paypal-icon.png') }}" alt="PayPal">
+                                            <span>PayPal</span>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="payment_method" id="payment_method" value="credit_card">
+                                </div>
+
+                                <!-- Card Payment Section -->
+                                <div id="card-payment-section" class="payment-section">
+                                    <div class="card-container">
+                                        <div class="front">
+                                            <div class="image">
+                                                <img src="{{ asset('new/img/image/chip.png') }}" alt="">
+                                                <img src="{{ asset('new/img/image/visa.png') }}" alt="">
+                                            </div>
+                                            <div class="card-number-box">################</div>
+                                            <div class="flexbox">
+                                                <div class="box">
+                                                    <span>card holder</span>
+                                                    <div class="card-holder-name">full name</div>
+                                                </div>
+                                                <div class="box">
+                                                    <span>expires</span>
+                                                    <div class="expiration">
+                                                        <span class="exp-month">mm</span>
+                                                        <span class="exp-year">yy</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="back">
+                                            <div class="stripe"></div>
+                                            <div class="box">
+                                                <span>cvv</span>
+                                                <div class="cvv-box"></div>
+                                                <img src="{{ asset('new/img/image/visa.png') }}" alt="">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-input-section">
+                                        <div class="input-group">
+                                            <label>Card Number</label>
+                                            <input type="text" id="card_number" name="card_number" maxlength="19"
+                                                class="card-input" placeholder="0000 0000 0000 0000">
+                                        </div>
+
+                                        <div class="input-group">
+                                            <label>Card Holder Name</label>
+                                            <input type="text" name="card_holder" id="card_holder"
+                                                class="card-input">
+                                        </div>
+
+                                        <div class="card-extra-details">
+                                            <div class="input-group">
+                                                <label>Expiry Month</label>
+                                                <select name="card_month" id="card_month" class="card-input">
+                                                    <option value="" selected disabled>MM</option>
+                                                    @for ($i = 1; $i <= 12; $i++)
+                                                        <option value="{{ sprintf('%02d', $i) }}">
+                                                            {{ sprintf('%02d', $i) }}</option>
+                                                    @endfor
+                                                </select>
+                                            </div>
+
+                                            <div class="input-group">
+                                                <label>Expiry Year</label>
+                                                <select name="card_year" id="card_year" class="card-input">
+                                                    <option value="" selected disabled>YY</option>
+                                                    @for ($i = date('Y'); $i <= date('Y') + 10; $i++)
+                                                        <option value="{{ $i }}">{{ $i }}</option>
+                                                    @endfor
+                                                </select>
+                                            </div>
+
+                                            <div class="input-group">
+                                                <label>CVV</label>
+                                                <input type="text" name="cvv" id="cvv" maxlength="4"
+                                                    class="card-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- PayPal Payment Section -->
+                                <div id="paypal-payment-section" class="payment-section" style="display: none;">
+                                    <div class="paypal-container">
+                                        <div class="paypal-logo">
+                                            <img src="{{ asset('new/img/paypal-logo.png') }}" alt="PayPal">
+                                        </div>
+                                        <p class="paypal-description">Click the button below to pay securely with PayPal
+                                        </p>
+                                        <div id="paypal-button-container"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Common Payment Information -->
+                                <div class="payment-summary">
+                                    <div class="summary-item">
+                                        <span>Deposit Fee</span>
+                                        <span>RM 100.00</span>
+                                        <input type="hidden" name="deposit_price" value="100">
+                                    </div>
+                                    <div class="summary-item">
+                                        <span>Resort Total Price</span>
+                                        <span>RM <span id="total_price">0.00</span></span>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button (for card payment) -->
+                                <button type="submit" class="submit-button" id="submit-button">
+                                    Complete Payment
+                                </button>
+
+                                <!-- Progress Bar -->
+                                <div class="progress-container" id="progressBarContainer" style="display: none;">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+        </div>
     </section>
     <!-- Book Section Ends -->
 
     <!------------------------------------------------------------ /.Js Area -------------------------------------------------------->
+
+    <!-- Paypal JS -->
+    {{-- <script
+        src="https://www.paypal.com/sdk/js?client-id=AeNUnjIv8kLAKJR5ECfdFIfP0TKNb5yHJ1NHamYpTDrDXbf8teHex-lfzlvZHCvxbqeJckM-cDCG2hML&currency=MYR">
+    </script> --}}
 
     {{-- progress bar JS --}}
     <!-- 在 body 标签底部引入 Bootstrap JS 和 jQuery -->
@@ -450,43 +728,44 @@
                     let formData = new FormData(form);
 
                     fetch(form.action, {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                    .getAttribute('content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Toastify({
+                                    text: data.message,
+                                    duration: 10000,
+                                    style: {
+                                        background: "linear-gradient(to right, #00b09b, #96c93d)"
+                                    }
+                                }).showToast();
+                                window.location.href = "{{ route('home') }}";
+                            } else {
+                                Toastify({
+                                    text: data.message,
+                                    duration: 10000,
+                                    style: {
+                                        background: "linear-gradient(to right, #b90000, #c99396)"
+                                    }
+                                }).showToast();
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
                             Toastify({
-                                text: data.message,
-                                duration: 10000,
-                                style: {
-                                    background: "linear-gradient(to right, #00b09b, #96c93d)"
-                                }
-                            }).showToast();
-                            window.location.href = "{{ route('home') }}";
-                        } else {
-                            Toastify({
-                                text: data.message,
+                                text: 'An error occurred while processing your request.',
                                 duration: 10000,
                                 style: {
                                     background: "linear-gradient(to right, #b90000, #c99396)"
                                 }
                             }).showToast();
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Toastify({
-                            text: 'An error occurred while processing your request.',
-                            duration: 10000,
-                            style: {
-                                background: "linear-gradient(to right, #b90000, #c99396)"
-                            }
-                        }).showToast();
-                    });
+                        });
                 } else {
                     width += 10;
                     progressBar.style.width = width + '%';
@@ -498,7 +777,7 @@
     </script>
 
     {{-- Calculate Resort Total Price --}}
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const checkinInput = document.getElementById('checkin_date');
             const checkoutInput = document.getElementById('checkout_date');
@@ -525,7 +804,7 @@
             checkinInput.addEventListener('change', calculateTotalPrice);
             checkoutInput.addEventListener('change', calculateTotalPrice);
         });
-    </script>
+    </script> --}}
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -824,4 +1103,398 @@
         });
     </script>
 
+    <!-- PayPal JS -->
+    <script
+        src="https://www.paypal.com/sdk/js?client-id=AevCq5WDpuSoYCJlkxHD-N_Yf13gKJmf9sOESVMmYa9lDzN9bVvgfNUqTy4C62CthVk9r5qoEgwDM8Un">
+    </script>
+
+    {{-- Final Paypal Payment Method --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkinInput = document.getElementById('checkin_date');
+            const checkoutInput = document.getElementById('checkout_date');
+            const totalPriceElement = document.getElementById('total_price');
+            const resortPrice = parseFloat(document.getElementById('resort_price').value);
+
+            function calculateTotalPrice() {
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+
+                if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
+                    const timeDifference = checkoutDate.getTime() - checkinDate.getTime();
+                    const dayDifference = timeDifference / (1000 * 3600 * 24);
+                    const totalPrice = dayDifference * resortPrice;
+
+                    totalPriceElement.textContent = totalPrice.toFixed(2);
+                } else {
+                    totalPriceElement.textContent = '0.00';
+                }
+            }
+
+            checkinInput.addEventListener('change', calculateTotalPrice);
+            checkoutInput.addEventListener('change', calculateTotalPrice);
+
+            // Payment method selection
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            const cardPaymentSection = document.getElementById('card-payment-section');
+            const paypalPaymentSection = document.getElementById('paypal-payment-section');
+            const paymentMethodInput = document.getElementById('payment_method');
+
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    paymentOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    const method = this.getAttribute('data-method');
+                    paymentMethodInput.value = method;
+
+                    if (method === 'credit_card') {
+                        cardPaymentSection.style.display = 'block';
+                        paypalPaymentSection.style.display = 'none';
+                    } else if (method === 'paypal') {
+                        cardPaymentSection.style.display = 'none';
+                        paypalPaymentSection.style.display = 'block';
+                        initializePayPalButtons();
+                    }
+                });
+            });
+
+            function initializePayPalButtons() {
+                paypal.Buttons({
+                    createOrder: function(data, actions) {
+                        const totalPrice = parseFloat(totalPriceElement.innerText.replace('RM ', ''));
+                        if (isNaN(totalPrice) || totalPrice <= 0) {
+                            alert('Invalid total price. Please check the total price.');
+                            return;
+                        }
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: {
+                                    value: totalPrice.toFixed(2)
+                                }
+                            }]
+                        });
+                    },
+                    onApprove: function(data, actions) {
+                        return actions.order.capture().then(function(details) {
+                            submitBooking();
+                        });
+                    }
+                }).render('#paypal-button-container');
+            }
+
+            document.getElementById('submit-button').addEventListener('click', function(event) {
+                event.preventDefault();
+                submitBooking();
+            });
+
+            function submitBooking() {
+                const formData = new FormData(document.getElementById('bookingForm'));
+                const paymentMethod = document.getElementById('payment_method').value;
+
+                if (paymentMethod === 'credit_card') {
+                    // Add credit card fields to formData
+                    formData.append('card_number', document.getElementById('card_number').value);
+                    formData.append('card_holder', document.getElementById('card_holder').value);
+                    formData.append('card_month', document.getElementById('card_month').value);
+                    formData.append('card_year', document.getElementById('card_year').value);
+                    formData.append('cvv', document.getElementById('cvv').value);
+                } else {
+                    // Add dummy values for PayPal
+                    formData.append('card_number', '0000000000000000');
+                    formData.append('card_holder', 'PayPal User');
+                    formData.append('card_month', '01');
+                    formData.append('card_year', new Date().getFullYear() + 1);
+                    formData.append('cvv', '000');
+                }
+
+                fetch('{{ url('bookingsresort') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Booking Successful!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                window.location.href = '{{ route('home') }}';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Booking Failed',
+                                text: data.message
+                            });
+                        }
+                    }).catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'An error occurred while processing your booking.'
+                        });
+                    });
+            }
+
+            // Card input visualization (if needed)
+            // const cardNumber = document.querySelector('.card-number-box');
+            // const cardHolder = document.querySelector('.card-holder-name');
+            // const cardMonth = document.querySelector('.exp-month');
+            // const cardYear = document.querySelector('.exp-year');
+            // const cardCVV = document.querySelector('.cvv-box');
+
+            // document.querySelector('#card_number').oninput = () => {
+            //     cardNumber.innerText = document.querySelector('#card_number').value;
+            // }
+
+            // document.querySelector('#card_holder').oninput = () => {
+            //     cardHolder.innerText = document.querySelector('#card_holder').value;
+            // }
+
+            // document.querySelector('#card_month').oninput = () => {
+            //     cardMonth.innerText = document.querySelector('#card_month').value;
+            // }
+
+            // document.querySelector('#card_year').oninput = () => {
+            //     cardYear.innerText = document.querySelector('#card_year').value;
+            // }
+
+            // document.querySelector('#cvv').onmouseenter = () => {
+            //     document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(-180deg)';
+            //     document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(0deg)';
+            // }
+
+            // document.querySelector('#cvv').onmouseleave = () => {
+            //     document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(0deg)';
+            //     document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(180deg)';
+            // }
+
+            // document.querySelector('#cvv').oninput = () => {
+            //     cardCVV.innerText = document.querySelector('#cvv').value;
+            // }
+        });
+    </script>
+
+    {{-- Paypal Payment Method --}}
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkinInput = document.getElementById('checkin_date');
+            const checkoutInput = document.getElementById('checkout_date');
+            const totalPriceElement = document.getElementById('total_price');
+            const resortPrice = parseFloat(document.getElementById('resort_price').value);
+
+            function calculateTotalPrice() {
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+
+                if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
+                    const timeDifference = checkoutDate.getTime() - checkinDate.getTime();
+                    const dayDifference = timeDifference / (1000 * 3600 * 24);
+                    const totalPrice = dayDifference * resortPrice;
+
+                    totalPriceElement.textContent = totalPrice.toFixed(2);
+
+                } else {
+                    totalPriceElement.textContent = '0.00';
+                }
+            }
+
+            checkinInput.addEventListener('change', calculateTotalPrice);
+            checkoutInput.addEventListener('change', calculateTotalPrice);
+
+            // Payment method selection
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            const cardPaymentSection = document.getElementById('card-payment-section');
+            const paypalPaymentSection = document.getElementById('paypal-payment-section');
+            const paymentMethodInput = document.getElementById('payment_method');
+
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    paymentOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    const method = this.getAttribute('data-method');
+                    paymentMethodInput.value = method;
+
+                    if (method === 'credit_card') {
+                        cardPaymentSection.style.display = 'block';
+                        paypalPaymentSection.style.display = 'none';
+                    } else if (method === 'paypal') {
+                        cardPaymentSection.style.display = 'none';
+                        paypalPaymentSection.style.display = 'block';
+                        // Initialize PayPal buttons when PayPal is selected
+                        initializePayPalButtons();
+                    }
+                });
+            });
+
+            function initializePayPalButtons() {
+                paypal.Buttons({
+                    createOrder: function(data, actions) {
+                        // Get the total price from the total_price span
+                        const totalPrice = parseFloat(totalPriceElement.innerText.replace('RM ', ''));
+                        if (isNaN(totalPrice) || totalPrice <= 0) {
+                            alert('Invalid total price. Please check the total price.');
+                            return;
+                        }
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: {
+                                    value: totalPrice.toFixed(2) // Use the actual total price
+                                }
+                            }]
+                        });
+                    },
+                    onApprove: function(data, actions) {
+                        return actions.order.capture().then(function(details) {
+                            alert('Transaction completed by ' + details.payer.name.given_name);
+                            // Submit the form after successful payment
+                            document.getElementById('bookingForm').submit();
+                        });
+                    }
+                }).render('#paypal-button-container');
+            }
+
+            // Handle form submission for PayPal payment
+            document.getElementById('bookingForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const paymentMethod = document.getElementById('payment_method').value;
+
+                if (paymentMethod === 'paypal') {
+                    // Submit the form via AJAX
+                    const formData = new FormData(this);
+
+                    // Fill in valid dummy values for card fields to avoid validation errors
+                    formData.append('card_number', '4111 1111 1111 1111'); // Valid test card number
+                    formData.append('card_holder', 'John Doe');
+                    formData.append('card_month', '12');
+                    formData.append('card_year', new Date().getFullYear() + 1);
+                    formData.append('cvv', '123');
+
+                    fetch('{{ url('bookingsresort') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    }).then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert(data.message);
+                            window.location.href = '{{ route('home') }}';
+                        } else {
+                            alert('Payment failed: ' + data.message);
+                        }
+                    }).catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while processing your payment.');
+                    });
+                } else {
+                    // Submit the form normally for credit card payment
+                    this.submit();
+                }
+            });
+        });
+    </script> --}}
+
+    {{-- <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables
+            const form = document.getElementById('bookingForm');
+            const paymentMethod = document.getElementById('payment_method');
+            const cardSection = document.getElementById('card-payment-section');
+            const paypalSection = document.getElementById('paypal-payment-section');
+            const submitButton = document.getElementById('submit-button');
+            const progressBar = document.getElementById('progressBarContainer');
+            const cardInputs = document.querySelectorAll(
+                '#card-payment-section input, #card-payment-section select');
+            const resortPrice = parseFloat(document.getElementById('resort_price').value);
+
+            // Payment method selection
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const method = this.dataset.method;
+                    paymentMethod.value = method;
+
+                    // Update UI
+                    document.querySelectorAll('.payment-option').forEach(opt => {
+                        opt.classList.remove('active');
+                    });
+                    this.classList.add('active');
+
+                    // Show/hide relevant sections
+                    if (method === 'paypal') {
+                        cardSection.style.display = 'none';
+                        paypalSection.style.display = 'block';
+                        submitButton.style.display = 'none';
+                        cardInputs.forEach(input => input.required = false);
+                    } else {
+                        cardSection.style.display = 'block';
+                        paypalSection.style.display = 'none';
+                        submitButton.style.display = 'block';
+                        cardInputs.forEach(input => input.required = true);
+                    }
+                });
+            });
+
+            // Initialize PayPal
+            paypal.Buttons({
+                createOrder: function(data, actions) {
+                    const totalPrice = document.getElementById('total_price').textContent;
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                currency_code: 'MYR', // 使用货币代码
+                                value: totalPrice.toFixed(2) // 确保金额格式正确
+                            }
+                        }]
+                    });
+                },
+                onApprove: function(data, actions) {
+                    return actions.order.capture().then(function(details) {
+                        document.getElementById('progressBarContainer').style.display = 'block';
+                        document.querySelector('.progress-bar').style.width = '100%';
+
+                        const form = document.getElementById('bookingForm');
+                        const paypalDetailsInput = document.createElement('input');
+                        paypalDetailsInput.type = 'hidden';
+                        paypalDetailsInput.name = 'paypal_details';
+                        paypalDetailsInput.value = JSON.stringify(details);
+                        form.appendChild(paypalDetailsInput);
+                        form.submit();
+                    });
+                },
+                onError: function(err) {
+                    console.error('PayPal Error:', err);
+                    alert('There was an error processing your PayPal payment. Please try again.');
+                }
+            }).render('#paypal-button-container');
+
+
+            // Calculate total price
+            const checkinDate = document.getElementById('checkin_date');
+            const checkoutDate = document.getElementById('checkout_date');
+            const totalPriceSpan = document.getElementById('total_price');
+
+            function calculateTotalPrice() {
+                const checkin = new Date(checkinDate.value);
+                const checkout = new Date(checkoutDate.value);
+                const days = (checkout - checkin) / (1000 * 60 * 60 * 24);
+                const totalPrice = resortPrice * days;
+                totalPriceSpan.textContent = totalPrice.toFixed(2);
+            }
+
+            checkinDate.addEventListener('change', calculateTotalPrice);
+            checkoutDate.addEventListener('change', calculateTotalPrice);
+
+            // Initial calculation
+            calculateTotalPrice();
+        });
+    </script> --}}
 @endsection

@@ -88,11 +88,11 @@
             <div class="details">
                 <p>User Name: <span>{{ $VerifyResort->user_name }}</span></p>
                 <p>Resort Name: <span>{{ $VerifyResort->resort->name }}</span></p>
-                <p>Date: <span>{{ \Carbon\Carbon::parse($VerifyResort->booking_date)->format('j F Y (l)') }}</span></p>
-                <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($VerifyResort->checkin_time)->format('g:i A') }}</span>
-                </p>
-                <p>Check-Out-Time:
-                    <span>{{ \Carbon\Carbon::parse($VerifyResort->checkout_time)->format('g:i A') }}</span></p>
+                <p>Booking Date: <span>{{ $VerifyResort->booking_days }} day</span></p>
+                <p>Check-In-Date: <span>{{ \Carbon\Carbon::parse($VerifyResort->checkin_date)->format('j F Y') }}</span></p>
+                <p>Check-Out-Date: <span>{{ \Carbon\Carbon::parse($VerifyResort->checkout_date)->format('j F Y') }}</span></p>
+                <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($VerifyResort->checkin_time)->format('g:i A') }}</span></p>
+                <p>Check-Out-Time: <span>{{ \Carbon\Carbon::parse($VerifyResort->checkout_time)->format('g:i A') }}</span></p>
                 <p>Resort Type: <span>{{ $VerifyResort->resort->type }}</span></p>
                 <p>Address: <span>{{ $VerifyResort->resort->location }}</span></p>
                 <p>State: <span>{{ $VerifyResort->resort->state }}</span></p>

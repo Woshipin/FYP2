@@ -806,6 +806,7 @@
                         <!-- {{ Auth::id() }} -->
                         <input type="hidden" name="user_id" value="{{ Auth::id() }}">
 
+                        <label for="name">Select Hotel Name</label>
                         <select class="form-control" name="hotel_id">
                             <option value="">---------Select Hotel---------</option>
                             @foreach ($hotels as $hotel)
@@ -1049,7 +1050,7 @@
                                                 <td>{{ $room->name }}</td>
                                                 <td>{{ $room->type }}</td>
                                                 <td>{{ $room->available }}</td>
-                                                <td>{{ $room->price }}</td>
+                                                <td>RM{{ $room->price }}</td>
                                                 <td>
                                                     @if ($room->status == 0)
                                                         <a href="{{ url('changeroom-status/' . $room->id) }}"

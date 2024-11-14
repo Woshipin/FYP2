@@ -471,7 +471,207 @@
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    {{-- AI Chat Bot CSS --}}
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            /* Keeping the original color */
+            --secondary-color: #F5F7FA;
+            --text-color: #333333;
+            --border-radius: 16px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Keeping the button styles unchanged */
+        .chatbox__button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            /* background-color: var(--primary-color); */
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .chatbox__button:hover {
+            transform: scale(1.1);
+        }
+
+        .chatbox__button img {
+            width: 30px;
+            height: 30px;
+        }
+
+        /* Increasing the width of the chat support window */
+        .chatbox__support {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 450px;
+            /* Increased from 350px */
+            height: 550px;
+            /* Slightly increased for better proportion */
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .chatbox--active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        /* Keeping the header styles unchanged */
+        .chatbox__header {
+            background-color: var(--primary-color);
+            padding: 15px 20px;
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+        }
+
+        .chatbox__image--header img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .chatbox__content--header {
+            color: white;
+        }
+
+        .chatbox__heading--header {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .chatbox__description--header {
+            font-size: 12px;
+            margin: 0;
+        }
+
+        /* Increasing padding for messages area */
+        .chatbox__messages {
+            flex-grow: 1;
+            padding: 25px;
+            /* Increased from 20px */
+            overflow-y: auto;
+        }
+
+        /* Keeping the footer styles unchanged */
+        .chatbox__footer {
+            padding: 10px 20px;
+            background-color: var(--secondary-color);
+            border-bottom-left-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+            display: flex;
+        }
+
+        #chat-input {
+            flex-grow: 1;
+            border: none;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        #chat-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+
+        .chatbox__send--footer {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chatbox__send--footer:hover {
+            background-color: darken(var(--primary-color), 10%);
+        }
+
+        /* Increasing the max-width of message items */
+        .messages__item {
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 85%;
+            /* Increased from 80% */
+            font-size: 14px;
+        }
+
+        .messages__item--visitor {
+            background-color: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .messages__item--operator {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            align-self: flex-start;
+        }
+    </style>
+
+    <script type="importmap">
+    {
+        "imports": {
+        "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+    }
+    </script>
+
     <br><br><br>
+
+    {{-- Test --}}
+    <div class="chatbox">
+        <div class="chatbox__button">
+            <img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat Icon">
+        </div>
+        <div class="chatbox__support">
+            <div class="chatbox__header">
+                <div class="chatbox__image--header">
+                    <img src="chatbot/images/image.png" alt="Chatbot Avatar">
+                </div>
+                <div class="chatbox__content--header">
+                    <h4 class="chatbox__heading--header">SOAR AI Chat Support</h4>
+                    <p class="chatbox__description--header">Ask me anything!</p>
+                </div>
+            </div>
+
+            <div class="chatbox__messages" id="content-box"></div>
+            <div class="chatbox__footer">
+                <input type="text" id="chat-input" placeholder="Write a message...">
+                <button class="chatbox__send--footer" id="send-button">Send</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ##### Breadcumb Area Start ##### -->
     <section class="breadcumb-area bg-img bg-overlay" style="height: 200px;">
@@ -654,7 +854,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     {{-- Final Full Resort Real Time Search, Detection Image and GPS Function --}}
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             var map = null;
             var markers = [];
@@ -931,6 +1131,277 @@
                 }
             });
         });
+    </script> --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var map = null;
+            var markers = [];
+            var userMarker = null;
+            var resorts = @json($resort);
+            var resortRatings = @json($resortRatings);
+
+            console.log('Resorts:', resorts);
+            console.log('Resort Ratings:', resortRatings);
+
+            // 确保 resorts 是一个数组
+            if (!Array.isArray(resorts)) {
+                resorts = [resorts];
+            }
+
+            function initMap() {
+                if (map === null) {
+                    map = L.map('map').setView([4.2105, 101.9758], 7);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                }
+            }
+
+            function updateMapMarkers(resorts) {
+                if (map === null) {
+                    console.error('Map not initialized');
+                    return;
+                }
+
+                markers.forEach(function(marker) {
+                    if (marker !== userMarker) {
+                        map.removeLayer(marker);
+                    }
+                });
+                markers = markers.filter(marker => marker !== userMarker);
+
+                if (Array.isArray(resorts)) {
+                    resorts.forEach(function(resort) {
+                        if (resort.latitude && resort.longitude && resort.register_status === 1) {
+                            var marker = L.marker([resort.latitude, resort.longitude]).addTo(map)
+                                .bindPopup('<b>' + resort.name + '</b><br>' + resort.location + '<br>' +
+                                    resort.price);
+                            markers.push(marker);
+                        }
+                    });
+                } else {
+                    console.error('Expected an array of resorts but received:', resorts);
+                }
+            }
+
+            function generateStarRating(rating) {
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                        stars += '<i class="fas fa-star" style="color: gold; font-size: 20px;"></i>';
+                    } else if (i - 0.5 <= rating) {
+                        stars += '<i class="fas fa-star-half-alt" style="color: gold; font-size: 20px;"></i>';
+                    } else {
+                        stars += '<i class="far fa-star" style="font-size: 20px; color: black;"></i>';
+                    }
+                }
+                return stars;
+            }
+
+            function updateSearchResults(filteredResorts) {
+                var resultsContainer = $('#searchResultsContainer');
+                resultsContainer.empty();
+
+                if (Array.isArray(filteredResorts) && filteredResorts.length > 0) {
+                    filteredResorts.forEach(function(resort) {
+                        if (resort.register_status === 1) {
+                            var isDisabled = resort.status === 1;
+                            const resortId = resort.id;
+                            var resortName = resort.name;
+                            var resortLocation = resort.location;
+                            var resortState = resort.state;
+                            var resortCountry = resort.country;
+                            var resortDescription = resort.description;
+                            var resortImages = resort.images || [];
+                            var resortRating = resortRatings[resortId] || {
+                                averageRating: 0,
+                                count: 0
+                            };
+
+                            var averageRating = resortRating.averageRating !== undefined && !isNaN(resortRating.averageRating) ? resortRating.averageRating : 0;
+
+                            var imageURL = (resort.image || (resortImages.length > 0 && resortImages[0].image)) ?
+                                "{{ asset('images/') }}/" + (resort.image || resortImages[0].image) :
+                                null;
+
+                            var resortHTML = `
+                                <div class="resort-card ${isDisabled ? 'disabled' : ''}" id="resortcard_${resortId}">
+                                    <div class="resort-image">
+                                        ${imageURL ? `<img src="${imageURL}" alt="${resortName}">` : `
+                                            <div class="no-image-box">
+                                                <span>No Image</span>
+                                            </div>`}
+                                    </div>
+                                    <div class="resort-content">
+                                        <h2 class="resort-title">
+                                            <i class="fas fa-hotel"></i> ${resortName}
+                                        </h2>
+                                        <p class="resort-location">
+                                            <i class="fas fa-map-marker-alt"></i> ${resortLocation}, ${resortState}, ${resortCountry}
+                                        </p>
+                                        <p class="resort-description">
+                                            <i class="fas fa-info-circle"></i> ${resortDescription.length > 100 ? resortDescription.substring(0, 100) + '...' : resortDescription}
+                                        </p>
+                                        <div class="resort-amenities">
+                                            <span><i class="fas fa-swimming-pool"></i> Pool</span>
+                                            <span><i class="fas fa-wifi"></i> Free WiFi</span>
+                                            <span><i class="fas fa-parking"></i> Parking</span>
+                                        </div>
+                                        <div class="resort-rating">
+                                            ${generateStarRating(averageRating)}
+                                            <span>(${averageRating.toFixed(1)})</span>
+                                        </div>
+                                        <div class="resort-actions">
+                                            ${isDisabled ?
+                                                '<button class="btn btn-disabled">Closed</button>' :
+                                                `<div class="actions">
+                                                    <form id="wishlistForm_${resortId}" action="{{ url('/wishlist/add/resort') }}/${resortId}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <button type="submit" id="wishlist" class="btn btn-wishlist">
+                                                            <i class="fas fa-heart"></i> Wishlist
+                                                        </button>
+                                                    </form>
+                                                    <a href="{{ url('Resortdetail/') }}/${resortId}/view" class="btn btn-book" id="viewresort${resortId}">Book Now</a>
+                                                </div>`
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+
+                            resultsContainer.append(resortHTML);
+                        }
+                    });
+                } else {
+                    resultsContainer.html('<p class="no-results">No Resorts Found</p>');
+                }
+            }
+
+            function performSearch() {
+                var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
+                var filteredResorts = resorts.filter(function(resort) {
+                    return resort.name.toLowerCase().includes(searchInputValue) ||
+                        resort.country.toLowerCase().includes(searchInputValue) ||
+                        resort.state.toLowerCase().includes(searchInputValue) ||
+                        resort.location.toLowerCase().includes(searchInputValue) ||
+                        resort.description.toLowerCase().includes(searchInputValue);
+                });
+
+                updateMapMarkers(filteredResorts);
+                updateSearchResults(filteredResorts);
+            }
+
+            document.getElementById('searchInput').addEventListener('input', function() {
+                performSearch();
+            });
+
+            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                var fileInput = document.getElementById('imageInput');
+                if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                    console.error('No file selected');
+                    return;
+                }
+
+                fetch('{{ route('uploadAndSearch') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Upload and search data:', data);
+
+                        // Display an alert with the detection result
+                        if (Array.isArray(data) && data.length > 0) {
+                            alert('Detected image result: ' + data.length + ' matching resorts found.');
+                        } else {
+                            alert('Detected image result: No matching resorts found.');
+                        }
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.log('No matching resorts found');
+                            updateSearchResults([]); // Update UI to show no results
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error occurred during image upload and search.');
+                        updateSearchResults([]); // Update UI to show error state
+                    });
+            });
+
+            initMap();
+
+            if (Array.isArray(resorts)) {
+                updateMapMarkers(resorts);
+                updateSearchResults(resorts);
+            } else {
+                console.error('resorts is not an array:', resorts);
+            }
+
+            function fetchNearbyResorts(latitude, longitude) {
+                fetch(`/resort-gps-search?latitude=${latitude}&longitude=${longitude}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Nearby resorts data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching nearby resorts:', error);
+                    });
+            }
+
+            // 获取用户位置
+            document.getElementById('getLocationButton').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+
+                        // 添加用户位置标记
+                        if (userMarker) {
+                            map.removeLayer(userMarker);
+                        }
+                        userMarker = L.marker([latitude, longitude]).addTo(map).bindPopup("You are here!").openPopup();
+                        markers.push(userMarker);
+
+                        // 创建地图圆圈
+                        L.circle([latitude, longitude], {
+                            color: 'blue',
+                            fillColor: '#30f',
+                            fillOpacity: 0.2,
+                            radius: 5000 // 5 km radius
+                        }).addTo(map);
+
+                        fetchNearbyResorts(latitude, longitude);
+                        map.setView([latitude, longitude], 13);
+                    });
+                } else {
+                    alert("Geolocation is not supported by this browser.");
+                }
+            });
+        });
     </script>
 
     {{-- Pusher JS Disabled Function --}}
@@ -996,4 +1467,78 @@
             });
         });
     </script>
+
+    {{-- Test --}}
+    {{-- AI Chat Bot --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatButton = document.querySelector('.chatbox__button');
+            const chatSupport = document.querySelector('.chatbox__support');
+            const chatInput = document.getElementById('chat-input');
+            const contentBox = document.getElementById('content-box');
+
+            chatButton.addEventListener('click', function() {
+                chatSupport.classList.toggle('chatbox--active');
+            });
+
+            // We don't define sendMessage here to avoid conflict with the next script
+
+            function addMessage(message, sender) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('messages__item', `messages__item--${sender}`);
+                messageElement.textContent = message;
+                contentBox.appendChild(messageElement);
+                contentBox.scrollTop = contentBox.scrollHeight;
+            }
+        });
+    </script>
+
+    <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+        const API_KEY = "AIzaSyDQVtdIHsPihe5km66Ptiukc7D3UcHr5RY";  // Replace with your API key
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value;
+            if (message.trim() === '') return;
+
+            const contentBox = document.getElementById('content-box');
+            const visitorMessage = document.createElement('div');
+            visitorMessage.className = 'messages__item messages__item--visitor';
+            visitorMessage.textContent = message;
+            contentBox.appendChild(visitorMessage);
+            contentBox.scrollTop = contentBox.scrollHeight;
+
+            input.value = '';
+
+            try {
+                const result = await model.generateContent(message);
+                const response = result.response.text();
+                const operatorMessage = document.createElement('div');
+                operatorMessage.className = 'messages__item messages__item--operator';
+                operatorMessage.textContent = response;
+                contentBox.appendChild(operatorMessage);
+                contentBox.scrollTop = contentBox.scrollHeight;
+            } catch (error) {
+                console.error('Error:', error);
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'messages__item messages__item--error';
+                errorMessage.textContent = 'Error: ' + error.message;
+                contentBox.appendChild(errorMessage);
+                contentBox.scrollTop = contentBox.scrollHeight;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('send-button').addEventListener('click', sendMessage);
+            document.getElementById('chat-input').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+
 @endsection

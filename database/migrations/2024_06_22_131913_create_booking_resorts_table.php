@@ -26,6 +26,7 @@ return new class extends Migration
             $table->time('checkout_time');
             $table->string('verify_code')->nullable();
             $table->unsignedTinyInteger('payment_status')->default(0);
+            $table->string('payment_method')->nullable(); // 删除了 "->after('total_price')"
             $table->unsignedDecimal('deposit_price', 10, 2)->default(0);
             $table->unsignedDecimal('total_price', 10, 2)->default(0);
             $table->string('card_number')->nullable();
@@ -34,6 +35,7 @@ return new class extends Migration
             $table->unsignedSmallInteger('card_year');
             $table->string('cvv')->nullable();
             $table->integer('popular_count')->default(0);
+            $table->uuid('booking_uuid')->nullable()->unique()->after('id');
             $table->timestamps();
 
             // 添加索引

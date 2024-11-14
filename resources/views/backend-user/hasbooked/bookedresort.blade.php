@@ -226,7 +226,7 @@
                                                     value="{{ $resort->id }}"></td>
                                             <td>{{ $resort->user_name }}</td>
                                             <td>{{ $resort->resort_name }}</td>
-                                            <td>{{ $resort->resort->price }}</td>
+                                            <td>RM{{ $resort->resort->price }}</td>
                                             <td>{{ \Carbon\Carbon::parse($resort->booking_date)->format('j F Y (l)') }}
                                             </td>
                                             <td>{{ \Carbon\Carbon::parse($resort->checkin_time)->format('g:i A') }}</td>

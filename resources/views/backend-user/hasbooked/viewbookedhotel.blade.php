@@ -1,7 +1,8 @@
-@extends('backend-user.newlayout')
+<!DOCTYPE html>
+<html>
 
-@section('newuser-section')
-    <title>Booked Hotel Invoice</title>
+<head>
+    <title>Booked Hotel Verification</title>
 
     <style>
         body {
@@ -79,66 +80,90 @@
         }
     </style>
 
-    <div class="invoice">
-        <h2>Booked Hotel Detail</h2>
-        <div class="details">
-            <p>User Name: <span>{{ $bookedhotels->user_name }}</span></p>
-            <p>Hotel Name: <span>{{ $bookedhotels->hotel_name }}</span></p>
-            <p>Date: <span>{{ \Carbon\Carbon::parse($bookedhotels->booking_date)->format('j F Y (l)') }}</span></p>
-            <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($bookedhotels->checkin_time)->format('g:i A') }}</span></p>
-            <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($bookedhotels->checkout_time)->format('g:i A') }}</span></p>
-            @if ($bookedhotels->hotel)
-                <!-- Check if the hotel relationship exists -->
-                <p>Address: <span>{{ $bookedhotels->hotel->address }}</span></p>
-                <p>State: <span>{{ $bookedhotels->hotel->state }}</span></p>
-                <p>Country: <span>{{ $bookedhotels->hotel->country }}</span></p>
-            @endif
-        </div>
-        <div class="items">
-            <table>
-                <tr>
-                    <th>Room Name</th>
-                    <th>Room Type</th>
-                    <th>Quantity</th>
-                </tr>
-                @if ($bookedhotels->room)
-                    <!-- Check if room relationship exists -->
-                    <tr>
-                        <td>{{ $bookedhotels->room->name }}</td>
-                        <td>{{ $bookedhotels->room->type }}</td>
-                        <td>{{ $bookedhotels->quantity }}</td>
-                    </tr>
+<body>
+    @if (isset($VerifyHotel))
+        <div class="invoice">
+            <h2>Booked Hotel Detail</h2>
+            <div class="details">
+                <p>User Name: <span>{{ $VerifyHotel->user_name }}</span></p>
+                <p>Hotel Name: <span>{{ $VerifyHotel->hotel_name }}</span></p>
+                <p>Booking Days: <span>{{ $VerifyHotel->booking_days }} day</span></p>
+                <p>Check-In-Date: <span>{{ \Carbon\Carbon::parse($VerifyHotel->checkin_date)->format('j F Y') }}</span></p>
+                <p>Check-Out-Date: <span>{{ \Carbon\Carbon::parse($VerifyHotel->checkout_date)->format('j F Y') }}</span></p>
+                <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($VerifyHotel->checkin_time)->format('g:i A') }}</span></p>
+                <p>Check-Out-Time: <span>{{ \Carbon\Carbon::parse($VerifyHotel->checkout_time)->format('g:i A') }}</span></p>
+                @if ($VerifyHotel->hotel)
+                    <!-- Check if the hotel relationship exists -->
+                    <p>Address: <span>{{ $VerifyHotel->hotel->address }}</span></p>
+                    <p>State: <span>{{ $VerifyHotel->hotel->state }}</span></p>
+                    <p>Country: <span>{{ $VerifyHotel->hotel->country }}</span></p>
                 @endif
-            </table>
-        </div>
-        @if ($bookedhotels->room)
-            <!-- Check if room relationship exists -->
-            <div class="total">
-                <p style="font-weight:bold">Total Price: ${{ $bookedhotels->room->price }}</p>
             </div>
-        @endif
+            <div class="items">
+                <table>
+                    <tr>
+                        <th>Room Name</th>
+                        <th>Room Type</th>
+                        <th>Quantity</th>
+                    </tr>
+                    @if ($VerifyHotel->room)
+                        <!-- Check if room relationship exists -->
+                        <tr>
+                            <td>{{ $VerifyHotel->room->name }}</td>
+                            <td>{{ $VerifyHotel->room->type }}</td>
+                            <td>{{ $VerifyHotel->quantity }}</td>
+                        </tr>
+                    @endif
+                </table>
+            </div>
 
-        <div class="total">
-            <p style="font-weight:bold">Deposit Fee: $100</p>
-        </div>
+            <div class="total">
+                <p style="font-weight:bold">Deposit Fee: RM {{ $VerifyHotel->deposit_price }}</p>
+            </div>
 
-        <div class="footer">
-            <p>Thank you, {{ $bookedhotels->user_name }}
-                @if ($bookedhotels->user)
-                    ({{ $bookedhotels->user->email }}),
-                @endif
-                for your purchase! Enjoy the Hotel!
-            </p>
-
-            @if ($bookedhotels->hotel)
-                <p>If any problem, you can contact phone number ({{ $bookedhotels->hotel->phone }}) or email
-                    ({{ $bookedhotels->hotel->email }}), for your purchase! Enjoy the Hotel!</p>
+            @if ($VerifyHotel->room)
+                <!-- Check if room relationship exists -->
+                <div class="total">
+                    <p style="font-weight:bold">Room Price: RM {{ $VerifyHotel->room->price }}</p>
+                </div>
             @endif
+
+            <div class="total">
+                <p style="font-weight:bold">Total Room Price: RM {{ $VerifyHotel->total_price }}</p>
+            </div>
+
+            <div class="footer">
+                <p>Thank you, {{ $VerifyHotel->user_name }}
+                    @if ($VerifyHotel->user)
+                        ({{ $VerifyHotel->user->email }}),
+                    @endif
+                    for your purchase! Enjoy the Hotel!
+                </p>
+
+                @if ($VerifyHotel->hotel)
+                    <p>If any problem, you can contact phone number ({{ $VerifyHotel->hotel->phone }}) or email
+                        ({{ $VerifyHotel->hotel->email }}), for your purchase! Enjoy the Hotel!</p>
+                @endif
+            </div>
+
+            <a href="{{ url('/download-bookedhotel-pdf/' . $VerifyHotel->id) }}" class="btn btn-info btn-sm"><i
+                    class="fas fa-file-pdf"></i>&nbsp;Download</a>
+
+            <a href="{{ url('mybookingshotel') }}" class="btn btn-success btn-sm"><i
+                    class="fas fa-file-pdf"></i>&nbsp;Continue</a>
+
         </div>
+    @else
+        <p>No valid hotel found for the scanned QR code.</p>
+    @endif
 
-        <a href="{{ url('/download-bookedhotel-pdf/' . $bookedhotels->id) }}" class="btn btn-info btn-sm"><i
-                class="fas fa-file-pdf"></i>&nbsp;Download</a>
+    <script>
+        // Check if the verification is successful and show an alert
+        @if (isset($VerifyHotel))
+            alert('Verification Hotel complete!');
+        @endif
+    </script>
 
-    </div>
-    
-@endsection
+</body>
+
+</html>

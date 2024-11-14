@@ -1,8 +1,7 @@
 @extends('admin.layout')
 
 @section('admin-section')
-
-    <br><br><br><br><br><br><br><br><br>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
@@ -10,39 +9,45 @@
         body {
             font-family: 'Nunito', sans-serif;
             margin: 0;
+            display: flex;
+            justify-content: center;
             align-items: center;
             min-height: 100vh;
             color: var(--text-color);
+            background: var(--bg-color);
+            transition: background-color 0.5s, color 0.5s;
         }
 
         .container {
-            width: 100%;
-            max-width: 1200px;
+            width: 95%;
+            max-width: 1400px;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            padding: 30px 20px;
+            padding: 20px;
             background: var(--bg-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.5s, color 0.5s;
             position: relative;
-            margin-top: -150px;
+            margin: 20px auto;
+            overflow-x: auto;
         }
 
         h3 {
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 26px;
+            margin-bottom: 20px;
+            font-size: 24px;
             font-weight: 700;
         }
 
         .wallet-card-container {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .wallet-card {
-            flex: 1;
-            margin: 0 10px;
+            flex: 1 1 calc(33.333% - 20px);
+            margin: 10px;
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -52,7 +57,7 @@
             position: relative;
             overflow: hidden;
             background: var(--wallet-bg-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.5s, color 0.5s;
         }
 
         .wallet-card.grey-color {
@@ -75,49 +80,53 @@
         }
 
         .wallet-card .info .title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
         }
 
         .wallet-card .info .amount {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             margin-top: 10px;
         }
 
         .wallet-card .icon {
-            font-size: 40px;
+            font-size: 30px;
             opacity: 0.8;
         }
 
         .wallet-card .icon-background {
             position: absolute;
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             filter: blur(20px);
             border-radius: 50%;
-            top: -40px;
-            right: -40px;
+            top: -30px;
+            right: -30px;
             transform: rotate(45deg);
             z-index: 0;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 30px;
+            margin-top: 20px;
+            font-size: 14px;
         }
 
-        table,
-        th,
-        td {
+        table, th, td {
             border: 1px solid #747598;
         }
 
-        th,
-        td {
+        th, td {
             padding: 10px;
+            padding-right: 20px; /* 使表格中的文本稍微靠右一点 */
             text-align: left;
+            white-space: nowrap;
         }
 
         th {
@@ -134,23 +143,22 @@
 
         .toggle-btn {
             position: absolute;
-            top: 10%;
-            right: 20px;
-            transform: translateY(-50%);
+            top: 10px;
+            right: 10px;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.5s, color 0.5s;
         }
 
         .toggle-btn i {
             margin-right: 8px;
-            font-size: 20px;
+            font-size: 16px;
         }
 
         .dark-mode {
@@ -184,8 +192,100 @@
         .night {
             color: var(--text-color);
         }
+
+        @media (max-width: 768px) {
+            .wallet-card {
+                flex: 1 1 calc(50% - 20px);
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h3 {
+                font-size: 20px;
+            }
+
+            .wallet-card .info .title {
+                font-size: 12px;
+            }
+
+            .wallet-card .info .amount {
+                font-size: 18px;
+            }
+
+            .wallet-card .icon {
+                font-size: 24px;
+            }
+
+            .wallet-card .icon-background {
+                width: 80px;
+                height: 80px;
+                top: -20px;
+                right: -20px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            .toggle-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .toggle-btn i {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .wallet-card {
+                flex: 1 1 100%;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            h3 {
+                font-size: 18px;
+            }
+
+            .wallet-card .info .title {
+                font-size: 10px;
+            }
+
+            .wallet-card .info .amount {
+                font-size: 16px;
+            }
+
+            .wallet-card .icon {
+                font-size: 20px;
+            }
+
+            .wallet-card .icon-background {
+                width: 60px;
+                height: 60px;
+                top: -10px;
+                right: -10px;
+            }
+
+            table {
+                font-size: 10px;
+            }
+
+            .toggle-btn {
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+
+            .toggle-btn i {
+                font-size: 12px;
+            }
+        }
     </style>
-    
+
     <div class="container">
         <h3>Admin Wallet Dashboard</h3>
 
@@ -219,36 +319,37 @@
                 </div>
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th class="night">ID</th>
-                        <th class="night">Balance</th>
-                        <th class="night">Tax</th>
-                        <th class="night">User Deposit</th>
-                        <th class="night">Transfer Balance To Owner</th>
-                        <th class="night">Transfer Deposit To Owner</th>
-                        <th class="night">Transfer Date</th>
-                        <th class="night">Transfer Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($adminwallets as $wallet)
+            <div class="table-responsive">
+                <table>
+                    <thead>
                         <tr>
-                            <td class="night" style="padding-left: 10px">{{ $wallet->id }}</td>
-                            <td class="night" style="padding-left: 10px">RM{{ $wallet->balance }}</td>
-                            <td class="night" style="padding-left: 10px">RM{{ $wallet->tax }}</td>
-                            <td class="night" style="padding-left: 10px">RM{{ $wallet->user_deposit }}</td>
-                            <td class="night" style="padding-left: 10px">RM{{ $wallet->refund_user_balance }}</td>
-                            <td class="night" style="padding-left: 10px">RM{{ $wallet->refund_user_deposit }}</td>
-                            <td class="night" style="padding-left: 10px">{{ \Carbon\Carbon::parse($wallet->created_at)->format('Y-m-d') }}</td>
-                            <td class="night" style="padding-left: 10px">{{ \Carbon\Carbon::parse($wallet->updated_at)->format('H:i:s') }}</td>
+                            <th class="night">ID</th>
+                            <th class="night">Balance</th>
+                            <th class="night">Tax</th>
+                            <th class="night">User Deposit</th>
+                            <th class="night">Transfer Balance To Owner</th>
+                            <th class="night">Transfer Deposit To Owner</th>
+                            <th class="night">Transfer Date</th>
+                            <th class="night">Transfer Time</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($adminwallets as $wallet)
+                            <tr>
+                                <td class="night">{{ $wallet->id }}</td>
+                                <td class="night">RM{{ $wallet->balance }}</td>
+                                <td class="night">RM{{ $wallet->tax }}</td>
+                                <td class="night">RM{{ $wallet->user_deposit }}</td>
+                                <td class="night">RM{{ $wallet->refund_user_balance }}</td>
+                                <td class="night">RM{{ $wallet->refund_user_deposit }}</td>
+                                <td class="night">{{ \Carbon\Carbon::parse($wallet->created_at)->format('Y-m-d') }}</td>
+                                <td class="night">{{ \Carbon\Carbon::parse($wallet->updated_at)->format('H:i:s') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-            <!-- 分页链接 -->
             <div class="d-flex justify-content-center mt-4">
                 {{ $adminwallets->links() }}
             </div>
@@ -290,6 +391,7 @@
                 }
                 body.classList.toggle('dark-mode', className === 'dark-mode');
                 body.classList.toggle('light-mode', className === 'light-mode');
+                localStorage.setItem('mode', className);
             }
 
             toggleBtn.addEventListener("click", function() {

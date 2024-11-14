@@ -1,222 +1,40 @@
-{{-- @extends('backend-user.newlayout')
-
-@section('newuser-section')
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
-
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: #59596f;
-            margin-top: 30px;
-            margin-bottom: 30px;
-        }
-
-        span {
-            color: white;
-        }
-
-        .container {
-            overflow: hidden;
-            border-radius: 30px;
-            width: 300px;
-            height: 650px;
-            background: linear-gradient(to right, #202140, #2D2E48);
-        }
-
-        i.logo {
-            color: #c0c4df;
-        }
-
-        span.account-label {
-            font-size: 14px;
-            color: #747598;
-            font-weight: 700;
-        }
-
-        span.balance {
-            font-size: 30px;
-            color: #f5f4f1;
-            font-weight: 600;
-        }
-
-        div.rounded-border {
-            border: 6px solid transparent;
-            background-origin: border-box;
-            background-clip: padding-box, border-box;
-            border-radius: 30px;
-            position: relative;
-        }
-
-        .grey-color {
-            background-image: linear-gradient(to top right, #181930 50%, #3b3c58), linear-gradient(145deg, transparent 75%, #3b4065);
-        }
-
-        .plain-color {
-            z-index: 1;
-            background-image: linear-gradient(to top right, #181930 50%, #3b3c58);
-        }
-
-        .green-color {
-            background-image: linear-gradient(to top right, #181930 50%, #3b3c58), linear-gradient(145deg, transparent 75%, #00c6c4);
-        }
-
-        .yellow-color {
-            background-image: linear-gradient(to top right, #181930 50%, #3b3c58), linear-gradient(220deg, transparent 75%, #f5b300);
-        }
-
-        .yellow-color::before {
-            left: -48px;
-            bottom: -48px;
-            transform: rotate(-45deg);
-            content: '';
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background: conic-gradient(#00c6c40f 0 12.5%, #f5b300af 0 37.5%, #f5b4000f 0 100%);
-            filter: blur(15px);
-        }
-
-        .green-color::before {
-            right: -98px;
-            bottom: -68px;
-            transform: rotate(225deg);
-            content: '';
-            position: absolute;
-            width: 170px;
-            height: 170px;
-            background: conic-gradient(#00c6c40f 0 12.5%, #00c6c4af 0 37.5%, #00c6c40f 0 100%);
-            filter: blur(30px);
-        }
-
-        span.currency-name {
-            font-size: 16px;
-            color: #f5f4f1;
-            letter-spacing: 1px;
-        }
-
-        span.currency-value {
-            font-size: 10px;
-            font-weight: 700;
-            color: #747598;
-        }
-
-        i.bitcoin {
-            color: #f5b300;
-        }
-
-        i.ethereum {
-            color: #878FAF;
-        }
-
-        i.ripple {
-            color: #00C6C4;
-        }
-
-        div.menu>i {
-            color: #494b64;
-            font-size: 1.3em;
-        }
-
-        div.menu>i.active {
-            color: #c0c4df;
-            border-bottom: 4px solid #c0c4df;
-            border-radius: 3px;
-            padding-bottom: 20px;
-        }
-    </style>
-
-    <div class="container">
-
-        <div class="d-flex flex-row pt-5">
-            <i class="fab fa-affiliatetheme logo"></i>
-        </div>
-
-        <h3 style="color: white">{{ $user->name }}'s Wallet</h3>
-
-        @if ($wallet)
-            <div class="mt-4 d-flex flex-column rounded-border grey-color py-4 px-3">
-                <span class="account-label">My Account</span>
-                <span class="balance">RM{{ $wallet->balance ?? '0.00' }}</span>
-            </div>
-
-            <div class="mt-2 d-flex flex-row justify-content-between rounded-border yellow-color px-3 py-4">
-                <div class="d-flex flex-column">
-                    <span class="currency-name">Profit</span>
-                </div>
-                <div class="d-flex flex-column align-items-end">
-                    <span>RM{{ $wallet->profit ?? '0.00' }}</span>
-                </div>
-            </div>
-
-            <div class="mt-2 d-flex flex-row justify-content-between rounded-border plain-color px-3 py-4">
-                <div class="d-flex flex-column">
-                    <span class="currency-name">Refund Price</span>
-                </div>
-                <div class="d-flex flex-column align-items-end">
-                    <span>RM{{ $wallet->refund_price ?? '0.00' }}</span>
-                </div>
-            </div>
-
-            <div class="mt-2 d-flex flex-row justify-content-between rounded-border green-color px-3 py-4">
-                <div class="d-flex flex-column">
-                    <span class="currency-name">Refund Deposit</span>
-                </div>
-                <div class="d-flex flex-column align-items-end">
-                    <span>RM{{ $wallet->refund_deposit ?? '0.00' }}</span>
-                </div>
-            </div>
-        @else
-            <p>Wallet information is not available.</p>
-        @endif
-
-    </div>
-@endsection --}}
-
 @extends('backend-user.newlayout')
 
 @section('newuser-section')
 
-    <br><br><br><br><br><br>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
 
-        body {
-            font-family: 'Nunito', sans-serif;
-            margin: 0;
-            align-items: center;
-            min-height: 100vh;
-            color: var(--text-color);
-        }
-
         .container {
-            width: 100%;
-            max-width: 1200px;
+            width: 95%;
+            max-width: 1400px;
             border-radius: 15px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            padding: 30px 20px;
+            padding: 20px;
             background: var(--bg-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.5s, color 0.5s;
             position: relative;
-            margin-top: -150px;
+            margin: 20px auto;
+            overflow-x: auto;
         }
 
         h3 {
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 26px;
+            margin-bottom: 20px;
+            font-size: 24px;
             font-weight: 700;
         }
 
         .wallet-card-container {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         .wallet-card {
-            flex: 1;
-            margin: 0 10px;
+            flex: 1 1 calc(33.333% - 20px);
+            margin: 10px;
             border-radius: 15px;
             padding: 20px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -226,7 +44,7 @@
             position: relative;
             overflow: hidden;
             background: var(--wallet-bg-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.5s, color 0.5s;
         }
 
         .wallet-card.grey-color {
@@ -249,49 +67,52 @@
         }
 
         .wallet-card .info .title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
         }
 
         .wallet-card .info .amount {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 700;
             margin-top: 10px;
         }
 
         .wallet-card .icon {
-            font-size: 40px;
+            font-size: 30px;
             opacity: 0.8;
         }
 
         .wallet-card .icon-background {
             position: absolute;
-            width: 120px;
-            height: 120px;
+            width: 100px;
+            height: 100px;
             filter: blur(20px);
             border-radius: 50%;
-            top: -40px;
-            right: -40px;
+            top: -30px;
+            right: -30px;
             transform: rotate(45deg);
             z-index: 0;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 30px;
+            margin-top: 20px;
+            font-size: 14px;
         }
 
-        table,
-        th,
-        td {
+        table, th, td {
             border: 1px solid #747598;
         }
 
-        th,
-        td {
+        th, td {
             padding: 10px;
             text-align: left;
+            white-space: nowrap;
         }
 
         th {
@@ -308,23 +129,22 @@
 
         .toggle-btn {
             position: absolute;
-            top: 10%;
-            right: 20px;
-            transform: translateY(-50%);
+            top: 10px;
+            right: 10px;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 20px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
             display: flex;
             align-items: center;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.5s, color 0.5s;
         }
 
         .toggle-btn i {
             margin-right: 8px;
-            font-size: 20px;
+            font-size: 16px;
         }
 
         .dark-mode {
@@ -357,6 +177,98 @@
 
         .night {
             color: var(--text-color);
+        }
+
+        @media (max-width: 768px) {
+            .wallet-card {
+                flex: 1 1 calc(50% - 20px);
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            h3 {
+                font-size: 20px;
+            }
+
+            .wallet-card .info .title {
+                font-size: 12px;
+            }
+
+            .wallet-card .info .amount {
+                font-size: 18px;
+            }
+
+            .wallet-card .icon {
+                font-size: 24px;
+            }
+
+            .wallet-card .icon-background {
+                width: 80px;
+                height: 80px;
+                top: -20px;
+                right: -20px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            .toggle-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+
+            .toggle-btn i {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .wallet-card {
+                flex: 1 1 100%;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            h3 {
+                font-size: 18px;
+            }
+
+            .wallet-card .info .title {
+                font-size: 10px;
+            }
+
+            .wallet-card .info .amount {
+                font-size: 16px;
+            }
+
+            .wallet-card .icon {
+                font-size: 20px;
+            }
+
+            .wallet-card .icon-background {
+                width: 60px;
+                height: 60px;
+                top: -10px;
+                right: -10px;
+            }
+
+            table {
+                font-size: 10px;
+            }
+
+            .toggle-btn {
+                padding: 4px 8px;
+                font-size: 10px;
+            }
+
+            .toggle-btn i {
+                font-size: 12px;
+            }
         }
     </style>
 
@@ -393,30 +305,31 @@
                 </div>
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th class="night">ID</th>
-                        <th class="night">Profit</th>
-                        <th class="night">My Deposit</th>
-                        <th class="night">Transfer Date</th>
-                        <th class="night">Transfer Time</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($adminwallets as $wallet)
+            <div class="table-responsive">
+                <table>
+                    <thead>
                         <tr>
-                            <td class="night" style="padding-left: 10px">{{ $wallet->id }}</td>
-                            <td class="night" style="padding-left: 10px">RM{{ $wallet->refund_user_balance }}</td>
-                            <td class="night" style="padding-left: 10px">RM{{ $wallet->refund_user_deposit }}</td>
-                            <td class="night" style="padding-left: 10px">{{ \Carbon\Carbon::parse($wallet->created_at)->format('Y-m-d') }}</td>
-                            <td class="night" style="padding-left: 10px">{{ \Carbon\Carbon::parse($wallet->updated_at)->format('H:i:s') }}</td>
+                            <th class="night">ID</th>
+                            <th class="night">Profit</th>
+                            <th class="night">My Deposit</th>
+                            <th class="night">Transfer Date</th>
+                            <th class="night">Transfer Time</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($adminwallets as $wallet)
+                            <tr>
+                                <td class="night">{{ $wallet->id }}</td>
+                                <td class="night">RM{{ $wallet->refund_user_balance }}</td>
+                                <td class="night">RM{{ $wallet->refund_user_deposit }}</td>
+                                <td class="night">{{ \Carbon\Carbon::parse($wallet->created_at)->format('Y-m-d') }}</td>
+                                <td class="night">{{ \Carbon\Carbon::parse($wallet->updated_at)->format('H:i:s') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-            <!-- 分页链接 -->
             <div class="d-flex justify-content-center mt-4">
                 {{ $adminwallets->links() }}
             </div>
@@ -458,6 +371,7 @@
                 }
                 body.classList.toggle('dark-mode', className === 'dark-mode');
                 body.classList.toggle('light-mode', className === 'light-mode');
+                localStorage.setItem('mode', className);
             }
 
             toggleBtn.addEventListener("click", function() {

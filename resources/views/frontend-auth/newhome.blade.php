@@ -581,153 +581,6 @@
         }
     </style>
 
-    {{-- AI Chat Bot CSS --}}
-    <style>
-        *,
-        html {
-            --primaryGradient: linear-gradient(93.12deg, #581B98 0.52%, #9C1DE7 100%);
-            --secondaryGradient: linear-gradient(268.91deg, #581B98 -2.14%, #9C1DE7 99.69%);
-            --primaryBoxShadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
-            --secondaryBoxShadow: 0px -10px 15px rgba(0, 0, 0, 0.1);
-            --light: 300;
-            --regular: 400;
-            --semiBold: 600;
-            --extraLight: 300;
-            --italic: 300;
-            --primary: #581B98;
-            --botResponse: #00FFFF;
-            --visitorMessage: #581B98;
-            --visitorTextColor: #FFFFFF;
-        }
-
-        .chatbox__support {
-            background: #f9f9f9;
-            height: 600px;
-            width: 500px;
-            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            position: fixed;
-            bottom: 90px;
-            right: 30px;
-            display: none;
-            z-index: 9999;
-            flex-direction: column;
-        }
-
-        .chatbox--active {
-            display: flex;
-        }
-
-        .chatbox__header {
-            background: var(--primaryGradient);
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: center;
-            padding: 15px 20px;
-            border-top-left-radius: 20px;
-            border-top-right-radius: 20px;
-            box-shadow: var(--primaryBoxShadow);
-        }
-
-        .chatbox__image--header {
-            margin-right: 0px;
-        }
-
-        .chatbox__heading--header {
-            font-size: 1.2rem;
-            color: white;
-        }
-
-        .chatbox__description--header {
-            font-size: .9rem;
-            color: white;
-        }
-
-        .chatbox__messages {
-            padding: 20px;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-
-        .messages__item {
-            margin-top: 10px;
-            padding: 8px 12px;
-            max-width: 70%;
-            border-radius: 20px;
-            word-wrap: break-word;
-        }
-
-        .messages__item--visitor {
-            align-self: flex-end;
-            background: var(--visitorMessage);
-            color: var(--visitorTextColor);
-            border-top-left-radius: 20px;
-            border-bottom-left-radius: 20px;
-        }
-
-        .messages__item--operator {
-            align-self: flex-start;
-            background: var(--botResponse);
-            color: black;
-            border-top-right-radius: 20px;
-            border-bottom-right-radius: 20px;
-        }
-
-        .chatbox__footer {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            border-bottom-right-radius: 10px;
-            border-bottom-left-radius: 10px;
-            background: #f9f9f9;
-            box-shadow: var(--secondaryBoxShadow);
-        }
-
-        .chatbox__footer img {
-            width: 24px;
-            height: 24px;
-            margin: 0 10px;
-            cursor: pointer;
-        }
-
-        .chatbox__footer input {
-            flex-grow: 1;
-            border: none;
-            padding: 10px;
-            border-radius: 30px;
-            margin-right: 10px;
-        }
-
-        .chatbox__send--footer {
-            color: white;
-            background: #581B98;
-            padding: 10px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .chatbox__button {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 10000;
-        }
-
-        .chatbox__button button {
-            padding: 10px;
-            background: white;
-            border: none;
-            outline: none;
-            border-radius: 50%;
-            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-    </style>
-
     {{-- More CSS --}}
     <style>
         /* =========== Discount ============ */
@@ -1334,62 +1187,233 @@
         }
     </style>
 
+    {{-- AI Chat Bot CSS --}}
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            /* Keeping the original color */
+            --secondary-color: #F5F7FA;
+            --text-color: #333333;
+            --border-radius: 16px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Keeping the button styles unchanged */
+        .chatbox__button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            /* background-color: var(--primary-color); */
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .chatbox__button:hover {
+            transform: scale(1.1);
+        }
+
+        .chatbox__button img {
+            width: 30px;
+            height: 30px;
+        }
+
+        /* Increasing the width of the chat support window */
+        .chatbox__support {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 450px;
+            /* Increased from 350px */
+            height: 550px;
+            /* Slightly increased for better proportion */
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .chatbox--active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        /* Keeping the header styles unchanged */
+        .chatbox__header {
+            background-color: var(--primary-color);
+            padding: 15px 20px;
+            border-top-left-radius: var(--border-radius);
+            border-top-right-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+        }
+
+        .chatbox__image--header img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .chatbox__content--header {
+            color: white;
+        }
+
+        .chatbox__heading--header {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .chatbox__description--header {
+            font-size: 12px;
+            margin: 0;
+        }
+
+        /* Increasing padding for messages area */
+        .chatbox__messages {
+            flex-grow: 1;
+            padding: 25px;
+            /* Increased from 20px */
+            overflow-y: auto;
+        }
+
+        /* Keeping the footer styles unchanged */
+        .chatbox__footer {
+            padding: 10px 20px;
+            background-color: var(--secondary-color);
+            border-bottom-left-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+            display: flex;
+        }
+
+        #chat-input {
+            flex-grow: 1;
+            border: none;
+            background-color: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        #chat-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--primary-color);
+        }
+
+        .chatbox__send--footer {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 20px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .chatbox__send--footer:hover {
+            background-color: darken(var(--primary-color), 10%);
+        }
+
+        /* Increasing the max-width of message items */
+        .messages__item {
+            margin-bottom: 10px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            max-width: 85%;
+            /* Increased from 80% */
+            font-size: 14px;
+        }
+
+        .messages__item--visitor {
+            background-color: var(--primary-color);
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+
+        .messages__item--operator {
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            align-self: flex-start;
+        }
+    </style>
+
+    <script type="importmap">
+    {
+        "imports": {
+        "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+    }
+    </script>
+
     {{-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"> --}}
 
     {{-- ------------------------------------------------------- CSS Area End ------------------------------------------------------ --}}
 
     {{-- AI Chat Bot --}}
-    <div class="container">
-        <div class="chatbox">
-            <div class="chatbox__support">
-                <div class="chatbox__header">
-                    <div class="chatbox__image--header">
-                        <img src="chatbot/images/image.png" alt="image">
-                    </div>
-                    <div class="chatbox__content--header">
-                        <h4 class="chatbox__heading--header">Chat support</h4>
-                        <p class="chatbox__description--header">Ask us anything about our services</p>
-                    </div>
-                </div>
-                <div class="chatbox__messages" id="content-box"></div>
-                <div class="chatbox__footer">
-                    <input type="text" id="chat-input" placeholder="Write a message...">
-                    <p class="chatbox__send--footer" onclick="sendMessage()">Send</p>
-                </div>
-            </div>
-            <div class="chatbox__button">
-                <button>
-                    <img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat">
-                </button>
-            </div>
+    {{-- Good Chat bot --}}
+    {{-- <div class="chatbox">
+        <div class="chatbox__button">
+            <img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat Icon">
         </div>
-    </div>
-
-    {{-- <div class="container">
-        <div class="chatbox">
-            <div class="chatbox__support">
-                <div class="chatbox__header">
-                    <div class="chatbox__image--header">
-                        <img src="chatbot/images/image.png" alt="image">
-                    </div>
-                    <div class="chatbox__content--header">
-                        <h4 class="chatbox__heading--header">Chat support</h4>
-                        <p class="chatbox__description--header">Ask us anything about our services</p>
-                    </div>
+        <div class="chatbox__support">
+            <div class="chatbox__header">
+                <div class="chatbox__image--header">
+                    <img src="chatbot/images/image.png" alt="Chatbot Avatar">
                 </div>
-                <div class="chatbox__messages" id="content-box"></div>
-                <div class="chatbox__footer">
-                    <input type="text" id="chat-input" placeholder="Write a message...">
-                    <p class="chatbox__send--footer" onclick="sendMessage()">Send</p>
+                <div class="chatbox__content--header">
+                    <h4 class="chatbox__heading--header">SOAR AI Chat Support</h4>
+                    <p class="chatbox__description--header">Ask me anything!</p>
                 </div>
             </div>
-            <div class="chatbox__button">
-                <button>
-                    <img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat">
-                </button>
+
+            <div class="chatbox__messages" id="content-box"></div>
+            <div class="chatbox__footer">
+                <input type="text" id="chat-input" placeholder="Write a message...">
+                <button class="chatbox__send--footer" id="send-button">Send</button>
             </div>
         </div>
     </div> --}}
+
+    {{-- Test --}}
+    <div class="chatbox">
+        <div class="chatbox__button">
+            <img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat Icon">
+        </div>
+        <div class="chatbox__support">
+            <div class="chatbox__header">
+                <div class="chatbox__image--header">
+                    <img src="chatbot/images/image.png" alt="Chatbot Avatar">
+                </div>
+                <div class="chatbox__content--header">
+                    <h4 class="chatbox__heading--header">SOAR AI Chat Support</h4>
+                    <p class="chatbox__description--header">Ask me anything!</p>
+                </div>
+            </div>
+            <div class="chatbox__messages" id="content-box"></div>
+            <div class="chatbox__footer">
+                <input type="text" id="chat-input" placeholder="Write a message...">
+                <button class="chatbox__send--footer" id="send-button">Send</button>
+            </div>
+        </div>
+    </div>
 
     {{-- Scroll Reveal effect  --}}
     <!-- Home Section Starts -->
@@ -2485,22 +2509,6 @@
 
     {{-- Scroll Reveal Effect From Resort To Restaurant --}}
     <script>
-        // 初始化度假村的 Swiper
-        // function initResortSwiper() {
-        //     var resortSwiper = new Swiper('#resort-room .room-slider', {
-        //         loop: true, // 启用循环
-        //         slidesPerView: 1, // 每次显示一张幻灯片
-        //         pagination: {
-        //             el: '#resort-room .swiper-pagination', // 分页容器
-        //             clickable: true, // 启用可点击的分页指示点
-        //         },
-        //         autoplay: {
-        //             delay: 2000, // 幻灯片之间的切换延迟（以毫秒为单位）
-        //             disableOnInteraction: false, // 用户交互后是否禁用自动播放
-        //         },
-        //     });
-        // }
-
         function initResortSwiper() {
             var resortSwiper = new Swiper('#resort-room .room-slider', {
                 loop: true, // Enable loop mode
@@ -2592,169 +2600,48 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="path/to/slick.min.js"></script>
 
-    {{-- Chat Bot --}}
+    {{-- AI Chat Bot --}}
     <script>
-        class InteractiveChatbox { // 定义交互式聊天框类
-            constructor(button, chatbox, icons) { // 构造函数，接收按钮、聊天框和图标参数
-                this.button = button; // 按钮元素
-                this.chatbox = chatbox; // 聊天框元素
-                this.icons = icons; // 图标对象
-                this.state = false; // 初始状态为关闭
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatButton = document.querySelector('.chatbox__button');
+            const chatSupport = document.querySelector('.chatbox__support');
+            const chatInput = document.getElementById('chat-input');
+            const contentBox = document.getElementById('content-box');
 
-            display() { // 显示聊天框方法
-                this.button.addEventListener('click', () => this.toggleState()); // 监听按钮点击事件
-            }
-
-            toggleState() { // 切换状态方法
-                this.state = !this.state; // 状态取反
-                this.showOrHideChatBox(); // 调用显示或隐藏聊天框方法
-            }
-
-            showOrHideChatBox() { // 显示或隐藏聊天框方法
-                if (this.state) { // 如果状态为打开
-                    this.chatbox.classList.add('chatbox--active'); // 添加活动类
-                    this.toggleIcon(true); // 切换图标为打开状态
-                } else { // 否则
-                    this.chatbox.classList.remove('chatbox--active'); // 移除活动类
-                    this.toggleIcon(false); // 切换图标为关闭状态
-                }
-            }
-
-            toggleIcon(state) { // 切换图标方法
-                if (state) { // 如果状态为打开
-                    this.button.innerHTML = this.icons.isClicked; // 设置按钮 HTML 为打开图标
-                } else { // 否则
-                    this.button.innerHTML = this.icons.isNotClicked; // 设置按钮 HTML 为关闭图标
-                }
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => { // 文档加载完成后执行
-            const chatButton = document.querySelector('.chatbox__button button'); // 获取聊天框按钮元素
-            const chatContent = document.querySelector('.chatbox__support'); // 获取聊天内容元素
-            const icons = { // 图标对象
-                isClicked: '<img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat">', // 打开状态图标 HTML
-                isNotClicked: '<img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat">' // 关闭状态图标 HTML
-            };
-
-            const chatbox = new InteractiveChatbox(chatButton, chatContent, icons); // 创建聊天框实例
-            chatbox.display(); // 显示聊天框
-
-            // 确保页面加载时聊天框关闭
-            chatbox.state = false; // 将状态设为关闭
-            chatbox.showOrHideChatBox(); // 显示或隐藏聊天框
-
-            const inputField = document.getElementById('chat-input'); // 获取输入框元素
-            inputField.addEventListener('keypress', function(event) { // 监听输入框按键事件
-                if (event.key === 'Enter') { // 如果按下的是回车键
-                    sendMessage(); // 调用发送消息方法
-                }
+            chatButton.addEventListener('click', function() {
+                chatSupport.classList.toggle('chatbox--active');
             });
+
+            // We don't define sendMessage here to avoid conflict with the next script
+
+            function addMessage(message, sender) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('messages__item', `messages__item--${sender}`);
+                messageElement.textContent = message;
+                contentBox.appendChild(messageElement);
+                contentBox.scrollTop = contentBox.scrollHeight;
+            }
         });
-
-        function sendMessage() { // 发送消息方法
-            const input = document.getElementById('chat-input'); // 获取输入框元素
-            const message = input.value; // 获取输入框的值
-
-            if (message.trim() === '') return; // 如果消息为空则返回
-
-            const contentBox = document.getElementById('content-box'); // 获取内容盒子元素
-            const visitorMessage = document.createElement('div'); // 创建访客消息元素
-            visitorMessage.className = 'messages__item messages__item--visitor'; // 添加类名
-            visitorMessage.textContent = message; // 设置文本内容为消息内容
-            contentBox.appendChild(visitorMessage); // 将访客消息元素添加到内容盒子中
-            contentBox.scrollTop = contentBox.scrollHeight; // 滚动内容盒子到底部
-
-            fetch('/chat', { // 发送聊天请求
-                    method: 'POST', // POST 方法
-                    headers: {
-                        'Content-Type': 'application/json', // JSON 格式
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                            'content') // CSRF 令牌
-                    },
-                    body: JSON.stringify({ // 请求体为 JSON 格式的消息内容
-                        message: message // 消息内容
-                    })
-                })
-                .then(response => response.json()) // 解析响应为 JSON 格式
-                .then(data => { // 处理响应数据
-                    const operatorMessage = document.createElement('div'); // 创建客服消息元素
-                    operatorMessage.className = 'messages__item messages__item--operator'; // 添加类名
-                    operatorMessage.textContent = data.response; // 设置文本内容为响应的消息内容
-                    contentBox.appendChild(operatorMessage); // 将客服消息元素添加到内容盒子中
-                    contentBox.scrollTop = contentBox.scrollHeight; // 滚动内容盒子到底部
-                    input.value = ''; // 清空输入框的值
-                })
-                .catch(error => { // 捕获错误
-                    console.error('Error:', error); // 输出错误信息到控制台
-                });
-        }
     </script>
-    {{-- <script>
-        class InteractiveChatbox { // 定义交互式聊天框类
-            constructor(button, chatbox, icons) { // 构造函数，接收按钮、聊天框和图标参数
-                this.button = button; // 按钮元素
-                this.chatbox = chatbox; // 聊天框元素
-                this.icons = icons; // 图标对象
-                this.state = false; // 初始状态为关闭
-            }
 
-            display() { // 显示聊天框方法
-                this.button.addEventListener('click', () => this.toggleState()); // 监听按钮点击事件
-            }
+    <script type="module">
+        import {
+            GoogleGenerativeAI
+        } from "@google/generative-ai";
 
-            toggleState() { // 切换状态方法
-                this.state = !this.state; // 状态取反
-                this.showOrHideChatBox(); // 调用显示或隐藏聊天框方法
-            }
-
-            showOrHideChatBox() { // 显示或隐藏聊天框方法
-                if (this.state) { // 如果状态为打开
-                    this.chatbox.classList.add('chatbox--active'); // 添加活动类
-                    this.toggleIcon(true); // 切换图标为打开状态
-                } else { // 否则
-                    this.chatbox.classList.remove('chatbox--active'); // 移除活动类
-                    this.toggleIcon(false); // 切换图标为关闭状态
-                }
-            }
-
-            toggleIcon(state) { // 切换图标方法
-                if (state) { // 如果状态为打开
-                    this.button.innerHTML = this.icons.isClicked; // 设置按钮 HTML 为打开图标
-                } else { // 否则
-                    this.button.innerHTML = this.icons.isNotClicked; // 设置按钮 HTML 为关闭图标
-                }
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => { // 文档加载完成后执行
-            const chatButton = document.querySelector('.chatbox__button button'); // 获取聊天框按钮元素
-            const chatContent = document.querySelector('.chatbox__support'); // 获取聊天内容元素
-            const icons = { // 图标对象
-                isClicked: '<img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat">', // 打开状态图标 HTML
-                isNotClicked: '<img src="chatbot/images/icons/chatbox-icon.svg" alt="Chat">' // 关闭状态图标 HTML
-            };
-
-            const chatbox = new InteractiveChatbox(chatButton, chatContent, icons); // 创建聊天框实例
-            chatbox.display(); // 显示聊天框
-
-            // 确保页面加载时聊天框关闭
-            chatbox.state = false; // 将状态设为关闭
-            chatbox.showOrHideChatBox(); // 显示或隐藏聊天框
-
-            const inputField = document.getElementById('chat-input');
-            inputField.addEventListener('keypress', function(event) {
-                if (event.key === 'Enter') {
-                    sendMessage();
-                }
-            });
+        // Replace with your actual API key
+        const API_KEY = "AIzaSyDQVtdIHsPihe5km66Ptiukc7D3UcHr5RY";
+        // AIzaSyDB_xvNfturII_zXvYBwlPhcHp6p5J5abQ My Api Key
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-flash"
         });
 
-        function sendMessage() {
+        async function sendMessage() {
             const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-            if (message === '') return;
+            const message = input.value;
+
+            if (message.trim() === '') return;
 
             const contentBox = document.getElementById('content-box');
             const visitorMessage = document.createElement('div');
@@ -2763,41 +2650,103 @@
             contentBox.appendChild(visitorMessage);
             contentBox.scrollTop = contentBox.scrollHeight;
 
-            fetch('/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({
-                    message: message
-                })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(err => {
-                        throw new Error(JSON.stringify(err));
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
+            input.value = '';
+
+            try {
+                const result = await model.generateContent(message);
+                const response = result.response.text();
+
                 const operatorMessage = document.createElement('div');
                 operatorMessage.className = 'messages__item messages__item--operator';
-                operatorMessage.textContent = data.response;
+                operatorMessage.textContent = response;
                 contentBox.appendChild(operatorMessage);
                 contentBox.scrollTop = contentBox.scrollHeight;
-                input.value = '';
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error:', error);
-                const operatorMessage = document.createElement('div');
-                operatorMessage.className = 'messages__item messages__item--operator';
-                operatorMessage.textContent = 'Error: ' + error.message;
-                contentBox.appendChild(operatorMessage);
-            });
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'messages__item messages__item--error';
+                errorMessage.textContent = 'Error: ' + error.message;
+                contentBox.appendChild(errorMessage);
+                contentBox.scrollTop = contentBox.scrollHeight;
+            }
         }
 
+        // Add event listeners after the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('send-button').addEventListener('click', sendMessage);
+            document.getElementById('chat-input').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script>
+
+    {{-- Test --}}
+    {{-- <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+
+        const API_KEY = "AIzaSyDQVtdIHsPihe5km66Ptiukc7D3UcHr5RY";
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        const model = genAI.getGenerativeModel({
+            model: "gemini-1.5-flash"
+        });
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value;
+
+            if (message.trim() === '') return;
+
+            const contentBox = document.getElementById('content-box');
+            const visitorMessage = document.createElement('div');
+            visitorMessage.className = 'messages__item messages__item--visitor';
+            visitorMessage.textContent = message;
+            contentBox.appendChild(visitorMessage);
+            contentBox.scrollTop = contentBox.scrollHeight;
+
+            input.value = '';
+
+            try {
+                // Call AI API to get suggestions
+                const aiResponse = await model.generateContent(message);
+                const userQuery = aiResponse.text();
+
+                // Send user query to backend for matching
+                const response = await fetch('/search', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ query: userQuery })
+                });
+
+                const results = await response.json();
+                const operatorMessage = document.createElement('div');
+                operatorMessage.className = 'messages__item messages__item--operator';
+                operatorMessage.innerHTML = results.map(item => `<p>${item.name} - ${item.location}</p>`).join('');
+                contentBox.appendChild(operatorMessage);
+                contentBox.scrollTop = contentBox.scrollHeight;
+            } catch (error) {
+                console.error('Error:', error);
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'messages__item messages__item--error';
+                errorMessage.textContent = 'Error: ' + error.message;
+                contentBox.appendChild(errorMessage);
+                contentBox.scrollTop = contentBox.scrollHeight;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('send-button').addEventListener('click', sendMessage);
+            document.getElementById('chat-input').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
     </script> --}}
+
 
 @endsection

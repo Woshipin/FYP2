@@ -339,7 +339,7 @@
 
                 <div class="product-price">
                     <p class="last-price">Resort Type: {{ $resort->type }}/day</p>
-                    <p class="last-price">Resort Price: {{ $resort->price }}/day</p>
+                    <p class="last-price">Resort Price: RM{{ $resort->price }}/day</p>
                     <p class="new-price">Resort Phone Number: {{ $resort->phone }}</p>
                     <p class="new-price">Resort Contact Email: {{ $resort->email }}</p>
                 </div>

@@ -87,11 +87,11 @@
             <div class="details">
                 <p>User Name: <span>{{ $VerifyHotel->user_name }}</span></p>
                 <p>Hotel Name: <span>{{ $VerifyHotel->hotel_name }}</span></p>
-                <p>Date: <span>{{ \Carbon\Carbon::parse($VerifyHotel->booking_date)->format('j F Y (l)') }}</span></p>
-                <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($VerifyHotel->checkin_time)->format('g:i A') }}</span>
-                </p>
-                <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($VerifyHotel->checkout_time)->format('g:i A') }}</span>
-                </p>
+                <p>Booking Days: <span>{{ $VerifyHotel->booking_days }} day</span></p>
+                <p>Check-In-Date: <span>{{ \Carbon\Carbon::parse($VerifyHotel->checkin_date)->format('j F Y') }}</span></p>
+                <p>Check-Out-Date: <span>{{ \Carbon\Carbon::parse($VerifyHotel->checkout_date)->format('j F Y') }}</span></p>
+                <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($VerifyHotel->checkin_time)->format('g:i A') }}</span></p>
+                <p>Check-Out-Time: <span>{{ \Carbon\Carbon::parse($VerifyHotel->checkout_time)->format('g:i A') }}</span></p>
                 @if ($VerifyHotel->hotel)
                     <!-- Check if the hotel relationship exists -->
                     <p>Address: <span>{{ $VerifyHotel->hotel->address }}</span></p>

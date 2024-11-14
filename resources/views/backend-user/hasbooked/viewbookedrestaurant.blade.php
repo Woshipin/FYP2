@@ -1,7 +1,8 @@
-@extends('backend-user.newlayout')
+<!DOCTYPE html>
+<html>
 
-@section('newuser-section')
-    <title>Booked Restaurant Invoice</title>
+<head>
+    <title>Booked Restaurant Verification</title>
 
     <style>
         body {
@@ -79,72 +80,91 @@
         }
     </style>
 
-    <div class="invoice">
-        <h2>Booked Restaurant Detail</h2>
-        <div class="details">
-            <p>User Name: <span>{{ $bookedrestaurants->user_name }}</span></p>
-            <p>Restaurant Name: <span>{{ $bookedrestaurants->restaurant_name }}</span></p>
-            <p>Booking Date: <span>{{ \Carbon\Carbon::parse($bookedrestaurants->booking_date)->format('j F Y (l)') }}</span></p>
-            <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($bookedrestaurants->checkin_time)->format('g:i A') }}</span></p>
-            <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($bookedrestaurants->checkout_time)->format('g:i A') }}</span></p>
-            @if ($bookedrestaurants->restaurant)
-                <!-- Check if the hotel relationship exists -->
-                <p>Address: <span>{{ $bookedrestaurants->restaurant->address }}</span></p>
-                <p>State: <span>{{ $bookedrestaurants->restaurant->state }}</span></p>
-                <p>Country: <span>{{ $bookedrestaurants->restaurant->country }}</span></p>
-            @endif
-        </div>
-        <div class="items">
-            <table>
-                <tr>
-                    <th>Restaurant Name</th>
-                    <th>Restaurant Quantity</th>
-                    <th>Booking Date</th>
-                    <th>Check-In-Time:</th>
-                    <th>Check-In-Time:</th>
-                    <th>Table Type</th>
-                </tr>
+<body>
+
+    @if (isset($VerifyRestaurant))
+        <div class="invoice">
+            <h2>Booked Restaurant Detail</h2>
+            <div class="details">
+                <p>User Name: <span>{{ $VerifyRestaurant->user_name }}</span></p>
+                <p>Restaurant Name: <span>{{ $VerifyRestaurant->restaurant_name }}</span></p>
+                <p>Booking Date:
+                    <span>{{ \Carbon\Carbon::parse($VerifyRestaurant->booking_date)->format('j F Y (l)') }}</span>
+                </p>
+                <p>Check-In-Time:
+                    <span>{{ \Carbon\Carbon::parse($VerifyRestaurant->checkin_time)->format('g:i A') }}</span>
+                </p>
+                <p>Check-In-Time:
+                    <span>{{ \Carbon\Carbon::parse($VerifyRestaurant->checkout_time)->format('g:i A') }}</span>
+                </p>
+                @if ($VerifyRestaurant->restaurant)
+                    <!-- Check if the hotel relationship exists -->
+                    <p>Address: <span>{{ $VerifyRestaurant->restaurant->address }}</span></p>
+                    <p>State: <span>{{ $VerifyRestaurant->restaurant->state }}</span></p>
+                    <p>Country: <span>{{ $VerifyRestaurant->restaurant->country }}</span></p>
+                @endif
+            </div>
+            <div class="items">
+                <table>
+                    <tr>
+                        <th>Restaurant Name</th>
+                        <th>Restaurant Quantity</th>
+                        <th>Booking Date</th>
+                        <th>Check-In-Time:</th>
+                        <th>Check-In-Time:</th>
+                        <th>Table Type</th>
+                    </tr>
                     <!-- Check if room relationship exists -->
                     <tr>
-                        <td>{{ $bookedrestaurants->restaurant_name }}</td>
-                        <td>{{ $bookedrestaurants->quantity }}</td>
-                        <td>{{ \Carbon\Carbon::parse($bookedrestaurants->booking_date)->format('j F Y (l)') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($bookedrestaurants->checkin_time)->format('g:i A') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($bookedrestaurants->checkout_time)->format('g:i A') }}</td>
-                        @if ($bookedrestaurants->table)
-                            <td>{{ $bookedrestaurants->table->title }}</td>
+                        <td>{{ $VerifyRestaurant->restaurant_name }}</td>
+                        <td>{{ $VerifyRestaurant->quantity }}</td>
+                        <td>{{ \Carbon\Carbon::parse($VerifyRestaurant->booking_date)->format('j F Y (l)') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($VerifyRestaurant->checkin_time)->format('g:i A') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($VerifyRestaurant->checkout_time)->format('g:i A') }}</td>
+                        @if ($VerifyRestaurant->table)
+                            <td>{{ $VerifyRestaurant->table->title }}</td>
                         @endif
                     </tr>
-            </table>
-        </div>
-
-        <div class="total">
-            <p style="font-weight:bold">Deposit Fee: $100</p>
-        </div>
-
-        {{-- @if ($bookedrestaurants->table)
-            <!-- Check if table relationship exists -->
-            <div class="total">
-                <p style="font-weight:bold">Total Price: ${{ $bookedrestaurants->table->price }}</p>
+                </table>
             </div>
-        @endif --}}
 
-        <div class="footer">
-            <p>Thank you, {{ $bookedrestaurants->user_name }}
-                @if ($bookedrestaurants->user)
-                    ({{ $bookedrestaurants->user->email }}),
+            <div class="total">
+                <p style="font-weight:bold">Deposit Fee: RM {{ $VerifyRestaurant->deposit_price }}</p>
+            </div>
+
+            <div class="footer">
+                <p>Thank you, {{ $VerifyRestaurant->user_name }}
+                    @if ($VerifyRestaurant->user)
+                        ({{ $VerifyRestaurant->user->email }}),
+                    @endif
+                    for your purchase! Enjoy the Hotel!
+                </p>
+
+                @if ($VerifyRestaurant->restaurant)
+                    <p>If any problem, you can contact phone number ({{ $VerifyRestaurant->restaurant->phone }}) or
+                        email
+                        ({{ $VerifyRestaurant->restaurant->email }}), for your purchase! Enjoy the Restaurant!</p>
                 @endif
-                for your purchase! Enjoy the Hotel!
-            </p>
+            </div>
 
-            @if ($bookedrestaurants->restaurant)
-                <p>If any problem, you can contact phone number ({{ $bookedrestaurants->restaurant->phone }}) or email
-                    ({{ $bookedrestaurants->restaurant->email }}), for your purchase! Enjoy the Restaurant!</p>
-            @endif
+            <a href="{{ url('/download-bookedrestaurant-pdf/' . $VerifyRestaurant->id) }}" class="btn btn-info btn-sm"><i
+                    class="fas fa-file-pdf"></i>&nbsp;Download</a>
+
+            <a href="{{ url('mybookingsrestaurant') }}" class="btn btn-success btn-sm"><i
+                    class="fas fa-file-pdf"></i>&nbsp;Continue</a>
+
         </div>
+    @else
+        <p>No valid restaurant found for the scanned QR code.</p>
+    @endif
 
-        <a href="{{ url('/download-bookedrestaurant-pdf/' . $bookedrestaurants->id) }}" class="btn btn-info btn-sm"><i class="fas fa-file-pdf"></i>&nbsp;Download</a>
+    <script>
+        // Check if the verification is successful and show an alert
+        @if (isset($bookedrestaurants))
+            alert('Verification Restaurant complete!');
+        @endif
+    </script>
 
-    </div>
+</body>
 
-@endsection
+</html>

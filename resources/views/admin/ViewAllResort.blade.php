@@ -2,7 +2,7 @@
 
 @section('admin-section')
 
-    <style>
+    {{-- <style>
         .table-bordered {
             border: 2px solid black;
             /* 表格的外边框颜色 */
@@ -13,7 +13,7 @@
             border: 1px solid grey;
             /* 表格的内边框颜色 */
         }
-    </style>
+    </style> --}}
 
     <!-- 引入Pannellum的JS和CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css">
@@ -39,7 +39,7 @@
                         </tr>
                         <tr>
                             <th>Resort Price</th>
-                            <td>{{ $resorts->price }}</td>
+                            <td>RM{{ $resorts->price }}</td>
                         </tr>
                         <tr>
                             <th>Resort Image</th>

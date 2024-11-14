@@ -27,6 +27,7 @@ return new class extends Migration
             $table->time('checkout_time');
             $table->string('verify_code')->nullable();
             $table->unsignedTinyInteger('payment_status')->default(0);
+            $table->string('payment_method')->nullable(); 
             $table->unsignedDecimal('deposit_price', 10, 2)->default(0);
             $table->unsignedDecimal('total_price', 10, 2)->default(0);
             $table->string('card_number'); // 更改数据类型为 string

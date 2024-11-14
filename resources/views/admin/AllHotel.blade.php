@@ -1,7 +1,6 @@
 @extends('admin.layout')
 
 @section('admin-section')
-
     <!-- 引入Pannellum的JS和CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css">
     <script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
@@ -167,24 +166,6 @@
                     <select name="" id="">
                         <option value="">ID</option>
                     </select>
-                    <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Launch demo modal</button> -->
-                    <!-- Restaurant Model -->
-                    {{-- <button type="button" class="btn btn-info m-1" data-toggle="modal"data-target="#restaurantModal">Add Restaurant</button> --}}
-                    <!-- Add Table Model -->
-                    <!-- <button type="button" class="btn btn-primary m-1" data-toggle="modal" data-target="#tableModal">Add Tbale</button> -->
-                    <!--Export Resort Model -->
-                    <a href="{{ url('export-resort') }}"><button type="button" class="btn btn-primary m-1">Export
-                            Hotel</button></a>
-                    <!-- View Resort PDF Model -->
-                    <!-- <form action="{{ url('resort/view-pdf') }}" method="POST">
-                                                                                    @csrf
-                                                                                    <button type="submit" class="btn btn-danger m-1">View In PDF</button>
-                                                                                </form> -->
-                    <!-- Export Resort PDF Model -->
-                    <!-- <form action="{{ url('resort/download-pdf') }}" method="POST" target="__blank">
-                                                                                    @csrf
-                                                                                    <button type="submit" class="btn btn-danger m-1">Download PDF</button>
-                                                                                </form> -->
                 </div>
 
                 {{-- Real Time Search --}}
@@ -205,73 +186,6 @@
             @if (\Session::has('success'))
                 <div class="alert alert-success">{{ Session::get('success') }}</div>
             @endif
-
-            {{-- <div class="container-fluid mt-3">
-                <!-- DataTales Example -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Hotel List</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Image</th>
-                                        <th>Country</th>
-                                        <th>State</th>
-                                        <th>Address</th>
-                                        <th>Open / Close</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if ($hotels !== 0 && count($hotels) > 0)
-                                        @foreach ($hotels as $hotel)
-                                            <tr>
-                                                <td>{{ $hotel->name }}</td>
-                                                <td><img width="80" src="{{ asset('images/' . $hotel->image) }}"
-                                                        alt="Image" /></td>
-                                                <td>{{ $hotel->country }}</td>
-                                                <td>{{ $hotel->state }}</td>
-                                                <td>{{ $hotel->address }}</td>
-                                                <td>
-                                                    @if ($hotel->status == 0)
-                                                        <a href="{{ url('changehotel-status/' . $hotel->id) }}"
-                                                            class="btn btn-sm btn-success"
-                                                            onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
-                                                    @else
-                                                        <a href="{{ url('changehotel-status/' . $hotel->id) }}"
-                                                            class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <a href="{{ url('admin/viewHotel/' . $hotel->id) . '/view' }}"
-                                                        class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
-                                                    <a href="" class="btn btn-primary btn-sm" data-toggle="modal"
-                                                        data-target="#hoteleditModal{{ $hotel->id }}"><i
-                                                            class="las la-pencil-alt"></i></a>
-                                                    <a onclick="return confirm('Are you sure to delete this data?')"
-                                                        href="{{ url('admin/deleteHotel/' . $hotel->id) . '/delete' }}"
-                                                        class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <td colspan="7">No Hotel Found</td>
-                                        </tr>
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    {{ $hotels->links() }}
-                </div>
-            </div> --}}
 
             <div class="container-fluid mt-3">
                 <!-- DataTales Example -->
@@ -306,40 +220,6 @@
                 </div>
             </div>
 
-            {{-- Token Problem --}}
-            {{-- <div class="container-fluid mt-3">
-                <!-- DataTales Example -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Hotel List</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Image</th>
-                                        <th>Country</th>
-                                        <th>State</th>
-                                        <th>Address</th>
-                                        <th>Open / Close</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="searchResultsContainer">
-                                    <!-- Content will be dynamically added here based on search -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <div id="paginationContainer">
-                        {{ $hotels->links() }}
-                    </div>
-                </div>
-            </div> --}}
-
         </div>
     </div>
 
@@ -347,158 +227,6 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     {{-- Real Time Search --}}
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            function updateSearchResults(filteredHotels) {
-                var resultsContainer = document.getElementById('searchResultsContainer');
-                resultsContainer.innerHTML = ''; // Clear previous results
-
-                if (Array.isArray(filteredHotels) && filteredHotels.length > 0) {
-                    filteredHotels.forEach(function(hotel) {
-                        var isDisabled = hotel.status === 1;
-
-                        var hotelHTML = `
-                        <tr class="${isDisabled ? 'disabled' : ''}">
-                            <td>${hotel.name}</td>
-                            <td style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
-                                ${hotel.images && hotel.images.length > 0 ?
-                                `<div id="carousel${hotel.id}" class="carousel slide" data-ride="carousel">
-                                        <div class="carousel-inner" style="width: 100%; height: 100%;">
-                                            ${hotel.images.map((image, index) => `
-                                        <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                                            <img src="{{ asset('images/') }}/${image.image}" class="d-block w-100" alt="Hotel Image" style="max-width: 100%; max-height: 100%; display: block; margin: auto;">
-                                        </div>
-                                        `).join('')}
-                                        </div>
-                                        <a class="carousel-control-prev" href="#carousel${hotel.id}" role="button" data-slide="prev" style="width: 20px;">
-                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">Previous</span>
-                                        </a>
-                                        <a class="carousel-control-next" href="#carousel${hotel.id}" role="button" data-slide="next" style="width: 20px;">
-                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                            <span class="sr-only">Next</span>
-                                        </a>
-                                    </div>` :
-                                `<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>`}
-                            </td>
-                            <td>${hotel.country}</td>
-                            <td>${hotel.state}</td>
-                            <td>${hotel.address}</td>
-                            <td>
-                                ${isDisabled ?
-                                    `<a href="{{ url('HotelDetail/') }}/${hotel.id}/view" class="btn btn-sm btn-danger">Closed</a>` :
-                                    `<a href="{{ url('HotelDetail/') }}/${hotel.id}/view" class="btn btn-sm btn-success">Open</a>`
-                                }
-                            </td>
-                            <td>
-                            ${hotel.register_status === 1
-                                ? `<span class="text-success">Approved</span>`
-                                : hotel.register_status === 2
-                                    ? `<span class="text-danger">Rejected</span>`
-                                    : `<button class="btn btn-sm btn-success" onclick="updateHotelRegisterStatus(${hotel.id}, 1)">Approve</button>
-                                           <button class="btn btn-sm btn-danger" onclick="rejectHotel(${hotel.id})">Reject</button>`
-                            }
-                        </td>
-                            <td>
-                                <a href="{{ url('admin/viewHotel/') }}/${hotel.id}/view" class="btn btn-info btn-sm"><i class="fas fa-eye"></i>&nbsp;View</a>
-                                <a onclick="return confirm('Are you sure to delete this data?')" href="{{ url('admin/deleteHotel/') }}/${hotel.id}/delete" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
-                            </td>
-                        </tr>`;
-
-                        resultsContainer.innerHTML += hotelHTML;
-                    });
-                } else {
-                    resultsContainer.innerHTML = '<tr><td colspan="7">No Hotel Found</td></tr>';
-                }
-            }
-
-            var initialHotels = @json($hotels->items());
-            updateSearchResults(initialHotels);
-
-            document.getElementById('searchInput').addEventListener('input', function() {
-                performSearch();
-            });
-
-            function performSearch() {
-                var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
-                var hotelsData = @json($hotels->items());
-
-                if (!Array.isArray(hotelsData)) {
-                    console.error('Invalid hotels data:', hotelsData);
-                    return;
-                }
-
-                var filteredHotels = hotelsData.filter(function(hotel) {
-                    return hotel.name.toLowerCase().includes(searchInputValue);
-                });
-
-                updateSearchResults(filteredHotels);
-            }
-        });
-
-        function updateHotelRegisterStatus(hotelId, status) {
-            fetch(`/admin/updateHotelRegisterStatus/${hotelId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        status: status
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Hotel status updated successfully');
-                        location.reload(); // Refresh the page to update the table
-                    } else {
-                        alert('Failed to update hotel status');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred. Please try again.');
-                });
-        }
-
-        function rejectHotel(hotelId) {
-            var rejectionMessage = prompt("Please enter the reason for rejection:");
-
-            if (rejectionMessage) {
-                fetch(`/admin/rejectHotel/${hotelId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            message: rejectionMessage
-                        })
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            return response.text().then(text => {
-                                throw new Error(`HTTP error ${response.status}: ${text}`);
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            alert('Hotel rejected and email sent successfully');
-                            location.reload(); // Refresh the page to update the table
-                        } else {
-                            alert('Failed to reject hotel: ' + (data.message || ''));
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred: ' + error.message);
-                    });
-            }
-        }
-    </script> --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             function updateSearchResults(filteredHotels) {
@@ -515,24 +243,24 @@
                             <td style="position: relative; width: 100px; height: 100px; overflow: hidden; text-align: center;">
                                 ${hotel.images && hotel.images.length > 0 ?
                                 `<div id="carousel${hotel.id}" class="carousel slide" data-ride="carousel">
-                                    <div class="carousel-inner" style="width: 100%; height: 100%;">
-                                        ${hotel.images.map((image, index) => `
+                                                <div class="carousel-inner" style="width: 100%; height: 100%;">
+                                                    ${hotel.images.map((image, index) => `
                                         <div class="carousel-item ${index === 0 ? 'active' : ''}">
                                             <img src="{{ asset('images/') }}/${image.image}" class="d-block w-100" alt="Hotel Image"
                                                  style="max-width: 100%; max-height: 100%; display: block; margin: auto;"
                                                  onclick="show360Image('{{ asset('images/') }}/${image.image}')">
                                         </div>
                                         `).join('')}
-                                    </div>
-                                    <a class="carousel-control-prev" href="#carousel${hotel.id}" role="button" data-slide="prev" style="width: 20px;">
-                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Previous</span>
-                                    </a>
-                                    <a class="carousel-control-next" href="#carousel${hotel.id}" role="button" data-slide="next" style="width: 20px;">
-                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                        <span class="sr-only">Next</span>
-                                    </a>
-                                </div>` :
+                                                </div>
+                                                <a class="carousel-control-prev" href="#carousel${hotel.id}" role="button" data-slide="prev" style="width: 20px;">
+                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                    <span class="sr-only">Previous</span>
+                                                </a>
+                                                <a class="carousel-control-next" href="#carousel${hotel.id}" role="button" data-slide="next" style="width: 20px;">
+                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                    <span class="sr-only">Next</span>
+                                                </a>
+                                            </div>` :
                                 `<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>`}
                             </td>
                             <td>${hotel.country}</td>
@@ -550,7 +278,7 @@
                                     : hotel.register_status === 2
                                         ? `<span class="text-danger">Rejected</span>`
                                         : `<button class="btn btn-sm btn-success" onclick="updateHotelRegisterStatus(${hotel.id}, 1)">Approve</button>
-                                            <button class="btn btn-sm btn-danger" onclick="rejectHotel(${hotel.id})">Reject</button>`
+                                                        <button class="btn btn-sm btn-danger" onclick="rejectHotel(${hotel.id})">Reject</button>`
                                 }
                             </td>
                             <td>
@@ -685,7 +413,5 @@
             }
         }
     </script>
-
-
 
 @endsection

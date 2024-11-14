@@ -1,7 +1,6 @@
 @extends('frontend-auth.newlayout')
 
 @section('frontend-section')
-
     {{-- Payment Card CSS --}}
     <link rel="stylesheet" href="{{ asset('paymentcard/css/style.css') }}">
 
@@ -70,11 +69,197 @@
             /* color: black */
         }
     </style>
+    <style>
+        #paypal-payment-section {
+            padding: 20px;
+            text-align: center;
+        }
+
+        #paypal-button-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .payment-method-select {
+            margin-bottom: 20px;
+        }
+
+        /* Add any additional custom styles you need */
+    </style>
+    <style>
+        .payment-method-selector {
+            margin-bottom: 2rem;
+        }
+
+        .payment-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .payment-option {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        .payment-option img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        .card-input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card-input {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .card-extra-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .payment-summary {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background-color: #2563eb;
+        }
+
+        .progress-container {
+            margin-top: 1.5rem;
+        }
+
+        .progress {
+            height: 0.5rem;
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .paypal-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .paypal-logo img {
+            width: 200px;
+            height: auto;
+        }
+
+        .paypal-description {
+            text-align: center;
+            color: #64748b;
+        }
+    </style>
+    <style>
+        .card-container {
+            position: relative;
+            width: 300px;
+            height: 180px;
+            perspective: 1000px;
+        }
+
+        .front,
+        .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            transition: transform 0.6s;
+        }
+
+        .front {
+            transform: rotateY(0deg);
+        }
+
+        .back {
+            transform: rotateY(180deg);
+        }
+
+        .card-container.flipped .front {
+            transform: rotateY(180deg);
+        }
+
+        .card-container.flipped .back {
+            transform: rotateY(0deg);
+        }
+    </style>
 
     {{-- progress bar CSS --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- 在 head 标签中引入 Bootstrap CSS -->
     {{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> --}}
+
+    {{-- sweetalert2 --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <br><br><br><br><br><br>
 
@@ -100,7 +285,8 @@
                     <li class="custom-tab" data-tab="payment">Payment</li>
                 </ul>
 
-                <form action="{{ url('bookings') }}" method="post" enctype="multipart/form-data" id="bookingForm">
+                <form action="{{ url('bookingsrestaurant') }}" method="post" enctype="multipart/form-data"
+                    id="bookingForm">
                     @csrf
 
                     {{-- Booking Restaurant Area --}}
@@ -189,114 +375,142 @@
 
                     <br>
 
-                    {{-- Card Payment Area --}}
-                    <div class="container-payment custom-tab-content " data-tab="payment">
-
+                    {{-- Payment Area --}}
+                    <div class="container-payment custom-tab-content" data-tab="payment">
                         <div class="row">
                             <div class="col-md-5">
                                 <img src="{{ asset('new/img/book-img.jpg') }}" alt="">
                             </div>
 
                             <div class="col-md-6">
-                                <div class="card-container">
-
-                                    <div class="front">
-                                        <div class="image">
-                                            <img src="{{ asset('new/img/image/chip.png') }}" alt="">
-                                            <img src="{{ asset('new/img/image/visa.png') }}" alt="">
+                                <!-- Payment Method Selection -->
+                                <div class="payment-method-selector">
+                                    <h3>Select Payment Method</h3>
+                                    <div class="payment-options">
+                                        <div class="payment-option" data-method="credit_card">
+                                            <img src="{{ asset('new/img/card-icon.png') }}" alt="Card">
+                                            <span>Credit/Debit Card</span>
                                         </div>
-                                        <div class="card-number-box">################</div>
-                                        <div class="flexbox">
-                                            <div class="box">
-                                                <span>card holder</span>
-                                                <div class="card-holder-name">full name</div>
+                                        <div class="payment-option" data-method="paypal">
+                                            <img src="{{ asset('new/img/paypal-icon.png') }}" alt="PayPal">
+                                            <span>PayPal</span>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="payment_method" id="payment_method" value="credit_card">
+                                </div>
+
+                                <!-- Card Payment Section -->
+                                <div id="card-payment-section" class="payment-section">
+                                    <div class="card-container">
+                                        <div class="front">
+                                            <div class="image">
+                                                <img src="{{ asset('new/img/image/chip.png') }}" alt="">
+                                                <img src="{{ asset('new/img/image/visa.png') }}" alt="">
                                             </div>
-                                            <div class="box">
-                                                <span>expires</span>
-                                                <div class="expiration">
-                                                    <span class="exp-month">mm</span>
-                                                    <span class="exp-year">yy</span>
+                                            <div class="card-number-box">################</div>
+                                            <div class="flexbox">
+                                                <div class="box">
+                                                    <span>card holder</span>
+                                                    <div class="card-holder-name">full name</div>
+                                                </div>
+                                                <div class="box">
+                                                    <span>expires</span>
+                                                    <div class="expiration">
+                                                        <span class="exp-month">mm</span>
+                                                        <span class="exp-year">yy</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="back">
-                                        <div class="stripe"></div>
-                                        <div class="box">
-                                            <span>cvv</span>
-                                            <div class="cvv-box"></div>
-                                            <img src="{{ asset('new/img/image/visa.png') }}" alt="">
+                                        <div class="back">
+                                            <div class="stripe"></div>
+                                            <div class="box">
+                                                <span>cvv</span>
+                                                <div class="cvv-box"></div>
+                                                <img src="{{ asset('new/img/image/visa.png') }}" alt="">
+                                            </div>
                                         </div>
                                     </div>
 
-                                </div>
-                                <br>
+                                    <div class="card-input-section">
+                                        <div class="input-group">
+                                            <label>Card Number</label>
+                                            <input type="text" id="card_number" name="card_number" maxlength="19"
+                                                class="card-input" placeholder="0000 0000 0000 0000">
+                                        </div>
 
-                                <h3>Deposit Fee RM100</h3>
-                                <input type="hidden" name="deposit_price" value="100">
+                                        <div class="input-group">
+                                            <label>Card Holder Name</label>
+                                            <input type="text" name="card_holder" id="card_holder"
+                                                class="card-input">
+                                        </div>
 
-                                <div class="inputBox">
-                                    <span>Card Number</span>
-                                    <input type="text" id="card_number" name="card_number" maxlength="19"
-                                        class="card-number-input" placeholder="0000 0000 0000 0000" required
-                                        inputmode="numeric">
-                                </div>
+                                        <div class="card-extra-details">
+                                            <div class="input-group">
+                                                <label>Expiry Month</label>
+                                                <select name="card_month" id="card_month" class="card-input">
+                                                    <option value="" selected disabled>MM</option>
+                                                    @for ($i = 1; $i <= 12; $i++)
+                                                        <option value="{{ sprintf('%02d', $i) }}">
+                                                            {{ sprintf('%02d', $i) }}</option>
+                                                    @endfor
+                                                </select>
+                                            </div>
 
-                                <div class="inputBox">
-                                    <span>Card Holder</span>
-                                    <input type="text" name="card_holder" class="card-holder-input">
-                                </div>
+                                            <div class="input-group">
+                                                <label>Expiry Year</label>
+                                                <select name="card_year" id="card_year" class="card-input">
+                                                    <option value="" selected disabled>YY</option>
+                                                    @for ($i = date('Y'); $i <= date('Y') + 10; $i++)
+                                                        <option value="{{ $i }}">{{ $i }}</option>
+                                                    @endfor
+                                                </select>
+                                            </div>
 
-                                <div class="flexbox">
-                                    <div class="inputBox">
-                                        <span>expiration mm</span>
-                                        <select name="card_month" id="" class="month-input">
-                                            <option value="month" selected disabled>month</option>
-                                            <option value="01">01</option>
-                                            <option value="02">02</option>
-                                            <option value="03">03</option>
-                                            <option value="04">04</option>
-                                            <option value="05">05</option>
-                                            <option value="06">06</option>
-                                            <option value="07">07</option>
-                                            <option value="08">08</option>
-                                            <option value="09">09</option>
-                                            <option value="10">10</option>
-                                            <option value="11">11</option>
-                                            <option value="12">12</option>
-                                        </select>
-                                    </div>
-                                    <div class="inputBox">
-                                        <span>expiration yy</span>
-                                        <select name="card_year" id="" class="year-input">
-                                            <option value="year" selected disabled>year</option>
-                                            <option value="2021">2021</option>
-                                            <option value="2022">2022</option>
-                                            <option value="2023">2023</option>
-                                            <option value="2024">2024</option>
-                                            <option value="2025">2025</option>
-                                            <option value="2026">2026</option>
-                                            <option value="2027">2027</option>
-                                            <option value="2028">2028</option>
-                                            <option value="2029">2029</option>
-                                            <option value="2030">2030</option>
-                                        </select>
-                                    </div>
-                                    <div class="inputBox">
-                                        <span>cvv</span>
-                                        <input type="number" name="cvv" maxlength="4" class="cvv-input">
+                                            <div class="input-group">
+                                                <label>CVV</label>
+                                                <input type="text" name="cvv" id="cvv" maxlength="4"
+                                                    class="card-input">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                                <input type="submit" class="btn" id="submit-button">
+
+                                <!-- PayPal Payment Section -->
+                                <div id="paypal-payment-section" class="payment-section" style="display: none;">
+                                    <div class="paypal-container">
+                                        <div class="paypal-logo">
+                                            <img src="{{ asset('new/img/paypal-logo.png') }}" alt="PayPal">
+                                        </div>
+                                        <p class="paypal-description">Click the button below to pay securely with PayPal
+                                        </p>
+                                        <div id="paypal-button-container"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Common Payment Information -->
+                                <div class="payment-summary">
+                                    <div class="summary-item">
+                                        <span>Deposit Fee</span>
+                                        <span>RM 100.00</span>
+                                        <input type="hidden" name="deposit_price" value="100">
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button (for card payment) -->
+                                <button type="submit" class="submit-button" id="submit-button">
+                                    Complete Payment
+                                </button>
+
+                                <!-- Progress Bar -->
+                                <div class="progress-container" id="progressBarContainer" style="display: none;">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Porgress Bar -->
-                    <div class="progress mt-3" id="progressBarContainer" style="display: none;">
-                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
-                            aria-valuemin="0" aria-valuemax="100">0%</div>
                     </div>
 
                 </form>
@@ -797,6 +1011,176 @@
             // 默认加载时禁用过去的日期
             disablePastDates();
 
+        });
+    </script>
+
+    <!-- PayPal JS -->
+    <script
+        src="https://www.paypal.com/sdk/js?client-id=AevCq5WDpuSoYCJlkxHD-N_Yf13gKJmf9sOESVMmYa9lDzN9bVvgfNUqTy4C62CthVk9r5qoEgwDM8Un">
+    </script>
+
+    {{-- Paypal Payment Method --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Payment method selection
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            const cardPaymentSection = document.getElementById('card-payment-section');
+            const paypalPaymentSection = document.getElementById('paypal-payment-section');
+            const paymentMethodInput = document.getElementById('payment_method');
+
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    paymentOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    const method = this.getAttribute('data-method');
+                    paymentMethodInput.value = method;
+
+                    if (method === 'credit_card') {
+                        cardPaymentSection.style.display = 'block';
+                        paypalPaymentSection.style.display = 'none';
+                    } else if (method === 'paypal') {
+                        cardPaymentSection.style.display = 'none';
+                        paypalPaymentSection.style.display = 'block';
+                        initializePayPalButtons();
+                    }
+                });
+            });
+
+            function initializePayPalButtons() {
+                paypal.Buttons({
+                    createOrder: function(data, actions) {
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: {
+                                    value: '100.00'
+                                }
+                            }]
+                        });
+                    },
+                    onApprove: function(data, actions) {
+                        return actions.order.capture().then(function(details) {
+                            startProgressBarAndSubmit();
+                        });
+                    }
+                }).render('#paypal-button-container');
+            }
+
+            document.getElementById('submit-button').addEventListener('click', function(event) {
+                event.preventDefault();
+                startProgressBarAndSubmit();
+            });
+
+            function startProgressBarAndSubmit() {
+                let progressBarContainer = document.getElementById('progressBarContainer');
+                progressBarContainer.style.display = 'block';
+                let progressBar = document.querySelector('.progress-bar');
+                let width = 0;
+
+                let interval = setInterval(function() {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                        submitBooking();
+                    } else {
+                        width += 5;
+                        progressBar.style.width = width + '%';
+                        progressBar.setAttribute('aria-valuenow', width);
+                        progressBar.textContent = width + '%';
+                    }
+                }, 50);
+            }
+
+            function submitBooking() {
+                const formData = new FormData(document.getElementById('bookingForm'));
+                const paymentMethod = document.getElementById('payment_method').value;
+
+                if (paymentMethod === 'credit_card') {
+                    formData.append('card_number', document.getElementById('card_number').value);
+                    formData.append('card_holder', document.getElementById('card_holder').value);
+                    formData.append('card_month', document.getElementById('card_month').value);
+                    formData.append('card_year', document.getElementById('card_year').value);
+                    formData.append('cvv', document.getElementById('cvv').value);
+                } else {
+                    formData.append('card_number', '0000000000000000');
+                    formData.append('card_holder', 'PayPal User');
+                    formData.append('card_month', '01');
+                    formData.append('card_year', new Date().getFullYear() + 1);
+                    formData.append('cvv', '000');
+                }
+
+                fetch('{{ url('bookingsrestaurant') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Booking Successful!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                window.location.href = '{{ route('home') }}';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Booking Failed',
+                                text: data.message
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'An error occurred while processing your booking.'
+                        });
+                    })
+                    .finally(() => {
+                        document.getElementById('progressBarContainer').style.display = 'none';
+                    });
+            }
+
+            // Card input visualization
+            // const cardNumber = document.querySelector('.card-number-box');
+            // const cardHolder = document.querySelector('.card-holder-name');
+            // const cardMonth = document.querySelector('.exp-month');
+            // const cardYear = document.querySelector('.exp-year');
+            // const cardCVV = document.querySelector('.cvv-box');
+
+            // document.querySelector('#card_number').oninput = () => {
+            //     cardNumber.innerText = document.querySelector('#card_number').value;
+            // }
+
+            // document.querySelector('#card_holder').oninput = () => {
+            //     cardHolder.innerText = document.querySelector('#card_holder').value;
+            // }
+
+            // document.querySelector('#card_month').oninput = () => {
+            //     cardMonth.innerText = document.querySelector('#card_month').value;
+            // }
+
+            // document.querySelector('#card_year').oninput = () => {
+            //     cardYear.innerText = document.querySelector('#card_year').value;
+            // }
+
+            // document.querySelector('#cvv').onfocus = () => {
+            //     document.querySelector('.card-container').classList.add('flipped');
+            // }
+
+            // document.querySelector('#cvv').onblur = () => {
+            //     document.querySelector('.card-container').classList.remove('flipped');
+            // }
+
+            // document.querySelector('#cvv').oninput = () => {
+            //     cardCVV.innerText = document.querySelector('#cvv').value;
+            // }
         });
     </script>
 

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('type_name');
             $table->unsignedDecimal('deposit_price', 10, 2)->default(0); // 定义小数精度为10位，总数
             $table->unsignedDecimal('total_price', 10, 2)->default(0);
+            $table->string('payment_method')->nullable();
             $table->string('card_number'); // 只存储卡号的最后四位
             $table->string('card_holder');
             $table->unsignedTinyInteger('card_month'); // 存储月份的整数

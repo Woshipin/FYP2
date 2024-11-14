@@ -21,7 +21,7 @@
                     </tr>
                     <tr>
                         <th>Resort Price</th>
-                        <td>{{$resorts->price}}</td>
+                        <td>RM{{$resorts->price}}</td>
                     </tr>
                     <tr>
                         <th>Resort Image</th>

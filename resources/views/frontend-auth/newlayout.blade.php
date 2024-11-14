@@ -48,6 +48,8 @@
 
     {{-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"> --}}
 
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
     {{-- Nav CSS --}}
     <style>
         .navbar a {
@@ -61,6 +63,172 @@
             /* 当前页面的颜色 */
         }
     </style>
+    <style>
+        :root {
+            --orange: #FF7F50;
+            --orange-hover: #FF6347;
+            --black: #2C3E50;
+            --white: #ECF0F1;
+        }
+
+        * {
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            outline: none;
+            border: none;
+            text-transform: capitalize;
+            transition: all .2s linear;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 2rem;
+            background-color: var(--black);
+            color: var(--white);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--orange);
+        }
+
+        nav.navbar {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        nav.navbar a {
+            color: var(--white);
+            font-size: 1.6rem;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        nav.navbar a:hover,
+        nav.navbar a.active {
+            color: var(--white);
+            background-color: var(--orange);
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn {
+            background-color: var(--orange);
+            color: var(--white) !important;
+            padding: 0.8rem 1.8rem;
+            border-radius: 8px;
+            font-size: 1.4rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(255, 127, 80, 0.3);
+        }
+
+        .btn:hover {
+            background-color: var(--orange-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 127, 80, 0.4);
+            text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .dropdown-menu {
+            background-color: var(--black);
+            border: none;
+            border-radius: 12px;
+            padding: 0.8rem;
+            min-width: 180px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .dropdown-item {
+            color: var(--white) !important;
+            font-size: 1.4rem;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            margin: 0.2rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--orange);
+            color: var(--white) !important;
+            transform: translateX(4px);
+        }
+
+        .menu-bar {
+            font-size: 2rem;
+            color: var(--white);
+            cursor: pointer;
+            display: none;
+        }
+
+        @media (max-width: 991px) {
+            .menu-bar {
+                display: block;
+            }
+
+            nav.navbar {
+                display: none;
+                flex-direction: column;
+                gap: 1rem;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                background-color: var(--black);
+                padding: 1rem;
+            }
+
+            nav.navbar.show {
+                display: flex;
+            }
+
+            .dropdown {
+                width: 100%;
+            }
+
+            .dropdown-toggle {
+                width: 100%;
+                text-align: left;
+                position: relative;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .dropdown-menu {
+                position: static !important;
+                width: 100%;
+                margin-top: 0.5rem !important;
+                padding: 0;
+                background-color: rgba(44, 62, 80, 0.95);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .dropdown-item {
+                padding: 1rem 1.5rem;
+                color: var(--white) !important;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .dropdown-item:last-child {
+                border-bottom: none;
+            }
+        }
+    </style>
 
 </head>
 
@@ -68,12 +236,11 @@
 
     <!-- header section starts -->
     <header>
-
-        <div id="menu-bar" class="fas fa-bars"></div>
-
         <a href="{{ url('/') }}" class="logo"><span>SUC Travel Website</span></a>
 
-        <nav class="navbar">
+        <div id="menu-bar" class="fas fa-bars menu-bar" onclick="toggleMenu()"></div>
+
+        <nav class="navbar" id="navbar">
             <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Home</a>
             <a href="{{ url('/allResort') }}" class="{{ request()->is('allResort*') ? 'active' : '' }}">Resort</a>
             <a href="{{ url('/allHotel') }}" class="{{ request()->is('allHotel*') ? 'active' : '' }}">Hotel</a>
@@ -87,15 +254,26 @@
                     $id = Auth::user()->id;
                 @endphp
                 <a href="{{ url('/users/dashboard/' . $id) }}"
-                    class="{{ request()->is('users/dashboard/' . $id) ? 'active' : '' }}"><i class="fas fa-tachometer-alt" id="mydashboard-btn"></i> My Dashboard</a>
-                <a class="btn" href="{{ url('/logout') }}"><i class="fas fa-sign-out-alt" id="logout-btn"></i> Logout</a>
+                    class="{{ request()->is('users/dashboard/' . $id) ? 'active' : '' }}">
+                    <i class="fas fa-tachometer-alt" id="mydashboard-btn"></i> My Dashboard
+                </a>
+                <a class="btn" href="{{ url('/logout') }}"><i class="fas fa-sign-out-alt" id="logout-btn"></i>
+                    Logout</a>
             @endauth
 
             @guest
-                <a class="btn" href="{{ url('/login') }}"><i class="fas fa-user" id="login-btn"></i> Login</a>
+                <div class="dropdown">
+                    <a class="btn dropdown-toggle" href="#" role="button" id="loginDropdown" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-user" id="login-btn"></i>Account
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="loginDropdown">
+                        <a class="dropdown-item" href="{{ url('/login') }}">Login</a>
+                        <a class="dropdown-item" href="{{ url('/register') }}">Register</a>
+                    </div>
+                </div>
             @endguest
         </nav>
-
     </header>
     <!-- header section ends -->
 
@@ -260,6 +438,39 @@
         integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     {{-- // <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script> --}}
+
+
+    {{-- 更新后的JavaScript代码 --}}
+    <!-- JavaScript代码 -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        function toggleMenu() {
+            const navbar = document.getElementById('navbar');
+            navbar.classList.toggle('show');
+        }
+
+        $(document).ready(function() {
+            // Bootstrap dropdown handling
+            $('#loginDropdown').on('click', function(e) {
+                var $el = $(this).next('.dropdown-menu');
+                var isVisible = $el.is(':visible');
+                $('.dropdown-menu').hide();
+                if (!isVisible) {
+                    $el.show();
+                }
+            });
+
+            // Click outside to close dropdown
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.dropdown').length) {
+                    $('.dropdown-menu').hide();
+                }
+            });
+        });
+    </script>
 
 </body>
 

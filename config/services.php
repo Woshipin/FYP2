@@ -35,5 +35,12 @@ return [
         'pk' => env('STRIPE_KEY'),
         'sk' => env('STRIPE_SECRET'),
     ],
-    
+
+    'paypal' => [
+        'client_id' => env('PAYPAL_CLIENT_ID'),
+        'client_secret' => env('PAYPAL_CLIENT_SECRET'),
+        'currency' => env('PAYPAL_CURRENCY', 'MYR'),
+        'sandbox' => env('PAYPAL_SANDBOX', true),
+    ],
+
 ];

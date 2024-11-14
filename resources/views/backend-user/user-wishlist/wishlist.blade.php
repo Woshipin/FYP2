@@ -180,7 +180,7 @@
                 @if ($resortWishlists->count() > 0)
                     @foreach ($resortWishlists as $resortWishlist)
                         <div class="swiper-slide slide">
-                            <span class="price" id="price">${{ $resortWishlist->resort->price }}</span>
+                            <span class="price" id="price">RM{{ $resortWishlist->resort->price }}</span>
 
                             <div class="image"
                                 style="width: 100%; height: 250px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
@@ -260,7 +260,7 @@
                 @if ($hotelWishlists->count() > 0)
                     @foreach ($hotelWishlists as $hotelWishlist)
                         <div class="swiper-slide slide">
-                            <span class="price" id="price">${{ $hotelWishlist->hotel->price }}</span>
+                            <span class="price" id="price">RM{{ $hotelWishlist->hotel->price }}</span>
 
                             <div class="image"
                                 style="width: 100%; height: 250px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
@@ -344,7 +344,7 @@
                 @if ($restaurantWishlists->count() > 0)
                     @foreach ($restaurantWishlists as $restaurantWishlist)
                         <div class="swiper-slide slide">
-                            <span class="price" id="price">${{ $restaurantWishlist->restaurant->price }}</span>
+                            <span class="price" id="price">RM{{ $restaurantWishlist->restaurant->price }}</span>
 
                             <div class="image"
                                 style="width: 100%; height: 250px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; background-color: #f9f9f9;">
@@ -410,7 +410,6 @@
             <div class="swiper-pagination"></div>
         </div>
     </section>
-
 
     <!-- Link Swiper's JS -->
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>

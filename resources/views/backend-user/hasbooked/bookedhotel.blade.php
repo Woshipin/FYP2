@@ -182,10 +182,7 @@
                     </div>
 
                     <hr>
-
-                    <!-- Button to delete all selected items -->
-                    {{-- <form action="{{ route ('hotels.deleteMultiplebookedhotel') }}" method="post" id="deleteMultipleForm">
-                    @csrf --}}
+                    
                     <!-- Your table code here -->
                     <div class="table-responsive">
                         <table id="example" class="table table-striped table-bordered">

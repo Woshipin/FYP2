@@ -445,7 +445,7 @@
                                                 <td>{{ $room->name }}</td>
                                                 <td>{{ $room->type }}</td>
                                                 <td>{{ $room->available }}</td>
-                                                <td>{{ $room->price }}</td>
+                                                <td>RM{{ $room->price }}</td>
                                                 <td>
                                                     @if ($room->status == 0)
                                                         <a href="{{ url('changeroom-status/' . $room->id) }}"

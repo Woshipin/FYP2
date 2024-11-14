@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Restaurant;
@@ -30,6 +31,12 @@ use Illuminate\Support\Str;
 use App\Mail\ResortPaymentVerification;
 use App\Mail\HotelPaymentVerification;
 use App\Mail\RestaurantPaymentVerification;
+use Illuminate\Support\Facades\Log;
+
+use App\Services\PayPalService;
+use PayPal\Api\Payment;
+use Omnipay\Omnipay;
+use DateTime;
 
 class BookingController extends Controller
 {
@@ -77,19 +84,16 @@ class BookingController extends Controller
         return $bookingDetails;
     }
 
-    public function booking(Request $request)
+    public function bookingrestaurant(Request $request)
     {
+        // 验证请求数据
         $validator = Validator::make($request->all(), [
-            'card_number' => 'required|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
-            'card_holder' => 'required',
-            'card_month' => 'required',
-            'card_year' => 'required',
-            'cvv' => 'required',
-            'booking_date' => 'required',
-            'checkin_time' => 'required',
-            'checkout_time' => 'required',
+            'booking_date' => 'required|date',
+            'checkin_time' => 'required|date_format:H:i',
+            'checkout_time' => 'required|date_format:H:i',
             'gender' => 'required',
-            'quantity' => 'required|numeric|between:1,20', // 最小1，最大20
+            'quantity' => 'required|numeric|between:1,20',
+            'payment_method' => 'required|in:credit_card,paypal',
         ]);
 
         if ($validator->fails()) {
@@ -113,17 +117,17 @@ class BookingController extends Controller
                 $payment->type_name = $request->type_name;
                 $payment->deposit_price = $deposit;
                 $payment->total_price = 0;
-                $payment->card_number = substr($request->card_number, -4);
-                $payment->card_holder = $request->card_holder;
-                $payment->card_month = $request->card_month;
-                $payment->card_year = $request->card_year;
-                $payment->cvv = Crypt::encryptString($request->cvv);
+                $payment->card_number = substr($request->card_number, -4) ?: '0000';
+                $payment->card_holder = $request->card_holder ?: 'John Doe';
+                $payment->card_month = $request->card_month ?: 1;
+                $payment->card_year = $request->card_year ?: date('Y');
+                $payment->cvv = Crypt::encryptString($request->cvv) ?: Crypt::encryptString('123');
                 $payment->save();
 
                 // Booking Restaurant save
                 $bookings = new BookingRestaurant();
                 $bookings->user_id = auth()->id();
-                $bookings->user_name = $request->user_name;
+                $bookings->user_name = $request->user()->name;
                 $bookings->restaurant_id = $request->restaurant_id;
                 $bookings->restaurant_name = $request->restaurant_name;
                 $bookings->table_id = $request->table_id;
@@ -133,11 +137,12 @@ class BookingController extends Controller
                 $bookings->gender = $request->gender;
                 $bookings->quantity = $request->quantity;
                 $bookings->deposit_price = $deposit;
-                $bookings->card_number = substr($request->card_number, -4);
-                $bookings->card_holder = $request->card_holder;
-                $bookings->card_month = $request->card_month;
-                $bookings->card_year = $request->card_year;
-                $bookings->cvv = Crypt::encryptString($request->cvv);
+                $bookings->payment_method = $request->payment_method;
+                $bookings->card_number = substr($request->card_number, -4) ?: '0000';
+                $bookings->card_holder = $request->card_holder ?: 'John Doe';
+                $bookings->card_month = $request->card_month ?: 1;
+                $bookings->card_year = $request->card_year ?: date('Y');
+                $bookings->cvv = Crypt::encryptString($request->cvv) ?: Crypt::encryptString('123');
                 $bookings->verify_code = $verifyCode;
                 $bookings->popular_count = 1;
                 $bookings->save();
@@ -345,17 +350,16 @@ class BookingController extends Controller
 
     public function mybookedRestaurant()
     {
-        $user = auth()->user();
+        // 确保用户已认证
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'You need to log in to view your bookings.');
+        }
 
-        // $restaurantIds = $user->restaurants()->pluck('id')->toArray();
+        // 获取当前认证用户的 ID
+        $userId = auth()->id();
 
-        // Get the query builder instance before fetching results
-        $hasBookedQuery = BookingRestaurant::whereIn('user_id', $user);
-
-        // Paginate the query builder instance
-        $mybookeds = $hasBookedQuery->paginate(10);
-
-        // $bookedss = Restaurant::with('bookings', 'bookings.table')->get();
+        // 获取预订记录
+        $mybookeds = BookingRestaurant::where('user_id', $userId)->paginate(10);
 
         return view('backend-user.mybooked.mybookedrestaurant', compact('mybookeds'));
     }
@@ -421,9 +425,9 @@ class BookingController extends Controller
 
     public function viewBookedRestaurant($id){
 
-        $bookedrestaurants = BookingRestaurant::find($id);
+        $VerifyRestaurant = BookingRestaurant::find($id);
 
-        return view('backend-user.hasbooked.viewbookedrestaurant',compact('bookedrestaurants'));
+        return view('backend-user.hasbooked.viewbookedrestaurant',compact('VerifyRestaurant'));
     }
 
     public function hasrestaurantSearch(Request $request)
@@ -557,21 +561,282 @@ class BookingController extends Controller
         return $bookedDates;
     }
 
+    // public function bookingresort(Request $request)
+    // {
+    //     // 验证请求数据
+    //     $validator = Validator::make($request->all(), [
+    //         'card_number' => 'required|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
+    //         'card_holder' => 'required',
+    //         'card_month' => 'required|integer|between:1,12',
+    //         'card_year' => 'required|integer|min:' . date('Y'),
+    //         'cvv' => 'required|digits:3',
+    //         'checkin_date' => 'required|date',
+    //         'checkout_date' => 'required|date|after_or_equal:checkin_date',
+    //         'checkin_time' => 'required|date_format:H:i',
+    //         'checkout_time' => 'required|date_format:H:i',
+    //         'gender' => 'required',
+    //         'quantity' => 'required|numeric|between:1,20',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+    //     }
+
+    //     if (Auth::check()) {
+    //         try {
+    //             DB::beginTransaction();
+
+    //             $checkinDate = Carbon::parse($request->checkin_date);
+    //             $checkoutDate = Carbon::parse($request->checkout_date);
+    //             $bookingDays = $checkoutDate->diffInDays($checkinDate);
+
+    //             $totalPrice = $request->resort_price * $bookingDays;
+
+    //             $tax = $totalPrice * 0.10;
+    //             $deposit = $request->deposit_price;
+    //             $balance = $totalPrice - $tax;
+
+    //             $verifyCode = Str::random(10);
+
+    //             // Save Deposit Information
+    //             $payment = new Deposit();
+    //             $payment->user_name = $request->user()->name;
+    //             $payment->user_email = $request->user()->email;
+    //             $payment->type_name = $request->type_name;
+    //             $payment->deposit_price = $deposit;
+    //             $payment->total_price = $totalPrice;
+    //             $payment->card_number = substr($request->card_number, -4);
+    //             $payment->card_holder = $request->card_holder;
+    //             $payment->card_month = $request->card_month;
+    //             $payment->card_year = $request->card_year;
+    //             $payment->cvv = Crypt::encryptString($request->cvv);
+    //             $payment->save();
+
+    //             // Save Booking Resort Information
+    //             $booking = new BookingResort();
+    //             $booking->user_id = auth()->id();
+    //             $booking->user_name = $request->user()->name;
+    //             $booking->resort_id = $request->resort_id;
+    //             $booking->resort_name = $request->resort_name;
+    //             $booking->gender = $request->gender;
+    //             $booking->quantity = $request->quantity;
+    //             $booking->checkin_date = $request->checkin_date;
+    //             $booking->checkout_date = $request->checkout_date;
+    //             $booking->booking_days = $bookingDays;
+    //             $booking->checkin_time = $request->checkin_time;
+    //             $booking->checkout_time = $request->checkout_time;
+    //             $booking->deposit_price = $deposit;
+    //             $booking->total_price = $totalPrice;
+    //             $booking->card_number = substr($request->card_number, -4);
+    //             $booking->card_holder = $request->card_holder;
+    //             $booking->card_month = $request->card_month;
+    //             $booking->card_year = $request->card_year;
+    //             $booking->cvv = Crypt::encryptString($request->cvv);
+    //             $booking->verify_code = $verifyCode;
+    //             $booking->popular_count = 1;
+    //             $booking->save();
+
+    //             // 更新管理员钱包
+    //             $adminWallet = new AdminWallet();
+    //             $adminWallet->type_id = $request->type_id;
+    //             $adminWallet->type_name = $request->type_name;
+    //             $adminWallet->type_category = $request->type_category;
+    //             $adminWallet->balance = $balance;
+    //             $adminWallet->user_deposit = $deposit;
+    //             $adminWallet->tax = $tax;
+    //             $adminWallet->verify_code = $verifyCode;
+    //             $adminWallet->save();
+
+    //             // 更新餐厅的 popular_count
+    //             $resort = Resort::find($request->resort_id);
+    //             if ($resort) {
+    //                 $resort->increment('popular_count');
+    //             }
+
+    //             $data = [
+    //                 'subject' => 'Your Booking Resort Details',
+    //                 'user_name' => $request->user()->name,
+    //                 'email' => $request->user()->email,
+    //                 'booking_days' => $bookingDays,
+    //                 'check_in_date' => $request->checkin_date,
+    //                 'check_out_date' => $request->checkout_date,
+    //                 'check_in_time' => $request->checkin_time,
+    //                 'check_out_time' => $request->checkout_time,
+    //                 'quantity' => $request->quantity,
+    //                 'gender' => $request->gender,
+    //                 'owner_name' => $request->owner_name,
+    //                 'resort_name' => $request->resort_name,
+    //                 'resort_phone' => $request->resort_phone,
+    //                 'resort_email' => $request->resort_email,
+    //                 'resort_price' => $request->resort_price,
+    //                 'total_price' => $totalPrice,
+    //                 'resort_type' => $request->resort_type,
+    //             ];
+
+    //             Mail::send('email.resortemail', $data, function ($message) use ($data) {
+    //                 $message->to($data['email'])->subject($data['subject']);
+    //             });
+
+    //             DB::commit();
+
+    //             event(new BookingStatus());
+
+    //             return response()->json(['success' => true, 'message' => "Resort {$booking->resort_name} booked successfully!"]);
+    //         } catch (\Exception $e) {
+    //             DB::rollback();
+    //             return response()->json(['success' => false, 'message' => 'Booking failed: ' . $e->getMessage()], 500);
+    //         }
+    //     } else {
+    //         return response()->json(['success' => false, 'message' => 'You need to log in first.'], 401);
+    //     }
+    // }
+
+    // public function bookingresort(Request $request)
+    // {
+    //     // 验证请求数据
+    //     $validator = Validator::make($request->all(), [
+    //         'checkin_date' => 'required|date',
+    //         'checkout_date' => 'required|date|after_or_equal:checkin_date',
+    //         'checkin_time' => 'required|date_format:H:i',
+    //         'checkout_time' => 'required|date_format:H:i',
+    //         'gender' => 'required',
+    //         'quantity' => 'required|numeric|between:1,20',
+    //         'payment_method' => 'required|in:credit_card,paypal',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+    //     }
+
+    //     if (Auth::check()) {
+    //         try {
+    //             DB::beginTransaction();
+
+    //             $checkinDate = Carbon::parse($request->checkin_date);
+    //             $checkoutDate = Carbon::parse($request->checkout_date);
+    //             $bookingDays = $checkoutDate->diffInDays($checkinDate);
+
+    //             $totalPrice = $request->resort_price * $bookingDays;
+
+    //             $tax = $totalPrice * 0.10;
+    //             $deposit = $request->deposit_price;
+    //             $balance = $totalPrice - $tax;
+
+    //             $verifyCode = Str::random(10);
+
+    //             // Save Deposit Information
+    //             $payment = new Deposit();
+    //             $payment->user_name = $request->user()->name;
+    //             $payment->user_email = $request->user()->email;
+    //             $payment->type_name = $request->type_name;
+    //             $payment->deposit_price = $deposit;
+    //             $payment->total_price = $totalPrice;
+    //             $payment->card_number = substr($request->card_number, -4) ?: '0000';
+    //             $payment->card_holder = $request->card_holder ?: 'John Doe';
+    //             $payment->card_month = $request->card_month ?: 1;
+    //             $payment->card_year = $request->card_year ?: date('Y');
+    //             $payment->cvv = Crypt::encryptString($request->cvv) ?: Crypt::encryptString('123');
+    //             $payment->save();
+
+    //             // Save Booking Resort Information
+    //             $booking = new BookingResort();
+    //             $booking->user_id = auth()->id();
+    //             $booking->user_name = $request->user()->name;
+    //             $booking->resort_id = $request->resort_id;
+    //             $booking->resort_name = $request->resort_name;
+    //             $booking->gender = $request->gender;
+    //             $booking->quantity = $request->quantity;
+    //             $booking->checkin_date = $request->checkin_date;
+    //             $booking->checkout_date = $request->checkout_date;
+    //             $booking->booking_days = $bookingDays;
+    //             $booking->checkin_time = $request->checkin_time;
+    //             $booking->checkout_time = $request->checkout_time;
+    //             $booking->deposit_price = $deposit;
+    //             $booking->total_price = $totalPrice;
+    //             $booking->payment_method = $request->payment_method;
+    //             $booking->card_number = substr($request->card_number, -4) ?: '0000';
+    //             $booking->card_holder = $request->card_holder ?: 'John Doe';
+    //             $booking->card_month = $request->card_month ?: 1;
+    //             $booking->card_year = $request->card_year ?: date('Y');
+    //             $booking->cvv = Crypt::encryptString($request->cvv) ?: Crypt::encryptString('123');
+    //             $booking->verify_code = $verifyCode;
+    //             $booking->popular_count = 1;
+    //             $booking->save();
+
+    //             // 更新管理员钱包
+    //             $adminWallet = new AdminWallet();
+    //             $adminWallet->type_id = $request->type_id;
+    //             $adminWallet->type_name = $request->type_name;
+    //             $adminWallet->type_category = $request->type_category;
+    //             $adminWallet->balance = $balance;
+    //             $adminWallet->user_deposit = $deposit;
+    //             $adminWallet->tax = $tax;
+    //             $adminWallet->verify_code = $verifyCode;
+    //             $adminWallet->save();
+
+    //             // 更新度假村的 popular_count
+    //             $resort = Resort::find($request->resort_id);
+    //             if ($resort) {
+    //                 $resort->increment('popular_count');
+    //             }
+
+    //             $data = [
+    //                 'subject' => 'Your Booking Resort Details',
+    //                 'user_name' => $request->user()->name,
+    //                 'email' => $request->user()->email,
+    //                 'booking_days' => $bookingDays,
+    //                 'check_in_date' => $request->checkin_date,
+    //                 'check_out_date' => $request->checkout_date,
+    //                 'check_in_time' => $request->checkin_time,
+    //                 'check_out_time' => $request->checkout_time,
+    //                 'quantity' => $request->quantity,
+    //                 'gender' => $request->gender,
+    //                 'owner_name' => $request->owner_name,
+    //                 'resort_name' => $request->resort_name,
+    //                 'resort_phone' => $request->resort_phone,
+    //                 'resort_email' => $request->resort_email,
+    //                 'resort_price' => $request->resort_price,
+    //                 'total_price' => $totalPrice,
+    //                 'resort_type' => $request->resort_type,
+    //             ];
+
+    //             try {
+    //                 Mail::send('email.resortemail', $data, function ($message) use ($data) {
+    //                     $message->to('ahpin7762@gmail.com')->subject($data['subject']);
+    //                 });
+    //             } catch (\Exception $e) {
+    //                 Log::error('Email sending failed: ' . $e->getMessage());
+    //                 DB::rollback();
+    //                 return response()->json(['success' => false, 'message' => 'Email sending failed: ' . $e->getMessage()], 500);
+    //             }
+
+    //             DB::commit();
+
+    //             event(new BookingStatus());
+
+    //             return redirect()->route('home')->with('success', "Resort {$booking->resort_name} booked successfully!");
+
+    //         } catch (\Exception $e) {
+    //             DB::rollback();
+    //             Log::error('Booking failed: ' . $e->getMessage());
+    //             return response()->json(['success' => false, 'message' => 'Booking failed: ' . $e->getMessage()], 500);
+    //         }
+    //     } else {
+    //         return response()->json(['success' => false, 'message' => 'You need to log in first.'], 401);
+    //     }
+    // }
+
     public function bookingresort(Request $request)
     {
         // 验证请求数据
         $validator = Validator::make($request->all(), [
-            'card_number' => 'required|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
-            'card_holder' => 'required',
-            'card_month' => 'required|integer|between:1,12',
-            'card_year' => 'required|integer|min:' . date('Y'),
-            'cvv' => 'required|digits:3',
             'checkin_date' => 'required|date',
             'checkout_date' => 'required|date|after_or_equal:checkin_date',
             'checkin_time' => 'required|date_format:H:i',
             'checkout_time' => 'required|date_format:H:i',
             'gender' => 'required',
             'quantity' => 'required|numeric|between:1,20',
+            'payment_method' => 'required|in:credit_card,paypal',
         ]);
 
         if ($validator->fails()) {
@@ -601,11 +866,11 @@ class BookingController extends Controller
                 $payment->type_name = $request->type_name;
                 $payment->deposit_price = $deposit;
                 $payment->total_price = $totalPrice;
-                $payment->card_number = substr($request->card_number, -4);
-                $payment->card_holder = $request->card_holder;
-                $payment->card_month = $request->card_month;
-                $payment->card_year = $request->card_year;
-                $payment->cvv = Crypt::encryptString($request->cvv);
+                $payment->card_number = substr($request->card_number, -4) ?: '0000';
+                $payment->card_holder = $request->card_holder ?: 'John Doe';
+                $payment->card_month = $request->card_month ?: 1;
+                $payment->card_year = $request->card_year ?: date('Y');
+                $payment->cvv = Crypt::encryptString($request->cvv) ?: Crypt::encryptString('123');
                 $payment->save();
 
                 // Save Booking Resort Information
@@ -623,12 +888,14 @@ class BookingController extends Controller
                 $booking->checkout_time = $request->checkout_time;
                 $booking->deposit_price = $deposit;
                 $booking->total_price = $totalPrice;
-                $booking->card_number = substr($request->card_number, -4);
-                $booking->card_holder = $request->card_holder;
-                $booking->card_month = $request->card_month;
-                $booking->card_year = $request->card_year;
-                $booking->cvv = Crypt::encryptString($request->cvv);
+                $booking->payment_method = $request->payment_method;
+                $booking->card_number = substr($request->card_number, -4) ?: '0000';
+                $booking->card_holder = $request->card_holder ?: 'John Doe';
+                $booking->card_month = $request->card_month ?: 1;
+                $booking->card_year = $request->card_year ?: date('Y');
+                $booking->cvv = Crypt::encryptString($request->cvv) ?: Crypt::encryptString('123');
                 $booking->verify_code = $verifyCode;
+                // $booking->booking_uuid = $request->booking_uuid; // 添加 UUID
                 $booking->popular_count = 1;
                 $booking->save();
 
@@ -686,6 +953,468 @@ class BookingController extends Controller
             return response()->json(['success' => false, 'message' => 'You need to log in first.'], 401);
         }
     }
+
+    public function paypalSuccess(Request $request)
+    {
+        $paypalService = new PayPalService();
+        $paymentId = $request->get('paymentId');
+        $payerId = $request->get('PayerID');
+
+        $result = $paypalService->executePayment($paymentId, $payerId);
+
+        if ($result) {
+            return redirect()->route('home')->with('success', 'Payment successful!');
+        } else {
+            return redirect()->route('home')->with('error', 'Payment failed!');
+        }
+    }
+
+    public function paypalCancel()
+    {
+        return redirect()->route('home')->with('error', 'Payment cancelled!');
+    }
+
+    // -----------------------------
+    // public function bookingresort(Request $request)
+    // {
+    //     // 验证请求数据
+    //     $validator = Validator::make($request->all(), [
+    //         'card_number' => 'required_if:payment_method,card|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
+    //         'card_holder' => 'required_if:payment_method,card',
+    //         'card_month' => 'required_if:payment_method,card|integer|between:1,12',
+    //         'card_year' => 'required_if:payment_method,card|integer|min:' . date('Y'),
+    //         'cvv' => 'required_if:payment_method,card|digits:3',
+    //         'checkin_date' => 'required|date',
+    //         'checkout_date' => 'required|date|after_or_equal:checkin_date',
+    //         'checkin_time' => 'required|date_format:H:i',
+    //         'checkout_time' => 'required|date_format:H:i',
+    //         'gender' => 'required',
+    //         'quantity' => 'required|numeric|between:1,20',
+    //         'payment_method' => 'required|in:card,paypal', // 新增支付方式验证
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+    //     }
+
+    //     if (!Auth::check()) {
+    //         return response()->json(['success' => false, 'message' => 'You need to log in first.'], 401);
+    //     }
+
+    //     try {
+    //         DB::beginTransaction();
+
+    //         $checkinDate = Carbon::parse($request->checkin_date);
+    //         $checkoutDate = Carbon::parse($request->checkout_date);
+    //         $bookingDays = $checkoutDate->diffInDays($checkinDate);
+
+    //         $totalPrice = $request->resort_price * $bookingDays;
+    //         $tax = $totalPrice * 0.10;
+    //         $deposit = $request->deposit_price;
+    //         $balance = $totalPrice - $tax;
+    //         $verifyCode = Str::random(10);
+
+    //         // PayPal支付处理
+    //         if ($request->payment_method === 'paypal') {
+    //             try {
+    //                 $gateway = Omnipay::create('PayPal_Rest');
+    //                 $gateway->setClientId(config('services.paypal.client_id'));
+    //                 $gateway->setSecret(config('services.paypal.client_secret'));
+    //                 $gateway->setTestMode(config('services.paypal.sandbox'));
+
+    //                 $response = $gateway->purchase([
+    //                     'amount' => [
+    //                         'value' => $totalPrice,
+    //                         'currency' => config('services.paypal.currency')
+    //                     ],
+    //                     'returnUrl' => route('paypal.success'),
+    //                     'cancelUrl' => route('paypal.cancel'),
+    //                     'description' => "Booking for {$request->resort_name}",
+    //                 ])->send();
+
+    //                 if ($response->isRedirect()) {
+    //                     session([
+    //                         'paypal_payment_id' => $response->getTransactionReference(),
+    //                         'resort_id' => $request->resort_id,
+    //                         'resort_name' => $request->resort_name,
+    //                         'gender' => $request->gender,
+    //                         'quantity' => $request->quantity,
+    //                         'checkin_date' => $request->checkin_date,
+    //                         'checkout_date' => $request->checkout_date,
+    //                         'booking_days' => $bookingDays,
+    //                         'checkin_time' => $request->checkin_time,
+    //                         'checkout_time' => $request->checkout_time,
+    //                         'owner_name' => $request->owner_name,
+    //                         'resort_phone' => $request->resort_phone,
+    //                         'resort_email' => $request->resort_email,
+    //                         'resort_price' => $request->resort_price,
+    //                         'resort_type' => $request->resort_type,
+    //                         'type_id' => $request->type_id,
+    //                         'type_name' => $request->type_name,
+    //                         'type_category' => $request->type_category,
+    //                     ]);
+
+    //                     return response()->json([
+    //                         'success' => true,
+    //                         'redirect' => true,
+    //                         'redirect_url' => $response->getRedirectUrl()
+    //                     ]);
+    //                 } else {
+    //                     \Log::error('PayPal Error: ' . $response->getMessage());
+    //                     return response()->json([
+    //                         'success' => false,
+    //                         'message' => 'PayPal Error: ' . $response->getMessage()
+    //                     ], 422);
+    //                 }
+    //             } catch (\Exception $e) {
+    //                 \Log::error('PayPal Exception: ' . $e->getMessage());
+    //                 return response()->json([
+    //                     'success' => false,
+    //                     'message' => 'PayPal Exception: ' . $e->getMessage()
+    //                 ], 500);
+    //             }
+    //         }
+
+    //         // Save Deposit Information
+    //         $payment = new Deposit();
+    //         $payment->user_name = $request->user()->name;
+    //         $payment->user_email = $request->user()->email;
+    //         $payment->type_name = $request->type_name;
+    //         $payment->deposit_price = $deposit;
+    //         $payment->total_price = $totalPrice;
+    //         $payment->payment_method = $request->payment_method;
+
+    //         if ($request->payment_method === 'card') {
+    //             $payment->card_number = substr($request->card_number, -4);
+    //             $payment->card_holder = $request->card_holder;
+    //             $payment->card_month = $request->card_month;
+    //             $payment->card_year = $request->card_year;
+    //             $payment->cvv = Crypt::encryptString($request->cvv);
+    //         }
+
+    //         $payment->save();
+
+    //         // Save Booking Resort Information
+    //         $booking = new BookingResort();
+    //         $booking->user_id = auth()->id();
+    //         $booking->user_name = $request->user()->name;
+    //         $booking->resort_id = $request->resort_id;
+    //         $booking->resort_name = $request->resort_name;
+    //         $booking->gender = $request->gender;
+    //         $booking->quantity = $request->quantity;
+    //         $booking->checkin_date = $request->checkin_date;
+    //         $booking->checkout_date = $request->checkout_date;
+    //         $booking->booking_days = $bookingDays;
+    //         $booking->checkin_time = $request->checkin_time;
+    //         $booking->checkout_time = $request->checkout_time;
+    //         $booking->deposit_price = $deposit;
+    //         $booking->total_price = $totalPrice;
+    //         $booking->payment_method = $request->payment_method;
+
+    //         if ($request->payment_method === 'card') {
+    //             $booking->card_number = substr($request->card_number, -4);
+    //             $booking->card_holder = $request->card_holder;
+    //             $booking->card_month = $request->card_month;
+    //             $booking->card_year = $request->card_year;
+    //             $booking->cvv = Crypt::encryptString($request->cvv);
+    //         }
+
+    //         $booking->verify_code = $verifyCode;
+    //         $booking->popular_count = 1;
+    //         $booking->save();
+
+    //         // 更新管理员钱包
+    //         $adminWallet = new AdminWallet();
+    //         $adminWallet->type_id = $request->type_id;
+    //         $adminWallet->type_name = $request->type_name;
+    //         $adminWallet->type_category = $request->type_category;
+    //         $adminWallet->balance = $balance;
+    //         $adminWallet->user_deposit = $deposit;
+    //         $adminWallet->tax = $tax;
+    //         $adminWallet->verify_code = $verifyCode;
+    //         $adminWallet->save();
+
+    //         // 更新餐厅的 popular_count
+    //         $resort = Resort::find($request->resort_id);
+    //         if ($resort) {
+    //             $resort->increment('popular_count');
+    //         }
+
+    //         $data = [
+    //             'subject' => 'Your Booking Resort Details',
+    //             'user_name' => $request->user()->name,
+    //             'email' => $request->user()->email,
+    //             'booking_days' => $bookingDays,
+    //             'check_in_date' => $request->checkin_date,
+    //             'check_out_date' => $request->checkout_date,
+    //             'check_in_time' => $request->checkin_time,
+    //             'check_out_time' => $request->checkout_time,
+    //             'quantity' => $request->quantity,
+    //             'gender' => $request->gender,
+    //             'owner_name' => $request->owner_name,
+    //             'resort_name' => $request->resort_name,
+    //             'resort_phone' => $request->resort_phone,
+    //             'resort_email' => $request->resort_email,
+    //             'resort_price' => $request->resort_price,
+    //             'total_price' => $totalPrice,
+    //             'resort_type' => $request->resort_type,
+    //             'payment_method' => $request->payment_method
+    //         ];
+
+    //         Mail::send('email.resortemail', $data, function ($message) use ($data) {
+    //             $message->to($data['email'])->subject($data['subject']);
+    //         });
+
+    //         DB::commit();
+
+    //         event(new BookingStatus());
+
+    //         return response()->json(['success' => true, 'message' => "Resort {$booking->resort_name} booked successfully!"]);
+    //     } catch (\Exception $e) {
+    //         DB::rollback();
+    //         return response()->json(['success' => false, 'message' => 'Booking failed: ' . $e->getMessage()], 500);
+    //     }
+    // }
+
+    // public function paypalSuccess(Request $request)
+    // {
+    //     // 获取 PayPal 支付详情
+    //     $paypalPaymentId = session('paypal_payment_id');
+    //     $payerId = $request->input('PayerID');
+    //     $paymentId = $request->input('paymentId');
+
+    //     // 验证 PayPal 支付
+    //     $gateway = Omnipay::create('PayPal_Rest');
+    //     $gateway->setClientId(config('services.paypal.client_id'));
+    //     $gateway->setSecret(config('services.paypal.client_secret'));
+    //     $gateway->setTestMode(config('services.paypal.sandbox')); // 确保为true
+
+
+    //     $transaction = $gateway->completePurchase([
+    //         'payer_id' => $payerId,
+    //         'transactionReference' => $paymentId,
+    //     ]);
+
+    //     $response = $transaction->send();
+
+    //     if ($response->isSuccessful()) {
+    //         // 支付成功，处理预订逻辑
+    //         $paymentDetails = $response->getData();
+
+    //         // 保存支付详情到数据库
+    //         $payment = new Deposit();
+    //         $payment->user_name = auth()->user()->name;
+    //         $payment->user_email = auth()->user()->email;
+    //         $payment->type_name = 'Resort Booking';
+    //         $payment->deposit_price = 100;
+    //         $payment->total_price = $paymentDetails['transactions'][0]['amount']['total'];
+    //         $payment->payment_method = 'paypal';
+    //         $payment->paypal_details = json_encode($paymentDetails);
+    //         $payment->save();
+
+    //         // 保存预订详情到数据库
+    //         $booking = new BookingResort();
+    //         $booking->user_id = auth()->id();
+    //         $booking->user_name = auth()->user()->name;
+    //         $booking->resort_id = session('resort_id');
+    //         $booking->resort_name = session('resort_name');
+    //         $booking->gender = session('gender');
+    //         $booking->quantity = session('quantity');
+    //         $booking->checkin_date = session('checkin_date');
+    //         $booking->checkout_date = session('checkout_date');
+    //         $booking->booking_days = session('booking_days');
+    //         $booking->checkin_time = session('checkin_time');
+    //         $booking->checkout_time = session('checkout_time');
+    //         $booking->deposit_price = 100;
+    //         $booking->total_price = $paymentDetails['transactions'][0]['amount']['total'];
+    //         $booking->payment_method = 'paypal';
+    //         $booking->paypal_details = json_encode($paymentDetails);
+    //         $booking->verify_code = Str::random(10);
+    //         $booking->popular_count = 1;
+    //         $booking->save();
+
+    //         // 更新管理员钱包
+    //         $adminWallet = new AdminWallet();
+    //         $adminWallet->type_id = session('type_id');
+    //         $adminWallet->type_name = session('type_name');
+    //         $adminWallet->type_category = session('type_category');
+    //         $adminWallet->balance = $paymentDetails['transactions'][0]['amount']['total'] - 100;
+    //         $adminWallet->user_deposit = 100;
+    //         $adminWallet->tax = 0;
+    //         $adminWallet->verify_code = Str::random(10);
+    //         $adminWallet->save();
+
+    //         // 更新餐厅的 popular_count
+    //         $resort = Resort::find(session('resort_id'));
+    //         if ($resort) {
+    //             $resort->increment('popular_count');
+    //         }
+
+    //         // 发送邮件通知
+    //         $data = [
+    //             'subject' => 'Your Booking Resort Details',
+    //             'user_name' => auth()->user()->name,
+    //             'email' => auth()->user()->email,
+    //             'booking_days' => session('booking_days'),
+    //             'check_in_date' => session('checkin_date'),
+    //             'check_out_date' => session('checkout_date'),
+    //             'check_in_time' => session('checkin_time'),
+    //             'check_out_time' => session('checkout_time'),
+    //             'quantity' => session('quantity'),
+    //             'gender' => session('gender'),
+    //             'owner_name' => session('owner_name'),
+    //             'resort_name' => session('resort_name'),
+    //             'resort_phone' => session('resort_phone'),
+    //             'resort_email' => session('resort_email'),
+    //             'resort_price' => session('resort_price'),
+    //             'total_price' => $paymentDetails['transactions'][0]['amount']['total'],
+    //             'resort_type' => session('resort_type'),
+    //             'payment_method' => 'paypal'
+    //         ];
+
+    //         Mail::send('email.resortemail', $data, function ($message) use ($data) {
+    //             $message->to($data['email'])->subject($data['subject']);
+    //         });
+
+    //         // 清除会话数据
+    //         session()->forget([
+    //             'paypal_payment_id', 'resort_id', 'resort_name', 'gender', 'quantity',
+    //             'checkin_date', 'checkout_date', 'booking_days', 'checkin_time', 'checkout_time',
+    //             'owner_name', 'resort_phone', 'resort_email', 'resort_price', 'resort_type',
+    //             'type_id', 'type_name', 'type_category'
+    //         ]);
+
+    //         return redirect()->route('home')->with('success', 'Resort booked successfully!');
+    //     } else {
+    //         return redirect()->route('home')->with('error', 'PayPal payment failed. Please try again.');
+    //     }
+    // }
+
+    // public function paypalCancel()
+    // {
+    //     return redirect()->route('home')->with('error', 'PayPal payment was cancelled.');
+    // }
+
+    // --------------------
+
+    // PayPal 回调处理方法
+    // public function paypalSuccess(Request $request)
+    // {
+    //     // 获取 PayPal 支付详情
+    //     $paypalPaymentId = session('paypal_payment_id');
+    //     $payerId = $request->input('PayerID');
+    //     $paymentId = $request->input('paymentId');
+
+    //     // 验证 PayPal 支付
+    //     $gateway = Omnipay::create('PayPal_Rest');
+    //     $gateway->setClientId(config('services.paypal.client_id'));
+    //     $gateway->setSecret(config('services.paypal.client_secret'));
+    //     $gateway->setTestMode(config('services.paypal.sandbox')); // true for sandbox, false for live
+
+    //     $transaction = $gateway->completePurchase([
+    //         'payer_id' => $payerId,
+    //         'transactionReference' => $paymentId,
+    //     ]);
+
+    //     $response = $transaction->send();
+
+    //     if ($response->isSuccessful()) {
+    //         // 支付成功，处理预订逻辑
+    //         $paymentDetails = $response->getData();
+
+    //         // 保存支付详情到数据库
+    //         $payment = new Deposit();
+    //         $payment->user_name = auth()->user()->name;
+    //         $payment->user_email = auth()->user()->email;
+    //         $payment->type_name = 'Resort Booking';
+    //         $payment->deposit_price = 100;
+    //         $payment->total_price = $paymentDetails['transactions'][0]['amount']['total'];
+    //         $payment->payment_method = 'paypal';
+    //         $payment->paypal_details = json_encode($paymentDetails);
+    //         $payment->save();
+
+    //         // 保存预订详情到数据库
+    //         $booking = new BookingResort();
+    //         $booking->user_id = auth()->id();
+    //         $booking->user_name = auth()->user()->name;
+    //         $booking->resort_id = session('resort_id');
+    //         $booking->resort_name = session('resort_name');
+    //         $booking->gender = session('gender');
+    //         $booking->quantity = session('quantity');
+    //         $booking->checkin_date = session('checkin_date');
+    //         $booking->checkout_date = session('checkout_date');
+    //         $booking->booking_days = session('booking_days');
+    //         $booking->checkin_time = session('checkin_time');
+    //         $booking->checkout_time = session('checkout_time');
+    //         $booking->deposit_price = 100;
+    //         $booking->total_price = $paymentDetails['transactions'][0]['amount']['total'];
+    //         $booking->payment_method = 'paypal';
+    //         $booking->paypal_details = json_encode($paymentDetails);
+    //         $booking->verify_code = Str::random(10);
+    //         $booking->popular_count = 1;
+    //         $booking->save();
+
+    //         // 更新管理员钱包
+    //         $adminWallet = new AdminWallet();
+    //         $adminWallet->type_id = session('type_id');
+    //         $adminWallet->type_name = session('type_name');
+    //         $adminWallet->type_category = session('type_category');
+    //         $adminWallet->balance = $paymentDetails['transactions'][0]['amount']['total'] - 100;
+    //         $adminWallet->user_deposit = 100;
+    //         $adminWallet->tax = 0;
+    //         $adminWallet->verify_code = Str::random(10);
+    //         $adminWallet->save();
+
+    //         // 更新餐厅的 popular_count
+    //         $resort = Resort::find(session('resort_id'));
+    //         if ($resort) {
+    //             $resort->increment('popular_count');
+    //         }
+
+    //         // 发送邮件通知
+    //         $data = [
+    //             'subject' => 'Your Booking Resort Details',
+    //             'user_name' => auth()->user()->name,
+    //             'email' => auth()->user()->email,
+    //             'booking_days' => session('booking_days'),
+    //             'check_in_date' => session('checkin_date'),
+    //             'check_out_date' => session('checkout_date'),
+    //             'check_in_time' => session('checkin_time'),
+    //             'check_out_time' => session('checkout_time'),
+    //             'quantity' => session('quantity'),
+    //             'gender' => session('gender'),
+    //             'owner_name' => session('owner_name'),
+    //             'resort_name' => session('resort_name'),
+    //             'resort_phone' => session('resort_phone'),
+    //             'resort_email' => session('resort_email'),
+    //             'resort_price' => session('resort_price'),
+    //             'total_price' => $paymentDetails['transactions'][0]['amount']['total'],
+    //             'resort_type' => session('resort_type'),
+    //             'payment_method' => 'paypal'
+    //         ];
+
+    //         Mail::send('email.resortemail', $data, function ($message) use ($data) {
+    //             $message->to($data['email'])->subject($data['subject']);
+    //         });
+
+    //         // 清除会话数据
+    //         session()->forget([
+    //             'paypal_payment_id', 'resort_id', 'resort_name', 'gender', 'quantity',
+    //             'checkin_date', 'checkout_date', 'booking_days', 'checkin_time', 'checkout_time',
+    //             'owner_name', 'resort_phone', 'resort_email', 'resort_price', 'resort_type',
+    //             'type_id', 'type_name', 'type_category'
+    //         ]);
+
+    //         return redirect()->route('home')->with('success', 'Resort booked successfully!');
+    //     } else {
+    //         return redirect()->route('home')->with('error', 'PayPal payment failed. Please try again.');
+    //     }
+    // }
+
+    // public function paypalCancel()
+    // {
+    //     return redirect()->route('home')->with('error', 'PayPal payment was cancelled.');
+    // }
 
     public function verifyResortPayment(Request $request, $id)
     {
@@ -821,17 +1550,16 @@ class BookingController extends Controller
 
     public function mybookedResort()
     {
-        $user = auth()->user();
+        // 确保用户已认证
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'You need to log in to view your bookings.');
+        }
 
-        // $restaurantIds = $user->restaurants()->pluck('id')->toArray();
+        // 获取当前认证用户的 ID
+        $userId = auth()->id();
 
-        // Get the query builder instance before fetching results
-        $hasBookedQuery = BookingResort::whereIn('user_id', $user);
-
-        // Paginate the query builder instance
-        $mybookeds = $hasBookedQuery->paginate(10);
-
-        // $bookedss = Restaurant::with('bookings', 'bookings.table')->get();
+        // 获取预订记录
+        $mybookeds = BookingResort::where('user_id', $userId)->paginate(10);
 
         return view('backend-user.mybooked.mybookedresort', compact('mybookeds'));
     }
@@ -913,9 +1641,9 @@ class BookingController extends Controller
 
     public function viewBookedResort($id){
 
-        $bookedresorts = BookingResort::find($id);
+        $VerifyResort = BookingResort::find($id);
 
-        return view('backend-user.hasbooked.viewbookedresort',compact('bookedresorts'));
+        return view('backend-user.hasbooked.viewbookedresort',compact('VerifyResort'));
     }
 
     public function hasresortSearch(Request $request)
@@ -1043,39 +1771,172 @@ class BookingController extends Controller
         return $bookedDates;
     }
 
+    // public function bookinghotel(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'card_number' => 'required|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
+    //         'card_holder' => 'required',
+    //         'card_month' => 'required',
+    //         'card_year' => 'required',
+    //         'cvv' => 'required|digits:3',
+    //         'checkin_date' => 'required|date',
+    //         'checkout_date' => 'required|date|after_or_equal:checkin_date',
+    //         'checkin_time' => 'required|date_format:H:i',
+    //         'checkout_time' => 'required|date_format:H:i',
+    //         'gender' => 'required',
+    //         'quantity' => 'required|numeric|between:1,20',
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
+    //     }
+
+    //     // Convert card_month to integer
+    //     $cardMonth = (int) $request->card_month;
+    //     $cardYear = (int) $request->card_year;
+
+    //     if (Auth::check()) {
+    //         try {
+    //             DB::beginTransaction();
+
+    //             // 获取入住日期和退房日期并转换为 Carbon 对象
+    //             $checkinDate = Carbon::parse($request->checkin_date);
+    //             $checkoutDate = Carbon::parse($request->checkout_date);
+
+    //             // 计算日期差
+    //             $bookingDays = $checkoutDate->diffInDays($checkinDate);
+
+    //             $totalPrice = $request->room_price * $bookingDays;
+
+    //             $tax = $totalPrice * 0.10;
+    //             $deposit = $request->deposit_price;
+    //             $balance = $totalPrice - $tax;
+
+    //             $verifyCode = Str::random(10);
+
+    //             // 存储支付卡信息
+    //             $payment = new Deposit();
+    //             $payment->user_name = $request->user()->name;
+    //             $payment->user_email = $request->user()->email;
+    //             $payment->type_name = $request->type_name;
+    //             $payment->deposit_price = $deposit;
+    //             $payment->total_price = $totalPrice;
+    //             $payment->card_number = substr($request->card_number, -4);
+    //             $payment->card_holder = $request->card_holder;
+    //             $payment->card_month = $cardMonth; // 使用转换后的整数
+    //             $payment->card_year = $cardYear; // 使用转换后的整数
+    //             $payment->cvv = Crypt::encryptString($request->cvv);
+    //             $payment->save();
+
+    //             $bookings = new BookingHotel();
+    //             $bookings->user_id = auth()->id();
+    //             $bookings->user_name = $request->user_name;
+    //             $bookings->hotel_id = $request->hotel_id;
+    //             $bookings->hotel_name = $request->hotel_name;
+    //             $bookings->room_id = $request->room_id;
+    //             $bookings->booking_days = $bookingDays;
+    //             $bookings->checkin_date = $request->checkin_date;
+    //             $bookings->checkout_date = $request->checkout_date;
+    //             $bookings->checkin_time = $request->checkin_time;
+    //             $bookings->checkout_time = $request->checkout_time;
+    //             $bookings->gender = $request->gender;
+    //             $bookings->quantity = $request->quantity;
+    //             $bookings->deposit_price = $deposit;
+    //             $bookings->total_price = $totalPrice;
+    //             $bookings->card_number = substr($request->card_number, -4);
+    //             $bookings->card_holder = $request->card_holder;
+    //             $bookings->card_month = $cardMonth; // 使用转换后的整数
+    //             $bookings->card_year = $cardYear; // 使用转换后的整数
+    //             $bookings->cvv = Crypt::encryptString($request->cvv);
+    //             $bookings->verify_code = $verifyCode;
+    //             $bookings->popular_count = 1;
+    //             $bookings->save();
+
+    //             // 在保存后获取关联表格的标题
+    //             $roomTitle = $bookings->room->name;
+    //             $roomType = $bookings->room->type;
+    //             $roomPrice = $bookings->room->price;
+
+    //             // 更新管理员钱包
+    //             $adminWallet = new AdminWallet();
+    //             $adminWallet->type_id = $request->type_id;
+    //             $adminWallet->type_name = $request->type_name;
+    //             $adminWallet->type_category = $request->type_category;
+    //             $adminWallet->balance = $balance;
+    //             $adminWallet->user_deposit = $deposit;
+    //             $adminWallet->tax = $tax;
+    //             $adminWallet->verify_code = $verifyCode;
+    //             $adminWallet->save();
+
+    //             // 更新餐厅的 popular_count
+    //             $hotel = Hotel::find($request->hotel_id);
+    //             if ($hotel) {
+    //                 $hotel->increment('popular_count');
+    //             }
+
+    //             $data = [
+    //                 'subject' => 'You Booking Hotel Detail',
+    //                 'user_name' => $request->user_name,
+    //                 'email' => $request->email,
+    //                 'booking_days' => $bookingDays,
+    //                 'check_in_date' => $request->checkinDate,
+    //                 'check_out_date' => $request->checkoutDate,
+    //                 'check_in_time' => $request->checkin_time,
+    //                 'check_out_time' => $request->checkout_time,
+    //                 'quantity' => $request->quantity,
+    //                 'owner_name' => $request->owner_name,
+    //                 'hotel_email' => $request->hotel_email,
+    //                 'hotel_phone' => $request->hotel_phone,
+    //                 'hotel_name' => $request->hotel_name,
+    //                 'hotel_type' => $request->hotel_type,
+    //                 'room_name' => $roomTitle,
+    //                 'room_type' => $roomType,
+    //                 'room_price' => $roomPrice,
+    //                 'total_price' => $totalPrice,
+    //             ];
+
+    //             Mail::send('email.hotelemail', $data, function ($message) use ($data) {
+    //                 $message->to('ahpin7762@gmail.com')->subject($data['subject']);
+    //             });
+
+    //             DB::commit();
+
+    //             event(new BookingStatus());
+
+    //             return response()->json(['success' => true, 'message' => "Hotel {$bookings->hotel_name} Booking successfully!"]);
+    //         } catch (\Exception $e) {
+    //             DB::rollback();
+    //             return response()->json(['success' => false, 'message' => 'Booking failed: ' . $e->getMessage()], 500);
+    //         }
+    //     } else {
+    //         return response()->json(['success' => false, 'message' => 'You need to log in first.'], 401);
+    //     }
+    // }
+
+    // New With Paypal
     public function bookinghotel(Request $request)
     {
+        // 验证请求数据
         $validator = Validator::make($request->all(), [
-            'card_number' => 'required|regex:/^\d{4} \d{4} \d{4} \d{4}$/',
-            'card_holder' => 'required',
-            'card_month' => 'required',
-            'card_year' => 'required',
-            'cvv' => 'required|digits:3',
             'checkin_date' => 'required|date',
             'checkout_date' => 'required|date|after_or_equal:checkin_date',
             'checkin_time' => 'required|date_format:H:i',
             'checkout_time' => 'required|date_format:H:i',
             'gender' => 'required',
             'quantity' => 'required|numeric|between:1,20',
+            'payment_method' => 'required|in:credit_card,paypal',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['success' => false, 'message' => 'Validation failed', 'errors' => $validator->errors()], 422);
         }
 
-        // Convert card_month to integer
-        $cardMonth = (int) $request->card_month;
-        $cardYear = (int) $request->card_year;
-
         if (Auth::check()) {
             try {
                 DB::beginTransaction();
 
-                // 获取入住日期和退房日期并转换为 Carbon 对象
                 $checkinDate = Carbon::parse($request->checkin_date);
                 $checkoutDate = Carbon::parse($request->checkout_date);
-
-                // 计算日期差
                 $bookingDays = $checkoutDate->diffInDays($checkinDate);
 
                 $totalPrice = $request->room_price * $bookingDays;
@@ -1086,48 +1947,45 @@ class BookingController extends Controller
 
                 $verifyCode = Str::random(10);
 
-                // 存储支付卡信息
+                // Save Deposit Information
                 $payment = new Deposit();
                 $payment->user_name = $request->user()->name;
                 $payment->user_email = $request->user()->email;
                 $payment->type_name = $request->type_name;
                 $payment->deposit_price = $deposit;
                 $payment->total_price = $totalPrice;
-                $payment->card_number = substr($request->card_number, -4);
-                $payment->card_holder = $request->card_holder;
-                $payment->card_month = $cardMonth; // 使用转换后的整数
-                $payment->card_year = $cardYear; // 使用转换后的整数
-                $payment->cvv = Crypt::encryptString($request->cvv);
+                $payment->card_number = substr($request->card_number, -4) ?: '0000';
+                $payment->card_holder = $request->card_holder ?: 'John Doe';
+                $payment->card_month = $request->card_month ?: 1;
+                $payment->card_year = $request->card_year ?: date('Y');
+                $payment->cvv = Crypt::encryptString($request->cvv) ?: Crypt::encryptString('123');
                 $payment->save();
 
-                $bookings = new BookingHotel();
-                $bookings->user_id = auth()->id();
-                $bookings->user_name = $request->user_name;
-                $bookings->hotel_id = $request->hotel_id;
-                $bookings->hotel_name = $request->hotel_name;
-                $bookings->room_id = $request->room_id;
-                $bookings->booking_days = $bookingDays;
-                $bookings->checkin_date = $request->checkin_date;
-                $bookings->checkout_date = $request->checkout_date;
-                $bookings->checkin_time = $request->checkin_time;
-                $bookings->checkout_time = $request->checkout_time;
-                $bookings->gender = $request->gender;
-                $bookings->quantity = $request->quantity;
-                $bookings->deposit_price = $deposit;
-                $bookings->total_price = $totalPrice;
-                $bookings->card_number = substr($request->card_number, -4);
-                $bookings->card_holder = $request->card_holder;
-                $bookings->card_month = $cardMonth; // 使用转换后的整数
-                $bookings->card_year = $cardYear; // 使用转换后的整数
-                $bookings->cvv = Crypt::encryptString($request->cvv);
-                $bookings->verify_code = $verifyCode;
-                $bookings->popular_count = 1;
-                $bookings->save();
-
-                // 在保存后获取关联表格的标题
-                $roomTitle = $bookings->room->name;
-                $roomType = $bookings->room->type;
-                $roomPrice = $bookings->room->price;
+                // Save Booking Hotel Information
+                $booking = new BookingHotel();
+                $booking->user_id = auth()->id();
+                $booking->user_name = $request->user()->name;
+                $booking->hotel_id = $request->hotel_id;
+                $booking->hotel_name = $request->hotel_name;
+                $booking->room_id = $request->room_id;
+                $booking->gender = $request->gender;
+                $booking->quantity = $request->quantity;
+                $booking->checkin_date = $request->checkin_date;
+                $booking->checkout_date = $request->checkout_date;
+                $booking->booking_days = $bookingDays;
+                $booking->checkin_time = $request->checkin_time;
+                $booking->checkout_time = $request->checkout_time;
+                $booking->deposit_price = $deposit;
+                $booking->total_price = $totalPrice;
+                $booking->payment_method = $request->payment_method;
+                $booking->card_number = substr($request->card_number, -4) ?: '0000';
+                $booking->card_holder = $request->card_holder ?: 'John Doe';
+                $booking->card_month = $request->card_month ?: 1;
+                $booking->card_year = $request->card_year ?: date('Y');
+                $booking->cvv = Crypt::encryptString($request->cvv) ?: Crypt::encryptString('123');
+                $booking->verify_code = $verifyCode;
+                $booking->popular_count = 1;
+                $booking->save();
 
                 // 更新管理员钱包
                 $adminWallet = new AdminWallet();
@@ -1140,42 +1998,17 @@ class BookingController extends Controller
                 $adminWallet->verify_code = $verifyCode;
                 $adminWallet->save();
 
-                // 更新餐厅的 popular_count
+                // 更新酒店的 popular_count
                 $hotel = Hotel::find($request->hotel_id);
                 if ($hotel) {
                     $hotel->increment('popular_count');
                 }
 
-                $data = [
-                    'subject' => 'You Booking Hotel Detail',
-                    'user_name' => $request->user_name,
-                    'email' => $request->email,
-                    'booking_days' => $bookingDays,
-                    'check_in_date' => $request->checkinDate,
-                    'check_out_date' => $request->checkoutDate,
-                    'check_in_time' => $request->checkin_time,
-                    'check_out_time' => $request->checkout_time,
-                    'quantity' => $request->quantity,
-                    'owner_name' => $request->owner_name,
-                    'hotel_email' => $request->hotel_email,
-                    'hotel_phone' => $request->hotel_phone,
-                    'hotel_name' => $request->hotel_name,
-                    'hotel_type' => $request->hotel_type,
-                    'room_name' => $roomTitle,
-                    'room_type' => $roomType,
-                    'room_price' => $roomPrice,
-                    'total_price' => $totalPrice,
-                ];
-
-                Mail::send('email.hotelemail', $data, function ($message) use ($data) {
-                    $message->to('ahpin7762@gmail.com')->subject($data['subject']);
-                });
-
                 DB::commit();
 
                 event(new BookingStatus());
 
-                return response()->json(['success' => true, 'message' => "Hotel {$bookings->hotel_name} Booking successfully!"]);
+                return response()->json(['success' => true, 'message' => "Hotel {$booking->hotel_name} booked successfully!"]);
             } catch (\Exception $e) {
                 DB::rollback();
                 return response()->json(['success' => false, 'message' => 'Booking failed: ' . $e->getMessage()], 500);
@@ -1184,6 +2017,26 @@ class BookingController extends Controller
             return response()->json(['success' => false, 'message' => 'You need to log in first.'], 401);
         }
     }
+
+    // public function hotelpaypalSuccess(Request $request)
+    // {
+    //     $paypalService = new PayPalService();
+    //     $paymentId = $request->get('paymentId');
+    //     $payerId = $request->get('PayerID');
+
+    //     $result = $paypalService->executePayment($paymentId, $payerId);
+
+    //     if ($result) {
+    //         return redirect()->route('home')->with('success', 'Payment successful!');
+    //     } else {
+    //         return redirect()->route('home')->with('error', 'Payment failed!');
+    //     }
+    // }
+
+    // public function hotelpaypalCancel()
+    // {
+    //     return redirect()->route('home')->with('error', 'Payment cancelled!');
+    // }
 
     public function verifyHotelPayment(Request $request, $id)
     {
@@ -1310,17 +2163,16 @@ class BookingController extends Controller
 
     public function mybookedHotel()
     {
-        $user = auth()->user();
+        // 确保用户已认证
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('error', 'You need to log in to view your bookings.');
+        }
 
-        // $restaurantIds = $user->restaurants()->pluck('id')->toArray();
+        // 获取当前认证用户的 ID
+        $userId = auth()->id();
 
-        // Get the query builder instance before fetching results
-        $hasBookedQuery = BookingHotel::whereIn('user_id', $user);
-
-        // Paginate the query builder instance
-        $mybookeds = $hasBookedQuery->paginate(10);
-
-        // $bookedss = Restaurant::with('bookings', 'bookings.table')->get();
+        // 获取预订记录
+        $mybookeds = BookingHotel::where('user_id', $userId)->paginate(10);
 
         return view('backend-user.mybooked.mybookedhotel', compact('mybookeds'));
     }
@@ -1404,9 +2256,9 @@ class BookingController extends Controller
 
     public function viewBookedHotel($id){
 
-        $bookedhotels = BookingHotel::find($id);
+        $VerifyHotel = BookingHotel::find($id);
 
-        return view('backend-user.hasbooked.viewbookedhotel',compact('bookedhotels'));
+        return view('backend-user.hasbooked.viewbookedhotel',compact('VerifyHotel'));
     }
 
     public function hashotelSearch(Request $request)
@@ -1466,48 +2318,468 @@ class BookingController extends Controller
     }
 
     // ----------------------------------------------- Verify Qr Code Booked Area---------------------------------------------------//
+    // public function verifyResort(Request $request, $resortId)
+    // {
+    //     $bookedResort = BookingResort::with('resort', 'user')->find($resortId);
+
+    //     if (!$bookedResort) {
+    //         return back()->withInput()->with('error', 'Data Not Valid');
+    //     }
+
+    //     // 获取从请求中传递过来的验证信息
+    //     $user_id = $request->query('user_id');
+    //     $resort_id = $request->query('resort_id');
+    //     $checkin_date = $request->query('checkin_date');
+    //     $checkout_date = $request->query('checkout_date');
+    //     // $checkin_time = $request->query('checkin_time');
+    //     // $checkout_time = $request->query('checkout_time');
+    //     $total_price = $request->query('total_price');
+    //     $verify_code = $request->query('verify_code');
+
+    //     // 检查 checkin_date 是否超过或等于当前日期
+    //     $currentDate = now()->toDateString();
+    //     if ($bookedResort->checkin_date < $currentDate) {
+    //         return back()->withInput()->with('error', 'Check-in date has passed');
+    //     }
+
+    //     // 检查 checkin_time 是否超过 checkin_date 当天的 checkin_time
+    //     // $currentTime = now()->toTimeString();
+    //     // if ($currentTime < $bookedResort->checkin_time) {
+    //     //     return back()->withInput()->with('error', 'Check-in time has not yet passed');
+    //     // }
+
+    //     // 验证信息是否匹配
+    //     if ($bookedResort->user_id == $user_id &&
+    //         $bookedResort->resort_id == $resort_id &&
+    //         $bookedResort->checkin_date == $checkin_date &&
+    //         $bookedResort->checkout_date == $checkout_date &&
+    //         // $bookedResort->checkin_time == $checkin_time &&
+    //         // $bookedResort->checkout_time == $checkout_time &&
+    //         $bookedResort->total_price == $total_price &&
+    //         $bookedResort->verify_code == $verify_code
+    //     ) {
+    //         // 如果匹配，则更新支付状态
+    //         $bookedResort->payment_status = 1;
+    //         $bookedResort->save();
+
+    //         // 发送邮件到 ahpin7762@gmail.com
+    //         Mail::to('ahpin7762@gmail.com')->send(new ResortPaymentVerification($bookedResort));
+
+    //         // 返回之前的页面，并显示成功消息
+    //         return redirect('http://192.168.0.132:8000/mybookingsresort')->with('success', 'Payment status updated successfully and verification information sent to your email.');
+
+    //         // return view('backend-user.hasbooked.viewbookedresort', compact('bookedResort'));
+    //     } else {
+    //         // 如果不匹配，则返回验证失败的信息
+    //         return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
+    //     }
+    // }
+
     public function verifyResort(Request $request, $resortId)
     {
-        // Logic to verify the resort based on $resortId
-        $bookedresorts = BookingResort::find($resortId);
+        $bookedResort = BookingResort::with('resort', 'user')->find($resortId);
 
-        if ($bookedresorts) {
-            // Resort verification successful
-            return view('backend-user.verify.VerifyQrCodeResort', ['bookedresorts' => $bookedresorts]);
-        } else {
-            // Resort verification failed
-            echo '<script>alert("Data Not Valid")</script>';
-            return back()->withInput();
+        if (!$bookedResort) {
+            return back()->withInput()->with('error', 'Data Not Valid');
         }
-    }
 
-    public function verifyRestaurant(Request $request, $restaurantId)
-    {
-        // Logic to verify the Restaurant based on $restaurantId
-        $bookedrestaurants = BookingRestaurant::find($restaurantId);
+        // 获取从请求中传递过来的验证信息
+        $user_id = $request->query('user_id');
+        $resort_id = $request->query('resort_id');
+        $checkin_date = $request->query('checkin_date');
+        $checkout_date = $request->query('checkout_date');
+        $checkin_time = $request->query('checkin_time');
+        $checkout_time = $request->query('checkout_time');
+        $total_price = $request->query('total_price');
+        $verify_code = $request->query('verify_code');
 
-        if ($bookedrestaurants) {
-            // Restaurant verification successful
-            return view('backend-user.verify.verifyrestaurant', ['bookedrestaurants' => $bookedrestaurants]);
+        // 获取当前马来西亚的日期和时间
+        $currentDateTime = now('Asia/Kuala_Lumpur');
+
+        // 组合 checkin 和 checkout 的日期和时间
+        $checkinDateTime = Carbon::parse($bookedResort->checkin_date . ' ' . $bookedResort->checkin_time, 'Asia/Kuala_Lumpur');
+        $checkoutDateTime = Carbon::parse($bookedResort->checkout_date . ' ' . $bookedResort->checkout_time, 'Asia/Kuala_Lumpur');
+
+        // 检查是否超过 checkin 日期和时间
+        if ($currentDateTime->lt($checkinDateTime)) {
+            return back()->withInput()->with('error', 'Check-in time has not yet arrived');
+        }
+
+        // 检查是否在 checkout 日期和时间之前
+        if ($currentDateTime->gt($checkoutDateTime)) {
+            return back()->withInput()->with('error', 'Check-out time has passed');
+        }
+
+        // 验证信息是否匹配
+        if (
+            $bookedResort->user_id == $user_id &&
+            $bookedResort->resort_id == $resort_id &&
+            $bookedResort->checkin_date == $checkin_date &&
+            $bookedResort->checkout_date == $checkout_date &&
+            $bookedResort->checkin_time == $checkin_time &&
+            $bookedResort->checkout_time == $checkout_time &&
+            $bookedResort->total_price == $total_price &&
+            $bookedResort->verify_code == $verify_code
+        ) {
+            // 如果匹配，则更新支付状态
+            $bookedResort->payment_status = 1;
+            $bookedResort->save();
+
+            // 发送邮件到 ahpin7762@gmail.com
+            Mail::to('ahpin7762@gmail.com')->send(new ResortPaymentVerification($bookedResort));
+
+            // 返回之前的页面，并显示成功消息
+            return redirect('http://192.168.50.154:8000/mybookingsresort')->with('success', 'Payment status updated successfully and verification information sent to your email.');
         } else {
-            // Restaurant verification failed
-            echo '<script>alert("Data Not Valid")</script>';
-            return back()->withInput();
+            // 如果不匹配，则返回验证失败的信息
+            return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
         }
     }
 
     public function verifyHotel(Request $request, $hotelId)
     {
-        // Logic to verify the hotel based on $hotelId
-        $bookedhotels = BookingHotel::find($hotelId);
+        $bookedHotel = BookingHotel::with('hotel', 'user')->find($hotelId);
 
-        if ($bookedhotels) {
-            // Hotel verification successful
-            return view('backend-user.verify.verifyhotel', ['bookedhotels' => $bookedhotels]);
+        if (!$bookedHotel) {
+            return back()->withInput()->with('error', 'Data Not Valid');
+        }
+
+        // 获取从请求中传递过来的验证信息
+        $user_id = $request->query('user_id');
+        $hotel_id = $request->query('hotel_id');
+        $checkin_date = $request->query('checkin_date');
+        $checkout_date = $request->query('checkout_date');
+        $checkin_time = $request->query('checkin_time');
+        $checkout_time = $request->query('checkout_time');
+        $total_price = $request->query('total_price');
+        $verify_code = $request->query('verify_code');
+
+        // 获取当前马来西亚的日期和时间
+        $currentDateTime = now('Asia/Kuala_Lumpur');
+
+        // 组合 checkin 和 checkout 的日期和时间
+        $checkinDateTime = Carbon::parse($bookedHotel->checkin_date . ' ' . $bookedHotel->checkin_time, 'Asia/Kuala_Lumpur');
+        $checkoutDateTime = Carbon::parse($bookedHotel->checkout_date . ' ' . $bookedHotel->checkout_time, 'Asia/Kuala_Lumpur');
+
+        // 检查是否超过 checkin 日期和时间
+        if ($currentDateTime->lt($checkinDateTime)) {
+            return back()->withInput()->with('error', 'Check-in time has not yet arrived');
+        }
+
+        // 检查是否在 checkout 日期和时间之前
+        if ($currentDateTime->gt($checkoutDateTime)) {
+            return back()->withInput()->with('error', 'Check-out time has passed');
+        }
+
+        // 验证信息是否匹配
+        if (
+            $bookedHotel->user_id == $user_id &&
+            $bookedHotel->hotel_id == $hotel_id &&
+            $bookedHotel->checkin_date == $checkin_date &&
+            $bookedHotel->checkout_date == $checkout_date &&
+            $bookedHotel->checkin_time == $checkin_time &&
+            $bookedHotel->checkout_time == $checkout_time &&
+            $bookedHotel->total_price == $total_price &&
+            $bookedHotel->verify_code == $verify_code
+        ) {
+            // 如果匹配，则更新支付状态
+            $bookedHotel->payment_status = 1;
+            $bookedHotel->save();
+
+            // 发送邮件到 ahpin7762@gmail.com
+            Mail::to('ahpin7762@gmail.com')->send(new HotelPaymentVerification($bookedHotel));
+
+            // 返回之前的页面，并显示成功消息
+            return redirect('http://192.168.50.154:8000/mybookingshotel')->with('success', 'Payment status updated successfully and verification information sent to your email.');
         } else {
-            // Hotel verification failed
-            echo '<script>alert("Data Not Valid")</script>';
-            return back()->withInput();
+            // 如果不匹配，则返回验证失败的信息
+            return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
+        }
+    }
+
+    public function verifyRestaurant(Request $request, $restaurantId)
+    {
+        $bookedRestaurant = BookingRestaurant::with('restaurant', 'user')->find($restaurantId);
+
+        if (!$bookedRestaurant) {
+            return back()->withInput()->with('error', 'Data Not Valid');
+        }
+
+        // 获取从请求中传递过来的验证信息
+        $user_id = $request->query('user_id');
+        $restaurant_id = $request->query('restaurant_id');
+        $booking_date = $request->query('booking_date');
+        $checkin_time = $request->query('checkin_time');
+        $checkout_time = $request->query('checkout_time');
+        $total_price = $request->query('total_price');
+        $verify_code = $request->query('verify_code');
+
+        // 获取当前马来西亚的日期和时间
+        $currentDateTime = now('Asia/Kuala_Lumpur');
+
+        // 组合 checkin 和 checkout 的日期和时间
+        $checkinDateTime = Carbon::parse($bookedRestaurant->booking_date . ' ' . $bookedRestaurant->checkin_time, 'Asia/Kuala_Lumpur');
+        $checkoutDateTime = Carbon::parse($bookedRestaurant->booking_date . ' ' . $bookedRestaurant->checkout_time, 'Asia/Kuala_Lumpur');
+
+        // 检查是否超过 checkin 日期和时间
+        if ($currentDateTime->lt($checkinDateTime)) {
+            return back()->withInput()->with('error', 'Check-in time has not yet arrived');
+        }
+
+        // 检查是否在 checkout 日期和时间之前
+        if ($currentDateTime->gt($checkoutDateTime)) {
+            return back()->withInput()->with('error', 'Check-out time has passed');
+        }
+
+        // 验证信息是否匹配
+        if (
+            $bookedRestaurant->user_id == $user_id &&
+            $bookedRestaurant->restaurant_id == $restaurant_id &&
+            $bookedRestaurant->booking_date == $booking_date &&
+            $bookedRestaurant->checkin_time == $checkin_time &&
+            $bookedRestaurant->checkout_time == $checkout_time &&
+            $bookedRestaurant->total_price == $total_price &&
+            $bookedRestaurant->verify_code == $verify_code
+        ) {
+            // 如果匹配，则更新支付状态
+            $bookedRestaurant->payment_status = 1;
+            $bookedRestaurant->save();
+
+            // 发送邮件到 ahpin7762@gmail.com
+            Mail::to('ahpin7762@gmail.com')->send(new RestaurantPaymentVerification($bookedRestaurant));
+
+            // 返回之前的页面，并显示成功消息
+            return redirect('http://192.168.50.154:8000/mybookingsrestaurant')->with('success', 'Payment status updated successfully and verification information sent to your email.');
+        } else {
+            // 如果不匹配，则返回验证失败的信息
+            return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
+        }
+    }
+
+    // public function verifyHotel(Request $request, $hotelId)
+    // {
+    //     $bookedHotel = BookingHotel::with('hotel', 'user')->find($hotelId);
+
+    //     if (!$bookedHotel) {
+    //         return back()->withInput()->with('error', 'Data Not Valid');
+    //     }
+
+    //     // 获取从请求中传递过来的验证信息
+    //     $user_id = $request->query('user_id');
+    //     $hotel_id = $request->query('hotel_id');
+    //     $checkin_date = $request->query('checkin_date');
+    //     $checkout_date = $request->query('checkout_date');
+    //     $total_price = $request->query('total_price');
+    //     $verify_code = $request->query('verify_code');
+
+    //     // 检查 checkin_date 是否超过或等于当前日期
+    //     $currentDate = now()->toDateString();
+    //     if ($bookedHotel->checkin_date < $currentDate) {
+    //         return back()->withInput()->with('error', 'Check-in date has passed');
+    //     }
+
+    //     // 验证信息是否匹配
+    //     if ($bookedHotel->user_id == $user_id &&
+    //         $bookedHotel->hotel_id == $hotel_id &&
+    //         $bookedHotel->checkin_date == $checkin_date &&
+    //         $bookedHotel->checkout_date == $checkout_date &&
+    //         $bookedHotel->total_price == $total_price &&
+    //         $bookedHotel->verify_code == $verify_code
+    //     ) {
+    //         // 如果匹配，则更新支付状态
+    //         $bookedHotel->payment_status = 1;
+    //         $bookedHotel->save();
+
+    //         // 发送邮件到 ahpin7762@gmail.com
+    //         Mail::to('ahpin7762@gmail.com')->send(new HotelPaymentVerification($bookedHotel));
+
+    //         // 返回之前的页面，并显示成功消息
+    //         return redirect('http://192.168.0.132:8000/mybookingshotel')->with('success', 'Payment status updated successfully and verification information sent to your email.');
+    //     } else {
+    //         // 如果不匹配，则返回验证失败的信息
+    //         return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
+    //     }
+    // }
+
+    // public function verifyRestaurant(Request $request, $restaurantId)
+    // {
+    //     $bookedRestaurant = BookingRestaurant::with('restaurant', 'user')->find($restaurantId);
+
+    //     if (!$bookedRestaurant) {
+    //         return back()->withInput()->with('error', 'Data Not Valid');
+    //     }
+
+    //     // 获取从请求中传递过来的验证信息
+    //     $user_id = $request->query('user_id');
+    //     $restaurant_id = $request->query('restaurant_id');
+    //     $booking_date = $request->query('booking_date');
+    //     $total_price = $request->query('total_price');
+    //     $verify_code = $request->query('verify_code');
+
+    //     // 检查 booking_date 是否超过或等于当前日期
+    //     $currentDate = now()->toDateString();
+    //     if ($bookedRestaurant->booking_date < $currentDate) {
+    //         return back()->withInput()->with('error', 'Booking date has passed');
+    //     }
+
+    //     // 验证信息是否匹配
+    //     if ($bookedRestaurant->user_id == $user_id &&
+    //         $bookedRestaurant->restaurant_id == $restaurant_id &&
+    //         $bookedRestaurant->booking_date == $booking_date &&
+    //         $bookedRestaurant->total_price == $total_price &&
+    //         $bookedRestaurant->verify_code == $verify_code
+    //     ) {
+    //         // 如果匹配，则更新支付状态
+    //         $bookedRestaurant->payment_status = 1;
+    //         $bookedRestaurant->save();
+
+    //         // 发送邮件到 ahpin7762@gmail.com
+    //         Mail::to('ahpin7762@gmail.com')->send(new RestaurantPaymentVerification($bookedRestaurant));
+
+    //         // 返回之前的页面，并显示成功消息
+    //         return redirect('http://192.168.0.132:8000/mybookingsrestaurant')->with('success', 'Payment status updated successfully and verification information sent to your email.');
+    //     } else {
+    //         // 如果不匹配，则返回验证失败的信息
+    //         return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
+    //     }
+    // }
+
+    public function ExtandorCancelResort($id)
+    {
+        // 获取度假村预订的详情
+        $bookingResort = BookingResort::findOrFail($id);
+
+        // 计算预订日期
+        $bookingDates = [];
+        $currentDate = new DateTime($bookingResort->checkin_date);
+        $checkoutDate = new DateTime($bookingResort->checkout_date);
+
+        // 包括 checkout_date
+        while ($currentDate <= $checkoutDate) {
+            $bookingDates[] = $currentDate->format('Y-m-d');
+            $currentDate->modify('+1 day');
+        }
+
+        // 将度假村信息和预订日期传递给视图
+        return view('backend-user.mybooked.mybookedresortextandorcancel', compact('bookingResort', 'bookingDates'));
+    }
+
+    public function cancelBookingDate(Request $request, $id)
+    {
+        try {
+            DB::beginTransaction();
+
+            // 找到预订记录
+            $bookingResort = BookingResort::findOrFail($id);
+
+            // 获取要取消的日期并处理格式
+            $selectedDates = json_decode($request->input('selected_dates'), true);
+
+            // 处理日期格式，移除星期几信息
+            $selectedDates = array_map(function($date) {
+                return substr($date, 0, 10); // 只保留 YYYY-MM-DD 部分
+            }, $selectedDates);
+
+            // 验证日期格式
+            if (!is_array($selectedDates)) {
+                return redirect()->back()->with('error', 'Invalid selected dates format.');
+            }
+
+            // 记录调试信息
+            Log::info('Selected dates to cancel:', $selectedDates);
+            Log::info('Original booking:', [
+                'checkin' => $bookingResort->checkin_date,
+                'checkout' => $bookingResort->checkout_date
+            ]);
+
+            // 获取所有预订日期
+            $allBookingDates = [];
+            $currentDate = new DateTime($bookingResort->checkin_date);
+            $checkoutDate = new DateTime($bookingResort->checkout_date);
+
+            while ($currentDate <= $checkoutDate) {
+                $allBookingDates[] = $currentDate->format('Y-m-d');
+                $currentDate->modify('+1 day');
+            }
+
+            Log::info('All booking dates:', $allBookingDates);
+
+            // 移除要取消的日期
+            $remainingDates = array_values(array_diff($allBookingDates, $selectedDates));
+
+            Log::info('Remaining dates after cancellation:', $remainingDates);
+
+            // 计算取消日期的总价格
+            $totalPrice = count($selectedDates) * $bookingResort->resort->price;
+
+            // 如果没有剩余日期，删除整个预订
+            if (empty($remainingDates)) {
+                // 更新管理员钱包
+                $adminWallet = AdminWallet::where('verify_code', $bookingResort->verify_code)->first();
+                if ($adminWallet) {
+                    $adminWallet->balance -= $totalPrice;
+                    $adminWallet->save();
+                }
+
+                // 删除预订
+                $bookingResort->delete();
+
+                DB::commit();
+                return redirect()->back()->with('success', 'All booking dates canceled successfully.');
+            }
+
+            // 更新预订日期
+            $newCheckinDate = min($remainingDates);
+            $newCheckoutDate = max($remainingDates);
+
+            Log::info('New dates:', [
+                'checkin' => $newCheckinDate,
+                'checkout' => $newCheckoutDate
+            ]);
+
+            // 直接使用查询更新，确保数据被更新
+            $updated = DB::table('booking_resorts')
+                ->where('id', $bookingResort->id)
+                ->update([
+                    'checkin_date' => $newCheckinDate,
+                    'checkout_date' => $newCheckoutDate
+                ]);
+
+            Log::info('Update result:', ['updated' => $updated]);
+
+            // 更新管理员钱包
+            $adminWallet = AdminWallet::where('verify_code', $bookingResort->verify_code)->first();
+            if (!$adminWallet) {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Admin wallet not found for the given verify_code.');
+            }
+
+            $adminWallet->balance -= $totalPrice;
+            $adminWallet->save();
+
+            // 验证更新是否成功
+            $updatedBooking = BookingResort::find($id);
+            Log::info('Final booking state:', [
+                'checkin' => $updatedBooking->checkin_date,
+                'checkout' => $updatedBooking->checkout_date
+            ]);
+
+            DB::commit();
+
+            if ($updated) {
+                return redirect()->back()->with('success', 'Booking dates canceled successfully.');
+            } else {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Failed to update booking dates.');
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error in cancelBookingDate:', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return redirect()->back()->with('error', 'An error occurred while canceling booking dates: ' . $e->getMessage());
         }
     }
 

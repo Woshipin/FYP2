@@ -173,24 +173,6 @@
                     <select name="" id="">
                         <option value="">ID</option>
                     </select>
-                    <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Launch demo modal</button> -->
-                    <!-- Resort Model -->
-                    {{-- <button type="button" class="btn btn-info m-1" data-toggle="modal" data-target="#adminresortModal">Add Resort</button> --}}
-                    <!-- Import Resort Model -->
-                    <!-- <button type="button" class="btn btn-primary m-1" data-toggle="modal" data-target="#resortexcelModal">Import Modal</button> -->
-                    <!--Export Resort Model -->
-                    <a href="{{ url('export-resort') }}"><button type="button" class="btn btn-primary m-1">Export
-                            Resort</button></a>
-                    <!-- View Resort PDF Model -->
-                    <!-- <form action="{{ url('resort/view-pdf') }}" method="POST">
-                                                                                                @csrf
-                                                                                                <button type="submit" class="btn btn-danger m-1">View In PDF</button>
-                                                                                            </form> -->
-                    <!-- Export Resort PDF Model -->
-                    <!-- <form action="{{ url('resort/download-pdf') }}" method="POST" target="__blank">
-                                                                                                @csrf
-                                                                                                <button type="submit" class="btn btn-danger m-1">Download PDF</button>
-                                                                                            </form> -->
                 </div>
 
                 {{-- Real Time Search --}}
@@ -210,134 +192,6 @@
             @if (\Session::has('success'))
                 <div class="alert alert-success">{{ Session::get('success') }}</div>
             @endif
-
-            {{-- <div>
-                <table width="100%">
-                    <thead>
-                        <tr>
-                            <th>Resort ID</th>
-                            <th>Resort Name</th>
-                            <th>Resort Image</th>
-                            <th>Resort Price</th>
-                            <th>Resort Location</th>
-                            <th>Resort Description</th>
-                            <th>Open / Close</th>
-                            <th>ACTIONS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($resorts !== null && count($resorts) > 0)
-                            @foreach ($resortss as $resort)
-                                <tr id="resort_ids{{ $resort->id }}">
-                                    <td>{{ $resort->id }}</td>
-                                    <td>{{ $resort->name }}</td>
-                                    <td><img width="80" src="{{ asset('images/' . $resort->image) }}"
-                                            alt="Image" /></td>
-                                    <td>{{ $resort->price }}</td>
-                                    <td>{{ $resort->location }}</td>
-                                    <td>{{ $resort->description }}</td>
-                                    <td>
-                                        @if ($resort->status == 0)
-                                            <a href="{{ url('changeresort-status/' . $resort->id) }}"
-                                                class="btn btn-sm btn-success"
-                                                onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
-                                        @else
-                                            <a href="{{ url('changeresort-status/' . $resort->id) }}"
-                                                class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
-                                        @endif
-                                    </td>
-                                    <td>
-                                        <a href="{{ url('admin/viewResort/' . $resort->id) . '/view' }}"
-                                            class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
-                                        <a href="{{ url('editResort/' . $resort->id) . '/edit' }}"
-                                            class="btn btn-primary btn-sm" data-toggle="modal"
-                                            data-target="#resorteditModal{{ $resort->id }}"><i
-                                                class="fa fa-edit"></i></a><br>
-                                        <a onclick="return confirm('Are you sure to delete this data?')"
-                                            href="{{ url('admin/deleteResort/' . $resort->id) . '/delete' }}"
-                                            class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="9">No Resorts Found</td>
-                            </tr>
-                        @endif
-                    </tbody>
-                </table>
-            </div> --}}
-
-            {{-- <div class="container-fluid mt-3">
-                <!-- DataTales Example -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Resort List</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-bordered" width="100%" cellspacing="0">
-                                <thead>
-                                    <tr>
-                                        <th>Resort ID</th>
-                                        <th>Resort Name</th>
-                                        <th>Resort Image</th>
-                                        <th>Resort Price</th>
-                                        <th>Resort Location</th>
-                                        <th>Resort Description</th>
-                                        <th>Open / Close</th>
-                                        <th>ACTIONS</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if ($resorts !== null && count($resorts) > 0)
-                                        @foreach ($resorts as $resort)
-                                            <tr id="resort_ids{{ $resort->id }}">
-                                                <td>{{ $resort->id }}</td>
-                                                <td>{{ $resort->name }}</td>
-                                                <td><img width="80" src="{{ asset('images/' . $resort->image) }}"
-                                                        alt="Image" /></td>
-                                                <td>{{ $resort->price }}</td>
-                                                <td>{{ $resort->location }}</td>
-                                                <td>{{ $resort->description }}</td>
-                                                <td>
-                                                    @if ($resort->status == 0)
-                                                        <a href="{{ url('changeresort-status/' . $resort->id) }}"
-                                                            class="btn btn-sm btn-success"
-                                                            onclick="return confirm('Are you sure you want to change this status to close?')">Open</a>
-                                                    @else
-                                                        <a href="{{ url('changeresort-status/' . $resort->id) }}"
-                                                            class="btn btn-sm btn-danger"
-                                                            onclick="return confirm('Are you sure you want to change this status to open?')">Close</a>
-                                                    @endif
-                                                </td>
-                                                <td>
-                                                    <a href="{{ url('admin/viewResort/' . $resort->id) . '/view' }}"
-                                                        class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
-                                                    <a href="{{ url('editResort/' . $resort->id) . '/edit' }}"
-                                                        class="btn btn-primary btn-sm" data-toggle="modal"
-                                                        data-target="#resorteditModal{{ $resort->id }}"><i
-                                                            class="fa fa-edit"></i></a>
-                                                    <a onclick="return confirm('Are you sure to delete this data?')"
-                                                        href="{{ url('admin/deleteResort/' . $resort->id) . '/delete' }}"
-                                                        class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    @else
-                                        <tr>
-                                            <td colspan="8">No Resorts Found</td>
-                                        </tr>
-                                    @endif
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    {{ $resorts->links() }}
-                </div>
-            </div> --}}
 
             <div class="container-fluid mt-3">
                 <!-- DataTales Example -->
@@ -417,7 +271,7 @@
                                 </div>` :
                                 `<span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">No Image</span>`}
                             </td>
-                            <td>${resort.price}</td>
+                            <td>RM${resort.price}</td>
                             <td>${resort.location}</td>
                             <td>${resort.description}</td>
                             <td>

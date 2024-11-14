@@ -1,7 +1,8 @@
-@extends('backend-user.newlayout')
+<!DOCTYPE html>
+<html>
 
-@section('newuser-section')
-    <title>Booked Resort Invoice</title>
+<head>
+    <title>Booked Resort Verification</title>
 
     <style>
         body {
@@ -79,66 +80,87 @@
         }
     </style>
 
-    <div class="invoice">
-        <h2>Booked Resort Detail</h2>
-        <div class="details">
-            <p>User Name: <span>{{ $bookedresorts->user_name }}</span></p>
-            <p>Resort Name: <span>{{ $bookedresorts->resort_name }}</span></p>
-            <p>Date: <span>{{ \Carbon\Carbon::parse($bookedresorts->booking_date)->format('j F Y (l)') }}</span></p>
-            <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($bookedresorts->checkin_time)->format('g:i A') }}</span></p>
-            <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($bookedresorts->checkout_time)->format('g:i A') }}</span></p>
-            @if ($bookedresorts->resort)
-                <!-- Check if the resort relationship exists -->
-                <p>Resort Type: <span>{{ $bookedresorts->resort->type }}</span></p>
-                <p>Address: <span>{{ $bookedresorts->resort->location }}</span></p>
-                <p>State: <span>{{ $bookedresorts->resort->state }}</span></p>
-                <p>Country: <span>{{ $bookedresorts->resort->country }}</span></p>
-            @endif
-        </div>
-        <div class="items">
-            <table>
-                <tr>
-                    <th>Resort Name</th>
-                    <th>Resort Type</th>
-                    <th>Quantity</th>
-                </tr>
-                    <!-- Check if resort relationship exists -->
-                    <tr>
-                        @if ($bookedresorts->resort)
-                            <td>{{ $bookedresorts->resort->name }}</td>
-                            <td>{{ $bookedresorts->resort->type }}</td>
-                        @endif
-                        <td>{{ $bookedresorts->quantity }}</td>
-                    </tr>
-            </table>
-        </div>
-        @if ($bookedresorts->resort)
-            <!-- Check if resort relationship exists -->
-            <div class="total">
-                <p style="font-weight:bold">Total Price: ${{ $bookedresorts->resort->price }}</p>
+<body>
+
+    @if (isset($VerifyResort))
+        <div class="invoice">
+            <h2>Booked Resort Detail</h2>
+            <div class="details">
+                <p>User Name: <span>{{ $VerifyResort->user_name }}</span></p>
+                <p>Resort Name: <span>{{ $VerifyResort->resort->name }}</span></p>
+                <p>Booking Days: <span>{{ $VerifyResort->booking_days }} day</span></p>
+                <p>Check-In-Date: <span>{{ \Carbon\Carbon::parse($VerifyResort->checkin_date)->format('j F Y') }}</span></p>
+                <p>Check-Out-Date: <span>{{ \Carbon\Carbon::parse($VerifyResort->checkout_date)->format('j F Y') }}</span></p>
+                <p>Check-In-Time: <span>{{ \Carbon\Carbon::parse($VerifyResort->checkin_time)->format('g:i A') }}</span></p>
+                <p>Check-Out-Time: <span>{{ \Carbon\Carbon::parse($VerifyResort->checkout_time)->format('g:i A') }}</span></p>
+                <p>Resort Type: <span>{{ $VerifyResort->resort->type }}</span></p>
+                <p>Address: <span>{{ $VerifyResort->resort->location }}</span></p>
+                <p>State: <span>{{ $VerifyResort->resort->state }}</span></p>
+                <p>Country: <span>{{ $VerifyResort->resort->country }}</span></p>
             </div>
+            <div class="items">
+                <table>
+                    <tr>
+                        <th>Resort Name</th>
+                        <th>Resort Type</th>
+                        <th>Quantity People</th>
+                    </tr>
+                    <tr>
+                        <td>{{ $VerifyResort->resort->name }}</td>
+                        <td>{{ $VerifyResort->resort->type }}</td>
+                        <td>{{ $VerifyResort->quantity }}</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="total">
+                <p style="font-weight:bold">Deposit Fee: RM {{ $VerifyResort->deposit_price }}</p>
+            </div>
+
+            <div class="total">
+                <p style="font-weight:bold">Total Price: RM {{ $VerifyResort->total_price }}</p>
+            </div>
+
+            {{-- <div class="total">
+                <p style="font-weight:bold">Digital-Lock-Password:
+                    {{ $VerifyResort->resort->digital_lock_password ?? 'Not available' }}</p>
+            </div>
+
+            <div class="total">
+                <p style="font-weight:bold">Email-Box_Password:
+                    {{ $VerifyResort->resort->emailbox_password ?? 'Not available' }}</p>
+            </div> --}}
+
+            <div class="footer">
+                <p>Thank you, {{ $VerifyResort->user_name }}
+                    @if ($VerifyResort->user)
+                        ({{ $VerifyResort->user->email }}),
+                    @endif
+                    for your purchase! Enjoy the Hotel!
+                </p>
+
+                <p>If any problem, you can contact phone number ({{ $VerifyResort->resort->phone }}) or email
+                    ({{ $VerifyResort->resort->email }}), for your purchase! Enjoy the Hotel!</p>
+            </div>
+
+            <a href="{{ url('/download-bookedresort-pdf/' . $VerifyResort->id) }}" class="btn btn-info btn-sm"><i
+                    class="fas fa-file-pdf"></i>&nbsp;Download</a>
+
+            <a href="{{ url('mybookingsresort') }}" class="btn btn-success btn-sm"><i
+                    class="fas fa-file-pdf"></i>&nbsp;Continue</a>
+
+        </div>
+    @else
+        <p>No valid resort found for the scanned QR code.</p>
+    @endif
+
+    {{-- <script>
+        // Check if the verification is successful and show an alert
+        @if (isset($VerifyResort))
+            alert('Verification Resort complete!');
         @endif
+    </script> --}}
 
-        <div class="total">
-            <p style="font-weight:bold">Deposit Fee: $100</p>
-        </div>
+</body>
 
-        <div class="footer">
-            <p>Thank you, {{ $bookedresorts->user_name }}
-                @if ($bookedresorts->user)
-                    ({{ $bookedresorts->user->email }}),
-                @endif
-                for your purchase! Enjoy the Hotel!
-            </p>
-
-            @if ($bookedresorts->resort)
-                <p>If any problem, you can contact phone number ({{ $bookedresorts->resort->phone }}) or email
-                    ({{ $bookedresorts->resort->email }}), for your purchase! Enjoy the Hotel!</p>
-            @endif
-        </div>
-
-        <a href="{{ url('/download-bookedresort-pdf/' . $bookedresorts->id) }}" class="btn btn-info btn-sm"><i class="fas fa-file-pdf"></i>&nbsp;Download</a>
-
-    </div>
-
-@endsection
+</html>

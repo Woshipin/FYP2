@@ -771,7 +771,7 @@
                                                             Image</span>
                                                     @endif
                                                 </td>
-                                                <td>{{ $resort->price }}</td>
+                                                <td>RM{{ $resort->price }}</td>
                                                 <td>{{ $resort->location }}</td>
                                                 <td>{{ $resort->description }}</td>
                                                 <td>

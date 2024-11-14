@@ -356,6 +356,11 @@ Route::get('/mybookingshotel',[BookingController::class, 'mybookedHotel']);
 //show Customer bookeds hotel
 Route::get('/mybookingsresort',[BookingController::class, 'mybookedResort']);
 
+// Extand or cancel resort booking date page
+Route::get('/ExtandorCancelResort/{id}',[BookingController::class,'ExtandorCancelResort'])->name('ExtandorCancelResort')->middleware('auth');
+// cancel resort booking date
+Route::post('/booking/cancel/{id}', [BookingController::class, 'cancelBookingDate'])->name('booking.cancel');
+
 //---------------------------------------------------My Restaurant Area---------------------------------------------------------------//
 //checkout booked restaurant
 Route::post('paymentrestaurant/{id}/view/{table_id}', [BookingController::class, 'processPaymentRestaurant'])->name('process.payment.restaurant');
@@ -506,7 +511,7 @@ Route::post('/customer/send-reply', [ContactController::class, 'CustomerSendRepl
 
 //------------------------------------------------------Frontend Booking Restaurant------------------------------------------------------//
 Route::get('/booking/{id}',[BookingController::class,'bookingpage'])->name('bookingrestaurant')->middleware('auth');
-Route::post('/bookings', [BookingController::class, 'booking'])->middleware('auth');
+Route::post('/bookingsrestaurant', [BookingController::class, 'bookingrestaurant'])->middleware('auth');
 Route::post('/check-bookings', [BookingController::class, 'checkBookings']);
 
 //Frontend Booking Resort
@@ -767,7 +772,8 @@ Route::get('/recommendations', [RecommendationController::class, 'getRecommendat
     ->name('recommendations');
 
 //------------------------------------------------------ AI Chat Bot Area------------------------------------------------------//
-Route::post('/chat', [ChatbotController::class, 'chat']);
+// Route::post('/chat', [ChatbotController::class, 'chat']);
+Route::post('/AISearch', [ChatbotController::class, 'AISearch']);
 
 //------------------------------------------------------ Fail Area------------------------------------------------------//
 
@@ -802,3 +808,7 @@ Route::get('/aaa',[ResortController::class,'aaa']);
 //Login and Register Function
 // Route::post('/login&register1',[UserController::class,'userLogin'])->name('userLogin');
 // Route::post('/login&register',[UserController::class,'userRegister'])->name('userRegister');
+
+// Paypal Payment
+Route::get('paypal/success', [BookingController::class, 'paypalSuccess'])->name('paypal.success');
+Route::get('paypal/cancel', [BookingController::class, 'paypalCancel'])->name('paypal.cancel');

@@ -15,6 +15,13 @@ class BookingResort extends Model
         'deposit_price', 'total_price', 'card_number', 'card_holder', 'card_month', 'card_year', 'cvv'
     ];
 
+    protected $dates = [
+        'checkin_date',
+        'checkout_date',
+        'created_at',
+        'updated_at'
+    ];
+
     public function resort()
     {
         return $this->belongsTo(Resort::class, 'resort_id');

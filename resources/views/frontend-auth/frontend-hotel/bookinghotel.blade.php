@@ -55,7 +55,7 @@
         }
     </style>
 
-    {{-- Hotel Form CSS --}}
+    {{-- Form CSS --}}
     <style>
         .custom-tab-content {
             background: rgb(143, 239, 236);
@@ -69,14 +69,166 @@
             /* color: black */
         }
     </style>
+    <style>
+        #paypal-payment-section {
+            padding: 20px;
+            text-align: center;
+        }
+
+        #paypal-button-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .payment-method-select {
+            margin-bottom: 20px;
+        }
+
+        /* Add any additional custom styles you need */
+    </style>
+    <style>
+        .payment-method-selector {
+            margin-bottom: 2rem;
+        }
+
+        .payment-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .payment-option {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .payment-option.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        .payment-option img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        .card-input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card-input {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .card-extra-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .payment-summary {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background-color: #2563eb;
+        }
+
+        .progress-container {
+            margin-top: 1.5rem;
+        }
+
+        .progress {
+            height: 0.5rem;
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .paypal-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .paypal-logo img {
+            width: 200px;
+            height: auto;
+        }
+
+        .paypal-description {
+            text-align: center;
+            color: #64748b;
+        }
+    </style>
 
     {{-- progress bar CSS --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- 在 head 标签中引入 Bootstrap CSS -->
     {{-- <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> --}}
 
+    {{-- sweetalert2 --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br>
 
     <!-- Book Section Starts -->
     <section class="book" id="book">
@@ -92,15 +244,13 @@
         </h1>
 
         <div class="row">
-
             <div class="col-md-12">
-
                 <ul class="nav nav-tabs custom-tabs">
                     <li class="custom-tab active" data-tab="booking">Booking</li>
                     <li class="custom-tab" data-tab="payment">Payment</li>
                 </ul>
 
-                <form action="{{ url('bookingshotel') }}" method="post" enctype="multipart/form-data" id="booking-form">
+                <form action="{{ url('bookingshotel') }}" method="post" enctype="multipart/form-data" id="bookingForm">
                     @csrf
 
                     {{-- Booking Hotel Area --}}
@@ -110,66 +260,54 @@
                                 <img src="{{ asset('new/img/book-img.jpg') }}" alt="">
                             </div>
                             <div class="col-md-6">
+                                {{-- Hidden Fields --}}
                                 <input type="hidden" name="user_id" value="{{ Auth::id() }}">
                                 <input type="hidden" name="user_name" value="{{ auth()->user()->name }}">
                                 <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                 <input type="hidden" name="hotel_id" value="{{ $hotels->id }}">
                                 <input type="hidden" name="hotel_name" value="{{ $hotels->name }}">
                                 <input type="hidden" name="type_category" value="Hotel">
-
                                 <input type="hidden" name="owner_id" value="{{ $hotels->user->id }}">
                                 <input type="hidden" name="owner_name" value="{{ $hotels->user->name }}">
                                 <input type="hidden" name="hotel_phone" value="{{ $hotels->phone }}">
                                 <input type="hidden" name="hotel_email" value="{{ $hotels->email }}">
-
-                                <input type="hidden" name="room_price" value="">
-                                <input type="hidden" name="room_name" value="">
-                                <input type="hidden" name="room_type" value="">
-
                                 <input type="hidden" name="type_id" value="{{ $hotels->id }}">
                                 <input type="hidden" name="type_name" value="{{ $hotels->name }}">
-
-                                {{-- <input type="hidden" name="total_price" id="total_price" value="{{ $resorts->price }}"> --}}
 
                                 <div class="inputBox">
                                     <h3>Check-In Date</h3>
                                     <input type="date" required name="checkin_date" id="checkin_date"
-                                        class="form-control" placeholder="Select Your Booking Check In Date">
+                                        class="form-control">
                                 </div>
 
                                 <div class="inputBox">
                                     <h3>Check-Out Date</h3>
                                     <input type="date" required name="checkout_date" id="checkout_date"
-                                        class="form-control" placeholder="Select Your Booking Check Out Date">
+                                        class="form-control">
                                 </div>
 
                                 <div class="inputBox">
                                     <h3>Check-In Time</h3>
                                     <input type="time" required name="checkin_time" id="check_in_time"
-                                        class="form-control checkin-time" placeholder="Select Your Check-In Time">
+                                        class="form-control checkin-time">
                                 </div>
+
                                 <div class="inputBox">
                                     <h3>Check-Out Time</h3>
                                     <input type="time" required name="checkout_time" id="check_out_time"
-                                        class="form-control" placeholder="Select Your Check-Out Time">
+                                        class="form-control">
                                 </div>
 
                                 <div class="inputBox">
                                     <h3>Select Room</h3>
                                     <select class="form-control custom-select" id="room_select" name="room_id" required>
                                         <option value="0" selected>--- Choose ---</option>
-                                    </select>
-                                </div>
-
-                                {{-- <div class="inputBox">
-                                    <h3>Room Price</h3>
-                                    <select class="form-control custom-select" id="room_price" name="room_price" required>
-                                        <option value="0" selected>--- Choose ---</option>
                                         @foreach ($rooms as $room)
-                                            <option value="{{ $room->id }}" data-price="{{ $room->price }}">{{ $room->name }} (Price: {{ $room->price }})</option>
+                                            <option value="{{ $room->id }}" data-price="{{ $room->price }}">
+                                                {{ $room->name }} (Price: {{ $room->price }})</option>
                                         @endforeach
                                     </select>
-                                </div> --}}
+                                </div>
 
                                 <div class="inputBox">
                                     <h3>Select Gender</h3>
@@ -179,140 +317,166 @@
                                         @endforeach
                                     </select>
                                 </div>
+
                                 <div class="inputBox">
                                     <h3>Total Quantity Person</h3>
                                     <input type="number" required min="1" max="20" name="quantity"
-                                        id="quantity" type="text" class="form-control"
-                                        placeholder="Enter Total Quantity" oninput="validateQuantity(this)">
+                                        id="quantity" class="form-control">
                                 </div>
+
                                 <div class="inputBox">
-                                    <p id="payment" class="btn">Done</p>
+                                    <button type="button" id="payment" class="btn">Continue to Payment</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <br>
-
-                    {{-- Card Payment Area --}}
-                    <div class="container-payment custom-tab-content " data-tab="payment">
-
+                    {{-- Payment Area --}}
+                    <div class="container-payment custom-tab-content" data-tab="payment">
                         <div class="row">
                             <div class="col-md-5">
                                 <img src="{{ asset('new/img/book-img.jpg') }}" alt="">
                             </div>
 
                             <div class="col-md-6">
-                                <div class="card-container">
-
-                                    <div class="front">
-                                        <div class="image">
-                                            <img src="{{ asset('new/img/image/chip.png') }}" alt="">
-                                            <img src="{{ asset('new/img/image/visa.png') }}" alt="">
+                                <!-- Payment Method Selection -->
+                                <div class="payment-method-selector">
+                                    <h3>Select Payment Method</h3>
+                                    <div class="payment-options">
+                                        <div class="payment-option" data-method="credit_card">
+                                            <img src="{{ asset('new/img/card-icon.png') }}" alt="Card">
+                                            <span>Credit/Debit Card</span>
                                         </div>
-                                        <div class="card-number-box">################</div>
-                                        <div class="flexbox">
-                                            <div class="box">
-                                                <span>card holder</span>
-                                                <div class="card-holder-name">full name</div>
+                                        <div class="payment-option" data-method="paypal">
+                                            <img src="{{ asset('new/img/paypal-icon.png') }}" alt="PayPal">
+                                            <span>PayPal</span>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="payment_method" id="payment_method" value="credit_card">
+                                </div>
+
+                                <!-- Card Payment Section -->
+                                <div id="card-payment-section" class="payment-section">
+                                    <div class="card-container">
+                                        <div class="front">
+                                            <div class="image">
+                                                <img src="{{ asset('new/img/image/chip.png') }}" alt="">
+                                                <img src="{{ asset('new/img/image/visa.png') }}" alt="">
                                             </div>
-                                            <div class="box">
-                                                <span>expires</span>
-                                                <div class="expiration">
-                                                    <span class="exp-month">mm</span>
-                                                    <span class="exp-year">yy</span>
+                                            <div class="card-number-box">################</div>
+                                            <div class="flexbox">
+                                                <div class="box">
+                                                    <span>card holder</span>
+                                                    <div class="card-holder-name">full name</div>
+                                                </div>
+                                                <div class="box">
+                                                    <span>expires</span>
+                                                    <div class="expiration">
+                                                        <span class="exp-month">mm</span>
+                                                        <span class="exp-year">yy</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                    <div class="back">
-                                        <div class="stripe"></div>
-                                        <div class="box">
-                                            <span>cvv</span>
-                                            <div class="cvv-box"></div>
-                                            <img src="{{ asset('new/img/image/visa.png') }}" alt="">
+                                        <div class="back">
+                                            <div class="stripe"></div>
+                                            <div class="box">
+                                                <span>cvv</span>
+                                                <div class="cvv-box"></div>
+                                                <img src="{{ asset('new/img/image/visa.png') }}" alt="">
+                                            </div>
                                         </div>
                                     </div>
 
-                                </div>
-                                <br>
+                                    <div class="card-input-section">
+                                        <div class="input-group">
+                                            <label>Card Number</label>
+                                            <input type="text" id="card_number" name="card_number" maxlength="19"
+                                                class="card-input" placeholder="0000 0000 0000 0000">
+                                        </div>
 
-                                <h3>Deposit Fee RM100</h3>
-                                <input type="hidden" name="deposit_price" value="100">
-                                <h3>Hotel Room Price : RM<span id="room_price">0.00</span></h3>
-                                <h3>Hotel Room Total Price : RM<span name="total_price" id="total_price">0.00</span></h3>
+                                        <div class="input-group">
+                                            <label>Card Holder Name</label>
+                                            <input type="text" name="card_holder" id="card_holder"
+                                                class="card-input">
+                                        </div>
 
-                                <div class="inputBox">
-                                    <span>Card Number</span>
-                                    <input type="text" id="card_number" name="card_number" maxlength="16"
-                                        class="card-number-input" placeholder="0000 0000 0000 0000" required>
-                                </div>
+                                        <div class="card-extra-details">
+                                            <div class="input-group">
+                                                <label>Expiry Month</label>
+                                                <select name="card_month" id="card_month" class="card-input">
+                                                    <option value="" selected disabled>MM</option>
+                                                    @for ($i = 1; $i <= 12; $i++)
+                                                        <option value="{{ sprintf('%02d', $i) }}">
+                                                            {{ sprintf('%02d', $i) }}</option>
+                                                    @endfor
+                                                </select>
+                                            </div>
 
-                                <div class="inputBox">
-                                    <span>Card Holder</span>
-                                    <input type="text" name="card_holder" class="card-holder-input">
-                                </div>
+                                            <div class="input-group">
+                                                <label>Expiry Year</label>
+                                                <select name="card_year" id="card_year" class="card-input">
+                                                    <option value="" selected disabled>YY</option>
+                                                    @for ($i = date('Y'); $i <= date('Y') + 10; $i++)
+                                                        <option value="{{ $i }}">{{ $i }}</option>
+                                                    @endfor
+                                                </select>
+                                            </div>
 
-                                <div class="flexbox">
-                                    <div class="inputBox">
-                                        <span>expiration mm</span>
-                                        <select name="card_month" id="" class="month-input">
-                                            <option value="" selected disabled>month</option>
-                                            <option value="1">01</option>
-                                            <option value="2">02</option>
-                                            <option value="3">03</option>
-                                            <option value="4">04</option>
-                                            <option value="5">05</option>
-                                            <option value="6">06</option>
-                                            <option value="7">07</option>
-                                            <option value="8">08</option>
-                                            <option value="9">09</option>
-                                            <option value="10">10</option>
-                                            <option value="11">11</option>
-                                            <option value="12">12</option>
-                                        </select>
-                                    </div>
-                                    <div class="inputBox">
-                                        <span>expiration yy</span>
-                                        <select name="card_year" id="" class="year-input">
-                                            <option value="" selected disabled>year</option>
-                                            <option value="2021">2021</option>
-                                            <option value="2022">2022</option>
-                                            <option value="2023">2023</option>
-                                            <option value="2024">2024</option>
-                                            <option value="2025">2025</option>
-                                            <option value="2026">2026</option>
-                                            <option value="2027">2027</option>
-                                            <option value="2028">2028</option>
-                                            <option value="2029">2029</option>
-                                            <option value="2030">2030</option>
-                                        </select>
-                                    </div>
-                                    <div class="inputBox">
-                                        <span>cvv</span>
-                                        <input type="text" name="cvv" maxlength="4" class="cvv-input">
+                                            <div class="input-group">
+                                                <label>CVV</label>
+                                                <input type="text" name="cvv" id="cvv" maxlength="4"
+                                                    class="card-input">
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
+                                <!-- PayPal Payment Section -->
+                                <div id="paypal-payment-section" class="payment-section" style="display: none;">
+                                    <div class="paypal-container">
+                                        <div class="paypal-logo">
+                                            <img src="{{ asset('new/img/paypal-logo.png') }}" alt="PayPal">
+                                        </div>
+                                        <p class="paypal-description">Click the button below to pay securely with PayPal
+                                        </p>
+                                        <div id="paypal-button-container"></div>
+                                    </div>
+                                </div>
 
-                                <input type="submit" class="btn" id="submit-button">
+                                <!-- Common Payment Information -->
+                                <div class="payment-summary">
+                                    <div class="summary-item">
+                                        <span>Deposit Fee</span>
+                                        <span>RM 100.00</span>
+                                        <input type="hidden" name="deposit_price" value="100">
+                                    </div>
+                                    <div class="summary-item">
+                                        <span>Hotel Room Total Price</span>
+                                        <span>RM <span id="total_price">0.00</span></span>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button (for card payment) -->
+                                <button type="submit" class="submit-button" id="submit-button">
+                                    Complete Payment
+                                </button>
+
+                                <!-- Progress Bar -->
+                                <div class="progress-container" id="progressBarContainer" style="display: none;">
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- 进度条 -->
-                    <div class="progress mt-3" id="progressBarContainer" style="display: none;">
-                        <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
-                            aria-valuemin="0" aria-valuemax="100">0%</div>
                     </div>
 
                 </form>
             </div>
         </div>
-        {{-- </div> --}}
     </section>
-
     <!-- Book Section Ends -->
 
     <!-- /.container-fluid -->
@@ -395,49 +559,139 @@
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    {{-- Calculate Total Room Price --}}
+    {{-- DB Check Invalid Room Type and Calculate Total Room Price --}}
     <script>
-        function calculateTotalPrice() {
-            const checkinDate = new Date(document.getElementById('checkin_date').value);
-            const checkoutDate = new Date(document.getElementById('checkout_date').value);
-            const roomPrice = parseFloat(document.getElementById('room_price').value);
-            const totalPriceField = document.getElementById('total_price');
-
-            if (checkinDate && checkoutDate && roomPrice) {
-                const timeDifference = checkoutDate - checkinDate;
-                const dayDifference = timeDifference / (1000 * 3600 * 24);
-                const totalPrice = dayDifference * roomPrice;
-                totalPriceField.value = totalPrice.toFixed(2); // 保留两位小数
-            }
-        }
-
-        function onRoomSelect() {
-            const roomSelect = document.getElementById('room_select');
-            const roomPriceInput = document.getElementById('room_price');
-
-            // 在这里，你可以根据选择的房间ID来设置相应的房间价格
-            // 例如，假设 room_select 选项值和房间价格的对应关系存储在一个对象中
-            const roomPrices = {
-                1: 100, // 房间ID 1 对应的价格
-                2: 150, // 房间ID 2 对应的价格
-                3: 200 // 房间ID 3 对应的价格
-            };
-
-            const selectedRoomId = roomSelect.value;
-            if (selectedRoomId in roomPrices) {
-                roomPriceInput.value = roomPrices[selectedRoomId];
-                calculateTotalPrice();
-            } else {
-                roomPriceInput.value = '';
-                document.getElementById('total_price').value = '';
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('checkin_date').addEventListener('change', calculateTotalPrice);
-            document.getElementById('checkout_date').addEventListener('change', calculateTotalPrice);
-            document.getElementById('room_select').addEventListener('change', onRoomSelect);
+            const roomSelect = document.getElementById('room-select');
+            const roomPriceInput = document.getElementById('room_price_input');
+            const roomNameInput = document.getElementById('room_name_input');
+            const roomTypeInput = document.getElementById('room_type_input');
+            const roomPriceDisplay = document.getElementById('room_price_display');
+            const totalPriceDisplay = document.getElementById('total_price_display');
+            const checkinDateInput = document.getElementById('checkin_date');
+            const checkoutDateInput = document.getElementById('checkout_date');
+
+            function calculateTotalPrice() {
+                const checkinDate = new Date(checkinDateInput.value);
+                const checkoutDate = new Date(checkoutDateInput.value);
+                const roomPrice = parseFloat(roomPriceInput.value);
+
+                if (checkinDate && checkoutDate && !isNaN(roomPrice)) {
+                    const timeDiff = checkoutDate - checkinDate;
+                    const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+                    if (dayDiff > 0) {
+                        const totalPrice = roomPrice * dayDiff;
+                        totalPriceDisplay.textContent = totalPrice.toFixed(2);
+                    } else {
+                        totalPriceDisplay.textContent = '0.00';
+                    }
+                } else {
+                    totalPriceDisplay.textContent = '0.00';
+                }
+            }
+
+            roomSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+
+                if (selectedOption.value !== '0') {
+                    const roomName = selectedOption.dataset.name;
+                    const roomType = selectedOption.dataset.type;
+                    const roomPrice = selectedOption.dataset.price;
+
+                    roomNameInput.value = roomName || '';
+                    roomTypeInput.value = roomType || '';
+                    roomPriceInput.value = roomPrice || '';
+
+                    if (roomPrice) {
+                        roomPriceDisplay.textContent = parseFloat(roomPrice).toFixed(2);
+                    } else {
+                        roomPriceDisplay.textContent = '0.00';
+                    }
+
+                    calculateTotalPrice();
+                }
+            });
+
+            checkinDateInput.addEventListener('change', calculateTotalPrice);
+            checkoutDateInput.addEventListener('change', calculateTotalPrice);
         });
+
+        var bookedDates = {!! json_encode($bookedDates) !!};
+        var rooms = {!! json_encode($rooms) !!};
+
+        function disablePastDates() {
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById("checkin_date").setAttribute("min", today);
+            document.getElementById("checkout_date").setAttribute("min", today);
+        }
+
+        function getSelectedDates() {
+            var checkinDate = document.getElementById("checkin_date").value;
+            var checkoutDate = document.getElementById("checkout_date").value;
+
+            var selectedDates = [];
+            if (checkinDate && checkoutDate) {
+                var currentDate = new Date(checkinDate);
+
+                while (currentDate <= new Date(checkoutDate)) {
+                    selectedDates.push(currentDate.toISOString().slice(0, 10));
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            }
+
+            return selectedDates;
+        }
+
+        function isRoomAvailable(roomId, selectedDates) {
+            for (var i = 0; i < bookedDates.length; i++) {
+                var bookedDate = bookedDates[i];
+                if (bookedDate.room_id === roomId && selectedDates.includes(bookedDate.date)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function updateRoomOptions() {
+            var selectedDates = getSelectedDates();
+            var availableRooms = [];
+
+            for (var i = 0; i < rooms.length; i++) {
+                var room = rooms[i];
+                if (isRoomAvailable(room.id, selectedDates)) {
+                    availableRooms.push(room);
+                }
+            }
+
+            var roomSelect = document.getElementById("room-select");
+
+            roomSelect.innerHTML = "";
+
+            var defaultOption = document.createElement("option");
+            defaultOption.text = "--- Select A Room ---";
+            defaultOption.value = "0";
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            roomSelect.appendChild(defaultOption);
+
+            for (var k = 0; k < availableRooms.length; k++) {
+                var option = document.createElement("option");
+                option.text = availableRooms[k].type + " | Type: " + availableRooms[k].name + " | Price: $" +
+                    availableRooms[k].price;
+                option.value = availableRooms[k].id;
+                option.dataset.name = availableRooms[k].name;
+                option.dataset.type = availableRooms[k].type;
+                option.dataset.price = availableRooms[k].price;
+                roomSelect.appendChild(option);
+            }
+        }
+
+        document.getElementById("checkin_date").addEventListener("change", updateRoomOptions);
+        document.getElementById("checkout_date").addEventListener("change", updateRoomOptions);
+
+        updateRoomOptions();
+        disablePastDates();
     </script>
 
     {{-- Toastr New JS --}}
@@ -463,6 +717,18 @@
                 }
             }).showToast();
         @endif
+
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                Toastify({
+                    text: "{{ $error }}",
+                    duration: 10000,
+                    style: {
+                        background: "linear-gradient(to right, #b90000, #c99396)"
+                    }
+                }).showToast();
+            @endforeach
+        @endif
     </script>
 
     {{-- Check Quantity 1-20 --}}
@@ -484,6 +750,140 @@
                 input.value = input.max;
             }
         }
+    </script>
+
+    <!-- Include jQuery from the CDN -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    {{-- Pill JS --}}
+    <script>
+        // JavaScript to handle tab switching
+        $(document).ready(function() {
+            $('.custom-tab').click(function() {
+                var tab = $(this).data('tab');
+                $('.custom-tab').removeClass('active');
+                $('.custom-tab[data-tab="' + tab + '"]').toggleClass('active');
+                $('.custom-tab-content').removeClass('active');
+                $('.custom-tab-content[data-tab="' + tab + '"]').toggleClass('active');
+            });
+            $('#payment').click(function(e) {
+                e.preventDefault();
+                $('.custom-tab').removeClass('active');
+                $('.custom-tab[data-tab="payment"]').toggleClass('active');
+                $('.custom-tab-content').removeClass('active');
+                $('.custom-tab-content[data-tab="payment"]').toggleClass('active');
+            })
+        });
+    </script>
+
+    {{-- Check Date Valid and Past Date Check --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get references to date, check-in time, and check-out time elements
+            var checkinDate = document.getElementById('checkin_date');
+            var checkoutDate = document.getElementById('checkout_date');
+            var checkInTime = document.getElementById('check_in_time');
+            var checkOutTime = document.getElementById('check_out_time');
+            var roomSelect = document.getElementById('room_select');
+
+            // Disable check-in time, check-out time, and room select initially
+            // checkInTime.disabled = true;
+            // checkOutTime.disabled = true;
+            roomSelect.disabled = true;
+
+            // Event listener for check-in date selection
+            checkinDate.addEventListener('change', function() {
+                console.log('Check-in date changed:', checkinDate.value);
+                // Enable check-in time once the date is selected
+                checkInTime.disabled = false;
+                // Validate check-in date
+                validateCheckinDate();
+            });
+
+            // Event listener for check-out date selection
+            checkoutDate.addEventListener('change', function() {
+                console.log('Check-out date changed:', checkoutDate.value);
+                // Enable check-out time once the date is selected
+                checkOutTime.disabled = false;
+                // Validate check-out date
+                validateCheckoutDate();
+            });
+
+            // Event listener for check-in time selection
+            checkInTime.addEventListener('change', function() {
+                console.log('Check-in time changed:', checkInTime.value);
+                // Validate check-out time based on check-in time
+                validateCheckOutTime();
+            });
+
+            // Event listener for check-out time selection
+            checkOutTime.addEventListener('change', function() {
+                console.log('Check-out time changed:', checkOutTime.value);
+                // Enable room select once check-out time is selected
+                roomSelect.disabled = false;
+                // Validate check-out time based on check-in time
+                validateCheckOutTime();
+            });
+
+            // Function to validate check-in date
+            function validateCheckinDate() {
+                var today = new Date();
+                var selectedDate = new Date(checkinDate.value);
+
+                if (selectedDate < today) {
+                    alert('Check-in date cannot be in the past');
+                    checkinDate.value = '';
+                    checkInTime.disabled = true;
+                }
+            }
+
+            // Function to validate check-out date
+            function validateCheckoutDate() {
+                var checkinDateValue = new Date(checkinDate.value);
+                var checkoutDateValue = new Date(checkoutDate.value);
+
+                if (checkoutDateValue <= checkinDateValue) {
+                    alert('Check-out Date must be after Check-in Date');
+                    checkoutDate.value = '';
+                    checkOutTime.disabled = true;
+                }
+
+                if (checkoutDateValue.getTime() === checkinDateValue.getTime()) {
+                    alert('Check-out Date cannot be the same as Check-in Date');
+                    checkoutDate.value = '';
+                    checkOutTime.disabled = true;
+                }
+            }
+
+            // Function to validate check-out time based on check-in time
+            function validateCheckOutTime() {
+                var checkInTimeValue = convertToMinutes(checkInTime.value);
+                var checkOutTimeValue = convertToMinutes(checkOutTime.value);
+
+                // Define time boundaries (7:00 AM to 10:00 PM)
+                var startTime = convertToMinutes('07:00');
+                var endTime = convertToMinutes('22:00');
+
+                // Check if check-in time is within the allowed range (7:00 AM to 10:00 PM)
+                if (checkInTimeValue < startTime || checkInTimeValue > endTime) {
+                    alert('You selected check-in time outside the allowed range (7:00 AM to 10:00 PM)');
+                    checkInTime.value = '';
+                    checkOutTime.disabled = true;
+                } else if (checkOutTimeValue < startTime || checkOutTimeValue > endTime) {
+                    alert('You selected check-out time outside the allowed range (7:00 AM to 10:00 PM)');
+                    checkOutTime.value = '';
+                } else if (checkOutTimeValue <= checkInTimeValue) {
+                    alert('You selected check-out time before or equal to check-in time');
+                    checkOutTime.value = '';
+                }
+            }
+
+            // Function to convert time strings to minutes
+            function convertToMinutes(timeString) {
+                var timeArray = timeString.split(':');
+                return parseInt(timeArray[0]) * 60 + parseInt(timeArray[1]);
+            }
+        });
     </script>
 
     {{-- Payment Card Check --}}
@@ -562,221 +962,247 @@
         });
     </script>
 
-    {{-- Full Check Hotel Room Code --}}
+    {{-- Check Date --}}
     <script>
-        $(document).ready(function() {
+        $('#checkin_date').change(function() {
+            var checkinDate = new Date($('#checkin_date').val());
+            var checkoutDate = new Date($('#checkout_date').val());
 
-            function stringToIntegerArray(array) {
-                return array.map(function(str) {
-                    return parseInt(str, 10);
-                });
+            // Check if Check-out Date is less than or equal to Check-in Date
+            if (checkoutDate <= checkinDate) {
+                alert('Check-out Date must be after Check-in Date');
+                $('#checkout_date').val('');
             }
 
-            // Define open and close times
-            var openTime = '08:00';
-            var closeTime = '20:00';
+            // Check if Check-out Date is the same as Check-in Date
+            if (checkoutDate.getTime() === checkinDate.getTime()) {
+                alert('Check-out Date cannot be the same as Check-in Date');
+                $('#checkout_date').val('');
+            }
+        });
 
-            //disable
-            $('#check_in_time').prop('disabled', true);
-            $('#check_out_time').prop('disabled', true);
-            $('#room_select').prop('disabled', true);
+        $('#checkout_date').change(function() {
+            var checkinDate = new Date($('#checkin_date').val());
+            var checkoutDate = new Date($('#checkout_date').val());
 
-            //on change booking_date
-            $('#booking_date').change(function() {
-                $('#check_in_time').prop('disabled', false);
+            // Check if Check-out Date is less than or equal to Check-in Date
+            if (checkoutDate <= checkinDate) {
+                alert('Check-out Date must be after Check-in Date');
+                $('#checkout_date').val('');
+            }
 
-            });
-
-            //on change check_in_time and get value from BookingController
-            $('#check_in_time').change(function() {
-                var date = $('#booking_date').val();
-                var time = $('#check_in_time').val();
-                var booked = @json($collectionBooked);
-                var results = @json($collectionResults);
-                var dateTime = date + ' ' + time + ':00';
-
-                console.log('booked:', booked);
-                console.log('time:', time);
-                console.log('datetime :', dateTime);
-                console.log('results :', results);
-
-                // Array to store excluded room IDs
-                var excludedRoomIds = [];
-
-                for (var key in booked) {
-                    if (booked.hasOwnProperty(key)) {
-                        var bookingDate = key;
-                        var roomIds = booked[key];
-
-                        console.log('bookingDate:', bookingDate);
-                        console.log('roomIds:', roomIds);
-
-                        for (var i = 0; i < roomIds.length; i++) {
-                            if (bookingDate === dateTime) {
-                                excludedRoomIds.push(roomIds[i]);
-                            }
-                        }
-                    }
-                }
-                console.log("Excluded Room IDs:", excludedRoomIds);
-
-                // Convert check_in_time to a Date object for comparison
-                var checkInDateTime = new Date(dateTime);
-                var openTimeDateTime = new Date(date + ' ' + openTime);
-                var closeTimeDateTime = new Date(date + ' ' + closeTime);
-
-                // Check if check_in_time is within open and close times
-                if (checkInDateTime < openTimeDateTime || checkInDateTime >= closeTimeDateTime) {
-                    alert('Check-in time must be between ' + openTime + ' and ' + closeTime);
-                    $('#check_in_time').val(''); // Clear the input
-                    return;
-                }
-
-                // Change room IDs to integers
-                var intExcludedRoomIds = stringToIntegerArray(excludedRoomIds);
-                console.log("Excluded Room IDs as Integers:", intExcludedRoomIds);
-
-                // Object.entries(results).forEach(function([id, name, price]) {
-                //     if (!intExcludedRoomIds.includes(+name)) {
-                //         selectOptions += '<option value="' + name + '-' + price + '">' + name + ' (Price: ' + price + ') - ' + id + '</option>';
-                //     }
-                // });
-
-                var selectOptions = '';
-
-                var filteredResults = results.filter(function(item) {
-                    return !intExcludedRoomIds.includes(item.id);
-                });
-
-                console.log(filteredResults);
-
-                // Generate the selectOptions based on filteredResults
-                // var selectOptions = filteredResults.map(function(item) {
-                //     console.log(item.id, item.name, item.price, item.type);
-                //     return '<option value="' + item.id + '">' + item.type + ' - ' + item.name +
-                //         ' - ' + item.price + '</option>';
-                // }).join('');
-
-                // Generate the selectOptions based on filteredResults
-                // var selectOptions = filteredResults.map(function(item) {
-                //     console.log(item.id, item.name, item.price, item.type);
-                //     return '<option value="' + item.id + '" data-room_type="' + item.type +
-                //         '" data-room_price="' + item.price + '">' + item.type + ' - ' + item.name +
-                //         ' - ' + item.price + '</option>';
-                // }).join('');
-
-                // 正版
-                // Generate the selectOptions based on filteredResults
-                var selectOptions = '<option value="" disabled selected>Choose a room</option>';
-                selectOptions += filteredResults.map(function(item) {
-                    console.log(item.id, item.name, item.price, item.type);
-                    return '<option value="' + item.id + '" data-room_type="' + item.type +
-                        '" data-room_price="' + item.price + '">' + item.type + ' - ' + item.name +
-                        ' - ' + item.price + '</option>';
-                }).join('');
-
-                // var selectOptions = '<option value="" disabled selected>Choose a room</option>';
-                // selectOptions += filteredResults.map(function(item) {
-                //     console.log(item.id, item.name, item.price, item.type);
-                //     return '<option value="' + item.id + '" data-room_type="' + item.type +
-                //         '" data-room_name="' + item.name +
-                //         '" data-room_price="' + item.price + '">' + item.type + ' - ' + item.name +
-                //         ' - ' + item.price + '</option>';
-                // }).join('');
-
-                if (selectOptions === '') {
-                    selectOptions =
-                        '<option disabled selected>No available rooms. Please select another time.</option>';
-                }
-
-                $('#check_out_time').prop('disabled', false);
-                $('#room_select').html(selectOptions);
-
-
-                // Add change event listener for room selection
-                // $('#room_select').change(function() {
-                //     // Get the selected option
-                //     var selectedOption = $(this).find('option:selected');
-
-                //     // Extract room name, type, and price from the selected option
-                //     var roomId = selectedOption.val();
-                //     var roomName = selectedOption.text();
-                //     var roomType = selectedOption.data('room_type');
-                //     var roomPrice = selectedOption.data('room_price');
-
-                //     // Update the input fields
-                //     $('input[name="room_name"]').val(roomName);
-                //     $('input[name="room_type"]').val(roomType);
-                //     $('input[name="room_price"]').val(roomPrice);
-                // });
-
-                // Add change event listener using event delegation
-                $(document).on('change', '#room_select', function() {
-                    // Get the selected option
-                    var selectedOption = $(this).find('option:selected');
-
-                    // Extract room name, type, and price from the selected option
-                    var roomId = selectedOption.val();
-                    var roomName = selectedOption.text();
-                    var roomType = selectedOption.data('room_type');
-                    var roomPrice = selectedOption.data('room_price');
-
-                    // Update the input fields
-                    $('input[name="room_name"]').val(roomName);
-                    $('input[name="room_type"]').val(roomType);
-                    $('input[name="room_price"]').val(roomPrice);
-                });
-
-            });
-
-            $('#check_out_time').change(function() {
-                var date = $('#booking_date').val();
-                var checkInTime = $('#check_in_time').val();
-                var checkOutTime = $('#check_out_time').val();
-                var closeTimeDateTime = new Date(date + ' ' + closeTime);
-
-                // Convert check_out_time to a Date object for comparison
-                var checkOutDateTime = new Date(date + ' ' + checkOutTime);
-
-                // Check if check_out_time is greater than check_in_time
-                if (checkOutDateTime >= closeTimeDateTime) {
-                    alert('Check-out time must be less than ' + closeTime);
-                    $('#check_out_time').val(''); // Clear the input
-                    return;
-                } else if (checkOutTime <= checkInTime) {
-                    alert('Check-out-time must be Grater than ' + checkInTime);
-                    $('#check_out_time').val(''); // Clear the input
-                    return;
-                }
-                $('#room_select').prop('disabled', false);
-
-            });
-
+            // Check if Check-out Date is the same as Check-in Date
+            if (checkoutDate.getTime() === checkinDate.getTime()) {
+                alert('Check-out Date cannot be the same as Check-in Date');
+                $('#checkout_date').val('');
+            }
         });
     </script>
 
-    <!-- Include jQuery from the CDN -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- PayPal JS -->
+    <script
+        src="https://www.paypal.com/sdk/js?client-id=AevCq5WDpuSoYCJlkxHD-N_Yf13gKJmf9sOESVMmYa9lDzN9bVvgfNUqTy4C62CthVk9r5qoEgwDM8Un">
+    </script>
 
-    {{-- Pill JS --}}
+    {{-- Paypal Payment Method --}}
     <script>
-        // JavaScript to handle tab switching
-        $(document).ready(function() {
-            $('.custom-tab').click(function() {
-                console.log('aaa');
-                var tab = $(this).data('tab');
-                $('.custom-tab').removeClass('active');
-                $('.custom-tab[data-tab="' + tab + '"]').toggleClass('active');
-                $('.custom-tab-content').removeClass('active');
-                $('.custom-tab-content[data-tab="' + tab + '"]').toggleClass('active');
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkinInput = document.getElementById('checkin_date');
+            const checkoutInput = document.getElementById('checkout_date');
+            const totalPriceElement = document.getElementById('total_price');
+            const roomSelect = document.getElementById('room_select');
+            let roomPrice = 0;
+
+            function calculateTotalPrice() {
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+
+                if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
+                    const timeDifference = checkoutDate.getTime() - checkinDate.getTime();
+                    const dayDifference = timeDifference / (1000 * 3600 * 24);
+                    const totalPrice = dayDifference * roomPrice;
+
+                    totalPriceElement.textContent = totalPrice.toFixed(2);
+                } else {
+                    totalPriceElement.textContent = '0.00';
+                }
+            }
+
+            roomSelect.addEventListener('change', function() {
+                const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+                roomPrice = parseFloat(selectedOption.getAttribute('data-price'));
+                calculateTotalPrice();
             });
-            $('#payment').click(function(e) {
-                e.preventDefault();
-                $('.custom-tab').removeClass('active');
-                $('.custom-tab[data-tab="payment"]').toggleClass('active');
-                $('.custom-tab-content').removeClass('active');
-                $('.custom-tab-content[data-tab="payment"]').toggleClass('active');
-            })
+
+            checkinInput.addEventListener('change', calculateTotalPrice);
+            checkoutInput.addEventListener('change', calculateTotalPrice);
+
+            // Payment method selection
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            const cardPaymentSection = document.getElementById('card-payment-section');
+            const paypalPaymentSection = document.getElementById('paypal-payment-section');
+            const paymentMethodInput = document.getElementById('payment_method');
+
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    paymentOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    const method = this.getAttribute('data-method');
+                    paymentMethodInput.value = method;
+
+                    if (method === 'credit_card') {
+                        cardPaymentSection.style.display = 'block';
+                        paypalPaymentSection.style.display = 'none';
+                    } else if (method === 'paypal') {
+                        cardPaymentSection.style.display = 'none';
+                        paypalPaymentSection.style.display = 'block';
+                        initializePayPalButtons();
+                    }
+                });
+            });
+
+            function initializePayPalButtons() {
+                paypal.Buttons({
+                    createOrder: function(data, actions) {
+                        const totalPrice = parseFloat(totalPriceElement.innerText.replace('RM ', ''));
+                        if (isNaN(totalPrice) || totalPrice <= 0) {
+                            alert('Invalid total price. Please check the total price.');
+                            return;
+                        }
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: {
+                                    value: totalPrice.toFixed(2)
+                                }
+                            }]
+                        });
+                    },
+                    onApprove: function(data, actions) {
+                        return actions.order.capture().then(function(details) {
+                            startProgressBarAndSubmit();
+                        });
+                    }
+                }).render('#paypal-button-container');
+            }
+
+            document.getElementById('submit-button').addEventListener('click', function(event) {
+                event.preventDefault();
+                startProgressBarAndSubmit();
+            });
+
+            function startProgressBarAndSubmit() {
+                let progressBarContainer = document.getElementById('progressBarContainer');
+                progressBarContainer.style.display = 'block';
+                let progressBar = document.querySelector('.progress-bar');
+                let width = 0;
+
+                let interval = setInterval(function() {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                        submitBooking();
+                    } else {
+                        width += 5;
+                        progressBar.style.width = width + '%';
+                        progressBar.setAttribute('aria-valuenow', width);
+                        progressBar.textContent = width + '%';
+                    }
+                }, 50);
+            }
+
+            function submitBooking() {
+                const formData = new FormData(document.getElementById('bookingForm'));
+                const paymentMethod = document.getElementById('payment_method').value;
+
+                if (paymentMethod === 'credit_card') {
+                    formData.append('card_number', document.getElementById('card_number').value);
+                    formData.append('card_holder', document.getElementById('card_holder').value);
+                    formData.append('card_month', document.getElementById('card_month').value);
+                    formData.append('card_year', document.getElementById('card_year').value);
+                    formData.append('cvv', document.getElementById('cvv').value);
+                } else {
+                    formData.append('card_number', '0000000000000000');
+                    formData.append('card_holder', 'PayPal User');
+                    formData.append('card_month', '01');
+                    formData.append('card_year', new Date().getFullYear() + 1);
+                    formData.append('cvv', '000');
+                }
+
+                fetch('{{ url('bookingshotel') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Booking Successful!',
+                                text: data.message,
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                window.location.href = '{{ route('home') }}';
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Booking Failed',
+                                text: data.message
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'An error occurred while processing your booking.'
+                        });
+                    })
+                    .finally(() => {
+                        document.getElementById('progressBarContainer').style.display = 'none';
+                    });
+            }
+
+            // Card input visualization
+            const cardNumber = document.querySelector('.card-number-box');
+            const cardHolder = document.querySelector('.card-holder-name');
+            const cardMonth = document.querySelector('.exp-month');
+            const cardYear = document.querySelector('.exp-year');
+            const cardCVV = document.querySelector('.cvv-box');
+
+            document.querySelector('#card_number').oninput = () => {
+                cardNumber.innerText = document.querySelector('#card_number').value;
+            }
+
+            document.querySelector('#card_holder').oninput = () => {
+                cardHolder.innerText = document.querySelector('#card_holder').value;
+            }
+
+            document.querySelector('#card_month').oninput = () => {
+                cardMonth.innerText = document.querySelector('#card_month').value;
+            }
+
+            document.querySelector('#card_year').oninput = () => {
+                cardYear.innerText = document.querySelector('#card_year').value;
+            }
+
+            document.querySelector('#cvv').onmouseenter = () => {
+                document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(-180deg)';
+                document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(0deg)';
+            }
+
+            document.querySelector('#cvv').onmouseleave = () => {
+                document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(0deg)';
+                document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(180deg)';
+            }
+
+            document.querySelector('#cvv').oninput = () => {
+                cardCVV.innerText = document.querySelector('#cvv').value;
+            }
         });
     </script>
 

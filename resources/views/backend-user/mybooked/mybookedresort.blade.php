@@ -2,9 +2,9 @@
 
 @section('newuser-section')
 
+    <!-- Ticket Card -->
     <style>
-        @import url("https://fonts.googleapis.com/css2?family=Staatliches&display=swap");
-        @import url("https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap");
 
         * {
             margin: 0;
@@ -13,390 +13,350 @@
         }
 
         body {
-            font-family: "Staatliches", cursive;
-            color: black;
+            font-family: "Open Sans", sans-serif;
+            color: #333;
+            background-color: #f9f9f9;
         }
-
-        .breadcumb-area {
-            background-image: url(booked/bg-img/breadcumb3.jpg);
-            background-size: cover;
-            background-position: center;
-            height: 200px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-        }
-
-        .bradcumbContent {
-            max-width: 600px;
-        }
-
-        .bradcumbContent p {
-            font-size: 18px;
-        }
-
-        /* .bradcumbContent h2 {
-                            font-size: 36px;
-                            font-family: "Nanum Pen Script", cursive;
-                            font-weight: 700;
-                            letter-spacing: 0.1em;
-                            color: #4a437e;
-                        } */
 
         .ticket-section {
-            margin: 60px 0;
+            margin: 60px auto;
+            max-width: 1200px;
             display: grid;
-            gap: 50px;
+            gap: 30px;
+            padding: 0 20px;
         }
 
         .ticket {
-            margin: auto;
-            display: flex;
             background: white;
-            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+        }
+
+        .ticket:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
         .left {
+            flex: 1.5;
             display: flex;
+            flex-direction: column;
+        }
+
+        .right {
+            flex: 1;
+            background-color: #f8f9fa;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-left: 1px solid #eee;
         }
 
         .ticket-image {
-            height: 375px;
-            width: 250px;
-            /* background-image: url("https://media.pitchfork.com/photos/60db53e71dfc7ddc9f5086f9/1:1/w_1656,h_1656,c_limit/Olivia-Rodrigo-Sour-Prom.jpg"); */
-            background-size: contain;
-            opacity: 0.85;
-        }
-
-        .admit-one {
-            position: absolute;
-            color: darkgray;
-            height: 250px;
-            padding: 0 4px;
-            letter-spacing: 0.15em;
-            display: flex;
-            text-align: center;
-            justify-content: space-around;
-            writing-mode: vertical-rl;
-            transform: rotate(-180deg);
-        }
-
-        .admit-one span:nth-child(2) {
-            color: white;
-            font-weight: 700;
-        }
-
-        .left .ticket-number {
-            height: 250px;
-            width: 250px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: flex-end;
-            padding: 5px;
+            height: 300px;
+            width: 100%;
+            object-fit: cover;
         }
 
         .ticket-info {
-            max-width: 550px;
-            padding: 10px 30px;
+            padding: 25px;
+        }
+
+        .ticket-date {
             display: flex;
-            flex-direction: column;
-            text-align: center;
             justify-content: space-between;
             align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 20px;
+        }
+
+        .month-day {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .ticket-show-name {
+            margin-bottom: 20px;
+        }
+
+        .ticket-show-name h5 {
+            font-family: "Montserrat", sans-serif;
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .ticket-show-name p {
+            font-size: 18px;
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .ticket-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .detail-item {
+            text-align: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .detail-item span {
+            display: block;
+        }
+
+        .detail-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .right-info-container {
+            text-align: center;
+        }
+
+        .ticket-time {
+            margin-bottom: 25px;
+        }
+
+        .time-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .time-label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .time-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .ticket-barcode {
+            margin: 25px 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .ticket-barcode img {
+            width: 120px;
+            height: 120px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
         }
 
         .navy-blue-button {
             display: inline-block;
-            padding: 6px 40px;
+            padding: 12px 24px;
             font-size: 16px;
             text-align: center;
             text-decoration: none;
             cursor: pointer;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             color: #fff;
-            background-color: navy;
-            transition: background-color 0.3s ease;
+            background: linear-gradient(to right, #3498db, #2c3e50);
+            transition: all 0.3s ease;
+            width: 100%;
         }
 
         .navy-blue-button:hover {
-            background-color: #001f3f;
-            color: #fff;
+            background: linear-gradient(to right, #2c3e50, #3498db);
+            color: white;
+            /* 在 hover 时文字变成黑色 */
+            transform: translateY(-2px);
         }
 
-        .ticket-date {
-            width: 500px;
-            border-top: 1px solid gray;
-            border-bottom: 1px solid gray;
-            padding: 5px 0;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-        }
 
-        .ticket-date span {
-            width: 100px;
-            font-family: "Staatliches", cursive;
-            color: black;
-        }
-
-        .ticket-date span:first-child {
-            text-align: left;
-        }
-
-        .ticket-date span:last-child {
-            text-align: right;
-        }
-
-        .ticket-date .month-day {
-            color: #d83565;
-            font-size: 20px;
-        }
-
-        .ticket-show-name h2 {
-            font-size: 32px;
-            font-family: "Nanum Pen Script", cursive;
-            color: #d83565;
-        }
-
-        .ticket-show-name h1 {
-            font-size: 48px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            font-family: "Nanum Pen Script", cursive;
-            color: #4a437e;
-        }
-
-        .ticket-time {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .ticket-time p {
-            color: #4a437e;
-            padding: 3px 0;
-            color: #4a437e;
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
             text-align: center;
-            font-weight: 700;
-            font-family: "Staatliches", cursive;
+            margin-top: 15px;
         }
 
-        .ticket-time span {
-            font-weight: 400;
-            color: gray;
+        .status-checked-out {
+            background-color: #e9ecef;
+            color: #495057;
         }
 
-        .left .ticket-time {
-            font-size: 16px;
+        .status-cancelled {
+            background-color: #fee2e2;
+            color: #dc2626;
         }
 
-        .ticket-location {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            width: 100%;
-            padding-top: 8px;
-            color: rgb(23, 14, 14);
-            font-weight: bold;
-            border-top: 1px solid gray;
-        }
+        @media (max-width: 768px) {
+            .ticket {
+                flex-direction: column;
+            }
 
-        .ticket-location .separator {
-            font-size: 20px;
-        }
+            .right {
+                border-left: none;
+                border-top: 1px solid #eee;
+            }
 
-        .right {
-            width: 180px;
-            height: 350px;
-            border-left: 1px dashed #404040;
-        }
-
-        .right .admit-one {
-            color: darkgray;
-        }
-
-        .right .admit-one span:nth-child(2) {
-            color: gray;
-        }
-
-        .right .right-info-container {
-            height: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .right .ticket-show-name h1 {
-            font-size: 18px;
-        }
-
-        .ticket-barcode {
-            height: 100px;
-        }
-
-        .ticket-barcode img {
-            height: 100%;
-        }
-
-        .right .ticket-number {
-            color: gray;
+            .ticket-details {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 
-    <style>
-        /* Apply the same style to the qrcode div as ticket-barcode */
-        .qrcode {
-            width: 100px;
-            /* Adjust the width as needed */
-            height: 100px;
-            /* Adjust the height as needed */
-        }
-    </style>
-
-    {{-- Toastify CSS --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-
-    <!-- ##### Breadcumb Area Start ##### -->
-    <section class="breadcumb-area bg-img bg-overlay"
-        style="background-image: url(booked/bg-img/breadcumb3.jpg); height: 200px;">
-        <div class="bradcumbContent">
-            <p>See what you have purchased </p>
-            <h2>Resort Booked History</h2>
-        </div>
-    </section>
-
-    <!-- ##### Breadcumb Area End ##### -->
     <section class="ticket-section">
         @if ($mybookeds->isEmpty())
-            <p style="text-align: center; font-size:24px">No Resort Found</p>
+            <p style="text-align: center; font-size: 24px; color: #666;">No Resort Found</p>
         @else
             @foreach ($mybookeds as $resort)
-                <div class="ticket created-by-anniedotexe">
+                <div class="ticket">
                     <div class="left">
-
-                        <div class="ticket-image"
-                            @if ($resort->resort->image == null)
-                                style="background-color: #ccc;">
-                                No Image
+                        <div class="image">
+                            @if ($resort->resort->images->count() > 0)
+                                <img src="{{ asset('images/' . $resort->resort->images->first()->image) }}"
+                                    class="ticket-image" alt="Resort Image">
                             @else
-                                @php
-                                    $imagePath = asset('images/' . $resort->resort->image);
-                                @endphp
-                                style="background-image: url('{{ $imagePath }}');">
-                                <!-- Debugging output -->
-                                <p>{{ $imagePath }}</p>
+                                <div class="ticket-image"
+                                    style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                                    <span style="color: #999;">No Image Available</span>
+                                </div>
                             @endif
                         </div>
-
                         <div class="ticket-info">
-                            <p class="ticket-date">
-                                <span>{{ \Carbon\Carbon::parse($resort->booking_date)->format('l') }}</span>
-                                <!--format('l') returns the day of the week (e.g., Tuesday). -->
+                            <div class="ticket-date">
+                                <span
+                                    class="month-day">{{ \Carbon\Carbon::parse($resort->booking_date)->format('Y') }}</span>
                                 <span
                                     class="month-day">{{ \Carbon\Carbon::parse($resort->booking_date)->format('F j') }}</span>
-                                <!--format('F j') returns the month (e.g., June) and day (e.g., 29). -->
-                                <span>{{ \Carbon\Carbon::parse($resort->booking_date)->format('Y') }}</span>
-                                <!-- format('Y') returns the year. -->
-                            </p>
-
-                            <div class="ticket-show-name">
-                                <p class="ticket-location">Resort Name : {{ $resort->resort_name }}</p>
-                                <p class="ticket-location">Resort Price : RM {{ $resort->total_price }}</p>
+                                <span
+                                    class="month-day">{{ \Carbon\Carbon::parse($resort->booking_date)->format('l') }}</span>
                             </div>
-
-                            {{-- <div class="ticket-show-name">
-                                <p class="ticket-location">Check_In_Time : {{ \Carbon\Carbon::parse($resort->checkin_time)->format('g:i A') }}</p>
-                                <p class="ticket-location">Check_Out_Time : {{ \Carbon\Carbon::parse($resort->checkout_time)->format('g:i A') }}</p>
-                            </div> --}}
-
-                            <p class="ticket-location">Gender : {{ $resort->gender }}</p>
-                            <p class="ticket-location">Person : {{ $resort->quantity }}</p>
-
-                            {{-- <div class="ticket-time">
-                                <p class="ticket-location">{{ \Carbon\Carbon::parse($resort->checkin_time)->diffForHumans() }}</p>
-                            </div> --}}
-
+                            <div class="ticket-show-name">
+                                <h5>{{ $resort->resort_name }}</h5>
+                                <p>Resort Price: RM{{ $resort->total_price }}</p>
+                            </div>
+                            <div class="ticket-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">Gender</span>
+                                    <span class="detail-value">{{ $resort->gender }}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Person</span>
+                                    <span class="detail-value">{{ $resort->quantity }}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">Booking Days</span>
+                                    <span class="detail-value">{{ $resort->booking_days }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="right">
                         <div class="right-info-container">
                             <div class="ticket-time">
-                                <p style="font-weight:500;margin-top:10px;">Check_In_Time : <span
-                                        style=" color: #d83565; font-weight:bold">{{ \Carbon\Carbon::parse($resort->checkin_time)->format('g:i A') }}</span>
-                                </p>
-                                <p style="font-weight:500;margin-top:-10px;">Check_Out_Time : <span
-                                        style=" color: #d83565; font-weight:bold">{{ \Carbon\Carbon::parse($resort->checkout_time)->format('g:i A') }}</span>
-                                </p>
+                                <div class="time-item">
+                                    <span class="time-label">Check-In Date:</span>
+                                    <span
+                                        class="time-value">{{ \Carbon\Carbon::parse($resort->checkin_date)->format('j F Y') }}</span>
+                                </div>
+                                <div class="time-item">
+                                    <span class="time-label">Check-Out Date:</span>
+                                    <span
+                                        class="time-value">{{ \Carbon\Carbon::parse($resort->checkout_date)->format('j F Y') }}</span>
+                                </div>
+                                <div class="time-item">
+                                    <span class="time-label">Check-In Time:</span>
+                                    <span
+                                        class="time-value">{{ \Carbon\Carbon::parse($resort->checkin_time)->format('g:i A') }}</span>
+                                </div>
+                                <div class="time-item">
+                                    <span class="time-label">Check-Out Time:</span>
+                                    <span
+                                        class="time-value">{{ \Carbon\Carbon::parse($resort->checkout_time)->format('g:i A') }}</span>
+                                </div>
                             </div>
-
-                            {{-- Import the QrCode facade --}}
-                            {{-- @use SimpleSoftwareIO\QrCode\Facades\QrCode --}}
-
-                            {{-- <br> --}}
-
                             <div class="ticket-barcode">
-                                {!! QrCode::size(100)->generate(route('verify.resort', ['resortId' => $resort->id])) !!}
-                                {{-- {!! QrCode::size(100)->generate('https://www.douyin.com/video/7194920128637603105') !!} --}}
-                                {{-- <img src="https://external-preview.redd.it/cg8k976AV52mDvDb5jDVJABPrSZ3tpi1aXhPjgcDTbw.png?auto=webp&s=1c205ba303c1fa0370b813ea83b9e1bddb7215eb"
-                                    alt="QR code"> --}}
+                                <?php
+                                $ipAddress = '192.168.50.154';
+                                $url =
+                                    'http://' .
+                                    $ipAddress .
+                                    ':8000' .
+                                    route('verify.resort', ['resortId' => $resort->id], false) .
+                                    '?' .
+                                    http_build_query([
+                                        'user_id' => $resort->user_id,
+                                        'resort_id' => $resort->resort_id,
+                                        'checkin_date' => $resort->checkin_date,
+                                        'checkout_date' => $resort->checkout_date,
+                                        'checkin_time' => $resort->checkin_time,
+                                        'checkout_time' => $resort->checkout_time,
+                                        'total_price' => $resort->total_price,
+                                        'verify_code' => $resort->verify_code,
+                                    ]);
+                                ?>
+                                {!! QrCode::size(120)->generate($url) !!}
                             </div>
+                            <div class="action-buttons">
+                                <a href="{{ url('viewBookedResort/' . $resort->id) . '/view' }}" target="_blank"
+                                    class="navy-blue-button">View Detail</a>
 
-                            <div class="ticket-time">
-                                <p style="color: #d83565; font-weight:bold">
-                                    @if ($resort->payment_status == 'Unpaid')
-                                        <span>Unpaid</span>
-                                    @elseif($resort->payment_status == 'Paid')
-                                        <span>Paid</span>
-                                    @endif
-                                </p>
+                                @if ($resort->payment_status == 0)
+                                    {{-- <form action="{{ route('booking.cancel.resort', $resort->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            onclick="return confirm('Are you sure you want to Cancel this Booking?')"
+                                            class="navy-blue-button"
+                                            style="background: linear-gradient(to right, #dc2626, #991b1b);">
+                                            Cancel Booking
+                                        </button>
+                                    </form> --}}
+
+                                    <a href="{{ route('ExtandorCancelResort', ['id' => $resort->id]) }}"
+                                        class="navy-blue-button"
+                                        style="background: linear-gradient(to right, #dc2626, #991b1b);">Extand or Cancel Booking</a>
+
+                                @elseif($resort->payment_status == 1)
+                                    <form action="{{ route('booking.checkout.resort', $resort->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            onclick="return confirm('Are you sure you want to check out this resort?')"
+                                            class="navy-blue-button">Check Out</button>
+                                    </form>
+                                @elseif($resort->payment_status == 2)
+                                    <span class="status-badge status-checked-out">Checked Out</span>
+                                @elseif($resort->payment_status == 3)
+                                    <span class="status-badge status-cancelled">Booking Cancelled</span>
+                                @endif
                             </div>
-
-                            <a href="{{ url('viewBookedResort/' . $resort->id) . '/view' }}" target="_blank"
-                                class="navy-blue-button">View Detail</a><br>
-                            {{-- <a href="{{ route('booking.verify.resort', $resort->id) }}" onclick="return confirm('Are you sure you want to check in resort?')" target="_blank"
-                                class="navy-blue-button">Verify</a> --}}
-
-                            @if($resort->payment_status == 0)
-
-                                <form action="{{ route('booking.verify.resort', $resort->id) }}" method="POST">
-                                    @csrf
-                                    <input type="hidden" name="user_id" value="{{ $resort->user_id }}">
-                                    <input type="hidden" name="resort_id" value="{{ $resort->resort_id }}">
-                                    <input type="hidden" name="checkin_date" value="{{ $resort->checkin_date }}">
-                                    <input type="hidden" name="checkout_date" value="{{ $resort->checkout_date }}">
-                                    <input type="hidden" name="total_price" value="{{ $resort->total_price }}">
-                                    <input type="hidden" name="verify_code" value="{{ $resort->verify_code }}">
-                                    <button type="submit" onclick="return confirm('Are you sure you want to verify this booking?')" class="navy-blue-button">Verify</button>
-                                </form>
-
-                                <br>
-
-                                <form action="{{ route('booking.cancel.resort', $resort->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" onclick="return confirm('Are you sure you want to Cancel this Booking?')" class="btn btn-sm btn-danger">Cancelled The Booking</button>
-                                </form>
-
-                            @elseif($resort->payment_status == 1)
-
-                                <form action="{{ route('booking.checkout.resort', $resort->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" onclick="return confirm('Are you sure you want to check out this resort?')" class="btn btn-sm btn-danger">Check Out</button>
-                                </form>
-
-                            @elseif($resort->payment_status == 2)
-
-                                <span class="badge badge-secondary" style="font-size:15px">Checked Out</span>
-
-                            @elseif($resort->payment_status == 3)
-
-                                <span class="badge badge-secondary" style="font-size:15px">Your cancelled the Booking</span>
-
-                            @endif
-
                         </div>
                     </div>
                 </div>
@@ -404,7 +364,10 @@
         @endif
     </section>
 
-    {{-- Toastr JS --}}
+    {{-- Toastify CSS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+    {{-- Toastify JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         @if (Session::has('success'))
@@ -446,41 +409,6 @@
                 }).showToast();
             @endforeach
         @endif
-    </script>
-
-    {{-- New Delete Selected All Restaurant Has Booked --}}
-    <script>
-        // Function to check/uncheck all checkboxes
-        function checkAll(checkbox) {
-            const checkboxes = document.getElementsByClassName('checkbox_ids');
-            for (const cb of checkboxes) {
-                cb.checked = checkbox.checked;
-            }
-        }
-
-        document.getElementById('deleteAllSelectedRecord').addEventListener('click', function() {
-            const checkboxes = document.getElementsByClassName('checkbox_ids');
-            const selectedIds = [];
-
-            for (const checkbox of checkboxes) {
-                if (checkbox.checked) {
-                    selectedIds.push(parseInt(checkbox.value));
-                }
-            }
-
-            if (selectedIds.length === 0) {
-                alert('Please select at least one restaurant to delete.');
-            } else {
-                const form = document.getElementById('deleteMultipleForm');
-                const idsInput = document.createElement('input');
-                idsInput.type = 'hidden';
-                idsInput.name = 'ids';
-                idsInput.value = JSON.stringify(selectedIds);
-                form.appendChild(idsInput);
-
-                form.submit();
-            }
-        });
     </script>
 
 @endsection

@@ -2,464 +2,434 @@
 
 @section('newuser-section')
 
-    <style>
-        @import url("https://fonts.googleapis.com/css2?family=Staatliches&display=swap");
-        @import url("https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap");
+<style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap");
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-        body {
-            font-family: "Staatliches", cursive;
-            color: black;
-        }
+    body {
+        font-family: "Open Sans", sans-serif;
+        color: #333;
+        background-color: #f9f9f9;
+    }
 
-        .breadcumb-area {
-            background-image: url(booked/bg-img/breadcumb3.jpg);
-            background-size: cover;
-            background-position: center;
-            height: 200px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-        }
+    .breadcumb-area {
+        background-image: url(booked/bg-img/breadcumb3.jpg);
+        background-size: cover;
+        background-position: center;
+        height: 250px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+        position: relative;
+    }
 
-        .bradcumbContent {
-            max-width: 600px;
-        }
+    .breadcumb-area::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+    }
 
-        .bradcumbContent p {
-            font-size: 18px;
-        }
+    .bradcumbContent {
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        padding: 20px;
+    }
 
-        /* .bradcumbContent h2 {
-                            font-size: 36px;
-                            font-family: "Nanum Pen Script", cursive;
-                            font-weight: 700;
-                            letter-spacing: 0.1em;
-                            color: #4a437e;
-                        } */
+    .bradcumbContent h2 {
+        font-family: "Montserrat", sans-serif;
+        font-size: 42px;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
 
-        .ticket-section {
-            margin: 60px 0;
-            display: grid;
-            gap: 50px;
-        }
+    .bradcumbContent p {
+        font-size: 20px;
+        opacity: 0.9;
+    }
 
+    .ticket-section {
+        margin: 60px auto;
+        max-width: 1200px;
+        display: grid;
+        gap: 30px;
+        padding: 0 20px;
+    }
+
+    .ticket {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        display: flex;
+    }
+
+    .ticket:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+
+    .left {
+        flex: 1.5;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .right {
+        flex: 1;
+        background-color: #f8f9fa;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border-left: 1px solid #eee;
+    }
+
+    .ticket-image {
+        height: 300px;
+        width: 100%;
+        object-fit: cover;
+    }
+
+    .ticket-info {
+        padding: 25px;
+    }
+
+    .ticket-date {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 20px;
+    }
+
+    .month-day {
+        font-size: 20px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .ticket-show-name {
+        margin-bottom: 20px;
+    }
+
+    .ticket-show-name h5 {
+        font-family: "Montserrat", sans-serif;
+        font-size: 24px;
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .ticket-show-name p {
+        font-size: 18px;
+        color: #3498db;
+        font-weight: 600;
+    }
+
+    .ticket-details {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .detail-item {
+        text-align: center;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .detail-item span {
+        display: block;
+    }
+
+    .detail-label {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+    .detail-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .right-info-container {
+        text-align: center;
+    }
+
+    .ticket-time {
+        margin-bottom: 25px;
+    }
+
+    .time-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding: 10px;
+        background: white;
+        border-radius: 8px;
+    }
+
+    .time-label {
+        font-weight: 500;
+        color: #666;
+    }
+
+    .time-value {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .ticket-barcode {
+        margin: 25px 0;
+        display: flex;
+        justify-content: center;
+    }
+
+    .ticket-barcode img {
+        width: 120px;
+        height: 120px;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .navy-blue-button {
+        display: inline-block;
+        padding: 12px 24px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        background: linear-gradient(to right, #3498db, #2c3e50);
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+
+    .navy-blue-button:hover {
+        background: linear-gradient(to right, #2c3e50, #3498db);
+        transform: translateY(-2px);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .status-checked-out {
+        background-color: #e9ecef;
+        color: #495057;
+    }
+
+    .status-cancelled {
+        background-color: #fee2e2;
+        color: #dc2626;
+    }
+
+    @media (max-width: 768px) {
         .ticket {
-            margin: auto;
-            display: flex;
-            background: white;
-            box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
-        }
-
-        .left {
-            display: flex;
-        }
-
-        .ticket-image {
-            height: 375px;
-            width: 250px;
-            /* background-image: url("https://media.pitchfork.com/photos/60db53e71dfc7ddc9f5086f9/1:1/w_1656,h_1656,c_limit/Olivia-Rodrigo-Sour-Prom.jpg"); */
-            background-size: contain;
-            opacity: 0.85;
-        }
-
-        .admit-one {
-            position: absolute;
-            color: darkgray;
-            height: 250px;
-            padding: 0 4px;
-            letter-spacing: 0.15em;
-            display: flex;
-            text-align: center;
-            justify-content: space-around;
-            writing-mode: vertical-rl;
-            transform: rotate(-180deg);
-        }
-
-        .admit-one span:nth-child(2) {
-            color: white;
-            font-weight: 700;
-        }
-
-        .left .ticket-number {
-            height: 250px;
-            width: 250px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: flex-end;
-            padding: 5px;
-        }
-
-        .ticket-info {
-            max-width: 550px;
-            padding: 10px 30px;
-            display: flex;
             flex-direction: column;
-            text-align: center;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navy-blue-button {
-            display: inline-block;
-            padding: 6px 40px;
-            font-size: 16px;
-            text-align: center;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            background-color: navy;
-            transition: background-color 0.3s ease;
-        }
-
-        .navy-blue-button:hover {
-            background-color: #001f3f;
-            color: #fff;
-        }
-
-        .ticket-date {
-            width: 500px;
-            border-top: 1px solid gray;
-            border-bottom: 1px solid gray;
-            padding: 5px 0;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: space-around;
-        }
-
-        .ticket-date span {
-            width: 100px;
-            font-family: "Staatliches", cursive;
-            color: black;
-        }
-
-        .ticket-date span:first-child {
-            text-align: left;
-        }
-
-        .ticket-date span:last-child {
-            text-align: right;
-        }
-
-        .ticket-date .month-day {
-            color: #d83565;
-            font-size: 20px;
-        }
-
-        .ticket-show-name h2 {
-            font-size: 32px;
-            font-family: "Nanum Pen Script", cursive;
-            color: #d83565;
-        }
-
-        .ticket-show-name h1 {
-            font-size: 48px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            font-family: "Nanum Pen Script", cursive;
-            color: #4a437e;
-        }
-
-        .ticket-time {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .ticket-time p {
-            color: #4a437e;
-            padding: 3px 0;
-            color: #4a437e;
-            text-align: center;
-            font-weight: 700;
-            font-family: "Staatliches", cursive;
-        }
-
-        .ticket-time span {
-            font-weight: 400;
-            color: gray;
-        }
-
-        .left .ticket-time {
-            font-size: 16px;
-        }
-
-        .ticket-location {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            width: 100%;
-            padding-top: 8px;
-            color: rgb(23, 14, 14);
-            font-weight: bold;
-            border-top: 1px solid gray;
-        }
-
-        .ticket-location .separator {
-            font-size: 20px;
         }
 
         .right {
-            width: 180px;
-            height: 350px;
-            border-left: 1px dashed #404040;
+            border-left: none;
+            border-top: 1px solid #eee;
         }
 
-        .right .admit-one {
-            color: darkgray;
+        .ticket-details {
+            grid-template-columns: repeat(2, 1fr);
         }
+    }
+</style>
 
-        .right .admit-one span:nth-child(2) {
-            color: gray;
-        }
+<!-- Breadcumb Area -->
+<section class="breadcumb-area bg-img bg-overlay">
+    <div class="bradcumbContent">
+        <p>See what you have purchased</p>
+        <h2>Restaurant Booked History</h2>
+    </div>
+</section>
 
-        .right .right-info-container {
-            height: 250px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .right .ticket-show-name h1 {
-            font-size: 18px;
-        }
-
-        .ticket-barcode {
-            height: 100px;
-        }
-
-        .ticket-barcode img {
-            height: 100%;
-        }
-
-        .right .ticket-number {
-            color: gray;
-        }
-    </style>
-
-    {{-- Toastify CSS --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-
-    <!-- ##### Breadcumb Area Start ##### -->
-    <section class="breadcumb-area bg-img bg-overlay"
-        style="background-image: url(booked/bg-img/breadcumb3.jpg); height: 200px;">
-        <div class="bradcumbContent">
-            <p>See what you have purchased </p>
-            <h2>Restaurant Booked History</h2>
-        </div>
-    </section>
-
-    <!-- ##### Breadcumb Area End ##### -->
-    <section class="ticket-section">
-        @if ($mybookeds->isEmpty())
-            <p style="text-align: center; font-size:24px">No Restaurant Found</p>
-        @else
-            @foreach ($mybookeds as $restaurant)
-                <div class="ticket created-by-anniedotexe">
-                    <div class="left">
-
-                        <div class="ticket-image"
-                            @if ($restaurant->restaurant->image == null) style="background-color: #ccc;">
-                                No Image
-                            @else
-                                @php
-                                    $imagePath = asset('images/' . $restaurant->restaurant->image);
-                                @endphp
-                                style="background-image: url('{{ $imagePath }}');">
-                                <!-- Debugging output -->
-                                {{-- <p>{{ $imagePath }}</p> --}} @endif
+<!-- Ticket Section -->
+<section class="ticket-section">
+    @if ($mybookeds->isEmpty())
+        <p style="text-align: center; font-size: 24px; color: #666;">No Restaurant Found</p>
+    @else
+        @foreach ($mybookeds as $restaurant)
+            <div class="ticket">
+                <div class="left">
+                    <div class="image">
+                        @if ($restaurant->restaurant->images->count() > 0)
+                            <img src="{{ asset('images/' . $restaurant->restaurant->images->first()->image) }}"
+                                class="ticket-image" alt="Restaurant Image">
+                        @else
+                            <div class="ticket-image"
+                                style="background-color: #eee; display: flex; align-items: center; justify-content: center;">
+                                <span style="color: #999;">No Image Available</span>
                             </div>
-
-                            <div class="ticket-info">
-                                <p class="ticket-date">
-                                    <span>{{ \Carbon\Carbon::parse($restaurant->booking_date)->format('l') }}</span>
-                                    <!--format('l') returns the day of the week (e.g., Tuesday). -->
-                                    <span
-                                        class="month-day">{{ \Carbon\Carbon::parse($restaurant->booking_date)->format('F j') }}</span>
-                                    <!--format('F j') returns the month (e.g., June) and day (e.g., 29). -->
-                                    <span>{{ \Carbon\Carbon::parse($restaurant->booking_date)->format('Y') }}</span>
-                                    <!-- format('Y') returns the year. -->
-                                </p>
-
-                                <div class="ticket-show-name">
-                                    <p class="ticket-location">Restaurant Name : {{ $restaurant->restaurant_name }}</p>
-                                    <p class="ticket-location">Table Title : {{ $restaurant->table->title }}</p>
-                                </div>
-
-                                <p class="ticket-location">Gender : {{ $restaurant->gender }}</p>
-                                <p class="ticket-location">Person : {{ $restaurant->quantity }}</p>
-
-                                {{-- <div class="ticket-time">
-                                <p class="ticket-location">
-                                    {{ \Carbon\Carbon::parse($restaurant->checkin_time)->diffForHumans() }}</p>
-                            </div> --}}
-
-                            </div>
+                        @endif
+                    </div>
+                    <div class="ticket-info">
+                        <div class="ticket-date">
+                            <span class="month-day">{{ \Carbon\Carbon::parse($restaurant->booking_date)->format('l') }}</span>
+                            <span class="month-day">{{ \Carbon\Carbon::parse($restaurant->booking_date)->format('j F') }}</span>
+                            <span class="month-day">{{ \Carbon\Carbon::parse($restaurant->booking_date)->format('Y') }}</span>
                         </div>
-                        <div class="right">
-                            <div class="right-info-container">
-
-                                <div class="ticket-time">
-                                    <p style="font-weight:500;margin-top:10px;">Check_In_Time : <span
-                                            style=" color: #d83565; font-weight:bold">{{ \Carbon\Carbon::parse($restaurant->checkin_time)->format('g:i A') }}</span>
-                                    </p>
-                                    <p style="font-weight:500;margin-top:-10px;">Check_Out_Time : <span
-                                            style=" color: #d83565; font-weight:bold">{{ \Carbon\Carbon::parse($restaurant->checkout_time)->format('g:i A') }}</span>
-                                    </p>
-                                </div>
-
-                                <div class="ticket-barcode">
-                                    {{-- {!! QrCode::size(100)->generate(route('verify.restaurant', ['restaurantId' => $restaurant->id])) !!} --}}
-                                    {!! QrCode::size(100)->generate('https://www.douyin.com/video/7194920128637603105') !!}
-                                    {{-- <img src="https://external-preview.redd.it/cg8k976AV52mDvDb5jDVJABPrSZ3tpi1aXhPjgcDTbw.png?auto=webp&s=1c205ba303c1fa0370b813ea83b9e1bddb7215eb"
-                                    alt="QR code"> --}}
-                                </div>
-
-                                <div class="ticket-time">
-                                    <p style="color: #d83565; font-weight:bold">
-                                        @if ($restaurant->payment_status == 'Unpaid')
-                                            <span>Unpaid</span>
-                                        @elseif($restaurant->payment_status == 'Paid')
-                                            <span>Paid</span>
-                                        @endif
-                                    </p>
-                                </div>
-                                <a href="{{ url('viewBookedRestaurant/' . $restaurant->id) . '/view' }}" target="_blank"
-                                    class="navy-blue-button">View Detail</a><br>
-
-                                @if ($restaurant->payment_status == 0)
-                                    <form action="{{ route('booking.verify.restaurant', $restaurant->id) }}" method="POST">
-
-                                        @csrf
-                                        <input type="hidden" name="user_id" value="{{ $restaurant->user_id }}">
-                                        <input type="hidden" name="restaurant_id" value="{{ $restaurant->restaurant_id }}">
-                                        <input type="hidden" name="checkin_date" value="{{ $restaurant->checkin_date }}">
-                                        <input type="hidden" name="checkout_date" value="{{ $restaurant->checkout_date }}">
-                                        <input type="hidden" name="total_price" value="{{ $restaurant->total_price }}">
-                                        <input type="hidden" name="verify_code" value="{{ $restaurant->verify_code }}">
-
-                                        <button type="submit"
-                                            onclick="return confirm('Are you sure you want to verify this booking?')"
-                                            class="navy-blue-button">Verify</button>
-                                    </form>
-
-                                    <br>
-
-                                    <form action="{{ route('booking.cancel.restaurant', $restaurant->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit"
-                                            onclick="return confirm('Are you sure you want to Cancel this Booking?')"
-                                            class="btn btn-sm btn-danger">Cancelled The Booking</button>
-                                    </form>
-                                @elseif($restaurant->payment_status == 1)
-                                    <form action="{{ route('booking.checkout.restaurant', $restaurant->id) }}" method="POST">
-                                        @csrf
-                                        <button type="submit"
-                                            onclick="return confirm('Are you sure you want to check out this restaurant?')"
-                                            class="btn btn-sm btn-danger">Check Out</button>
-                                    </form>
-                                @elseif($restaurant->payment_status == 2)
-                                    <span class="badge badge-secondary" style="font-size:15px">Checked Out</span>
-                                @elseif($restaurant->payment_status == 3)
-                                    <span class="badge badge-secondary" style="font-size:15px">Your cancelled the
-                                        Booking</span>
-                                @endif
+                        <div class="ticket-show-name">
+                            <h5>{{ $restaurant->restaurant_name }}</h5>
+                            <p>Table Number: {{ $restaurant->table->id }}</p>
+                            <p>Table Title: {{ $restaurant->table->title }}</p>
+                        </div>
+                        <div class="ticket-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Gender</span>
+                                <span class="detail-value">{{ $restaurant->gender }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Person</span>
+                                <span class="detail-value">{{ $restaurant->quantity }}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Booking Date</span>
+                                <span class="detail-value">{{ $restaurant->booking_date }}</span>
                             </div>
                         </div>
                     </div>
-            @endforeach
-        @endif
-    </section>
+                </div>
+                <div class="right">
+                    <div class="right-info-container">
+                        <div class="ticket-time">
+                            <div class="time-item">
+                                <span class="time-label">Check In:</span>
+                                <span class="time-value">{{ \Carbon\Carbon::parse($restaurant->checkin_time)->format('g:i A') }}</span>
+                            </div>
+                            <div class="time-item">
+                                <span class="time-label">Check Out:</span>
+                                <span class="time-value">{{ \Carbon\Carbon::parse($restaurant->checkout_time)->format('g:i A') }}</span>
+                            </div>
+                        </div>
+                        <div class="ticket-barcode">
+                            <?php
+                            $ipAddress = '192.168.50.154';
+                            $url = 'http://' . $ipAddress . ':8000' . route('verify.restaurant', ['restaurantId' => $restaurant->id], false) . '?' . http_build_query([
+                                'user_id' => $restaurant->user_id,
+                                'restaurant_id' => $restaurant->restaurant_id,
+                                'booking_date' => $restaurant->booking_date,
+                                'checkin_time' => $restaurant->checkin_time,
+                                'checkout_time' => $restaurant->checkout_time,
+                                'total_price' => $restaurant->total_price,
+                                'verify_code' => $restaurant->verify_code,
+                            ]);
+                            ?>
+                            {!! QrCode::size(120)->generate($url) !!}
+                        </div>
+                        <div class="action-buttons">
+                            <a href="{{ url('viewBookedRestaurant/' . $restaurant->id) . '/view' }}" target="_blank"
+                                class="navy-blue-button">View Detail</a>
 
-    {{-- Toastr JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script>
-        @if (Session::has('success'))
+                            @if ($restaurant->payment_status == 0)
+                                <form action="{{ route('booking.cancel.restaurant', $restaurant->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                        onclick="return confirm('Are you sure you want to Cancel this Booking?')"
+                                        class="navy-blue-button" style="background: linear-gradient(to right, #dc2626, #991b1b);">
+                                        Cancel Booking
+                                    </button>
+                                </form>
+                            @elseif($restaurant->payment_status == 1)
+                                <form action="{{ route('booking.checkout.restaurant', $restaurant->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit"
+                                        onclick="return confirm('Are you sure you want to check out this restaurant?')"
+                                        class="navy-blue-button">Check Out</button>
+                                </form>
+                            @elseif($restaurant->payment_status == 2)
+                                <span class="status-badge status-checked-out">Checked Out</span>
+                            @elseif($restaurant->payment_status == 3)
+                                <span class="status-badge status-cancelled">Booking Cancelled</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    @endif
+</section>
+
+{{-- Toastify CSS --}}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+{{-- Toastify JS --}}
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script>
+    @if (Session::has('success'))
+        Toastify({
+            text: "{{ Session::get('success') }}",
+            duration: 10000,
+            style: {
+                background: "linear-gradient(to right, #00b09b, #96c93d)"
+            }
+        }).showToast();
+    @elseif (Session::has('fail'))
+        Toastify({
+            text: "{{ Session::get('fail') }}",
+            duration: 10000,
+            style: {
+                background: "linear-gradient(to right, #b90000, #c99396)"
+            }
+        }).showToast();
+    @endif
+
+    @if (Session::has('error'))
+        Toastify({
+            text: "{{ Session::get('error') }}",
+            duration: 10000,
+            style: {
+                background: "linear-gradient(to right, #b90000, #c99396)"
+            }
+        }).showToast();
+    @endif
+
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
             Toastify({
-                text: "{{ Session::get('success') }}",
-                duration: 10000,
-                style: {
-                    background: "linear-gradient(to right, #00b09b, #96c93d)"
-                }
-            }).showToast();
-        @elseif (Session::has('fail'))
-            Toastify({
-                text: "{{ Session::get('fail') }}",
+                text: "{{ $error }}",
                 duration: 10000,
                 style: {
                     background: "linear-gradient(to right, #b90000, #c99396)"
                 }
             }).showToast();
-        @endif
-
-        @if (Session::has('error'))
-            Toastify({
-                text: "{{ Session::get('error') }}",
-                duration: 10000,
-                style: {
-                    background: "linear-gradient(to right, #b90000, #c99396)"
-                }
-            }).showToast();
-        @endif
-
-        @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                Toastify({
-                    text: "{{ $error }}",
-                    duration: 10000,
-                    style: {
-                        background: "linear-gradient(to right, #b90000, #c99396)"
-                    }
-                }).showToast();
-            @endforeach
-        @endif
-    </script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    {{-- New Delete Selected All Restaurant Has Booked --}}
-    <script>
-        // Function to check/uncheck all checkboxes
-        function checkAll(checkbox) {
-            const checkboxes = document.getElementsByClassName('checkbox_ids');
-            for (const cb of checkboxes) {
-                cb.checked = checkbox.checked;
-            }
-        }
-
-        document.getElementById('deleteAllSelectedRecord').addEventListener('click', function() {
-            const checkboxes = document.getElementsByClassName('checkbox_ids');
-            const selectedIds = [];
-
-            for (const checkbox of checkboxes) {
-                if (checkbox.checked) {
-                    selectedIds.push(parseInt(checkbox.value));
-                }
-            }
-
-            if (selectedIds.length === 0) {
-                alert('Please select at least one restaurant to delete.');
-            } else {
-                const form = document.getElementById('deleteMultipleForm');
-                const idsInput = document.createElement('input');
-                idsInput.type = 'hidden';
-                idsInput.name = 'ids';
-                idsInput.value = JSON.stringify(selectedIds);
-                form.appendChild(idsInput);
-
-                form.submit();
-            }
-        });
-    </script>
+        @endforeach
+    @endif
+</script>
 
 @endsection

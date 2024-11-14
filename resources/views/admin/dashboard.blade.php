@@ -481,7 +481,7 @@
 
     {{-- Toastr JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
+    {{-- Toastr Alert JS --}}
     <script>
         @if (Session::has('success'))
             Toastify({

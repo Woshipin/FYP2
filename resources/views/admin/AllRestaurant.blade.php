@@ -121,24 +121,6 @@
                     <select name="" id="">
                         <option value="">ID</option>
                     </select>
-                    <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Launch demo modal</button> -->
-                    <!-- Restaurant Model -->
-                    {{-- <button type="button" class="btn btn-info m-1" data-toggle="modal"data-target="#restaurantModal">Add Restaurant</button> --}}
-                    <!-- Add Table Model -->
-                    <!-- <button type="button" class="btn btn-primary m-1" data-toggle="modal" data-target="#tableModal">Add Tbale</button> -->
-                    <!--Export Restaurant Model -->
-                    <a href="{{ url('export-resort') }}"><button type="button" class="btn btn-primary m-1">Export
-                            Restaurant</button></a>
-                    <!-- View Resort PDF Model -->
-                    <!-- <form action="{{ url('resort/view-pdf') }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="btn btn-danger m-1">View In PDF</button>
-                                        </form> -->
-                    <!-- Export Resort PDF Model -->
-                    <!-- <form action="{{ url('resort/download-pdf') }}" method="POST" target="__blank">
-                                            @csrf
-                                            <button type="submit" class="btn btn-danger m-1">Download PDF</button>
-                                        </form> -->
                 </div>
 
                 {{-- Real Time Search --}}
@@ -158,107 +140,6 @@
             @if (\Session::has('success'))
                 <div class="alert alert-success">{{ Session::get('success') }}</div>
             @endif
-
-            {{-- <div>
-            <table width="100%">
-                <thead>
-                    <tr>
-                        <th class="p-2">Restaurant ID</th>
-                        <th class="p-2">Restaurant Name</th>
-                        <th class="p-2">Restaurant Image</th>
-                        <th class="p-2">Restaurant Date</th>
-                        <th class="p-2">Restaurant Time</th>
-                        <th class="p-2">Restaurant Address</th>
-                        <th class="p-2">Restaurant Description</th>
-                        <th class="p-2">ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($restaurants as $restaurant)
-                        <tr>
-                            <td>{{ $restaurant->id }}</td>
-                            <td>{{ $restaurant->name }}</td>
-                            <td><img width="80" src="{{ asset('images/' . $restaurant->image) }}"
-                                    alt="Image" /></td>
-                            <td>{{ $restaurant->date }}</td>
-                            <td>{{ $restaurant->time }}</td>
-                            <td>{{ $restaurant->address }}</td>
-                            <td>{{ $restaurant->description }}</td>
-                            <td>
-                                <a href="{{ url('admin/viewRestaurant/' . $restaurant->id) . '/view' }}"
-                                    class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
-                                <a href="" class="btn btn-primary btn-sm" data-toggle="modal"
-                                    data-target="#restauranteditModal{{ $restaurant->id }}"><i
-                                        class="fa fa-edit"></i></a>
-                                <a onclick="return confirm('Are you sure to delete this data?')"
-                                    href="{{ url('admin/deleteRestaurant/' . $restaurant->id) . '/delete' }}"
-                                    class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="9">No Resorts Found</td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div> --}}
-
-            {{-- <div class="container-fluid mt-3">
-            <!-- DataTales Example -->
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Restaurant List</h6>
-                </div>
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <table class="table table-bordered" width="100%" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th class="p-2">Restaurant ID</th>
-                                    <th class="p-2">Restaurant Name</th>
-                                    <th class="p-2">Restaurant Image</th>
-                                    <th class="p-2">Restaurant Date</th>
-                                    <th class="p-2">Restaurant Time</th>
-                                    <th class="p-2">Restaurant Address</th>
-                                    <th class="p-2">Restaurant Description</th>
-                                    <th class="p-2">ACTIONS</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($restaurants as $restaurant)
-                                    <tr>
-                                        <td>{{ $restaurant->id }}</td>
-                                        <td>{{ $restaurant->name }}</td>
-                                        <td><img width="80" src="{{ asset('images/' . $restaurant->image) }}"
-                                                alt="Image" /></td>
-                                        <td>{{ $restaurant->date }}</td>
-                                        <td>{{ $restaurant->time }}</td>
-                                        <td>{{ $restaurant->address }}</td>
-                                        <td>{{ $restaurant->description }}</td>
-                                        <td>
-                                            <a href="{{ url('admin/viewRestaurant/' . $restaurant->id) . '/view' }}"
-                                                class="btn btn-info btn-sm"><i class="fas fa-eye"></i></a>
-                                            <a href="" class="btn btn-primary btn-sm" data-toggle="modal"
-                                                data-target="#restauranteditModal{{ $restaurant->id }}"><i
-                                                    class="fa fa-edit"></i></a>
-                                            <a onclick="return confirm('Are you sure to delete this data?')"
-                                                href="{{ url('admin/deleteRestaurant/' . $restaurant->id) . '/delete' }}"
-                                                class="btn btn-danger btn-sm"><i class="fa fa-trash"></i></a>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="8">No Restaurants Found</td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                {{ $restaurants->links() }}
-            </div>
-        </div> --}}
 
             <div class="container-fluid mt-3">
                 <!-- DataTales Example -->

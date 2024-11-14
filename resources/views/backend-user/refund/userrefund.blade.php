@@ -78,7 +78,7 @@
                                                         id="" value="{{ $userRefund->id }}"></td>
                                                 <td>{{ $userRefund->customer_name }}</td>
                                                 <td>{{ $userRefund->refund_name }}</td>
-                                                <td>{{ $userRefund->deposit_price }}</td>
+                                                <td>RM{{ $userRefund->deposit_price }}</td>
                                                 <td>{{ $userRefund->user_card_number }}</td>
                                                 <td>{{ $userRefund->card_number }}</td>
                                                 <td>{{ $userRefund->card_holder }}</td>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use App\Models\Resort;
 use App\Models\Hotel;
 use App\Models\Restaurant;
@@ -10,28 +11,141 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 use OpenAI\Laravel\Facades\OpenAI;
+use Gemini\Laravel\Facades\Gemini;
 
 class ChatBotController extends Controller
 {
-    public function chat(Request $request)
+
+    public function AISearch(Request $request)
     {
-        $message = $request->input('message');
-        $response = $this->handleMessage($message);
-        return response()->json(['response' => $response]);
+        $query = $request->input('query');
+
+        // 搜索度假村、酒店和餐厅
+        $resorts = Resort::where('name', 'like', "%$query%")
+                         ->orWhere('location', 'like', "%$query%")
+                         ->get();
+
+        $hotels = Hotel::where('name', 'like', "%$query%")
+                       ->orWhere('location', 'like', "%$query%")
+                       ->get();
+
+        $restaurants = Restaurant::where('name', 'like', "%$query%")
+                                 ->orWhere('location', 'like', "%$query%")
+                                 ->get();
+
+        return response()->json([
+            'resorts' => $resorts,
+            'hotels' => $hotels,
+            'restaurants' => $restaurants,
+        ]);
     }
 
-    private function handleMessage($message)
+    // public function chat(Request $request)
+    // {
+    //     $message = $request->input('message');
+    //     $response = $this->handleMessage($message);
+    //     return response()->json(['response' => $response]);
+    // }
+
+    // private function handleMessage($message)
+    // {
+    //     // 简单示例：根据用户输入的关键词查询数据库
+    //     if (strpos($message, 'resort') !== false) {
+    //         return $this->searchResorts($message);
+    //     } elseif (strpos($message, 'hotel') !== false) {
+    //         return $this->searchHotels($message);
+    //     } elseif (strpos($message, 'restaurant') !== false) {
+    //         return $this->searchRestaurants($message);
+    //     } else {
+    //         return '抱歉,我无法理解您的请求。请尝试询问关于resort, hotel或restaurant的信息。';
+    //     }
+    // }
+
+    // public function chat(Request $request)
+    // {
+    //     $message = $request->input('message');
+
+    //     // 使用 Gemini API 获取响应
+    //     $response = Http::withHeaders([
+    //         'Authorization' => 'Bearer ' . env('GEMINI_API_KEY'),
+    //     ])->post('https://api.gemini.com/v1/chat', [
+    //         'message' => $message,
+    //     ]);
+
+    //     // 检查是否请求成功
+    //     if ($response->failed()) {
+    //         \Log::error('Gemini API request failed: ' . $response->body());
+    //         return response()->json([
+    //             'error' => 'Failed to get response from Gemini API',
+    //             'response' => $response->body(), // 打印出响应内容进行调试
+    //         ], 500);
+    //     }
+
+    //     // 返回API的响应
+    //     return response()->json([
+    //         'response' => $response->json(),
+    //     ]);
+    // }
+
+    public function chat(Request $request)
     {
-        // 简单示例：根据用户输入的关键词查询数据库
-        if (strpos($message, 'resort') !== false) {
-            return $this->searchResorts($message);
-        } elseif (strpos($message, 'hotel') !== false) {
-            return $this->searchHotels($message);
-        } elseif (strpos($message, 'restaurant') !== false) {
-            return $this->searchRestaurants($message);
-        } else {
-            return '抱歉,我无法理解您的请求。请尝试询问关于resort, hotel或restaurant的信息。';
+        // Get the message from the request
+        $message = $request->input('message');
+
+        // API setup
+        $API_KEY = env('GEMINI_API_KEY');
+        $API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={$API_KEY}";
+
+        // Prepare the request payload for Gemini API
+        $payload = [
+            'contents' => [
+                [
+                    'parts' => [
+                        ['text' => $message]
+                    ]
+                ]
+            ],
+            'generationConfig' => [
+                'temperature' => 0.7,
+                'maxOutputTokens' => 100,
+                'topP' => 1,
+                'topK' => 1
+            ]
+        ];
+
+        // Log the request details for debugging
+        Log::info('Sending request to Gemini API', [
+            'url' => $API_URL,
+            'payload' => $payload,
+        ]);
+
+        // Use Gemini API to get a response
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json'
+        ])->post($API_URL, $payload);
+
+        // Check if the request was successful
+        if ($response->failed()) {
+            // Log the error response for debugging
+            Log::error('Gemini API request failed:', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+
+            return response()->json([
+                'error' => 'Failed to get response from Gemini API',
+                'details' => $response->json(),
+            ], 500);
         }
+
+        // Extract the text response from the Gemini API response
+        $responseData = $response->json();
+        $textResponse = $responseData['candidates'][0]['content']['parts'][0]['text'] ?? 'No response text found';
+
+        // Return the API's response
+        return response()->json([
+            'response' => $textResponse,
+        ]);
     }
 
     // Processing API KEY
