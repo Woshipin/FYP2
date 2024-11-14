@@ -304,6 +304,9 @@ Route::get('/viewBookedResort/{id}/view',[BookingController::class,'viewBookedRe
 // GPS Auto Search Resort
 Route::get('/resort-gps-search', [ResortController::class, 'ResortgpsSearch'])->name('resort.gps.search');
 
+Route::get('backend-user/backend-resort/resortpromotion/{id}', [ResortController::class, 'showPromotionForm'])->name('resort.promotion.form');
+Route::post('backend-user/backend-resort/resortpromotion/{id}', [ResortController::class, 'savePromotionDates'])->name('resort.promotion.save');
+
 //---------------------------------------------------Restaurant Area-------------------------------------------------------------//
 //Display Restaurant Page
 Route::get('/restaurant',[RestaurantController::class,'viewrestaurant']);

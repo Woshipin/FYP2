@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Resort;
 use App\Models\User;
+use App\Models\resort_promotion_dates;
 use App\Events\HotelStatus;
 use App\Models\ResortRating;
 use App\Models\ResortImage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 use Intervention\Image\Facades\Image;
 use Jenssegers\ImageHash\ImageHash;
@@ -622,6 +624,53 @@ class ResortController extends Controller
     //         ], 500);
     //     }
     // }
+
+    public function showPromotionForm($id)
+    {
+        $resort = Resort::findOrFail($id);
+        return view('backend-user.backend-resort.resortpromotion', compact('resort'));
+    }
+
+    public function savePromotionDates(Request $request, $id)
+    {
+        $resort = Resort::findOrFail($id);
+
+        // 验证请求
+        $request->validate([
+            'promotion_dates' => 'required|array',
+            'promotion_dates.*' => 'required|date_format:Y-m-d'
+        ]);
+
+        try {
+            // 开始事务
+            DB::beginTransaction();
+
+            // 删除现有的促销日期
+            $resort->promotionDates()->delete();
+
+            // 保存新的促销日期
+            foreach ($request->promotion_dates as $date) {
+                $resort->promotionDates()->create([
+                    'date' => $date
+                ]);
+            }
+
+            // 提交事务
+            DB::commit();
+
+            return redirect()
+                ->route('resort.promotion.form', $id)
+                ->with('success', 'Promotion dates saved successfully.');
+
+        } catch (\Exception $e) {
+            // 回滚事务
+            DB::rollback();
+
+            return redirect()
+                ->route('resort.promotion.form', $id)
+                ->with('error', 'Failed to save promotion dates. ' . $e->getMessage());
+        }
+    }
 
     public function ResortgpsSearch(Request $request)
     {

@@ -50,4 +50,9 @@ class Resort extends Model
         return route('bookingresort', ['id' => $this->id]); // Assuming you have a route named 'restaurant.booking'
     }
 
+    public function promotionDates()
+    {
+        return $this->hasMany(resort_promotion_dates::class);
+    }
+
 }

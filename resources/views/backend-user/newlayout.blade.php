@@ -11,6 +11,9 @@
 
     <title>User Dashboard</title>
 
+    <!-- Load jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
     <!-- Custom fonts for this template-->
     <link href="{{ asset('newuserdashboard/vendor/fontawesome-free/css/all.min.css') }}"
         rel="stylesheet"type="text/css">
@@ -259,7 +262,7 @@
                     </div>
                 </div>
             </li>
-            
+
             <!-- Nav Item - Table -->
             <li class="nav-item">
                 <a class="nav-link" href="{{ url('showTable') }}">
@@ -481,6 +484,9 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- Load jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
 </body>
 

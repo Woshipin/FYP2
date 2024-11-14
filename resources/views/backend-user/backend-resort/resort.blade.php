@@ -807,6 +807,10 @@
                                                         href="{{ url('deleteResort/' . $resort->id) . '/delete' }}"
                                                         class="btn btn-danger btn-sm"><i
                                                             class="fa fa-trash"></i>&nbsp;Delete</a>
+                                                    <a href="{{ url('backend-user/backend-resort/resortpromotion/' . $resort->id) }}"
+                                                        class="btn btn-success btn-sm"><i
+                                                            class="fa fa-percent"></i>&nbsp;Promotion</a>
+                                                </td>
                                                 </td>
                                             </tr>
                                         @endforeach
