@@ -395,7 +395,7 @@
         }
 
         .submit-button:hover {
-            background-color: #2563eb;
+            background-color: orange;
         }
 
         /* Progress Bar */

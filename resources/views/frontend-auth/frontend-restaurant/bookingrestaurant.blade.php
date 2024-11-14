@@ -56,7 +56,7 @@
     </style>
 
     {{-- Form CSS --}}
-    <style>
+    {{-- <style>
         .custom-tab-content {
             background: rgb(143, 239, 236);
         }
@@ -218,6 +218,357 @@
             color: #64748b;
         }
     </style>
+    <style>
+        .card-container {
+            position: relative;
+            width: 300px;
+            height: 180px;
+            perspective: 1000px;
+        }
+
+        .front,
+        .back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            transition: transform 0.6s;
+        }
+
+        .front {
+            transform: rotateY(0deg);
+        }
+
+        .back {
+            transform: rotateY(180deg);
+        }
+
+        .card-container.flipped .front {
+            transform: rotateY(180deg);
+        }
+
+        .card-container.flipped .back {
+            transform: rotateY(0deg);
+        }
+    </style> --}}
+
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: black;
+            /* 确保所有文本颜色为黑色 */
+            background-color: #f8fafc;
+            /* 确保背景颜色显示 */
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: black;
+            /* 确保标题颜色为黑色 */
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.75rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+        }
+
+        h5 {
+            font-size: 1.25rem;
+        }
+
+        h6 {
+            font-size: 1rem;
+        }
+
+        /* Form CSS */
+        .custom-tab-content {
+            background: rgb(143, 239, 236);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .h3 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        span {
+            color: black;
+        }
+
+        #paypal-payment-section {
+            padding: 20px;
+            text-align: center;
+        }
+
+        #paypal-button-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .payment-method-select {
+            margin-bottom: 20px;
+        }
+
+        /* Payment Method Selector */
+        .payment-method-selector {
+            margin-bottom: 2rem;
+        }
+
+        .payment-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .payment-option {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        .payment-option.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        .payment-option img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        /* Card Payment Section */
+        .card-container {
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        .card-input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card-input {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            width: 100%;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        .card-extra-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        /* Payment Summary */
+        .payment-summary {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        /* Submit Button */
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .submit-button:hover {
+            background-color: orange;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 1.5rem;
+        }
+
+        .progress {
+            height: 1rem;
+            /* 增加进度条的高度 */
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .progress-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            /* 确保百分比颜色为白色 */
+            font-weight: bold;
+            font-size: 0.875rem;
+            /* 调整百分比字体大小 */
+        }
+
+        /* PayPal Section */
+        .paypal-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .paypal-logo img {
+            width: 200px;
+            height: auto;
+        }
+
+        .paypal-description {
+            text-align: center;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        /* Input Boxes */
+        .inputBox {
+            margin-bottom: 1.5rem;
+        }
+
+        .inputBox h3 {
+            margin-bottom: 0.5rem;
+            font-family: 'Arial', sans-serif;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        .inputBox input,
+        .inputBox select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            height: 40px;
+            /* 确保高度足够 */
+            font-family: 'Arial', sans-serif;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        /* Custom Tabs */
+        .custom-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .custom-tab {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Arial', sans-serif;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        .custom-tab.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        /* Images */
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Continue to Payment Button */
+        .inputBox .btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .inputBox .btn:hover {
+            background-color: orange;
+        }
+    </style>
 
     {{-- progress bar CSS --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -227,8 +578,6 @@
     {{-- sweetalert2 --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <br><br><br><br><br><br>
 
     <!-- Book Section Starts -->
     <section class="book" id="book">
@@ -252,7 +601,8 @@
                     <li class="custom-tab" data-tab="payment">Payment</li>
                 </ul>
 
-                <form action="{{ url('bookingsrestaurant') }}" method="post" enctype="multipart/form-data" id="bookingForm">
+                <form action="{{ url('bookingsrestaurant') }}" method="post" enctype="multipart/form-data"
+                    id="bookingForm">
                     @csrf
 
                     {{-- Booking Restaurant Area --}}
@@ -333,7 +683,7 @@
                                         oninput="validateQuantity(this)">
                                 </div>
                                 <div class="inputBox">
-                                    <p id="payment" class="btn">Done</p>
+                                    <p id="payment" class="btn">Continue to Payment</p>
                                 </div>
                             </div>
                         </div>
@@ -484,6 +834,8 @@
         </div>
     </section>
     <!-- Book Section Ends -->
+
+    <br>
 
     <!-- /.container-fluid -->
 
@@ -1114,42 +1466,40 @@
             }
 
             // Card input visualization
-            const cardNumber = document.querySelector('.card-number-box');
-            const cardHolder = document.querySelector('.card-holder-name');
-            const cardMonth = document.querySelector('.exp-month');
-            const cardYear = document.querySelector('.exp-year');
-            const cardCVV = document.querySelector('.cvv-box');
+            // const cardNumber = document.querySelector('.card-number-box');
+            // const cardHolder = document.querySelector('.card-holder-name');
+            // const cardMonth = document.querySelector('.exp-month');
+            // const cardYear = document.querySelector('.exp-year');
+            // const cardCVV = document.querySelector('.cvv-box');
 
-            document.querySelector('#card_number').oninput = () => {
-                cardNumber.innerText = document.querySelector('#card_number').value;
-            }
+            // document.querySelector('#card_number').oninput = () => {
+            //     cardNumber.innerText = document.querySelector('#card_number').value;
+            // }
 
-            document.querySelector('#card_holder').oninput = () => {
-                cardHolder.innerText = document.querySelector('#card_holder').value;
-            }
+            // document.querySelector('#card_holder').oninput = () => {
+            //     cardHolder.innerText = document.querySelector('#card_holder').value;
+            // }
 
-            document.querySelector('#card_month').oninput = () => {
-                cardMonth.innerText = document.querySelector('#card_month').value;
-            }
+            // document.querySelector('#card_month').oninput = () => {
+            //     cardMonth.innerText = document.querySelector('#card_month').value;
+            // }
 
-            document.querySelector('#card_year').oninput = () => {
-                cardYear.innerText = document.querySelector('#card_year').value;
-            }
+            // document.querySelector('#card_year').oninput = () => {
+            //     cardYear.innerText = document.querySelector('#card_year').value;
+            // }
 
-            document.querySelector('#cvv').onmouseenter = () => {
-                document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(-180deg)';
-                document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(0deg)';
-            }
+            // document.querySelector('#cvv').onfocus = () => {
+            //     document.querySelector('.card-container').classList.add('flipped');
+            // }
 
-            document.querySelector('#cvv').onmouseleave = () => {
-                document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(0deg)';
-                document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(180deg)';
-            }
+            // document.querySelector('#cvv').onblur = () => {
+            //     document.querySelector('.card-container').classList.remove('flipped');
+            // }
 
-            document.querySelector('#cvv').oninput = () => {
-                cardCVV.innerText = document.querySelector('#cvv').value;
-            }
+            // document.querySelector('#cvv').oninput = () => {
+            //     cardCVV.innerText = document.querySelector('#cvv').value;
+            // }
         });
     </script>
-    
+
 @endsection

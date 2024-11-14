@@ -56,7 +56,7 @@
     </style>
 
     {{-- Form CSS --}}
-    <style>
+    {{-- <style>
         .custom-tab-content {
             background: rgb(143, 239, 236);
         }
@@ -217,6 +217,323 @@
             text-align: center;
             color: #64748b;
         }
+    </style> --}}
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+            color: black;
+            /* 确保所有文本颜色为黑色 */
+            background-color: #f8fafc;
+            /* 确保背景颜色显示 */
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: black;
+            /* 确保标题颜色为黑色 */
+        }
+
+        h1 {
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            font-size: 2rem;
+        }
+
+        h3 {
+            font-size: 1.75rem;
+        }
+
+        h4 {
+            font-size: 1.5rem;
+        }
+
+        h5 {
+            font-size: 1.25rem;
+        }
+
+        h6 {
+            font-size: 1rem;
+        }
+
+        /* Form CSS */
+        .custom-tab-content {
+            background: rgb(143, 239, 236);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .h3 {
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        span {
+            color: black;
+        }
+
+        #paypal-payment-section {
+            padding: 20px;
+            text-align: center;
+        }
+
+        #paypal-button-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .payment-method-select {
+            margin-bottom: 20px;
+        }
+
+        /* Payment Method Selector */
+        .payment-method-selector {
+            margin-bottom: 2rem;
+        }
+
+        .payment-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .payment-option {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        .payment-option.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+
+        .payment-option img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+        }
+
+        /* Card Payment Section */
+        .card-container {
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+
+        .card-input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .card-input {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            width: 100%;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        .card-extra-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        /* Payment Summary */
+        .payment-summary {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #f8fafc;
+            border-radius: 0.5rem;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        /* Submit Button */
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .submit-button:hover {
+            background-color: orange;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            margin-top: 1.5rem;
+        }
+
+        .progress {
+            height: 1rem;
+            /* 增加进度条的高度 */
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #3b82f6;
+            transition: width 0.3s ease;
+        }
+
+        .progress-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            /* 确保百分比颜色为白色 */
+            font-weight: bold;
+            font-size: 0.875rem;
+            /* 调整百分比字体大小 */
+        }
+
+        /* PayPal Section */
+        .paypal-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .paypal-logo img {
+            width: 200px;
+            height: auto;
+        }
+
+        .paypal-description {
+            text-align: center;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        /* Input Boxes */
+        .inputBox {
+            margin-bottom: 1.5rem;
+        }
+
+        .inputBox h3 {
+            margin-bottom: 0.5rem;
+            font-family: 'Arial', sans-serif;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        .inputBox input,
+        .inputBox select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            height: 40px;
+            /* 确保高度足够 */
+            font-family: 'Arial', sans-serif;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        /* Custom Tabs */
+        .custom-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .custom-tab {
+            padding: 0.75rem 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Arial', sans-serif;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: black;
+            /* 确保文本颜色为黑色 */
+        }
+
+        .custom-tab.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        /* Images */
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Continue to Payment Button */
+        .inputBox .btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .inputBox .btn:hover {
+            background-color: orange;
+        }
     </style>
 
     {{-- progress bar CSS --}}
@@ -227,8 +544,6 @@
     {{-- sweetalert2 --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <br><br><br><br><br><br>
 
     <!-- Book Section Starts -->
     <section class="book" id="book">
@@ -260,53 +575,62 @@
                                 <img src="{{ asset('new/img/book-img.jpg') }}" alt="">
                             </div>
                             <div class="col-md-6">
-                                {{-- Hidden Fields --}}
                                 <input type="hidden" name="user_id" value="{{ Auth::id() }}">
                                 <input type="hidden" name="user_name" value="{{ auth()->user()->name }}">
                                 <input type="hidden" name="email" value="{{ auth()->user()->email }}">
                                 <input type="hidden" name="hotel_id" value="{{ $hotels->id }}">
-                                <input type="hidden" name="hotel_name" value="{{ $hotels->name }}">
-                                <input type="hidden" name="type_category" value="Hotel">
+                                <input type="hidden" name="type_name" value="{{ $hotels->name }}">
                                 <input type="hidden" name="owner_id" value="{{ $hotels->user->id }}">
                                 <input type="hidden" name="owner_name" value="{{ $hotels->user->name }}">
-                                <input type="hidden" name="hotel_phone" value="{{ $hotels->phone }}">
                                 <input type="hidden" name="hotel_email" value="{{ $hotels->email }}">
+                                <input type="hidden" name="hotel_phone" value="{{ $hotels->phone }}">
+                                <input type="hidden" name="hotel_name" value="{{ $hotels->name }}">
+                                <input type="hidden" name="hotel_type" value="{{ $hotels->type }}">
+                                <input type="hidden" id="room_name_input" value="">
+                                <input type="hidden" id="room_type_input" value="">
+                                <input type="hidden" name="room_price" id="room_price_input" value="">
                                 <input type="hidden" name="type_id" value="{{ $hotels->id }}">
                                 <input type="hidden" name="type_name" value="{{ $hotels->name }}">
+                                <input type="hidden" name="type_category" value="Hotel">
 
                                 <div class="inputBox">
                                     <h3>Check-In Date</h3>
                                     <input type="date" required name="checkin_date" id="checkin_date"
-                                        class="form-control">
+                                        class="form-control" placeholder="Select Your Booking Check In Date"
+                                        min="YYYY-MM-DD" max="YYYY-MM-DD">
                                 </div>
 
                                 <div class="inputBox">
                                     <h3>Check-Out Date</h3>
                                     <input type="date" required name="checkout_date" id="checkout_date"
-                                        class="form-control">
+                                        class="form-control" placeholder="Select Your Booking Check Out Date"
+                                        min="YYYY-MM-DD" max="YYYY-MM-DD">
                                 </div>
 
                                 <div class="inputBox">
                                     <h3>Check-In Time</h3>
                                     <input type="time" required name="checkin_time" id="check_in_time"
-                                        class="form-control checkin-time">
+                                        class="form-control checkin-time" placeholder="Select Your Check-In Time">
                                 </div>
-
                                 <div class="inputBox">
                                     <h3>Check-Out Time</h3>
                                     <input type="time" required name="checkout_time" id="check_out_time"
-                                        class="form-control">
+                                        class="form-control" placeholder="Select Your Check-Out Time">
                                 </div>
 
                                 <div class="inputBox">
                                     <h3>Select Room</h3>
-                                    <select class="form-control custom-select" id="room_select" name="room_id" required>
-                                        <option value="0" selected>--- Choose ---</option>
-                                        @foreach ($rooms as $room)
-                                            <option value="{{ $room->id }}" data-price="{{ $room->price }}">
-                                                {{ $room->name }} (Price: {{ $room->price }})</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="custom-select-container">
+                                        <select class="form-control custom-select" id="room_select" name="room_id" required>
+                                            <option value="0" selected disabled>--- Choose a Room ---</option>
+                                            @foreach ($rooms as $room)
+                                                <option value="{{ $room->id }}" data-name="{{ $room->name }}" data-type="{{ $room->type }}" data-price="{{ $room->price }}">
+                                                    Name: {{ $room->type }} | Type: {{ $room->name }} | Price: ${{ $room->price }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <div class="select-arrow"></div>
+                                    </div>
                                 </div>
 
                                 <div class="inputBox">
@@ -321,15 +645,17 @@
                                 <div class="inputBox">
                                     <h3>Total Quantity Person</h3>
                                     <input type="number" required min="1" max="20" name="quantity"
-                                        id="quantity" class="form-control">
+                                        id="quantity" class="form-control" placeholder="Enter Total Quantity"
+                                        oninput="validateQuantity(this)">
                                 </div>
-
                                 <div class="inputBox">
-                                    <button type="button" id="payment" class="btn">Continue to Payment</button>
+                                    <p id="payment" class="btn">Continue to Payment</p>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <br>
 
                     {{-- Payment Area --}}
                     <div class="container-payment custom-tab-content" data-tab="payment">
@@ -560,7 +886,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     {{-- DB Check Invalid Room Type and Calculate Total Room Price --}}
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const roomSelect = document.getElementById('room-select');
             const roomPriceInput = document.getElementById('room_price_input');
@@ -692,6 +1018,256 @@
 
         updateRoomOptions();
         disablePastDates();
+    </script> --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const roomSelect = document.getElementById('room_select');
+            const roomPriceInput = document.getElementById('room_price_input');
+            const roomNameInput = document.getElementById('room_name_input');
+            const roomTypeInput = document.getElementById('room_type_input');
+            const roomPriceDisplay = document.getElementById('room_price_display');
+            const totalPriceDisplay = document.getElementById('total_price_display');
+            const checkinDateInput = document.getElementById('checkin_date');
+            const checkoutDateInput = document.getElementById('checkout_date');
+
+            function calculateTotalPrice() {
+                const checkinDate = new Date(checkinDateInput.value);
+                const checkoutDate = new Date(checkoutDateInput.value);
+                const roomPrice = parseFloat(roomPriceInput.value);
+
+                if (checkinDate && checkoutDate && !isNaN(roomPrice)) {
+                    const timeDiff = checkoutDate - checkinDate;
+                    const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+                    if (dayDiff > 0) {
+                        const totalPrice = roomPrice * dayDiff;
+                        totalPriceDisplay.textContent = totalPrice.toFixed(2);
+                    } else {
+                        totalPriceDisplay.textContent = '0.00';
+                    }
+                } else {
+                    totalPriceDisplay.textContent = '0.00';
+                }
+            }
+
+            roomSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+
+                if (selectedOption.value !== '0') {
+                    const roomName = selectedOption.dataset.name;
+                    const roomType = selectedOption.dataset.type;
+                    const roomPrice = selectedOption.dataset.price;
+
+                    roomNameInput.value = roomName || '';
+                    roomTypeInput.value = roomType || '';
+                    roomPriceInput.value = roomPrice || '';
+
+                    if (roomPrice) {
+                        roomPriceDisplay.textContent = parseFloat(roomPrice).toFixed(2);
+                    } else {
+                        roomPriceDisplay.textContent = '0.00';
+                    }
+
+                    calculateTotalPrice();
+                }
+            });
+
+            checkinDateInput.addEventListener('change', calculateTotalPrice);
+            checkoutDateInput.addEventListener('change', calculateTotalPrice);
+        });
+
+        var bookedDates = {!! json_encode($bookedDates) !!};
+        var rooms = {!! json_encode($rooms) !!};
+
+        function disablePastDates() {
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById("checkin_date").setAttribute("min", today);
+            document.getElementById("checkout_date").setAttribute("min", today);
+        }
+
+        function getSelectedDates() {
+            var checkinDate = document.getElementById("checkin_date").value;
+            var checkoutDate = document.getElementById("checkout_date").value;
+
+            var selectedDates = [];
+            if (checkinDate && checkoutDate) {
+                var currentDate = new Date(checkinDate);
+
+                while (currentDate <= new Date(checkoutDate)) {
+                    selectedDates.push(currentDate.toISOString().slice(0, 10));
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+            }
+
+            return selectedDates;
+        }
+
+        function isRoomAvailable(roomId, selectedDates) {
+            for (var i = 0; i < bookedDates.length; i++) {
+                var bookedDate = bookedDates[i];
+                if (bookedDate.room_id === roomId && selectedDates.includes(bookedDate.date)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function updateRoomOptions() {
+            var selectedDates = getSelectedDates();
+            var availableRooms = [];
+
+            for (var i = 0; i < rooms.length; i++) {
+                var room = rooms[i];
+                if (isRoomAvailable(room.id, selectedDates)) {
+                    availableRooms.push(room);
+                }
+            }
+
+            var roomSelect = document.getElementById("room_select");
+
+            roomSelect.innerHTML = "";
+
+            var defaultOption = document.createElement("option");
+            defaultOption.text = "--- Select A Room ---";
+            defaultOption.value = "0";
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            roomSelect.appendChild(defaultOption);
+
+            for (var k = 0; k < availableRooms.length; k++) {
+                var option = document.createElement("option");
+                option.text = availableRooms[k].type + " | Type: " + availableRooms[k].name + " | Price: $" +
+                    availableRooms[k].price;
+                option.value = availableRooms[k].id;
+                option.dataset.name = availableRooms[k].name;
+                option.dataset.type = availableRooms[k].type;
+                option.dataset.price = availableRooms[k].price;
+                roomSelect.appendChild(option);
+            }
+        }
+
+        document.getElementById("checkin_date").addEventListener("change", updateRoomOptions);
+        document.getElementById("checkout_date").addEventListener("change", updateRoomOptions);
+
+        updateRoomOptions();
+        disablePastDates();
+    </script>
+
+    {{-- Check Date Valid and Past Date Check --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get references to date, check-in time, and check-out time elements
+            var checkinDate = document.getElementById('checkin_date');
+            var checkoutDate = document.getElementById('checkout_date');
+            var checkInTime = document.getElementById('check_in_time');
+            var checkOutTime = document.getElementById('check_out_time');
+            var roomSelect = document.getElementById('room_select');
+
+            // Disable check-in time, check-out time, and room select initially
+            // checkInTime.disabled = true;
+            // checkOutTime.disabled = true;
+            roomSelect.disabled = true;
+
+            // Set the min attribute for check-in date to today's date
+            var today = new Date().toISOString().split('T')[0];
+            checkinDate.setAttribute('min', today);
+
+            // Event listener for check-in date selection
+            checkinDate.addEventListener('change', function() {
+                console.log('Check-in date changed:', checkinDate.value);
+                // Enable check-in time once the date is selected
+                checkInTime.disabled = false;
+                // Validate check-in date
+                validateCheckinDate();
+                // Set the min attribute for check-out date to check-in date
+                checkoutDate.setAttribute('min', checkinDate.value);
+            });
+
+            // Event listener for check-out date selection
+            checkoutDate.addEventListener('change', function() {
+                console.log('Check-out date changed:', checkoutDate.value);
+                // Enable check-out time once the date is selected
+                checkOutTime.disabled = false;
+                // Validate check-out date
+                validateCheckoutDate();
+            });
+
+            // Event listener for check-in time selection
+            checkInTime.addEventListener('change', function() {
+                console.log('Check-in time changed:', checkInTime.value);
+                // Validate check-out time based on check-in time
+                validateCheckOutTime();
+            });
+
+            // Event listener for check-out time selection
+            checkOutTime.addEventListener('change', function() {
+                console.log('Check-out time changed:', checkOutTime.value);
+                // Enable room select once check-out time is selected
+                roomSelect.disabled = false;
+                // Validate check-out time based on check-in time
+                validateCheckOutTime();
+            });
+
+            // Function to validate check-in date
+            function validateCheckinDate() {
+                var today = new Date();
+                today.setHours(0, 0, 0, 0); // Set time to 00:00:00
+                var selectedDate = new Date(checkinDate.value);
+
+                if (selectedDate < today) {
+                    alert('Check-in date cannot be in the past');
+                    checkinDate.value = '';
+                    checkInTime.disabled = true;
+                }
+            }
+
+            // Function to validate check-out date
+            function validateCheckoutDate() {
+                var checkinDateValue = new Date(checkinDate.value);
+                var checkoutDateValue = new Date(checkoutDate.value);
+
+                if (checkoutDateValue <= checkinDateValue) {
+                    alert('Check-out Date must be after Check-in Date');
+                    checkoutDate.value = '';
+                    checkOutTime.disabled = true;
+                }
+
+                if (checkoutDateValue.getTime() === checkinDateValue.getTime()) {
+                    alert('Check-out Date cannot be the same as Check-in Date');
+                    checkoutDate.value = '';
+                    checkOutTime.disabled = true;
+                }
+            }
+
+            // Function to validate check-out time based on check-in time
+            function validateCheckOutTime() {
+                var checkInTimeValue = convertToMinutes(checkInTime.value);
+                var checkOutTimeValue = convertToMinutes(checkOutTime.value);
+
+                // Define time boundaries (7:00 AM to 10:00 PM)
+                var startTime = convertToMinutes('07:00');
+                var endTime = convertToMinutes('22:00');
+
+                // Check if check-in time is within the allowed range (7:00 AM to 10:00 PM)
+                if (checkInTimeValue < startTime || checkInTimeValue > endTime) {
+                    alert('You selected check-in time outside the allowed range (7:00 AM to 10:00 PM)');
+                    checkInTime.value = '';
+                    checkOutTime.disabled = true;
+                } else if (checkOutTimeValue < startTime || checkOutTimeValue > endTime) {
+                    alert('You selected check-out time outside the allowed range (7:00 AM to 10:00 PM)');
+                    checkOutTime.value = '';
+                } else if (checkOutTimeValue <= checkInTimeValue) {
+                    alert('You selected check-out time before or equal to check-in time');
+                    checkOutTime.value = '';
+                }
+            }
+
+            // Function to convert time strings to minutes
+            function convertToMinutes(timeString) {
+                var timeArray = timeString.split(':');
+                return parseInt(timeArray[0]) * 60 + parseInt(timeArray[1]);
+            }
+        });
     </script>
 
     {{-- Toastr New JS --}}
@@ -828,6 +1404,7 @@
             // Function to validate check-in date
             function validateCheckinDate() {
                 var today = new Date();
+                today.setHours(0, 0, 0, 0); // Set time to 00:00:00
                 var selectedDate = new Date(checkinDate.value);
 
                 if (selectedDate < today) {
@@ -1007,36 +1584,6 @@
     {{-- Paypal Payment Method --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const checkinInput = document.getElementById('checkin_date');
-            const checkoutInput = document.getElementById('checkout_date');
-            const totalPriceElement = document.getElementById('total_price');
-            const roomSelect = document.getElementById('room_select');
-            let roomPrice = 0;
-
-            function calculateTotalPrice() {
-                const checkinDate = new Date(checkinInput.value);
-                const checkoutDate = new Date(checkoutInput.value);
-
-                if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
-                    const timeDifference = checkoutDate.getTime() - checkinDate.getTime();
-                    const dayDifference = timeDifference / (1000 * 3600 * 24);
-                    const totalPrice = dayDifference * roomPrice;
-
-                    totalPriceElement.textContent = totalPrice.toFixed(2);
-                } else {
-                    totalPriceElement.textContent = '0.00';
-                }
-            }
-
-            roomSelect.addEventListener('change', function() {
-                const selectedOption = roomSelect.options[roomSelect.selectedIndex];
-                roomPrice = parseFloat(selectedOption.getAttribute('data-price'));
-                calculateTotalPrice();
-            });
-
-            checkinInput.addEventListener('change', calculateTotalPrice);
-            checkoutInput.addEventListener('change', calculateTotalPrice);
-
             // Payment method selection
             const paymentOptions = document.querySelectorAll('.payment-option');
             const cardPaymentSection = document.getElementById('card-payment-section');
@@ -1064,7 +1611,8 @@
             function initializePayPalButtons() {
                 paypal.Buttons({
                     createOrder: function(data, actions) {
-                        const totalPrice = parseFloat(totalPriceElement.innerText.replace('RM ', ''));
+                        const totalPrice = parseFloat(document.getElementById('total_price').innerText
+                            .replace('RM ', ''));
                         if (isNaN(totalPrice) || totalPrice <= 0) {
                             alert('Invalid total price. Please check the total price.');
                             return;
@@ -1168,41 +1716,72 @@
             }
 
             // Card input visualization
-            const cardNumber = document.querySelector('.card-number-box');
-            const cardHolder = document.querySelector('.card-holder-name');
-            const cardMonth = document.querySelector('.exp-month');
-            const cardYear = document.querySelector('.exp-year');
-            const cardCVV = document.querySelector('.cvv-box');
+            // const cardNumber = document.querySelector('.card-number-box');
+            // const cardHolder = document.querySelector('.card-holder-name');
+            // const cardMonth = document.querySelector('.exp-month');
+            // const cardYear = document.querySelector('.exp-year');
+            // const cardCVV = document.querySelector('.cvv-box');
 
-            document.querySelector('#card_number').oninput = () => {
-                cardNumber.innerText = document.querySelector('#card_number').value;
+            // document.querySelector('#card_number').oninput = () => {
+            //     cardNumber.innerText = document.querySelector('#card_number').value;
+            // }
+
+            // document.querySelector('#card_holder').oninput = () => {
+            //     cardHolder.innerText = document.querySelector('#card_holder').value;
+            // }
+
+            // document.querySelector('#card_month').oninput = () => {
+            //     cardMonth.innerText = document.querySelector('#card_month').value;
+            // }
+
+            // document.querySelector('#card_year').oninput = () => {
+            //     cardYear.innerText = document.querySelector('#card_year').value;
+            // }
+
+            // document.querySelector('#cvv').onmouseenter = () => {
+            //     document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(-180deg)';
+            //     document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(0deg)';
+            // }
+
+            // document.querySelector('#cvv').onmouseleave = () => {
+            //     document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(0deg)';
+            //     document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(180deg)';
+            // }
+
+            // document.querySelector('#cvv').oninput = () => {
+            //     cardCVV.innerText = document.querySelector('#cvv').value;
+            // }
+
+            // Calculate total price based on room selection, check-in date, and check-out date
+            const roomSelect = document.getElementById('room_select');
+            const checkinDateInput = document.getElementById('checkin_date');
+            const checkoutDateInput = document.getElementById('checkout_date');
+            const totalPriceElement = document.getElementById('total_price');
+            let roomPrice = 0;
+
+            function calculateTotalPrice() {
+                const checkinDate = new Date(checkinDateInput.value);
+                const checkoutDate = new Date(checkoutDateInput.value);
+
+                if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
+                    const timeDifference = checkoutDate.getTime() - checkinDate.getTime();
+                    const dayDifference = timeDifference / (1000 * 3600 * 24);
+                    const totalPrice = dayDifference * roomPrice;
+
+                    totalPriceElement.textContent = totalPrice.toFixed(2);
+                } else {
+                    totalPriceElement.textContent = '0.00';
+                }
             }
 
-            document.querySelector('#card_holder').oninput = () => {
-                cardHolder.innerText = document.querySelector('#card_holder').value;
-            }
+            roomSelect.addEventListener('change', function() {
+                const selectedOption = roomSelect.options[roomSelect.selectedIndex];
+                roomPrice = parseFloat(selectedOption.getAttribute('data-price'));
+                calculateTotalPrice();
+            });
 
-            document.querySelector('#card_month').oninput = () => {
-                cardMonth.innerText = document.querySelector('#card_month').value;
-            }
-
-            document.querySelector('#card_year').oninput = () => {
-                cardYear.innerText = document.querySelector('#card_year').value;
-            }
-
-            document.querySelector('#cvv').onmouseenter = () => {
-                document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(-180deg)';
-                document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(0deg)';
-            }
-
-            document.querySelector('#cvv').onmouseleave = () => {
-                document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(0deg)';
-                document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(180deg)';
-            }
-
-            document.querySelector('#cvv').oninput = () => {
-                cardCVV.innerText = document.querySelector('#cvv').value;
-            }
+            checkinDateInput.addEventListener('change', calculateTotalPrice);
+            checkoutDateInput.addEventListener('change', calculateTotalPrice);
         });
     </script>
 
