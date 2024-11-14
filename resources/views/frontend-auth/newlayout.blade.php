@@ -118,7 +118,7 @@
             text-shadow: 0 0 2px rgba(0, 0, 0, 0.2);
         }
 
-        .btn {
+        .logout-btn {
             background-color: var(--orange);
             color: var(--white) !important;
             padding: 0.8rem 1.8rem;
@@ -132,7 +132,7 @@
             box-shadow: 0 2px 8px rgba(255, 127, 80, 0.3);
         }
 
-        .btn:hover {
+        .logout-btn:hover {
             background-color: var(--orange-hover);
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(255, 127, 80, 0.4);
@@ -257,7 +257,7 @@
                     class="{{ request()->is('users/dashboard/' . $id) ? 'active' : '' }}">
                     <i class="fas fa-tachometer-alt" id="mydashboard-btn"></i> My Dashboard
                 </a>
-                <a class="btn" href="{{ url('/logout') }}"><i class="fas fa-sign-out-alt" id="logout-btn"></i>
+                <a class="logout-btn" href="{{ url('/logout') }}"><i class="fas fa-sign-out-alt" id="logout-btn"></i>
                     Logout</a>
             @endauth
 

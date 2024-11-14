@@ -13,11 +13,16 @@ class WishlistController extends Controller
     // Add and Remove Hotel Wishlist
     public function addHotelToWishlist($hotelId)
     {
+        // 检查用户是否已登录
+        if (!auth()->check()) {
+            return redirect()->back()->with('fail', 'You must be logged in to add hotels to your wishlist.');
+        }
+
         $user = auth()->user();
 
-        // Check if the hotel is already in the wishlist
+        // 检查酒店是否已在愿望清单中
         if (!$user->wishlist()->where('hotel_id', $hotelId)->exists()) {
-            // Add the hotel to the wishlist
+            // 将酒店添加到愿望清单中
             $user->wishlist()->create(['hotel_id' => $hotelId]);
 
             return redirect()->back()->with('success', 'Hotel added to wishlist');
@@ -39,20 +44,25 @@ class WishlistController extends Controller
     // Add and Remove Resort Wishlist
     public function addResortToWishlist($resortId)
     {
+        // 检查用户是否已登录
+        if (!auth()->check()) {
+            return redirect()->back()->with('fail', 'You must be logged in to add resorts to your wishlist.');
+        }
+
         $user = auth()->user();
 
         // 刷新用户模型的缓存
         $user->refresh();
 
-        // Check if the Resort is already in the wishlist
+        // 检查度假村是否已在愿望清单中
         if (!$user->resortwishlist()->where('resort_id', $resortId)->exists()) {
-            // Add the Resort to the wishlist
+            // 将度假村添加到愿望清单中
             $user->resortwishlist()->create(['resort_id' => $resortId]);
 
-            return redirect()->back()->with('success', 'Resort added to Resortwishlist');
+            return redirect()->back()->with('success', 'Resort added to wishlist');
         }
 
-        return redirect()->back()->with('fail', 'Resort is already in the Resortwishlist!');
+        return redirect()->back()->with('fail', 'Resort is already in the wishlist!');
     }
 
     public function removeResortFromWishlist($resortId)
@@ -68,11 +78,16 @@ class WishlistController extends Controller
     // Add and Remove Restaurant Wishlist
     public function addRestaurantToWishlist($restaurantId)
     {
+        // 检查用户是否已登录
+        if (!auth()->check()) {
+            return redirect()->back()->with('fail', 'You must be logged in to add restaurants to your wishlist.');
+        }
+
         $user = auth()->user();
 
-        // Check if the Restaurant is already in the wishlist
+        // 检查餐厅是否已在愿望清单中
         if (!$user->restaurantwishlist()->where('restaurant_id', $restaurantId)->exists()) {
-            // Add the Restaurant to the wishlist
+            // 将餐厅添加到愿望清单中
             $user->restaurantwishlist()->create(['restaurant_id' => $restaurantId]);
 
             return redirect()->back()->with('success', 'Restaurant added to wishlist');
@@ -80,6 +95,7 @@ class WishlistController extends Controller
 
         return redirect()->back()->with('fail', 'Restaurant is already in the wishlist!');
     }
+
 
     public function removeRestaurantFromWishlist($restaurantId)
     {
