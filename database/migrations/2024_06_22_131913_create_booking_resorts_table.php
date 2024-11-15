@@ -35,7 +35,6 @@ return new class extends Migration
             $table->unsignedSmallInteger('card_year');
             $table->string('cvv')->nullable();
             $table->integer('popular_count')->default(0);
-            $table->uuid('booking_uuid')->nullable()->unique()->after('id');
             $table->timestamps();
 
             // 添加索引

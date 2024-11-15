@@ -13,6 +13,11 @@ class resort_promotion_dates extends Model
 
     protected $dates = ['date'];
 
+    // 添加日期转换
+    protected $casts = [
+        'date' => 'date:Y-m-d',
+    ];
+
     public function resort()
     {
         return $this->belongsTo(Resort::class);

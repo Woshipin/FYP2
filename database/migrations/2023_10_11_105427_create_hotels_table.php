@@ -25,7 +25,7 @@ return new class extends Migration
             $table->text('description'); // 文本类型，用于存储描述信息
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
-            $table->text('map')->nullable();;
+            $table->text('map')->nullable();
             $table->boolean('status')->default(false); // 布尔类型，表示状态，初始值为假（未激活）
             $table->integer('register_status')->default(0);
             $table->string('digital_lock_password')->nullable();

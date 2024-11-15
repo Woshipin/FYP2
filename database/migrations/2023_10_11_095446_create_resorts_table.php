@@ -26,7 +26,7 @@ return new class extends Migration
             $table->text('description');
             $table->decimal('latitude', 10, 7);
             $table->decimal('longitude', 10, 7);
-            $table->text('map')->nullable();;
+            $table->text('map')->nullable();
             $table->boolean('status')->default(false);
             $table->integer('register_status')->default(0);
             $table->string('digital_lock_password')->nullable();

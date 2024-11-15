@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Gate;
 
 use Intervention\Image\Facades\Image;
 use Jenssegers\ImageHash\ImageHash;
@@ -625,53 +626,6 @@ class ResortController extends Controller
     //     }
     // }
 
-    public function showPromotionForm($id)
-    {
-        $resort = Resort::findOrFail($id);
-        return view('backend-user.backend-resort.resortpromotion', compact('resort'));
-    }
-
-    public function savePromotionDates(Request $request, $id)
-    {
-        $resort = Resort::findOrFail($id);
-
-        // 验证请求
-        $request->validate([
-            'promotion_dates' => 'required|array',
-            'promotion_dates.*' => 'required|date_format:Y-m-d'
-        ]);
-
-        try {
-            // 开始事务
-            DB::beginTransaction();
-
-            // 删除现有的促销日期
-            $resort->promotionDates()->delete();
-
-            // 保存新的促销日期
-            foreach ($request->promotion_dates as $date) {
-                $resort->promotionDates()->create([
-                    'date' => $date
-                ]);
-            }
-
-            // 提交事务
-            DB::commit();
-
-            return redirect()
-                ->route('resort.promotion.form', $id)
-                ->with('success', 'Promotion dates saved successfully.');
-
-        } catch (\Exception $e) {
-            // 回滚事务
-            DB::rollback();
-
-            return redirect()
-                ->route('resort.promotion.form', $id)
-                ->with('error', 'Failed to save promotion dates. ' . $e->getMessage());
-        }
-    }
-
     public function ResortgpsSearch(Request $request)
     {
         $latitude = $request->query('latitude');
@@ -715,5 +669,83 @@ class ResortController extends Controller
             ], 500);
         }
     }
+
+    public function showPromotionForm($id)
+    {
+        $resort = Resort::findOrFail($id);
+        $promotionDates = $resort->promotionDates()
+            ->orderBy('date')
+            ->get()
+            ->groupBy(function($date) {
+                return Carbon::parse($date->date)->format('F Y');
+            });
+
+        return view('backend-user.backend-resort.resortpromotion', compact('resort', 'promotionDates'));
+    }
+
+    public function savePromotionDates(Request $request, $id)
+    {
+        $resort = Resort::findOrFail($id);
+
+        // 验证请求
+        $request->validate([
+            'promotion_dates' => 'required|array',
+            'promotion_dates.*' => 'required|date_format:Y-m-d'
+        ]);
+
+        try {
+            // 开始事务
+            DB::beginTransaction();
+
+            // 删除现有的促销日期
+            // $resort->promotionDates()->delete();
+
+            // 保存新的促销日期
+            foreach ($request->promotion_dates as $date) {
+                $resort->promotionDates()->create([
+                    'date' => Carbon::parse($date)->format('Y-m-d')
+                ]);
+            }
+
+            // 提交事务
+            DB::commit();
+
+            return redirect()
+                ->route('resort.promotion.form', $id)
+                ->with('success', 'Promotion dates saved successfully.');
+
+        } catch (\Exception $e) {
+            // 回滚事务
+            DB::rollback();
+
+            return redirect()
+                ->route('resort.promotion.form', $id)
+                ->with('error', 'Failed to save promotion dates. ' . $e->getMessage());
+        }
+    }
+
+    public function deletePromotionDate($id, Request $request)
+    {
+        $resort = Resort::findOrFail($id);
+
+        // 获取查询参数中的 date_id
+        $dateId = $request->query('date_id');
+
+        if (!$dateId) {
+            return redirect()->back()->with('error', 'Date ID is required.');
+        }
+
+        try {
+            $resort->promotionDates()->where('id', $dateId)->delete();
+
+            return redirect()->back()->with('success', 'Promotion date deleted successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to delete promotion date.');
+        }
+    }
+
+
+
+
 
 }
