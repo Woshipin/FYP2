@@ -683,6 +683,47 @@ class ResortController extends Controller
         return view('backend-user.backend-resort.resortpromotion', compact('resort', 'promotionDates'));
     }
 
+    // public function savePromotionDates(Request $request, $id)
+    // {
+    //     $resort = Resort::findOrFail($id);
+
+    //     // 验证请求
+    //     $request->validate([
+    //         'promotion_dates' => 'required|array',
+    //         'promotion_dates.*' => 'required|date_format:Y-m-d'
+    //     ]);
+
+    //     try {
+    //         // 开始事务
+    //         DB::beginTransaction();
+
+    //         // 删除现有的促销日期
+    //         // $resort->promotionDates()->delete();
+
+    //         // 保存新的促销日期
+    //         foreach ($request->promotion_dates as $date) {
+    //             $resort->promotionDates()->create([
+    //                 'date' => Carbon::parse($date)->format('Y-m-d')
+    //             ]);
+    //         }
+
+    //         // 提交事务
+    //         DB::commit();
+
+    //         return redirect()
+    //             ->route('resort.promotion.form', $id)
+    //             ->with('success', 'Promotion dates saved successfully.');
+
+    //     } catch (\Exception $e) {
+    //         // 回滚事务
+    //         DB::rollback();
+
+    //         return redirect()
+    //             ->route('resort.promotion.form', $id)
+    //             ->with('error', 'Failed to save promotion dates. ' . $e->getMessage());
+    //     }
+    // }
+
     public function savePromotionDates(Request $request, $id)
     {
         $resort = Resort::findOrFail($id);
@@ -690,7 +731,8 @@ class ResortController extends Controller
         // 验证请求
         $request->validate([
             'promotion_dates' => 'required|array',
-            'promotion_dates.*' => 'required|date_format:Y-m-d'
+            'promotion_dates.*' => 'required|date_format:Y-m-d',
+            'promotion_price' => 'required|numeric', // 单一的价格验证规则
         ]);
 
         try {
@@ -700,10 +742,11 @@ class ResortController extends Controller
             // 删除现有的促销日期
             // $resort->promotionDates()->delete();
 
-            // 保存新的促销日期
+            // 保存新的促销日期和价格
             foreach ($request->promotion_dates as $date) {
                 $resort->promotionDates()->create([
-                    'date' => Carbon::parse($date)->format('Y-m-d')
+                    'date' => Carbon::parse($date)->format('Y-m-d'),
+                    'price' => $request->promotion_price, // 使用单一的价格值
                 ]);
             }
 
@@ -712,7 +755,7 @@ class ResortController extends Controller
 
             return redirect()
                 ->route('resort.promotion.form', $id)
-                ->with('success', 'Promotion dates saved successfully.');
+                ->with('success', 'Promotion dates and prices saved successfully.');
 
         } catch (\Exception $e) {
             // 回滚事务
@@ -720,7 +763,25 @@ class ResortController extends Controller
 
             return redirect()
                 ->route('resort.promotion.form', $id)
-                ->with('error', 'Failed to save promotion dates. ' . $e->getMessage());
+                ->with('error', 'Failed to save promotion dates and prices. ' . $e->getMessage());
+        }
+    }
+
+    public function updatePromotionPrice(Request $request)
+    {
+        $request->validate([
+            'date_id' => 'required|exists:resort_promotion_dates,id',
+            'price' => 'required|numeric',
+        ]);
+
+        try {
+            $promotionDate = resort_promotion_dates::findOrFail($request->date_id);
+            $promotionDate->update(['price' => $request->price]);
+
+            return response()->json(['success' => true]);
+        } catch (\Exception $e) {
+            \Log::error('Failed to update promotion price: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Internal Server Error'], 500);
         }
     }
 
@@ -743,9 +804,5 @@ class ResortController extends Controller
             return redirect()->back()->with('error', 'Failed to delete promotion date.');
         }
     }
-
-
-
-
 
 }

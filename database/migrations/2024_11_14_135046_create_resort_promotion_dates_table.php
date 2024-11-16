@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('resort_id');
             $table->date('date');
+            $table->decimal('price', 8, 2)->nullable();
             $table->timestamps();
 
             $table->foreign('resort_id')->references('id')->on('resorts')->onDelete('cascade');

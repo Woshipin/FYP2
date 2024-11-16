@@ -25,6 +25,13 @@ class UserSeeder extends Seeder
         ]);
 
         User::create([
+            'name' => 'Pin',
+            'email' => 'ahpin7762@gmail.com',
+            'password' => '123456', // Use plain password here
+            'status' => 0
+        ]);
+
+        User::create([
             'name' => 'sj',
             'email' => 'sj@gmail.com',
             'password' => '123456',

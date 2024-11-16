@@ -16,6 +16,7 @@
         "laravel/tinker": "^2.8",
         "league/omnipay": "^3.2",
         "maatwebsite/excel": "~3.1.48",
+        "nesbot/carbon": "^2.72",
         "omnipay/paypal": "^3.0",
         "openai-php/laravel": "^0.6.0",
         "paypal/rest-api-sdk-php": "^1.6",

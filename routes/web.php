@@ -307,7 +307,7 @@ Route::get('/resort-gps-search', [ResortController::class, 'ResortgpsSearch'])->
 Route::get('backend-user/backend-resort/resortpromotion/{id}', [ResortController::class, 'showPromotionForm'])->name('resort.promotion.form');
 Route::post('backend-user/backend-resort/resortpromotion/{id}', [ResortController::class, 'savePromotionDates'])->name('resort.promotion.save');
 Route::get('/resort/{id}/promotion/delete', [ResortController::class, 'deletePromotionDate'])->name('resort.promotion.delete');
-
+Route::post('/resort/promotion/update', [ResortController::class, 'updatePromotionPrice'])->name('resort.promotion.update');
 
 
 //---------------------------------------------------Restaurant Area-------------------------------------------------------------//

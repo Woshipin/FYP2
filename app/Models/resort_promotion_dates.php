@@ -9,7 +9,7 @@ class resort_promotion_dates extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['resort_id', 'date'];
+    protected $fillable = ['resort_id', 'date','price'];
 
     protected $dates = ['date'];
 
