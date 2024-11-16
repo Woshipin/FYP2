@@ -520,20 +520,46 @@ class BookingController extends Controller
 
     //------------------------------------------------ Frontend Booking Resort Area --------------------------------------------------//
 
+    // public function bookingresortpage(Request $request, $id)
+    // {
+    //     if (Auth::check()) {
+
+    //         $genders = Gender::all();
+    //         $resorts = Resort::find($id);
+
+    //         // 获取已预订的日期范围
+    //         $bookedDates = $this->getBookedResortDates($id);
+
+    //         return view('frontend-auth.frontend-resort.bookingresort', compact('resorts', 'genders', 'bookedDates'));
+
+    //     } else {
+
+    //         return redirect()->route('frontend-auth.login')->with('error', 'You need to log in first.');
+    //     }
+    // }
+
     public function bookingresortpage(Request $request, $id)
     {
         if (Auth::check()) {
-
             $genders = Gender::all();
             $resorts = Resort::find($id);
 
             // 获取已预订的日期范围
             $bookedDates = $this->getBookedResortDates($id);
 
-            return view('frontend-auth.frontend-resort.bookingresort', compact('resorts', 'genders', 'bookedDates'));
+            // 获取促销日期和价格
+            $promotionDatesWithPrices = $resorts->getPromotionDatesWithPrices();
 
+            // 将数组转换为对象
+            $promotionDatesWithPricesObject = [];
+            foreach ($promotionDatesWithPrices as $date => $price) {
+                $promotionDatesWithPricesObject[$date] = $price;
+            }
+
+            // dd($promotionDatesWithPricesObject);
+
+            return view('frontend-auth.frontend-resort.bookingresort', compact('resorts', 'genders', 'bookedDates', 'promotionDatesWithPricesObject'));
         } else {
-
             return redirect()->route('frontend-auth.login')->with('error', 'You need to log in first.');
         }
     }

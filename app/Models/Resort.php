@@ -55,4 +55,11 @@ class Resort extends Model
         return $this->hasMany(resort_promotion_dates::class);
     }
 
+    public function getPromotionDatesWithPrices()
+    {
+        return $this->promotionDates()
+            ->select('date', 'price')
+            ->get();
+    }
+
 }
