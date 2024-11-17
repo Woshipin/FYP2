@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Resort;
 use App\Models\User;
 use App\Models\resort_promotion_dates;
+use App\Models\ResortDiscount;
 use App\Events\HotelStatus;
 use App\Models\ResortRating;
 use App\Models\ResortImage;
@@ -670,8 +671,18 @@ class ResortController extends Controller
         }
     }
 
+    // --------------------------------------------------------- Resort Promotion Area  ---------------------------------------------- //
+
     public function showPromotionForm($id)
     {
+
+        // 检查用户是否已登录
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('fail', 'You must be logged in to view the promotion form.');
+        }
+
+        $user = auth()->user();
+
         $resort = Resort::findOrFail($id);
         $promotionDates = $resort->promotionDates()
             ->orderBy('date')
@@ -682,47 +693,6 @@ class ResortController extends Controller
 
         return view('backend-user.backend-resort.resortpromotion', compact('resort', 'promotionDates'));
     }
-
-    // public function savePromotionDates(Request $request, $id)
-    // {
-    //     $resort = Resort::findOrFail($id);
-
-    //     // 验证请求
-    //     $request->validate([
-    //         'promotion_dates' => 'required|array',
-    //         'promotion_dates.*' => 'required|date_format:Y-m-d'
-    //     ]);
-
-    //     try {
-    //         // 开始事务
-    //         DB::beginTransaction();
-
-    //         // 删除现有的促销日期
-    //         // $resort->promotionDates()->delete();
-
-    //         // 保存新的促销日期
-    //         foreach ($request->promotion_dates as $date) {
-    //             $resort->promotionDates()->create([
-    //                 'date' => Carbon::parse($date)->format('Y-m-d')
-    //             ]);
-    //         }
-
-    //         // 提交事务
-    //         DB::commit();
-
-    //         return redirect()
-    //             ->route('resort.promotion.form', $id)
-    //             ->with('success', 'Promotion dates saved successfully.');
-
-    //     } catch (\Exception $e) {
-    //         // 回滚事务
-    //         DB::rollback();
-
-    //         return redirect()
-    //             ->route('resort.promotion.form', $id)
-    //             ->with('error', 'Failed to save promotion dates. ' . $e->getMessage());
-    //     }
-    // }
 
     public function savePromotionDates(Request $request, $id)
     {
@@ -803,6 +773,72 @@ class ResortController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to delete promotion date.');
         }
+    }
+
+    // --------------------------------------------------------- Resort Discount Area  ---------------------------------------------- //
+    public function showDiscountForm($id)
+    {
+        // 检查用户是否已登录
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('fail', 'You must be logged in to view the discount form.');
+        }
+
+        $user = auth()->user();
+
+        // 检查用户是否有权限查看此度假村的折扣信息（可选，视需求而定）
+        // if ($user->cannot('view', Resort::find($id))) {
+        //     return redirect()->back()->with('fail', 'You are not authorized to view this discount form.');
+        // }
+
+        // 获取指定度假村的折扣信息
+        $discounts = ResortDiscount::with('resort')->where('resort_id', $id)->get();
+
+        // 渲染视图并传递数据
+        return view('backend-user.backend-resort.resortdiscount', compact('discounts', 'id'));
+    }
+
+    // 保存新的折扣规则
+    public function saveDiscountDates(Request $request, $id)
+    {
+        $request->validate([
+            'nights' => 'required|integer|min:1',
+            'discount' => 'required|integer|min:0|max:100',
+        ]);
+
+        ResortDiscount::create([
+            'resort_id' => $id,
+            'nights' => $request->nights,
+            'discount' => $request->discount,
+        ]);
+
+        return redirect()->back()->with('success', 'Discount added successfully.');
+    }
+
+    // 更新折扣规则
+    public function updateDiscountPrice(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:resort_discounts,id',
+            'nights' => 'required|integer|min:1',
+            'discount' => 'required|integer|min:0|max:100',
+        ]);
+
+        $discount = ResortDiscount::findOrFail($request->id);
+        $discount->update([
+            'nights' => $request->nights,
+            'discount' => $request->discount,
+        ]);
+
+        return redirect()->back()->with('success', 'Discount updated successfully.');
+    }
+
+    // 删除折扣规则
+    public function deleteDiscountDate($id)
+    {
+        $discount = ResortDiscount::findOrFail($id);
+        $discount->delete();
+
+        return redirect()->back()->with('success', 'Discount deleted successfully.');
     }
 
 }

@@ -810,7 +810,9 @@
                                                     <a href="{{ url('backend-user/backend-resort/resortpromotion/' . $resort->id) }}"
                                                         class="btn btn-success btn-sm"><i
                                                             class="fa fa-percent"></i>&nbsp;Promotion</a>
-                                                </td>
+                                                    <a href="{{ url('backend-user/backend-resort/resortdiscount/' . $resort->id) }}"
+                                                        class="btn btn-success btn-sm"><i
+                                                            class="fa fa-percent"></i>&nbsp;Discount</a>
                                                 </td>
                                             </tr>
                                         @endforeach

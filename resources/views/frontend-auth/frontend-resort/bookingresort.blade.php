@@ -1583,77 +1583,6 @@
             //     promotionDatesWithPrices[promo.date] = parseFloat(promo.price);
             // });
 
-            // function calculateTotalPrice() {
-            //     const checkinDate = new Date(checkinInput.value);
-            //     const checkoutDate = new Date(checkoutInput.value);
-
-            //     if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
-            //         let totalPrice = 0;
-            //         let currentDate = new Date(checkinDate);
-
-            //         // 计算住宿天数
-            //         const timeDiff = checkoutDate.getTime() - checkinDate.getTime();
-            //         const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
-
-            //         console.log('Number of nights:', nights);
-
-            //         // 遍历每一天直到退房日期的前一天
-            //         for (let i = 0; i < nights; i++) {
-            //             const dateString = currentDate.toISOString().split('T')[0];
-            //             const promotionPrice = promotionDatesWithPrices[dateString];
-
-            //             console.log('Checking date:', dateString);
-            //             console.log('Promotion price:', promotionPrice);
-            //             console.log('Resort price:', resortPrice);
-
-            //             if (promotionPrice !== undefined) {
-            //                 totalPrice += promotionPrice;
-            //                 console.log('Using promotion price:', promotionPrice);
-            //             } else {
-            //                 totalPrice += resortPrice;
-            //                 console.log('Using regular price:', resortPrice);
-            //             }
-
-            //             currentDate.setDate(currentDate.getDate() + 1);
-            //         }
-
-            //         console.log('Final total price:', totalPrice);
-            //         totalPriceElement.textContent = totalPrice.toFixed(2);
-            //     } else {
-            //         totalPriceElement.textContent = '0.00';
-            //     }
-            // }
-
-            // function updateResortPrice() {
-            //     const checkinDate = new Date(checkinInput.value);
-            //     const dateString = checkinDate.toISOString().split('T')[0];
-            //     const promotionPrice = promotionDatesWithPrices[dateString];
-
-            //     console.log('Current promotions:', promotionDatesWithPrices);
-            //     console.log('Selected check-in date:', dateString);
-            //     console.log('Found promotion price:', promotionPrice);
-
-            //     if (promotionPrice !== undefined) {
-            //         resortPriceElement.value = promotionPrice.toFixed(2);
-            //     } else {
-            //         resortPriceElement.value = resortPrice.toFixed(2);
-            //     }
-
-            //     calculateTotalPrice();
-            // }
-
-            // 监听日期输入变化事件
-            // checkinInput.addEventListener('change', updateResortPrice);
-            // checkoutInput.addEventListener('change', calculateTotalPrice);
-
-            // Full Function
-            // 将促销日期和价格转换为更易于使用的格式
-            // const promotionDatesWithPrices = {};
-            // const rawPromotions = @json($promotionDatesWithPricesObject);
-            // rawPromotions.forEach(promo => {
-            //     promotionDatesWithPrices[promo.date] = parseFloat(promo.price);
-            // });
-
             // function getEarlyBookingDiscount(bookingDate, promotionDate) {
             //     // 计算预订日期与促销日期之间的月份差
             //     const bookingDateTime = new Date(bookingDate);
@@ -1668,6 +1597,16 @@
             //         return 0.7; // 提前1个月，打7折
             //     }
             //     return 1; // 不到1个月，原价
+            // }
+
+            // // 新添加的基于住宿天数的折扣函数
+            // function getDurationDiscount(nights) {
+            //     if (nights >= 7) {
+            //         return 0.5; // 住宿7天或以上，打5折
+            //     } else if (nights >= 5) {
+            //         return 0.7; // 住宿5-6天，打7折
+            //     }
+            //     return 1; // 少于5天，原价
             // }
 
             // function calculateTotalPrice() {
@@ -1715,6 +1654,11 @@
             //             currentDate.setDate(currentDate.getDate() + 1);
             //         }
 
+            //         // 应用住宿天数折扣
+            //         const durationDiscount = getDurationDiscount(nights);
+            //         totalPrice = totalPrice * durationDiscount;
+
+            //         console.log('Duration discount applied:', durationDiscount);
             //         console.log('Final total price:', totalPrice);
             //         totalPriceElement.textContent = totalPrice.toFixed(2);
             //     } else {
@@ -1759,6 +1703,9 @@
                 promotionDatesWithPrices[promo.date] = parseFloat(promo.price);
             });
 
+            // 获取度假村折扣信息
+            const resortDiscounts = @json($discounts);
+
             function getEarlyBookingDiscount(bookingDate, promotionDate) {
                 // 计算预订日期与促销日期之间的月份差
                 const bookingDateTime = new Date(bookingDate);
@@ -1775,14 +1722,19 @@
                 return 1; // 不到1个月，原价
             }
 
-            // 新添加的基于住宿天数的折扣函数
+            // 修改后的基于住宿天数的折扣函数，使用ResortDiscount数据
             function getDurationDiscount(nights) {
-                if (nights >= 7) {
-                    return 0.5; // 住宿7天或以上，打5折
-                } else if (nights >= 5) {
-                    return 0.7; // 住宿5-6天，打7折
+                // 按住宿天数从高到低排序折扣
+                const sortedDiscounts = resortDiscounts.sort((a, b) => b.nights - a.nights);
+
+                // 遍历排序后的折扣，找到第一个符合条件的折扣
+                for (const discount of sortedDiscounts) {
+                    if (nights >= discount.nights) {
+                        return discount.discount / 100; // 将百分比转换为小数
+                    }
                 }
-                return 1; // 少于5天，原价
+
+                return 1; // 如果没有找到匹配的折扣，返回原价
             }
 
             function calculateTotalPrice() {

@@ -309,6 +309,10 @@ Route::post('backend-user/backend-resort/resortpromotion/{id}', [ResortControlle
 Route::get('/resort/{id}/promotion/delete', [ResortController::class, 'deletePromotionDate'])->name('resort.promotion.delete');
 Route::post('/resort/promotion/update', [ResortController::class, 'updatePromotionPrice'])->name('resort.promotion.update');
 
+Route::get('backend-user/backend-resort/resortdiscount/{id}', [ResortController::class, 'showDiscountForm'])->name('resort.discount.form');
+Route::post('backend-user/backend-resort/resortdiscount/{id}', [ResortController::class, 'saveDiscountDates'])->name('resort.discount.save');
+Route::get('/resort/{id}/discount/delete', [ResortController::class, 'deleteDiscountDate'])->name('resort.discount.delete');
+Route::post('/resort/discount/update', [ResortController::class, 'updateDiscountPrice'])->name('resort.discount.update');
 
 //---------------------------------------------------Restaurant Area-------------------------------------------------------------//
 //Display Restaurant Page
