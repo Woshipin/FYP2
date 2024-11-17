@@ -538,6 +538,7 @@ class BookingController extends Controller
     //     }
     // }
 
+    // full
     public function bookingresortpage(Request $request, $id)
     {
         if (Auth::check()) {
@@ -563,6 +564,41 @@ class BookingController extends Controller
             return redirect()->route('frontend-auth.login')->with('error', 'You need to log in first.');
         }
     }
+
+    // public function bookingresortpage(Request $request, $id)
+    // {
+    //     if (Auth::check()) {
+    //         $genders = Gender::all();
+    //         $resorts = Resort::find($id);
+
+    //         // 获取已预订的日期范围
+    //         $bookedDates = $this->getBookedResortDates($id);
+
+    //         // 获取促销日期和价格
+    //         $promotionDatesWithPrices = $resorts->getPromotionDatesWithPrices();
+
+    //         // 将数组转换为对象，包含日期和价格信息
+    //         $promotionDatesWithPricesObject = [];
+    //         foreach ($promotionDatesWithPrices as $date => $price) {
+    //             $promotionDatesWithPricesObject[] = [
+    //                 'date' => $date,
+    //                 'price' => $price
+    //             ];
+    //         }
+
+    //         dd($promotionDatesWithPricesObject);
+
+    //         return view('frontend-auth.frontend-resort.bookingresort', compact(
+    //             'resorts',
+    //             'genders',
+    //             'bookedDates',
+    //             'promotionDatesWithPricesObject'
+    //         ));
+    //     } else {
+    //         return redirect()->route('frontend-auth.login')
+    //                ->with('error', 'You need to log in first.');
+    //     }
+    // }
 
     // 获取指定度假村的已预订的日期范围
     public function getBookedResortDates($resortId)
