@@ -11,6 +11,7 @@ use App\Imports\RoomImport;
 use App\Imports\TableImport;
 use Maatwebsite\Excel\Facades\Excel;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Imports\FacilityImport;
 
 class ImportController extends Controller
 {
@@ -116,6 +117,17 @@ class ImportController extends Controller
         // Add your desired logic after importing the data
 
         return redirect()->back()->with('table', 'Table imported successfully.');
+    }
+
+    public function importResortFacility(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,csv',
+        ]);
+
+        Excel::import(new FacilityImport, $request->file('file'));
+
+        return redirect()->back()->with('success', 'Facilities imported successfully!');
     }
 
 }

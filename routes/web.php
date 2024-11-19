@@ -22,6 +22,7 @@ use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\RecommendationController;
+use App\Http\Controllers\FacilityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -227,6 +228,14 @@ Route::get('/editStaff/{id}/edit', [StaffController::class, 'editstaff'])->name(
 Route::put('/updateStaff/{id}', [StaffController::class, 'updatestaff'])->name('updateStaff');
 //Delete Staff Function
 Route::get('/deleteStaff/{id}/delete', [StaffController::class, 'deletestaff'])->name('deleteStaff');
+
+//Facilities Area
+//Display Facilities Page
+Route::get('showfacilities', [FacilityController::class, 'ShowFacilities'])->name('facilities');
+//Add Facilities Page
+Route::post('addfacilities', [FacilityController::class, 'AddFacilities'])->name('addfacilities');
+//Delete Facilities Page
+Route::delete('deletefacilities/{facility}', [FacilityController::class, 'DeleteFacilities'])->name('delete.facilities');
 
 //------------------------------------------------------User Change Status Area------------------------------------------------------//
 //Change Hotel Status Function
@@ -658,6 +667,9 @@ Route::get('/export-staff', [ExportController::class, 'exportStaff'])->name('exp
 //Export and Import Resort Function
 Route::post('/import-resort', [ImportController::class, 'importResort'])->name('import-resort');
 Route::get('/export-resort', [ExportController::class, 'exportResort'])->name('export-resort');
+//Export and Import Resort Facility Function
+Route::post('backend-resort/resortfacilities/import', [ImportController::class, 'importResortFacility'])
+    ->name('backend-resort.facilities.import');
 
 //Export and Import Hotel Function
 Route::post('/import-hotel', [ImportController::class, 'importHotel'])->name('import-hotel');

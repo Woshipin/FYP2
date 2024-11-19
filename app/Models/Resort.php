@@ -67,4 +67,8 @@ class Resort extends Model
         return $this->hasMany(ResortDiscount::class);
     }
 
+    public function facilities()
+    {
+        return $this->hasMany(ResortFacility::class);
+    }
 }

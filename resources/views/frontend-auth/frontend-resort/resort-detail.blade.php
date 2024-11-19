@@ -6,35 +6,35 @@
     <style>
         /* Style the WhatsApp icon */
         .btn-success {
-            background-color: white;
+            background-color: #25D366;
             padding: 12px;
             border-radius: 50%;
+            transition: background-color 0.3s ease;
         }
 
         .btn-success i {
             font-size: 20px;
-            color: green;
-        }
-
-        .btn-success i:hover {
-            font-size: 24px;
             color: white;
         }
 
+        .btn-success:hover {
+            background-color: #128C7E;
+        }
+
         .btn-info {
-            background-color: white;
+            background-color: #FF0000;
             padding: 12px;
             border-radius: 50%;
+            transition: background-color 0.3s ease;
         }
 
         .btn-info i {
             font-size: 20px;
-            color: red;
+            color: white;
         }
 
-        .btn-info i:hover {
-            font-size: 24px;
-            color: white;
+        .btn-info:hover {
+            background-color: #E60000;
         }
     </style>
 
@@ -45,11 +45,13 @@
             color: #333;
             margin: 0;
             padding: 0;
+            background-color: #f8f9fa;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 100%;
             margin: 0 auto;
+            padding: 20px;
         }
 
         .product-price {
@@ -120,31 +122,35 @@
     <style>
         .product-imgs {
             width: 100%;
-            max-width: 600px;
+            height: 500px;
+            max-width: 100%;
             margin: auto;
         }
 
         .img-display {
             width: 100%;
+            height: 500px;
             overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .swiper {
             width: 100%;
-            height: auto;
+            height: 500px;
         }
 
         .swiper-slide img {
             display: block;
             width: 100%;
-            height: auto;
-            object-fit: cover;
+            height: 100%; /* 使用100%高度确保图片填充整个容器 */
+            object-fit: contain; /* 使用 contain 确保图片完整显示 */
         }
 
         /* New style for image placeholder */
         .img-placeholder {
             width: 100%;
-            height: 300px;
+            height: 500px; /* 调整高度以适应页面 */
             background-color: #f0f0f0;
             display: flex;
             justify-content: center;
@@ -152,6 +158,35 @@
             font-size: 18px;
             color: #666;
             border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        /* Ensure images take full width of the container */
+        .swiper-slide img {
+            width: 100%;
+            height: 100%; /* 使用100%高度确保图片填充整个容器 */
+            object-fit: contain; /* 使用 contain 确保图片完整显示 */
+        }
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            .product-imgs,
+            .img-display,
+            .swiper,
+            .swiper-slide img,
+            .img-placeholder {
+                height: 300px; /* 调整高度以适应页面 */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-imgs,
+            .img-display,
+            .swiper,
+            .swiper-slide img,
+            .img-placeholder {
+                height: 200px; /* 调整高度以适应页面 */
+            }
         }
     </style>
 
@@ -178,13 +213,13 @@
             display: none;
         }
 
-        .rating-css input + label {
+        .rating-css input+label {
             font-size: 60px;
             text-shadow: 1px 1px 0 #8f8420;
             cursor: pointer;
         }
 
-        .rating-css input:checked + label ~ label {
+        .rating-css input:checked+label~label {
             color: #b4afaf;
         }
 
@@ -212,7 +247,7 @@
                 font-size: 20px;
             }
 
-            .rating-css input + label {
+            .rating-css input+label {
                 font-size: 40px;
             }
 
@@ -226,7 +261,7 @@
                 font-size: 18px;
             }
 
-            .rating-css input + label {
+            .rating-css input+label {
                 font-size: 30px;
             }
 
@@ -236,6 +271,46 @@
 
             .submit-button button {
                 margin-top: 15px;
+            }
+        }
+    </style>
+
+    <style>
+        /* 为了使全景图像填满容器 */
+        .photosphere-container {
+            width: 100%;
+            height: 400px;
+            /* 调整高度以适应你的需要 */
+        }
+
+        /* 左中右三列布局 */
+        .columns {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .column {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .column:not(:last-child) {
+            margin-right: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .columns {
+                flex-direction: column;
+            }
+
+            .column:not(:last-child) {
+                margin-right: 0;
+                margin-bottom: 20px;
             }
         }
     </style>
@@ -252,28 +327,19 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 
-    <style>
-        /* 为了使全景图像填满容器 */
-        .photosphere-container {
-            width: 100%;
-            height: 400px;
-            /* 调整高度以适应你的需要 */
-        }
-    </style>
-
     {{-- toastify CSS --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
-    <br><br><br><br><br><br>
+    <br>
 
-    <div class="card-wrapper">
+    <div class="container">
         <div class="card">
             {{-- Mutliple Image --}}
             <div class="product-imgs">
                 <div class="img-display">
                     <div class="swiper img-showcase">
                         <div class="swiper-wrapper">
-                            @if($resort->images->isNotEmpty())
+                            @if ($resort->images->isNotEmpty())
                                 @foreach ($resort->images as $image)
                                     <div class="swiper-slide">
                                         <img src="{{ asset('images/' . $image->image) }}" alt="resort image"
@@ -294,9 +360,11 @@
                 </div>
             </div>
 
-            <div id="pannellumModal" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 1000;">
+            <div id="pannellumModal"
+                style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.8); z-index: 1000;">
                 <div id="panorama" style="width: 100%; height: 100%;"></div>
-                <button onclick="close360View()" style="position: absolute; top: 10px; right: 10px; padding: 10px; background: #fff; border: none; cursor: pointer;">Close</button>
+                <button onclick="close360View()"
+                    style="position: absolute; top: 10px; right: 10px; padding: 10px; background: #fff; border: none; cursor: pointer;">Close</button>
             </div>
 
             <div class="product-content">
@@ -355,50 +423,70 @@
                 </div>
 
                 <div class="purchase-info">
-                    <a href="{{ url('bookingresort/' . $resort->id) }}" class="btn"><i class="fas fa-calendar-check"></i>&nbsp;Booking</a>
-                    <a href="{{ route('resorts.comment', ['id' => $resort->id]) }}" class="btn"><i class="fas fa-comment"></i>&nbsp;Comment</a>
-                    <a href="https://wa.me/601110801649" target="_blank" class="btn-success"><i class="fab fa-whatsapp"></i></a>
-                    <a href="{{ route('resorts.contact', ['id' => $resort->id]) }}" class="btn-info"><i class="far fa-envelope"></i></a>
+                    <a href="{{ url('bookingresort/' . $resort->id) }}" class="btn btn-primary"><i
+                            class="fas fa-calendar-check"></i>&nbsp;Booking</a>
+                    <a href="{{ route('resorts.comment', ['id' => $resort->id]) }}" class="btn btn-secondary"><i
+                            class="fas fa-comment"></i>&nbsp;Comment</a>
+                    <a href="https://wa.me/601110801649" target="_blank" class="btn-success"><i
+                            class="fab fa-whatsapp"></i></a>
+                    <a href="{{ route('resorts.contact', ['id' => $resort->id]) }}" class="btn-info"><i
+                            class="far fa-envelope"></i></a>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!--Add Resort Rating Modal -->
-    <div class="add-rating-css">
-        <form action="{{ route('resortratings') }}" method="POST">
-            @csrf
-
-            <input type="hidden" name="rateable_id" value="{{ $resort->id }}">
-            <input type="hidden" name="rateable_name" value="{{ $resort->name }}">
-            <input type="hidden" name="rateable_type" value="{{ $resort->type }}">
-
-            <div class="rating-css">
-                <div class="star-icon">
-                    <input type="radio" value="1" name="rating" id="rating1">
-                    <label for="rating1" class="fa fa-star"></label>
-                    <input type="radio" value="2" name="rating" id="rating2">
-                    <label for="rating2" class="fa fa-star"></label>
-                    <input type="radio" value="3" name="rating" id="rating3">
-                    <label for="rating3" class="fa fa-star"></label>
-                    <input type="radio" value="4" name="rating" id="rating4">
-                    <label for="rating4" class="fa fa-star"></label>
-                    <input type="radio" value="5" name="rating" id="rating5">
-                    <label for="rating5" class="fa fa-star"></label>
-
-                    <button type="submit" class="btn btn-primary" style="float: right;">Add Rating</button>
-                </div>
+        <!-- 左中右三列布局 -->
+        <div class="columns">
+            <div class="column">
+                <h3>Column 1</h3>
+                <p>This is the content of the first column.</p>
             </div>
-        </form>
+            <div class="column">
+                <h3>Column 2</h3>
+                <p>This is the content of the second column.</p>
+            </div>
+            <div class="column">
+                <h3>Column 3</h3>
+                <p>This is the content of the third column.</p>
+            </div>
+        </div
+
+        <!--Add Resort Rating Modal -->
+        <div class="add-rating-css">
+            <form action="{{ route('resortratings') }}" method="POST">
+                @csrf
+
+                <input type="hidden" name="rateable_id" value="{{ $resort->id }}">
+                <input type="hidden" name="rateable_name" value="{{ $resort->name }}">
+                <input type="hidden" name="rateable_type" value="{{ $resort->type }}">
+
+                <div class="rating-css">
+                    <div class="star-icon">
+                        <input type="radio" value="1" name="rating" id="rating1">
+                        <label for="rating1" class="fa fa-star"></label>
+                        <input type="radio" value="2" name="rating" id="rating2">
+                        <label for="rating2" class="fa fa-star"></label>
+                        <input type="radio" value="3" name="rating" id="rating3">
+                        <label for="rating3" class="fa fa-star"></label>
+                        <input type="radio" value="4" name="rating" id="rating4">
+                        <label for="rating4" class="fa fa-star"></label>
+                        <input type="radio" value="5" name="rating" id="rating5">
+                        <label for="rating5" class="fa fa-star"></label>
+
+                        <button type="submit" class="btn btn-primary" style="float: right;">Add Rating</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <hr>
+
+        <div id="map">
+            <center><iframe src="{{ $resort->map }}" width="100%" height="450"></iframe></center>
+        </div>
+
+        <br><br>>
     </div>
-
-    <hr>
-
-    <div id="map">
-        <center><iframe src="{{ $resort->map }}" width="100%" height="450"></iframe></center>
-    </div>
-
-    <br><br>
 
     <!-- 引入 Photo Sphere Viewer 库 -->
     <script src="https://cdn.jsdelivr.net/npm/photo-sphere-viewer/dist/photo-sphere-viewer.min.js"></script>
@@ -482,6 +570,5 @@
             @endforeach
         @endif
     </script>
-
 
 @endsection

@@ -73,6 +73,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ url('/showfacilities') }}">
+                            <span class="las la-user-tie"></span>
+                            <small>Facilities</small>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ url('/admin/Resorts') }}">
                             <span class="fas fa-umbrella-beach"></span>
                             <small>Resort</small>
