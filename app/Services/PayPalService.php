@@ -37,7 +37,7 @@ class PayPalService
 
         $amount = new Amount();
         $amount->setTotal($totalAmount);
-        $amount->setCurrency('USD');
+        $amount->setCurrency('MYR');
 
         $transaction = new Transaction();
         $transaction->setAmount($amount);

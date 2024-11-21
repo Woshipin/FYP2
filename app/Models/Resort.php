@@ -55,11 +55,17 @@ class Resort extends Model
         return $this->hasMany(resort_promotion_dates::class);
     }
 
+    // App\Models\Resort.php
+
     public function getPromotionDatesWithPrices()
     {
         return $this->promotionDates()
             ->select('date', 'price')
-            ->get();
+            ->get()
+            ->mapWithKeys(function ($item) {
+                return [$item->date->format('Y-m-d') => (float)$item->price];
+            })
+            ->toArray();
     }
 
     public function discounts()

@@ -809,13 +809,15 @@
                                                             class="fa fa-trash"></i>&nbsp;Delete</a>
                                                     <a href="{{ url('backend-user/backend-resort/resortpromotion/' . $resort->id) }}"
                                                         class="btn btn-success btn-sm"><i
-                                                            class="fa fa-percent"></i>&nbsp;Promotion</a>
+                                                            class="fa fa-bullhorn"></i>&nbsp;Promotion</a>
+
                                                     <a href="{{ url('backend-user/backend-resort/resortdiscount/' . $resort->id) }}"
                                                         class="btn btn-success btn-sm"><i
-                                                            class="fa fa-percent"></i>&nbsp;Discount</a>
-                                                    <a href="{{ url('backend-user/backend-resort/resortfacilities/' . $resort->id) }}"
+                                                            class="fa fa-tag"></i>&nbsp;Discount</a>
+
+                                                    <a href="{{ url('backend-user/backend-resort/resortcommunity/' . $resort->id) }}"
                                                         class="btn btn-success btn-sm">
-                                                        <i class="fa fa-percent"></i>&nbsp;Facilities
+                                                        <i class="fa fa-people-group"></i>&nbsp;Community
                                                     </a>
 
                                                 </td>

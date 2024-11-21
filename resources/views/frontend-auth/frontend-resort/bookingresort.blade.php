@@ -1696,45 +1696,42 @@
             // checkinInput.addEventListener('change', updateResortPrice);
             // checkoutInput.addEventListener('change', calculateTotalPrice);
 
+            // JavaScript 部分
+            // 从 Blade 模板中获取促销日期和价格对象
+            const promotionDatesWithPricesObject = @json($promotionDatesWithPricesObject);
+
             // 将促销日期和价格转换为更易于使用的格式
             const promotionDatesWithPrices = {};
-            const rawPromotions = @json($promotionDatesWithPricesObject);
-            rawPromotions.forEach(promo => {
-                promotionDatesWithPrices[promo.date] = parseFloat(promo.price);
+            promotionDatesWithPricesObject.forEach(promo => {
+                promotionDatesWithPrices[promo.date] = Number(promo.price);
             });
 
             // 获取度假村折扣信息
             const resortDiscounts = @json($discounts);
 
             function getEarlyBookingDiscount(bookingDate, promotionDate) {
-                // 计算预订日期与促销日期之间的月份差
                 const bookingDateTime = new Date(bookingDate);
                 const promotionDateTime = new Date(promotionDate);
                 const monthsDiff = (promotionDateTime.getFullYear() - bookingDateTime.getFullYear()) * 12 +
                     (promotionDateTime.getMonth() - bookingDateTime.getMonth());
 
-                // 根据提前预订月数返回折扣比例
                 if (monthsDiff >= 2) {
-                    return 0.5; // 提前2个月或以上，打5折
+                    return 0.5;
                 } else if (monthsDiff >= 1) {
-                    return 0.7; // 提前1个月，打7折
+                    return 0.7;
                 }
-                return 1; // 不到1个月，原价
+                return 1;
             }
 
-            // 修改后的基于住宿天数的折扣函数，使用ResortDiscount数据
             function getDurationDiscount(nights) {
-                // 按住宿天数从高到低排序折扣
                 const sortedDiscounts = resortDiscounts.sort((a, b) => b.nights - a.nights);
 
-                // 遍历排序后的折扣，找到第一个符合条件的折扣
                 for (const discount of sortedDiscounts) {
                     if (nights >= discount.nights) {
-                        return discount.discount / 100; // 将百分比转换为小数
+                        return discount.discount / 100;
                     }
                 }
-
-                return 1; // 如果没有找到匹配的折扣，返回原价
+                return 1;
             }
 
             function calculateTotalPrice() {
@@ -1745,28 +1742,23 @@
                     let totalPrice = 0;
                     let currentDate = new Date(checkinDate);
 
-                    // 计算住宿天数
                     const timeDiff = checkoutDate.getTime() - checkinDate.getTime();
                     const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
                     console.log('Number of nights:', nights);
 
-                    // 遍历每一天直到退房日期的前一天
                     for (let i = 0; i < nights; i++) {
                         const dateString = currentDate.toISOString().split('T')[0];
                         console.log('Checking date:', dateString);
 
-                        // 检查是否为促销日期
                         let dayPrice = promotionDatesWithPrices[dateString];
                         console.log('Promotion price:', dayPrice);
                         console.log('Resort price:', resortPrice);
 
                         if (dayPrice !== undefined) {
-                            // 如果是促销日期，先记录原始促销价格
                             const originalPromotionPrice = dayPrice;
                             console.log('Found promotion price:', originalPromotionPrice);
 
-                            // 然后检查是否符合提前预订折扣条件
                             const today = new Date();
                             const earlyBookingDiscount = getEarlyBookingDiscount(today, dateString);
                             dayPrice = originalPromotionPrice * earlyBookingDiscount;
@@ -1776,13 +1768,12 @@
                             totalPrice += dayPrice;
                         } else {
                             console.log('Using regular price:', resortPrice);
-                            totalPrice += resortPrice;
+                            totalPrice += Number(resortPrice);
                         }
 
                         currentDate.setDate(currentDate.getDate() + 1);
                     }
 
-                    // 应用住宿天数折扣
                     const durationDiscount = getDurationDiscount(nights);
                     totalPrice = totalPrice * durationDiscount;
 
@@ -1795,7 +1786,6 @@
             }
 
             function updateResortPrice() {
-                const checkinDate = new Date(checkinInput.value);
                 const dateString = checkinInput.value;
 
                 console.log('Current promotions:', promotionDatesWithPrices);
@@ -1805,7 +1795,6 @@
                 console.log('Found promotion price:', promotionPrice);
 
                 if (promotionPrice !== undefined) {
-                    // 如果是促销日期，检查是否符合提前预订折扣条件
                     const today = new Date();
                     const earlyBookingDiscount = getEarlyBookingDiscount(today, dateString);
                     const finalPrice = promotionPrice * earlyBookingDiscount;
@@ -1814,7 +1803,7 @@
                     console.log('Final price:', finalPrice);
                 } else {
                     console.log('Using resort price:', resortPrice);
-                    resortPriceElement.value = resortPrice.toFixed(2);
+                    resortPriceElement.value = Number(resortPrice).toFixed(2);
                 }
 
                 calculateTotalPrice();

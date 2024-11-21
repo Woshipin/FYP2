@@ -548,6 +548,52 @@ class BookingController extends Controller
     //     }
     // }
 
+    // New
+    // public function bookingresortpage(Request $request, $id)
+    // {
+    //     if (Auth::check()) {
+    //         // 获取基础数据
+    //         $genders = Gender::all();
+    //         $resorts = Resort::find($id);
+
+    //         // 获取已预订的日期范围
+    //         $bookedDates = $this->getBookedResortDates($id);
+
+    //         // 获取促销日期和价格
+    //         $promotionDatesWithPrices = $resorts->getPromotionDatesWithPrices();
+
+    //         // 获取度假村的折扣政策，按住宿天数降序排序
+    //         $discounts = ResortDiscount::where('resort_id', $id)
+    //             ->orderBy('nights', 'desc')
+    //             ->get();
+
+    //         // 将促销日期和价格数组转换为对象
+    //         $promotionDatesWithPricesObject = [];
+    //         foreach ($promotionDatesWithPrices as $date => $price) {
+    //             $promotionDatesWithPricesObject[] = [
+    //                 'date' => $date,
+    //                 'price' => $price
+    //             ];
+    //         }
+
+    //         // dd($promotionDatesWithPricesObject);
+
+    //         // 返回视图，传递所有必要的数据
+    //         return view('frontend-auth.frontend-resort.bookingresort', compact(
+    //             'resorts',
+    //             'genders',
+    //             'bookedDates',
+    //             'promotionDatesWithPricesObject',
+    //             'discounts'
+    //         ));
+    //     } else {
+    //         return redirect()
+    //             ->route('frontend-auth.login')
+    //             ->with('error', 'You need to log in first.');
+    //     }
+    // }
+
+    // Controller 部分
     public function bookingresortpage(Request $request, $id)
     {
         if (Auth::check()) {
@@ -566,16 +612,15 @@ class BookingController extends Controller
                 ->orderBy('nights', 'desc')
                 ->get();
 
-            // 将促销日期和价格数组转换为对象
+            // 将促销日期和价格数组转换为对象数组
             $promotionDatesWithPricesObject = [];
             foreach ($promotionDatesWithPrices as $date => $price) {
                 $promotionDatesWithPricesObject[] = [
                     'date' => $date,
-                    'price' => $price
+                    'price' => $price // 价格已经是浮点数了
                 ];
             }
 
-            // 返回视图，传递所有必要的数据
             return view('frontend-auth.frontend-resort.bookingresort', compact(
                 'resorts',
                 'genders',
