@@ -248,7 +248,7 @@
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn-modern btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn-modern btn-danger" data-bs-dismiss="modal">Close</button>
                                             <button type="submit" class="btn-modern btn-success">Update Discount</button>
                                         </div>
                                     </form>
@@ -282,8 +282,8 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn-modern btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn-modern btn-primary">Add Discount</button>
+                                    <button type="button" class="btn-modern btn-danger" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn-modern btn-success">Add Discount</button>
                                 </div>
                             </form>
                         </div>

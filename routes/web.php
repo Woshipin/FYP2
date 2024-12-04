@@ -313,15 +313,24 @@ Route::get('/viewBookedResort/{id}/view',[BookingController::class,'viewBookedRe
 // GPS Auto Search Resort
 Route::get('/resort-gps-search', [ResortController::class, 'ResortgpsSearch'])->name('resort.gps.search');
 
+
+// Resort Promotion (Loyalty Program)
 Route::get('backend-user/backend-resort/resortpromotion/{id}', [ResortController::class, 'showPromotionForm'])->name('resort.promotion.form');
 Route::post('backend-user/backend-resort/resortpromotion/{id}', [ResortController::class, 'savePromotionDates'])->name('resort.promotion.save');
 Route::get('/resort/{id}/promotion/delete', [ResortController::class, 'deletePromotionDate'])->name('resort.promotion.delete');
 Route::post('/resort/promotion/update', [ResortController::class, 'updatePromotionPrice'])->name('resort.promotion.update');
 
+// Resort Discount (Loyalty Program)
 Route::get('backend-user/backend-resort/resortdiscount/{id}', [ResortController::class, 'showDiscountForm'])->name('resort.discount.form');
 Route::post('backend-user/backend-resort/resortdiscount/{id}', [ResortController::class, 'saveDiscountDates'])->name('resort.discount.save');
 Route::get('/resort/{id}/discount/delete', [ResortController::class, 'deleteDiscountDate'])->name('resort.discount.delete');
 Route::post('/resort/discount/update', [ResortController::class, 'updateDiscountPrice'])->name('resort.discount.update');
+
+// Resort Community
+Route::get('backend-user/backend-resort/resortcommunity/{id}', [ResortController::class, 'showCommunityForm'])->name('resort.community.form');
+Route::post('backend-user/backend-resort/resortcommunity/{id}', [ResortController::class, 'saveCommunityDates'])->name('resort.community.save');
+Route::get('/resort/{id}/community/delete', [ResortController::class, 'deleteCommunityDate'])->name('resort.community.delete');
+Route::post('/resort/community/update', [ResortController::class, 'updateCommunityPrice'])->name('resort.community.update');
 
 //---------------------------------------------------Restaurant Area-------------------------------------------------------------//
 //Display Restaurant Page

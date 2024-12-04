@@ -691,7 +691,7 @@ class ResortController extends Controller
                 return Carbon::parse($date->date)->format('F Y');
             });
 
-        return view('backend-user.backend-resort.resortpromotion', compact('resort', 'promotionDates'));
+        return view('backend-user.backend-resort.resort-promotion', compact('resort', 'promotionDates'));
     }
 
     public function savePromotionDates(Request $request, $id)
@@ -794,7 +794,7 @@ class ResortController extends Controller
         $discounts = ResortDiscount::with('resort')->where('resort_id', $id)->get();
 
         // 渲染视图并传递数据
-        return view('backend-user.backend-resort.resortdiscount', compact('discounts', 'id'));
+        return view('backend-user.backend-resort.resort-discount', compact('discounts', 'id'));
     }
 
     // 保存新的折扣规则
@@ -834,6 +834,67 @@ class ResortController extends Controller
 
     // 删除折扣规则
     public function deleteDiscountDate($id)
+    {
+        $discount = ResortDiscount::findOrFail($id);
+        $discount->delete();
+
+        return redirect()->back()->with('success', 'Discount deleted successfully.');
+    }
+
+    // --------------------------------------------------------- Resort Community Area  ---------------------------------------------- //
+    public function showCommunityForm($id)
+    {
+        // 检查用户是否已登录
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('fail', 'You must be logged in to view the discount form.');
+        }
+
+        $user = auth()->user();
+
+        // 获取指定度假村的折扣信息
+        // $discounts = ResortDiscount::with('resort')->where('resort_id', $id)->get();
+
+        // 渲染视图并传递数据
+        return view('backend-user.backend-resort.resort-community');
+    }
+
+    // 保存新的折扣规则
+    public function saveCommunityDates(Request $request, $id)
+    {
+        $request->validate([
+            'nights' => 'required|integer|min:1',
+            'discount' => 'required|integer|min:0|max:100',
+        ]);
+
+        ResortDiscount::create([
+            'resort_id' => $id,
+            'nights' => $request->nights,
+            'discount' => $request->discount,
+        ]);
+
+        return redirect()->back()->with('success', 'Discount added successfully.');
+    }
+
+    // 更新折扣规则
+    public function updateCommunityPrice(Request $request)
+    {
+        $request->validate([
+            'id' => 'required|exists:resort_discounts,id',
+            'nights' => 'required|integer|min:1',
+            'discount' => 'required|integer|min:0|max:100',
+        ]);
+
+        $discount = ResortDiscount::findOrFail($request->id);
+        $discount->update([
+            'nights' => $request->nights,
+            'discount' => $request->discount,
+        ]);
+
+        return redirect()->back()->with('success', 'Discount updated successfully.');
+    }
+
+    // 删除折扣规则
+    public function deleteCommunityDate($id)
     {
         $discount = ResortDiscount::findOrFail($id);
         $discount->delete();

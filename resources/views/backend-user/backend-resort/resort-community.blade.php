@@ -1,153 +1,888 @@
 @extends('backend-user.newlayout')
 
 @section('newuser-section')
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
 
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h3 class="card-title">
-                            Resort Facilities
-                        </h3>
-                        <div class="card-tools">
-                            <!-- Add Facility Button -->
-                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                data-target="#addFacilityModal">
-                                <i class="fas fa-plus"></i> Add Facility
-                            </button>
-                            <!-- Import Excel Button -->
-                            <button type="button" class="btn btn-success btn-sm" data-toggle="modal"
-                                data-target="#importFacilityModal">
-                                <i class="fas fa-file-import"></i> Import Excel
-                            </button>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    {{-- Modal CSS --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Modal 通用样式 */
+        .modal-dialog {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            border-radius: 12px;
+            padding: 20px;
+            /* Adjust padding as needed */
+            max-height: 80vh;
+            overflow-y: auto;
+            max-width: 800px;
+            /* 增加宽度 */
+        }
+
+        /* Modal Header */
+        .modal-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Form 样式优化 */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        /* 自适应文件上传框 */
+        .file-upload {
+            border: 2px dashed #ddd;
+            padding: 15px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* 提交按钮样式 */
+        .submit-button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .submit-button:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* 自定义滚动条 */
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+    </style>
+
+    {{-- Form CSS --}}
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #fff;
+            /* padding: 2rem; */
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .community-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .community-item {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .community-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+
+        .community-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            background-color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #64748b;
+        }
+
+        .community-details h2 {
+            font-size: 1.25rem;
+            margin-bottom: 0.25rem;
+            color: #1e293b;
+        }
+
+        .member-count {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        .chevron {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .community-item.expanded .chevron {
+            transform: rotate(180deg);
+        }
+
+        .community-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .community-item.expanded .community-content {
+            max-height: 1000px;
+        }
+
+        .content-inner {
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .community-description {
+            color: #475569;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .image-grid-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: none;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+
+        .image-grid-nav.prev {
+            left: -1rem;
+        }
+
+        .image-grid-nav.next {
+            right: -1rem;
+        }
+
+        .grid-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 0.5rem;
+            background-color: #f1f5f9;
+        }
+
+        .tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background-color: #f1f5f9;
+            color: #475569;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .member-count svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* New Styles for Modal */
+        .button {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #111;
+        }
+
+        .modal-description {
+            color: #666;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 4px;
+            transition: color 0.2s;
+        }
+
+        .close-button:hover {
+            color: #111;
+        }
+
+        /* Additional styles for forms, buttons, and image uploads */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #999;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .coordinates {
+            display: flex;
+            gap: 20px;
+        }
+
+        .coordinates .form-group {
+            flex: 1;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .file-upload {
+            border: 2px dashed #ddd;
+            padding: 15px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .file-upload input[type="file"] {
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-upload p {
+            margin: 0;
+            color: #777;
+            pointer-events: none;
+            /* 防止文本拦截点击事件 */
+        }
+
+        .file-upload:hover {
+            border-color: #2563eb;
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .submit-button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 12px;
+            transition: background-color 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .resort-list {
+            margin-top: 20px;
+        }
+
+        .resort-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .resort-list li {
+            background-color: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resort-list li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .resort-details {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .resort-details.active {
+            display: block;
+        }
+
+        .resort-details p {
+            margin-bottom: 10px;
+        }
+
+        .view-icon {
+            cursor: pointer;
+            font-size: 20px;
+            color: #666;
+            transition: color 0.2s;
+        }
+
+        .view-icon:hover {
+            color: #111;
+        }
+
+        .active-indicator {
+            font-size: 12px;
+            color: #666;
+            margin-left: 10px;
+        }
+
+        .add-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #111;
+            transition: all 0.2s;
+        }
+
+        .add-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Add styles for image preview */
+        .image-preview-container {
+            border: 1px solid #000;
+            border-radius: 6px;
+            padding: 10px;
+            min-height: 100px;
+            margin-top: 10px;
+        }
+
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .preview-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+    </style>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <div class="container">
+
+        <h1>Community</h1><br>
+
+        <!-- Button to trigger the modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resortModal">
+            Add New Resort
+        </button>
+
+        <br><br>
+
+        {{-- Show Community --}}
+        <div class="community-list">
+            <div class="community-item">
+                <button class="community-header">
+                    <div class="community-info">
+                        <div class="avatar">P</div>
+                        <div class="community-details">
+                            <h2>Photography Enthusiasts</h2>
+                            <div class="member-count">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                1250 members
+                            </div>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Icon</th>
-                                    <th>Name</th>
-                                    <th>Charge Type</th>
-                                    <th>Display Order</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($facilities as $facility)
-                                    <tr>
-                                        <td>
-                                            <i class="fas {{ $facility->icon_class }}"></i>
-                                        </td>
-                                        <td>{{ $facility->name }}</td>
-                                        <td>
-                                            @if ($facility->charge_type === 'free')
-                                                <span class="badge badge-success">Free</span>
-                                            @elseif($facility->charge_type === 'additional_charge')
-                                                <span class="badge badge-warning">Additional Charge</span>
-                                            @else
-                                                <span class="badge badge-info">None</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $facility->display_order }}</td>
-                                        <td>
-                                            <button type="button" class="btn btn-danger btn-sm"
-                                                onclick="deleteFacility({{ $facility->id }})">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div class="community-content">
+                    <div class="content-inner">
+                        <p class="community-description">A community for sharing and discussing photography techniques
+                            and equipment.</p>
+                        <div class="image-grid">
+                            <button class="image-grid-nav prev">&lt;</button>
+                            <img src="https://source.unsplash.com/random/400x400?photography,1" alt="Photography 1"
+                                class="grid-image">
+                            <img src="https://source.unsplash.com/random/400x400?photography,2" alt="Photography 2"
+                                class="grid-image">
+                            <img src="https://source.unsplash.com/random/400x400?photography,3" alt="Photography 3"
+                                class="grid-image">
+                            <img src="https://source.unsplash.com/random/400x400?cooking,1" alt="Cooking 1"
+                                class="grid-image">
+                            <img src="https://source.unsplash.com/random/400x400?cooking,2" alt="Cooking 2"
+                                class="grid-image">
+                            <img src="https://source.unsplash.com/random/400x400?cooking,3" alt="Cooking 3"
+                                class="grid-image">
+                            <button class="image-grid-nav next">&gt;</button>
+                        </div>
+                        <div class="tags">
+                            <span class="tag">Photography</span>
+                            <span class="tag">Art</span>
+                            <span class="tag">Creative</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="community-item">
+                <button class="community-header">
+                    <div class="community-info">
+                        <div class="avatar">C</div>
+                        <div class="community-details">
+                            <h2>Cooking Adventures</h2>
+                            <div class="member-count">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                                3500 members
+                            </div>
+                        </div>
+                    </div>
+                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </button>
+                <div class="community-content">
+                    <div class="content-inner">
+                        <p class="community-description">Explore new recipes and cooking methods with fellow food
+                            lovers.</p>
+                        <div class="image-grid">
+                            <button class="image-grid-nav prev">&lt;</button>
+                            <img src="https://source.unsplash.com/random/400x400?cooking,1" alt="Cooking 1"
+                                class="grid-image">
+                            <img src="https://source.unsplash.com/random/400x400?cooking,2" alt="Cooking 2"
+                                class="grid-image">
+                            <img src="https://source.unsplash.com/random/400x400?cooking,3" alt="Cooking 3"
+                                class="grid-image">
+                            <img src="https://source.unsplash.com/random/400x400?cooking,1" alt="Cooking 1"
+                                class="grid-image">
+                            <img src="https://source.unsplash.com/random/400x400?cooking,2" alt="Cooking 2"
+                                class="grid-image">
+                            <img src="https://source.unsplash.com/random/400x400?cooking,3" alt="Cooking 3"
+                                class="grid-image">
+                            <button class="image-grid-nav next">&gt;</button>
+                        </div>
+                        <div class="tags">
+                            <span class="tag">Cooking</span>
+                            <span class="tag">Food</span>
+                            <span class="tag">Recipes</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Add Facility Modal -->
-    <div class="modal fade" id="addFacilityModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <form action="{{ route('backend-resort.facilities.store') }}" method="POST">
-                    @csrf
+        <!-- Bootstrap Modal -->
+        <!-- Modal HTML -->
+        <div class="modal fade" id="resortModal" tabindex="-1" role="dialog" aria-labelledby="resortModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Add New Facility</h5>
-                        <button type="button" class="close" data-dismiss="modal">
-                            <span>&times;</span>
-                        </button>
+                        <h5 class="modal-title" id="resortModalLabel">Add New Resort</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" name="name" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Charge Type</label>
-                            <select name="charge_type" class="form-control" required>
-                                <option value="none">None</option>
-                                <option value="free">Free</option>
-                                <option value="additional_charge">Additional Charge</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Display Order</label>
-                            <input type="number" name="display_order" class="form-control" value="0" required>
-                        </div>
+                        <form id="resortForm">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" name="name" placeholder="Enter resort name"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="image">Images</label>
+                                <div class="file-upload">
+                                    <input type="file" id="image" name="image" accept="image/*" multiple
+                                        required>
+                                    <p>Click or drag images here to upload</p>
+                                </div>
+                                <div class="image-preview-container" id="imagePreview">
+                                    <p>No image selected</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cultural">Cultural Information</label>
+                                <textarea id="cultural" name="cultural" placeholder="Enter cultural information" required></textarea>
+                            </div>
+
+                            <div class="coordinates">
+                                <div class="form-group">
+                                    <label for="latitude">Latitude</label>
+                                    <input type="number" id="latitude" name="latitude" placeholder="0"
+                                        step="0.0000001" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="longitude">Longitude</label>
+                                    <input type="number" id="longitude" name="longitude" placeholder="0"
+                                        step="0.0000001" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <input type="text" id="address" name="address" placeholder="Enter address"
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" name="description" placeholder="Enter description" required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary submit-button">Save Resort</button>
+                        </form>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save Facility</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
+
+
     </div>
 
-    <!-- Import Excel Modal -->
-    <div class="modal fade" id="importFacilityModal" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <form action="{{ route('backend-resort.facilities.import') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title">Import Facilities from Excel</h5>
-                        <button type="button" class="close" data-dismiss="modal">
-                            <span>&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Select Excel File</label>
-                            <input type="file" name="file" class="form-control-file" required>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Import Facilities</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
+    <!-- Include jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    {{-- JS Code --}}
     <script>
-        function deleteFacility(facilityId) {
-            if (confirm('Are you sure you want to delete this facility?')) {
-                axios.delete(`/backend-resort/facilities/${facilityId}`)
-                    .then(response => {
-                        window.location.reload();
-                    })
-                    .catch(error => {
-                        alert('Error deleting facility');
-                    });
+
+        // Handle expand/collapse functionality
+        const communityHeaders = document.querySelectorAll('.community-header');
+
+        communityHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const communityItem = header.closest('.community-item');
+                communityItem.classList.toggle('expanded');
+            });
+        });
+
+        // Handle image grid navigation
+        document.querySelectorAll('.image-grid').forEach(grid => {
+            const images = Array.from(grid.querySelectorAll('.grid-image'));
+            const prevBtn = grid.querySelector('.prev');
+            const nextBtn = grid.querySelector('.next');
+            let currentPage = 0;
+            const imagesPerPage = 3;
+            const totalPages = Math.ceil(images.length / imagesPerPage);
+
+            function showImages(page) {
+                const start = page * imagesPerPage;
+                const end = start + imagesPerPage;
+
+                images.forEach((img, index) => {
+                    if (index >= start && index < end) {
+                        img.style.display = 'block';
+                    } else {
+                        img.style.display = 'none';
+                    }
+                });
             }
+
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentPage = (currentPage - 1 + totalPages) % totalPages;
+                showImages(currentPage);
+            });
+
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentPage = (currentPage + 1) % totalPages;
+                showImages(currentPage);
+            });
+
+            // Show initial images
+            showImages(0);
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            // 初始化图片上传与预览功能
+            initializeImageUpload();
+
+            // 初始化表单提交处理
+            initializeFormSubmission();
+        });
+
+        /**
+         * 初始化图片上传与预览功能
+         */
+        function initializeImageUpload() {
+            const imageInput = document.getElementById('image');
+            const previewContainer = document.getElementById('imagePreview');
+            const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+            imageInput.addEventListener('change', function(event) {
+                const files = event.target.files;
+                previewContainer.innerHTML = ''; // 清空旧内容
+
+                if (files.length === 0) {
+                    previewContainer.innerHTML = '<p>No image selected</p>';
+                    return;
+                }
+
+                Array.from(files).forEach((file, index) => {
+                    // 检查是否为图片文件
+                    if (!file.type.startsWith('image/')) {
+                        alert(`File "${file.name}" is not a valid image.`);
+                        return;
+                    }
+
+                    // 检查文件大小
+                    if (file.size > maxFileSize) {
+                        alert(`File "${file.name}" exceeds the 5MB size limit.`);
+                        return;
+                    }
+
+                    const reader = new FileReader();
+
+                    // 加载图片并显示预览
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = file.name;
+                        img.title = `Image ${index + 1}`;
+                        img.style.maxWidth = '100px';
+                        img.style.margin = '5px';
+                        img.style.borderRadius = '8px';
+                        img.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
+                        img.style.cursor = 'pointer';
+
+                        // 添加删除图片功能
+                        img.addEventListener('click', () => {
+                            if (confirm(`Remove "${file.name}" from upload?`)) {
+                                img.remove();
+                            }
+                        });
+
+                        previewContainer.appendChild(img);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
+            });
+        }
+
+        /**
+         * 初始化表单提交逻辑
+         */
+        function initializeFormSubmission() {
+            const form = document.getElementById("resortForm");
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // 检查表单是否有效
+                if (!form.checkValidity()) {
+                    alert('Please fill in all required fields.');
+                    return;
+                }
+
+                // 获取表单数据
+                const formData = new FormData(form);
+
+                // 模拟数据保存逻辑
+                console.log('Form Data:', Object.fromEntries(formData.entries()));
+                alert('Resort saved successfully!');
+
+                // 关闭模态框
+                const modal = bootstrap.Modal.getInstance(document.getElementById('resortModal'));
+                modal.hide();
+
+                // 重置表单
+                form.reset();
+
+                // 清空图片预览
+                document.getElementById('imagePreview').innerHTML = '<p>No image selected</p>';
+            });
         }
     </script>
-
-    {{-- Read Excel File Data JS --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
 @endsection
