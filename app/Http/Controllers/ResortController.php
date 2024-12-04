@@ -10,6 +10,8 @@ use App\Models\ResortDiscount;
 use App\Events\HotelStatus;
 use App\Models\ResortRating;
 use App\Models\ResortImage;
+use App\Models\ResortCommunity;
+use App\Models\ResortCommunityMultipleImage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -842,64 +844,107 @@ class ResortController extends Controller
     }
 
     // --------------------------------------------------------- Resort Community Area  ---------------------------------------------- //
+    // Show the community form
     public function showCommunityForm($id)
     {
-        // 检查用户是否已登录
+        // Check if the user is logged in
         if (!auth()->check()) {
-            return redirect()->route('login')->with('fail', 'You must be logged in to view the discount form.');
+            return redirect()->route('login')->with('fail', 'You must be logged in to view the community form.');
         }
 
-        $user = auth()->user();
+        // Get the resort communities for the given resort_id and eager load images
+        $communities = ResortCommunity::with('multipleImages')->where('resort_id', $id)->get();
 
-        // 获取指定度假村的折扣信息
-        // $discounts = ResortDiscount::with('resort')->where('resort_id', $id)->get();
-
-        // 渲染视图并传递数据
-        return view('backend-user.backend-resort.resort-community');
+        return view('backend-user.backend-resort.resort-community', compact('communities', 'id'));
     }
 
-    // 保存新的折扣规则
-    public function saveCommunityDates(Request $request, $id)
+    // Save a new resort community
+    public function saveCommunity(Request $request, $id)
     {
         $request->validate([
-            'nights' => 'required|integer|min:1',
-            'discount' => 'required|integer|min:0|max:100',
+            'name' => 'required|string|max:255',
+            'category' => 'required|string',
+            'image' => 'nullable|array',
+            'cultural' => 'nullable|string',
+            'address' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'description' => 'required|string',
         ]);
 
-        ResortDiscount::create([
+        // Create the community entry in the ResortCommunity table
+        $community = ResortCommunity::create([
             'resort_id' => $id,
-            'nights' => $request->nights,
-            'discount' => $request->discount,
+            'name' => $request->name,
+            'category' => $request->category,
+            'cultural' => $request->cultural,
+            'address' => $request->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'description' => $request->description,
         ]);
 
-        return redirect()->back()->with('success', 'Discount added successfully.');
+        // Handle image uploads and store them in the ResortCommunityMultipleImage table
+        if ($request->hasFile('image')) {
+            foreach ($request->file('image') as $image) {
+                $imagePath = $image->store('images', 'public'); // Store the image
+                ResortCommunityMultipleImage::create([
+                    'community_id' => $community->id, // Associate image with the community
+                    'image_path' => $imagePath,
+                ]);
+            }
+        }
+
+        return redirect()->back()->with('success', 'Community added successfully.');
     }
 
-    // 更新折扣规则
-    public function updateCommunityPrice(Request $request)
+    // Update a resort community
+    public function updateCommunity(Request $request, $id)
     {
         $request->validate([
-            'id' => 'required|exists:resort_discounts,id',
-            'nights' => 'required|integer|min:1',
-            'discount' => 'required|integer|min:0|max:100',
+            'name' => 'required|string|max:255',
+            'category' => 'required|string',
+            'image' => 'nullable|array',
+            'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'cultural' => 'nullable|string',
+            'address' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'description' => 'required|string',
         ]);
 
-        $discount = ResortDiscount::findOrFail($request->id);
-        $discount->update([
-            'nights' => $request->nights,
-            'discount' => $request->discount,
+        $community = ResortCommunity::findOrFail($id);
+
+        // Handle image uploads
+        $imagePaths = json_decode($community->image, true) ?? [];
+        if ($request->hasFile('image')) {
+            foreach ($request->file('image') as $image) {
+                $imagePaths[] = $image->store('images', 'public');
+            }
+        }
+
+        // Update the community data
+        $community->update([
+            'name' => $request->name,
+            'category' => $request->category,
+            'image' => json_encode($imagePaths),
+            'cultural' => $request->cultural,
+            'address' => $request->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'description' => $request->description,
         ]);
 
-        return redirect()->back()->with('success', 'Discount updated successfully.');
+        return redirect()->back()->with('success', 'Community updated successfully.');
     }
 
-    // 删除折扣规则
-    public function deleteCommunityDate($id)
+    // Delete a resort community
+    public function deleteCommunity($id)
     {
-        $discount = ResortDiscount::findOrFail($id);
-        $discount->delete();
+        $community = ResortCommunity::findOrFail($id);
+        $community->delete();
 
-        return redirect()->back()->with('success', 'Discount deleted successfully.');
+        return redirect()->back()->with('success', 'Community deleted successfully.');
     }
 
 }

@@ -16,7 +16,7 @@
 
     {{-- Modal CSS --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
+    {{-- <style>
         /* Modal 通用样式 */
         .modal-dialog {
             display: flex;
@@ -38,6 +38,78 @@
         .modal-header {
             padding: 1rem 1.5rem;
             border-bottom: 1px solid #ddd;
+        }
+
+        /* Form 样式优化 */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        /* 自适应文件上传框 */
+        .file-upload {
+            border: 2px dashed #ddd;
+            padding: 15px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* 提交按钮样式 */
+        .submit-button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .submit-button:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* 自定义滚动条 */
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb:hover {
+            background: #666;
+        }
+    </style> --}}
+    <style>
+        /* Modal 通用样式 */
+        .modal-lg {
+            max-width: 900px;
+            /* 增加Modal宽度 */
+        }
+
+        .modal-content {
+            border-radius: 12px;
+            padding: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         /* Form 样式优化 */
@@ -541,6 +613,8 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     <div class="container">
 
         <h1>Community</h1><br>
@@ -554,119 +628,76 @@
 
         {{-- Show Community --}}
         <div class="community-list">
-            <div class="community-item">
-                <button class="community-header">
-                    <div class="community-info">
-                        <div class="avatar">P</div>
-                        <div class="community-details">
-                            <h2>Photography Enthusiasts</h2>
-                            <div class="member-count">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                                1250 members
+            @foreach ($communities as $community)
+                <div class="community-item">
+                    <button class="community-header">
+                        <div class="community-info">
+                            <!-- Display first letter of community name as avatar -->
+                            <div class="avatar">{{ strtoupper(substr($community->name, 0, 1)) }}</div>
+                            <div class="community-details">
+                                <h2>{{ $community->name }}</h2>
+                                <div class="member-count">
+                                    <!-- SVG icon for member count -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                    @foreach (explode(',', $community->category) as $category)
+                                        <span class="tag">{{ $category }}</span>
+                                    @endforeach
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
-                <div class="community-content">
-                    <div class="content-inner">
-                        <p class="community-description">A community for sharing and discussing photography techniques
-                            and equipment.</p>
-                        <div class="image-grid">
-                            <button class="image-grid-nav prev">&lt;</button>
-                            <img src="https://source.unsplash.com/random/400x400?photography,1" alt="Photography 1"
-                                class="grid-image">
-                            <img src="https://source.unsplash.com/random/400x400?photography,2" alt="Photography 2"
-                                class="grid-image">
-                            <img src="https://source.unsplash.com/random/400x400?photography,3" alt="Photography 3"
-                                class="grid-image">
-                            <img src="https://source.unsplash.com/random/400x400?cooking,1" alt="Cooking 1"
-                                class="grid-image">
-                            <img src="https://source.unsplash.com/random/400x400?cooking,2" alt="Cooking 2"
-                                class="grid-image">
-                            <img src="https://source.unsplash.com/random/400x400?cooking,3" alt="Cooking 3"
-                                class="grid-image">
-                            <button class="image-grid-nav next">&gt;</button>
-                        </div>
-                        <div class="tags">
-                            <span class="tag">Photography</span>
-                            <span class="tag">Art</span>
-                            <span class="tag">Creative</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                        <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="community-content">
+                        <div class="content-inner">
+                            <!-- Community Description -->
+                            <p class="community-description">{{ $community->description }}</p>
+                            
+                            <div class="image-grid">
+                                <button class="image-grid-nav prev">&lt;</button>
 
-            <div class="community-item">
-                <button class="community-header">
-                    <div class="community-info">
-                        <div class="avatar">C</div>
-                        <div class="community-details">
-                            <h2>Cooking Adventures</h2>
-                            <div class="member-count">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                                3500 members
+                                <!-- Debugging: Display the paths -->
+                                @foreach ($community->multipleImages as $image)
+                                    <p>{{ $image->image_path }}</p>  <!-- Check if image paths are correct -->
+                                    <img src="{{ Storage::url($image->image_path) }}" alt="{{ $community->name }}" class="grid-image">
+                                @endforeach
+
+                                <button class="image-grid-nav next">&gt;</button>
+                            </div>
+
+
+                            <div class="tags">
+                                <!-- Loop through categories -->
+                                @foreach (explode(',', $community->category) as $category)
+                                    <span class="tag">{{ $category }}</span>
+                                @endforeach
                             </div>
                         </div>
                     </div>
-                    <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                </button>
-                <div class="community-content">
-                    <div class="content-inner">
-                        <p class="community-description">Explore new recipes and cooking methods with fellow food
-                            lovers.</p>
-                        <div class="image-grid">
-                            <button class="image-grid-nav prev">&lt;</button>
-                            <img src="https://source.unsplash.com/random/400x400?cooking,1" alt="Cooking 1"
-                                class="grid-image">
-                            <img src="https://source.unsplash.com/random/400x400?cooking,2" alt="Cooking 2"
-                                class="grid-image">
-                            <img src="https://source.unsplash.com/random/400x400?cooking,3" alt="Cooking 3"
-                                class="grid-image">
-                            <img src="https://source.unsplash.com/random/400x400?cooking,1" alt="Cooking 1"
-                                class="grid-image">
-                            <img src="https://source.unsplash.com/random/400x400?cooking,2" alt="Cooking 2"
-                                class="grid-image">
-                            <img src="https://source.unsplash.com/random/400x400?cooking,3" alt="Cooking 3"
-                                class="grid-image">
-                            <button class="image-grid-nav next">&gt;</button>
-                        </div>
-                        <div class="tags">
-                            <span class="tag">Cooking</span>
-                            <span class="tag">Food</span>
-                            <span class="tag">Recipes</span>
-                        </div>
-                    </div>
                 </div>
-            </div>
+            @endforeach
         </div>
 
-        <!-- Bootstrap Modal -->
-        <!-- Modal HTML -->
+
+        <!-- Bootstrap Add Community Modal -->
         <div class="modal fade" id="resortModal" tabindex="-1" role="dialog" aria-labelledby="resortModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document"> <!-- 使用modal-lg类来增加宽度 -->
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="resortModalLabel">Add New Resort</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="resortForm">
+                        <form id="resortForm" action="{{ route('resort.community.save', ['id' => $id]) }}" method="POST"
+                            enctype="multipart/form-data">
+                            @csrf
                             <div class="form-group">
                                 <label for="name">Name</label>
                                 <input type="text" id="name" name="name" placeholder="Enter resort name"
@@ -674,9 +705,19 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="category">Category</label>
+                                <select id="category" name="category" required>
+                                    <option value="transport">Transport</option>
+                                    <option value="community">Community</option>
+                                    <option value="social">Social</option>
+                                    <option value="cultural">Cultural</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
                                 <label for="image">Images</label>
                                 <div class="file-upload">
-                                    <input type="file" id="image" name="image" accept="image/*" multiple
+                                    <input type="file" id="image" name="image[]" accept="image/*" multiple
                                         required>
                                     <p>Click or drag images here to upload</p>
                                 </div>
@@ -687,35 +728,36 @@
 
                             <div class="form-group">
                                 <label for="cultural">Cultural Information</label>
-                                <textarea id="cultural" name="cultural" placeholder="Enter cultural information" required></textarea>
+                                <textarea id="cultural" name="cultural" placeholder="Enter cultural information" rows="5" required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="location">Address</label>
+                                <textarea id="location" name="address" placeholder="Enter address" rows="5" required></textarea>
                             </div>
 
                             <div class="coordinates">
                                 <div class="form-group">
                                     <label for="latitude">Latitude</label>
                                     <input type="number" id="latitude" name="latitude" placeholder="0"
-                                        step="0.0000001" required>
+                                        step="0.0000001" required readonly>
                                 </div>
                                 <div class="form-group">
                                     <label for="longitude">Longitude</label>
                                     <input type="number" id="longitude" name="longitude" placeholder="0"
-                                        step="0.0000001" required>
+                                        step="0.0000001" required readonly>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label for="address">Address</label>
-                                <input type="text" id="address" name="address" placeholder="Enter address"
-                                    required>
-                            </div>
-
-                            <div class="form-group">
                                 <label for="description">Description</label>
-                                <textarea id="description" name="description" placeholder="Enter description" required></textarea>
+                                <textarea id="description" name="description" placeholder="Enter description" rows="5" required></textarea>
                             </div>
 
                             <button type="submit" class="btn btn-primary submit-button">Save Resort</button>
                         </form>
+
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -735,7 +777,6 @@
 
     {{-- JS Code --}}
     <script>
-
         // Handle expand/collapse functionality
         const communityHeaders = document.querySelectorAll('.community-header');
 
@@ -783,13 +824,13 @@
             // Show initial images
             showImages(0);
         });
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             // 初始化图片上传与预览功能
             initializeImageUpload();
 
             // 初始化表单提交处理
-            initializeFormSubmission();
+            // initializeFormSubmission();
         });
 
         /**
@@ -854,35 +895,173 @@
         /**
          * 初始化表单提交逻辑
          */
-        function initializeFormSubmission() {
-            const form = document.getElementById("resortForm");
+        // function initializeFormSubmission() {
+        //     const form = document.getElementById("resortForm");
 
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
+        //     form.addEventListener('submit', function(e) {
+        //         e.preventDefault();
 
-                // 检查表单是否有效
-                if (!form.checkValidity()) {
-                    alert('Please fill in all required fields.');
+        //         // 检查表单是否有效
+        //         if (!form.checkValidity()) {
+        //             alert('Please fill in all required fields.');
+        //             return;
+        //         }
+
+        //         // 获取表单数据
+        //         const formData = new FormData(form);
+
+        //         // 模拟数据保存逻辑
+        //         console.log('Form Data:', Object.fromEntries(formData.entries()));
+        //         alert('Resort saved successfully!');
+
+        //         // 关闭模态框
+        //         const modal = bootstrap.Modal.getInstance(document.getElementById('resortModal'));
+        //         modal.hide();
+
+        //         // 重置表单
+        //         form.reset();
+
+        //         // 清空图片预览
+        //         document.getElementById('imagePreview').innerHTML = '<p>No image selected</p>';
+        //     });
+        // }
+    </script>
+
+    {{-- Get Coordinates --}}
+    <script>
+        document.getElementById('location').addEventListener('input', function() {
+            const address = this.value.trim();
+
+            // 如果地址为空，清空经纬度输入框
+            if (address === '') {
+                document.getElementById('latitude').value = '';
+                document.getElementById('longitude').value = '';
+                return;
+            }
+
+            // 调用 Nominatim API 获取地理编码数据
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`, {
+                    headers: {
+                        'User-Agent': 'YourAppName/1.0 (YourContactEmail)', // 替换为你的应用信息
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length > 0) {
+                        // 获取第一个结果的经纬度信息
+                        const location = data[0];
+                        document.getElementById('latitude').value = location.lat;
+                        document.getElementById('longitude').value = location.lon;
+                    } else {
+                        // 地址未找到时清空输入框
+                        document.getElementById('latitude').value = '';
+                        document.getElementById('longitude').value = '';
+                        console.error('No results found for the given address.');
+                    }
+                })
+                .catch(error => {
+                    // 捕获网络错误并清空输入框
+                    document.getElementById('latitude').value = '';
+                    document.getElementById('longitude').value = '';
+                    console.error('Error fetching geocoding data:', error);
+                });
+        });
+    </script>
+    {{-- <script>
+        // 防抖机制，用于减少 API 调用次数
+        let debounceTimer;
+
+        document.getElementById('location').addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                let address = this.value.trim();
+
+                // 清理字符串：移除特殊字符和前导符号
+                address = address.replace(/^-|[^a-zA-Z0-9\s,]/g, '');
+
+                // 尝试简化地址，仅保留主要部分
+                const simplifiedAddress = address.split(',').slice(0, 3).join(',');
+
+                // 如果地址为空，清空经纬度输入框
+                if (address === '') {
+                    document.getElementById('latitude').value = '';
+                    document.getElementById('longitude').value = '';
                     return;
                 }
 
-                // 获取表单数据
-                const formData = new FormData(form);
+                // 调用 Nominatim API
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(simplifiedAddress)}&countrycodes=my`, {
+                        headers: {
+                            'User-Agent': 'YourAppName/1.0 (ahpin7762@gmail.com)',
+                        },
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            const sortedData = data.sort((a, b) => b.importance - a.importance);
+                            const location = sortedData[0];
 
-                // 模拟数据保存逻辑
-                console.log('Form Data:', Object.fromEntries(formData.entries()));
-                alert('Resort saved successfully!');
+                            // 填入经纬度
+                            document.getElementById('latitude').value = location.lat;
+                            document.getElementById('longitude').value = location.lon;
+                        } else {
+                            // 未找到结果，清空经纬度输入框
+                            document.getElementById('latitude').value = '';
+                            document.getElementById('longitude').value = '';
+                            console.error('No results found for the given address.');
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('latitude').value = '';
+                        document.getElementById('longitude').value = '';
+                        console.error('Error fetching geocoding data:', error);
+                    });
+            }, 500); // 防抖延迟 500 毫秒
+        });
+    </script> --}}
 
-                // 关闭模态框
-                const modal = bootstrap.Modal.getInstance(document.getElementById('resortModal'));
-                modal.hide();
+    {{-- Toastr JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
-                // 重置表单
-                form.reset();
+    <script>
+        @if (Session::has('success'))
+            Toastify({
+                text: "{{ Session::get('success') }}",
+                duration: 10000,
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)"
+                }
+            }).showToast();
+        @elseif (Session::has('fail'))
+            Toastify({
+                text: "{{ Session::get('fail') }}",
+                duration: 10000,
+                style: {
+                    background: "linear-gradient(to right, #b90000, #c99396)"
+                }
+            }).showToast();
+        @endif
 
-                // 清空图片预览
-                document.getElementById('imagePreview').innerHTML = '<p>No image selected</p>';
-            });
-        }
+        @if (Session::has('error'))
+            Toastify({
+                text: "{{ Session::get('error') }}",
+                duration: 10000,
+                style: {
+                    background: "linear-gradient(to right, #b90000, #c99396)"
+                }
+            }).showToast();
+        @endif
+
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                Toastify({
+                    text: "{{ $error }}",
+                    duration: 10000,
+                    style: {
+                        background: "linear-gradient(to right, #b90000, #c99396)"
+                    }
+                }).showToast();
+            @endforeach
+        @endif
     </script>
 @endsection
