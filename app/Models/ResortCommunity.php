@@ -26,5 +26,4 @@ class ResortCommunity extends Model
     {
         return $this->hasMany(ResortCommunityMultipleImage::class, 'community_id');
     }
-
 }

@@ -847,14 +847,15 @@ class ResortController extends Controller
     // Show the community form
     public function showCommunityForm($id)
     {
-        // Check if the user is logged in
+        // 确保用户已登录
         if (!auth()->check()) {
             return redirect()->route('login')->with('fail', 'You must be logged in to view the community form.');
         }
 
-        // Get the resort communities for the given resort_id and eager load images
+        // 获取指定 resort_id 的所有社区，并预加载 multipleImages
         $communities = ResortCommunity::with('multipleImages')->where('resort_id', $id)->get();
 
+        // 返回视图并传递数据
         return view('backend-user.backend-resort.resort-community', compact('communities', 'id'));
     }
 
@@ -872,26 +873,34 @@ class ResortController extends Controller
             'description' => 'required|string',
         ]);
 
-        // Create the community entry in the ResortCommunity table
-        $community = ResortCommunity::create([
-            'resort_id' => $id,
-            'name' => $request->name,
-            'category' => $request->category,
-            'cultural' => $request->cultural,
-            'address' => $request->address,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            'description' => $request->description,
-        ]);
+        // 创建社区记录
+        $community = new ResortCommunity();
+        $community->resort_id = $id;
+        $community->name = $request->name;
+        $community->category = $request->category;
+        $community->cultural = $request->cultural;
+        $community->address = $request->address;
+        $community->latitude = $request->latitude;
+        $community->longitude = $request->longitude;
+        $community->description = $request->description;
+        $community->save();
 
-        // Handle image uploads and store them in the ResortCommunityMultipleImage table
+        // 处理图像上传
         if ($request->hasFile('image')) {
             foreach ($request->file('image') as $image) {
-                $imagePath = $image->store('images', 'public'); // Store the image
-                ResortCommunityMultipleImage::create([
-                    'community_id' => $community->id, // Associate image with the community
-                    'image_path' => $imagePath,
-                ]);
+                Log::info('Uploading image: ' . $image->getClientOriginalName());
+
+                // 防止文件名重复
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('images'), $imageName);
+
+                Log::info('Saving image to database: ' . $imageName);
+
+                // 保存到 ResortCommunityMultipleImage 表
+                $communityImage = new ResortCommunityMultipleImage();
+                $communityImage->community_id = $community->id;
+                $communityImage->image_path = 'images/' . $imageName; // 保存完整路径
+                $communityImage->save();
             }
         }
 
@@ -901,11 +910,13 @@ class ResortController extends Controller
     // Update a resort community
     public function updateCommunity(Request $request, $id)
     {
+        $community = ResortCommunity::findOrFail($id);
+
+        // Validate the request data
         $request->validate([
             'name' => 'required|string|max:255',
             'category' => 'required|string',
             'image' => 'nullable|array',
-            'image.*' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'cultural' => 'nullable|string',
             'address' => 'required|string',
             'latitude' => 'nullable|numeric',
@@ -913,27 +924,41 @@ class ResortController extends Controller
             'description' => 'required|string',
         ]);
 
-        $community = ResortCommunity::findOrFail($id);
+        // Update the community data
+        $community->name = $request->name;
+        $community->category = $request->category;
+        $community->cultural = $request->cultural;
+        $community->address = $request->address;
+        $community->latitude = $request->latitude;
+        $community->longitude = $request->longitude;
+        $community->description = $request->description;
 
-        // Handle image uploads
-        $imagePaths = json_decode($community->image, true) ?? [];
+        // Handle image uploads using the same approach as `saveCommunity`
         if ($request->hasFile('image')) {
+            // 删除旧图片记录及文件
+            foreach ($community->multipleImages as $existingImage) {
+                $existingImagePath = public_path($existingImage->image_path);
+                if (file_exists($existingImagePath)) {
+                    unlink($existingImagePath); // 删除实际文件
+                }
+                $existingImage->delete(); // 删除数据库记录
+            }
+
+            // 上传新图片并保存数据库记录
             foreach ($request->file('image') as $image) {
-                $imagePaths[] = $image->store('images', 'public');
+                // 防止文件名冲突
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('images'), $imageName);
+
+                // 保存到数据库
+                $community->multipleImages()->create([
+                    'image_path' => 'images/' . $imageName, // 保存完整路径
+                ]);
             }
         }
 
-        // Update the community data
-        $community->update([
-            'name' => $request->name,
-            'category' => $request->category,
-            'image' => json_encode($imagePaths),
-            'cultural' => $request->cultural,
-            'address' => $request->address,
-            'latitude' => $request->latitude,
-            'longitude' => $request->longitude,
-            'description' => $request->description,
-        ]);
+        // Save the updated community
+        $community->save();
 
         return redirect()->back()->with('success', 'Community updated successfully.');
     }
@@ -941,9 +966,13 @@ class ResortController extends Controller
     // Delete a resort community
     public function deleteCommunity($id)
     {
+        // Find the community by id
         $community = ResortCommunity::findOrFail($id);
+
+        // Delete the community
         $community->delete();
 
+        // Redirect with success message
         return redirect()->back()->with('success', 'Community deleted successfully.');
     }
 

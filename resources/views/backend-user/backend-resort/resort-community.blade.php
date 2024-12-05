@@ -14,6 +14,9 @@
     <!-- Custom styles for this page -->
     <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
+    <!-- Add Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
     {{-- Modal CSS --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     {{-- <style>
@@ -607,6 +610,69 @@
         }
     </style>
 
+    {{-- Action CSS --}}
+    <style>
+        .community-content {
+            position: relative;
+        }
+
+        .action-icons {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            /* 为悬浮文字定位 */
+        }
+
+        .icon-button svg {
+            width: 20px;
+            height: 20px;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .icon-button:hover svg {
+            color: #000;
+        }
+
+        /* 添加悬浮时的文字显示在图标上方 */
+        .icon-button::after {
+            content: attr(title);
+            /* 通过 title 属性显示文字 */
+            position: absolute;
+            top: -25px;
+            /* 文字显示在图标上方 */
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .icon-button:hover::after {
+            opacity: 1;
+        }
+    </style>
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -626,6 +692,69 @@
 
         <br><br>
 
+        {{-- Show Community --}}
+        {{-- <div class="community-list">
+            @foreach ($communities as $community)
+                <div class="community-item">
+                    <button class="community-header">
+                        <div class="community-info">
+                            <!-- Display first letter of community name as avatar -->
+                            <div class="avatar">{{ strtoupper(substr($community->name, 0, 1)) }}</div>
+                            <div class="community-details">
+                                <h2>{{ $community->name }}</h2>
+                                <div class="member-count">
+                                    <!-- SVG icon for member count -->
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+
+                                    @foreach (explode(',', $community->category) as $category)
+                                        <span class="tag">{{ $category }}</span>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+                        <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+                    <div class="community-content">
+                        <div class="content-inner">
+                            <!-- Community Description -->
+                            <p class="community-description">{{ $community->description }}</p>
+
+                            <div class="image-grid">
+                                <!-- 左侧导航按钮 -->
+                                <button class="image-grid-nav prev">&lt;</button>
+
+                                <!-- 遍历社区的图片 -->
+                                @foreach ($communities as $community)
+                                    @foreach ($community->multipleImages as $image)
+                                        <img src="{{ $image->full_image_path }}" alt="{{ $community->name }}" class="grid-image">
+                                    @endforeach
+                                @endforeach
+
+                                <!-- 右侧导航按钮 -->
+                                <button class="image-grid-nav next">&gt;</button>
+                            </div>
+
+                            <div class="tags">
+                                <!-- Loop through categories -->
+                                @foreach (explode(',', $community->category) as $category)
+                                    <span class="tag">{{ $category }}</span>
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <button>Edit</button>
+                        <button>delete</button>
+                    </div>
+                </div>
+            @endforeach
+        </div> --}}
         {{-- Show Community --}}
         <div class="community-list">
             @foreach ($communities as $community)
@@ -658,19 +787,20 @@
                         <div class="content-inner">
                             <!-- Community Description -->
                             <p class="community-description">{{ $community->description }}</p>
-                            
+
                             <div class="image-grid">
+                                <!-- Left navigation button -->
                                 <button class="image-grid-nav prev">&lt;</button>
 
-                                <!-- Debugging: Display the paths -->
+                                <!-- Community images -->
                                 @foreach ($community->multipleImages as $image)
-                                    <p>{{ $image->image_path }}</p>  <!-- Check if image paths are correct -->
-                                    <img src="{{ Storage::url($image->image_path) }}" alt="{{ $community->name }}" class="grid-image">
+                                    <img src="{{ $image->full_image_path }}" alt="{{ $community->name }}"
+                                        class="grid-image">
                                 @endforeach
 
+                                <!-- Right navigation button -->
                                 <button class="image-grid-nav next">&gt;</button>
                             </div>
-
 
                             <div class="tags">
                                 <!-- Loop through categories -->
@@ -679,11 +809,27 @@
                                 @endforeach
                             </div>
                         </div>
+
+                        <!-- Edit and Delete icons as buttons -->
+                        <div class="action-icons">
+
+                            <!-- Edit Button -->
+                            <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                data-bs-target="#resortEditModal{{ $community->id }}">
+                                <i class="fa fa-edit"></i>&nbsp;Edit
+                            </a>
+
+                            <!-- Delete button -->
+                            <a onclick="return confirm('Are you sure to delete this data?')"
+                                href="{{ route('resort.community.delete', $community->id) }}" class="btn btn-danger btn-sm">
+                                <i class="fa fa-trash"></i>&nbsp;Delete
+                            </a>
+                        </div>
+
                     </div>
                 </div>
             @endforeach
         </div>
-
 
         <!-- Bootstrap Add Community Modal -->
         <div class="modal fade" id="resortModal" tabindex="-1" role="dialog" aria-labelledby="resortModalLabel"
@@ -700,7 +846,7 @@
                             @csrf
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input type="text" id="name" name="name" placeholder="Enter resort name"
+                                <input type="text" id="name" name="name" placeholder="Enter community name"
                                     required>
                             </div>
 
@@ -754,7 +900,7 @@
                                 <textarea id="description" name="description" placeholder="Enter description" rows="5" required></textarea>
                             </div>
 
-                            <button type="submit" class="btn btn-primary submit-button">Save Resort</button>
+                            <button type="submit" class="btn btn-primary submit-button">Save Community</button>
                         </form>
 
 
@@ -766,8 +912,131 @@
             </div>
         </div>
 
+        <!-- Dynamically Generated Edit Community Modal -->
+        @foreach ($communities as $community)
+            <div class="modal fade" id="resortEditModal{{ $community->id }}" tabindex="-1" role="dialog"
+                aria-labelledby="resortEditModalLabel{{ $community->id }}" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="resortEditModalLabel{{ $community->id }}">
+                                Edit Community
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="resortEditForm{{ $community->id }}"
+                                action="{{ route('resort.community.update', $community->id) }}" method="POST"
+                                enctype="multipart/form-data">
+
+                                @csrf
+                                <input type="hidden" name="id" value="{{ $community->id }}" />
+
+                                <div class="form-group">
+                                    <label for="name{{ $community->id }}">Name</label>
+                                    <input type="text" id="name{{ $community->id }}" name="name"
+                                        value="{{ $community->name }}" class="form-control"
+                                        placeholder="Enter resort name" required />
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="category{{ $community->id }}">Category</label>
+                                    <select id="category{{ $community->id }}" name="category" class="form-select"
+                                        required>
+                                        <option value="transport"
+                                            {{ in_array('transport', explode(',', $community->category)) ? 'selected' : '' }}>
+                                            Transport
+                                        </option>
+                                        <option value="community"
+                                            {{ in_array('community', explode(',', $community->category)) ? 'selected' : '' }}>
+                                            Community
+                                        </option>
+                                        <option value="social"
+                                            {{ in_array('social', explode(',', $community->category)) ? 'selected' : '' }}>
+                                            Social
+                                        </option>
+                                        <option value="cultural"
+                                            {{ in_array('cultural', explode(',', $community->category)) ? 'selected' : '' }}>
+                                            Cultural
+                                        </option>
+                                    </select>
+                                </div>
+
+                                {{-- <div class="form-group">
+                                    <label for="image{{ $community->id }}">Images</label>
+                                    <div class="file-upload">
+                                        <input type="file" id="image{{ $community->id }}" name="image[]"
+                                            accept="image/*" multiple>
+                                        <p>Click or drag images here to upload</p>
+                                    </div>
+                                    <div class="image-preview-container" id="imagePreview{{ $community->id }}">
+                                        <p>No image selected</p>
+                                    </div>
+                                </div> --}}
+
+                                <div class="form-group">
+                                    <label for="image{{ $community->id }}">Images</label>
+                                    <div class="file-upload">
+                                        <input type="file" id="image{{ $community->id }}" name="image[]"
+                                            accept="image/*" multiple>
+                                        <p>Click or drag images here to upload</p>
+                                    </div>
+                                    <div class="image-preview-container" id="imagePreview{{ $community->id }}">
+                                        <!-- 动态生成的预览图像将在这里显示 -->
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="cultural{{ $community->id }}">Cultural Information</label>
+                                    <textarea id="cultural{{ $community->id }}" name="cultural" placeholder="Enter cultural information"
+                                        rows="5">{{ $community->cultural ?? '' }}</textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="location{{ $community->id }}">Address</label>
+                                    <textarea id="location{{ $community->id }}" name="address" placeholder="Enter address" rows="5">{{ $community->address ?? '' }}</textarea>
+                                </div>
+
+                                <div class="coordinates">
+                                    <div class="form-group">
+                                        <label for="latitude{{ $community->id }}">Latitude</label>
+                                        <input type="number" id="latitude{{ $community->id }}" name="latitude"
+                                            placeholder="0" step="0.0000001" required readonly
+                                            value="{{ $community->latitude ?? '' }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="longitude{{ $community->id }}">Longitude</label>
+                                        <input type="number" id="longitude{{ $community->id }}" name="longitude"
+                                            placeholder="0" step="0.0000001" required readonly
+                                            value="{{ $community->longitude ?? '' }}">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="description{{ $community->id }}">Description</label>
+                                    <textarea id="description{{ $community->id }}" name="description" placeholder="Enter description" rows="5">{{ $community->description ?? '' }}</textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary submit-button">
+                                    Update Community
+                                </button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
 
     </div>
+
+    <!-- Add Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Add Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
@@ -776,155 +1045,315 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     {{-- JS Code --}}
-    <script>
-        // Handle expand/collapse functionality
-        const communityHeaders = document.querySelectorAll('.community-header');
+    {{-- <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Handle expand/collapse functionality
+            const communityHeaders = document.querySelectorAll(".community-header");
 
-        communityHeaders.forEach(header => {
-            header.addEventListener('click', () => {
-                const communityItem = header.closest('.community-item');
-                communityItem.classList.toggle('expanded');
-            });
-        });
-
-        // Handle image grid navigation
-        document.querySelectorAll('.image-grid').forEach(grid => {
-            const images = Array.from(grid.querySelectorAll('.grid-image'));
-            const prevBtn = grid.querySelector('.prev');
-            const nextBtn = grid.querySelector('.next');
-            let currentPage = 0;
-            const imagesPerPage = 3;
-            const totalPages = Math.ceil(images.length / imagesPerPage);
-
-            function showImages(page) {
-                const start = page * imagesPerPage;
-                const end = start + imagesPerPage;
-
-                images.forEach((img, index) => {
-                    if (index >= start && index < end) {
-                        img.style.display = 'block';
-                    } else {
-                        img.style.display = 'none';
-                    }
+            communityHeaders.forEach((header) => {
+                header.addEventListener("click", () => {
+                    const communityItem = header.closest(".community-item");
+                    communityItem.classList.toggle("expanded");
                 });
-            }
-
-            prevBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                currentPage = (currentPage - 1 + totalPages) % totalPages;
-                showImages(currentPage);
             });
 
-            nextBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                currentPage = (currentPage + 1) % totalPages;
-                showImages(currentPage);
+            // Handle image grid navigation
+            document.querySelectorAll(".image-grid").forEach((grid) => {
+                const images = Array.from(grid.querySelectorAll(".grid-image"));
+                const prevBtn = grid.querySelector(".prev");
+                const nextBtn = grid.querySelector(".next");
+                let currentPage = 0;
+                const imagesPerPage = 3;
+                const totalPages = Math.ceil(images.length / imagesPerPage);
+
+                function showImages(page) {
+                    const start = page * imagesPerPage;
+                    const end = start + imagesPerPage;
+
+                    images.forEach((img, index) => {
+                        img.style.display = index >= start && index < end ? "block" : "none";
+                    });
+                }
+
+                if (prevBtn && nextBtn) {
+                    prevBtn.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        currentPage = (currentPage - 1 + totalPages) % totalPages;
+                        showImages(currentPage);
+                    });
+
+                    nextBtn.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        currentPage = (currentPage + 1) % totalPages;
+                        showImages(currentPage);
+                    });
+                }
+
+                // Show initial images
+                showImages(0);
             });
 
-            // Show initial images
-            showImages(0);
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // 初始化图片上传与预览功能
+            // Initialize image upload with preview functionality
             initializeImageUpload();
 
-            // 初始化表单提交处理
-            // initializeFormSubmission();
+            // Modal initialization (for dynamically generated modals)
+            initializeModals();
         });
 
         /**
-         * 初始化图片上传与预览功能
+         * Initialize the image upload with preview functionality
          */
         function initializeImageUpload() {
-            const imageInput = document.getElementById('image');
-            const previewContainer = document.getElementById('imagePreview');
-            const maxFileSize = 5 * 1024 * 1024; // 5MB
+            // Add event listeners to all file inputs with class `file-upload-input`
+            document.querySelectorAll('input[type="file"]').forEach((imageInput) => {
+                const previewContainerId = imageInput.dataset.previewTarget || "imagePreview";
+                const previewContainer = document.getElementById(previewContainerId);
+                const maxFileSize = 5 * 1024 * 1024; // 5MB
 
-            imageInput.addEventListener('change', function(event) {
-                const files = event.target.files;
-                previewContainer.innerHTML = ''; // 清空旧内容
-
-                if (files.length === 0) {
-                    previewContainer.innerHTML = '<p>No image selected</p>';
+                if (!previewContainer) {
+                    console.warn(`Preview container with ID "${previewContainerId}" not found`);
                     return;
                 }
 
-                Array.from(files).forEach((file, index) => {
-                    // 检查是否为图片文件
-                    if (!file.type.startsWith('image/')) {
-                        alert(`File "${file.name}" is not a valid image.`);
+                imageInput.addEventListener("change", function(event) {
+                    const files = event.target.files;
+                    previewContainer.innerHTML = ""; // Clear previous content
+
+                    if (files.length === 0) {
+                        previewContainer.innerHTML = '<p class="text-muted">No image selected</p>';
                         return;
                     }
 
-                    // 检查文件大小
-                    if (file.size > maxFileSize) {
-                        alert(`File "${file.name}" exceeds the 5MB size limit.`);
-                        return;
-                    }
+                    Array.from(files).forEach((file, index) => {
+                        // Check if the file is an image
+                        if (!file.type.startsWith("image/")) {
+                            alert(`File "${file.name}" is not a valid image.`);
+                            return;
+                        }
 
-                    const reader = new FileReader();
+                        // Check file size
+                        if (file.size > maxFileSize) {
+                            alert(`File "${file.name}" exceeds the 5MB size limit.`);
+                            return;
+                        }
 
-                    // 加载图片并显示预览
-                    reader.onload = function(e) {
-                        const img = document.createElement('img');
-                        img.src = e.target.result;
-                        img.alt = file.name;
-                        img.title = `Image ${index + 1}`;
-                        img.style.maxWidth = '100px';
-                        img.style.margin = '5px';
-                        img.style.borderRadius = '8px';
-                        img.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
-                        img.style.cursor = 'pointer';
+                        const reader = new FileReader();
 
-                        // 添加删除图片功能
-                        img.addEventListener('click', () => {
-                            if (confirm(`Remove "${file.name}" from upload?`)) {
-                                img.remove();
-                            }
-                        });
+                        // Load image and show preview
+                        reader.onload = function(e) {
+                            const img = document.createElement("img");
+                            img.src = e.target.result;
+                            img.alt = file.name;
+                            img.title = `Image ${index + 1}`;
+                            img.style.maxWidth = "100px";
+                            img.style.margin = "5px";
+                            img.style.borderRadius = "8px";
+                            img.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+                            img.style.cursor = "pointer";
 
-                        previewContainer.appendChild(img);
-                    };
+                            // Add remove image functionality
+                            img.addEventListener("click", () => {
+                                if (confirm(`Remove "${file.name}" from upload?`)) {
+                                    img.remove();
+                                }
+                            });
 
-                    reader.readAsDataURL(file);
+                            previewContainer.appendChild(img);
+                        };
+
+                        reader.readAsDataURL(file);
+                    });
                 });
             });
         }
 
         /**
-         * 初始化表单提交逻辑
+         * Initialize modals for dynamically generated modals
          */
-        // function initializeFormSubmission() {
-        //     const form = document.getElementById("resortForm");
+        function initializeModals() {
+            const modals = document.querySelectorAll(".modal");
+            modals.forEach((modal) => {
+                new bootstrap.Modal(modal); // Ensure modal components are initialized
+            });
+        }
+    </script> --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Handle expand/collapse functionality
+            const communityHeaders = document.querySelectorAll(".community-header");
 
-        //     form.addEventListener('submit', function(e) {
-        //         e.preventDefault();
+            communityHeaders.forEach((header) => {
+                header.addEventListener("click", () => {
+                    const communityItem = header.closest(".community-item");
+                    communityItem.classList.toggle("expanded");
+                });
+            });
 
-        //         // 检查表单是否有效
-        //         if (!form.checkValidity()) {
-        //             alert('Please fill in all required fields.');
-        //             return;
-        //         }
+            // Handle image grid navigation
+            document.querySelectorAll(".image-grid").forEach((grid) => {
+                const images = Array.from(grid.querySelectorAll(".grid-image"));
+                const prevBtn = grid.querySelector(".prev");
+                const nextBtn = grid.querySelector(".next");
+                let currentPage = 0;
+                const imagesPerPage = 3;
+                const totalPages = Math.ceil(images.length / imagesPerPage);
 
-        //         // 获取表单数据
-        //         const formData = new FormData(form);
+                function showImages(page) {
+                    const start = page * imagesPerPage;
+                    const end = start + imagesPerPage;
 
-        //         // 模拟数据保存逻辑
-        //         console.log('Form Data:', Object.fromEntries(formData.entries()));
-        //         alert('Resort saved successfully!');
+                    images.forEach((img, index) => {
+                        img.style.display = index >= start && index < end ? "block" : "none";
+                    });
+                }
 
-        //         // 关闭模态框
-        //         const modal = bootstrap.Modal.getInstance(document.getElementById('resortModal'));
-        //         modal.hide();
+                if (prevBtn && nextBtn) {
+                    prevBtn.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        currentPage = (currentPage - 1 + totalPages) % totalPages;
+                        showImages(currentPage);
+                    });
 
-        //         // 重置表单
-        //         form.reset();
+                    nextBtn.addEventListener("click", (e) => {
+                        e.preventDefault();
+                        currentPage = (currentPage + 1) % totalPages;
+                        showImages(currentPage);
+                    });
+                }
 
-        //         // 清空图片预览
-        //         document.getElementById('imagePreview').innerHTML = '<p>No image selected</p>';
-        //     });
-        // }
+                // Show initial images
+                showImages(0);
+            });
+
+            // Initialize image upload with preview functionality
+            initializeImageUpload();
+
+            // Modal initialization (for dynamically generated modals)
+            initializeModals();
+
+            // Load existing images from the database
+            loadExistingImages();
+        });
+
+        /**
+         * Initialize the image upload with preview functionality
+         */
+        function initializeImageUpload() {
+            // Add event listeners to all file inputs with class `file-upload-input`
+            document.querySelectorAll('input[type="file"]').forEach((imageInput) => {
+                const previewContainerId = imageInput.dataset.previewTarget || "imagePreview";
+                const previewContainer = document.getElementById(previewContainerId);
+                const maxFileSize = 5 * 1024 * 1024; // 5MB
+
+                if (!previewContainer) {
+                    console.warn(`Preview container with ID "${previewContainerId}" not found`);
+                    return;
+                }
+
+                imageInput.addEventListener("change", function(event) {
+                    const files = event.target.files;
+                    previewContainer.innerHTML = ""; // Clear previous content
+
+                    if (files.length === 0) {
+                        previewContainer.innerHTML = '<p class="text-muted">No image selected</p>';
+                        return;
+                    }
+
+                    Array.from(files).forEach((file, index) => {
+                        // Check if the file is an image
+                        if (!file.type.startsWith("image/")) {
+                            alert(`File "${file.name}" is not a valid image.`);
+                            return;
+                        }
+
+                        // Check file size
+                        if (file.size > maxFileSize) {
+                            alert(`File "${file.name}" exceeds the 5MB size limit.`);
+                            return;
+                        }
+
+                        const reader = new FileReader();
+
+                        // Load image and show preview
+                        reader.onload = function(e) {
+                            const img = document.createElement("img");
+                            img.src = e.target.result;
+                            img.alt = file.name;
+                            img.title = `Image ${index + 1}`;
+                            img.style.maxWidth = "100px";
+                            img.style.margin = "5px";
+                            img.style.borderRadius = "8px";
+                            img.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+                            img.style.cursor = "pointer";
+
+                            // Add remove image functionality
+                            img.addEventListener("click", () => {
+                                if (confirm(`Remove "${file.name}" from upload?`)) {
+                                    img.remove();
+                                }
+                            });
+
+                            previewContainer.appendChild(img);
+                        };
+
+                        reader.readAsDataURL(file);
+                    });
+                });
+            });
+        }
+
+        /**
+         * Load existing images from the database
+         */
+        function loadExistingImages() {
+            // Assuming you have a data attribute on the file input that contains the image URLs
+            document.querySelectorAll('input[type="file"]').forEach((imageInput) => {
+                const previewContainerId = imageInput.dataset.previewTarget || "imagePreview";
+                const previewContainer = document.getElementById(previewContainerId);
+                const imageUrls = JSON.parse(imageInput.dataset.imageUrls || "[]");
+
+                if (!previewContainer) {
+                    console.warn(`Preview container with ID "${previewContainerId}" not found`);
+                    return;
+                }
+
+                if (imageUrls.length === 0) {
+                    previewContainer.innerHTML = '<p class="text-muted">No image selected</p>';
+                    return;
+                }
+
+                imageUrls.forEach((url, index) => {
+                    const img = document.createElement("img");
+                    img.src = url;
+                    img.alt = `Image ${index + 1}`;
+                    img.title = `Image ${index + 1}`;
+                    img.style.maxWidth = "100px";
+                    img.style.margin = "5px";
+                    img.style.borderRadius = "8px";
+                    img.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+                    img.style.cursor = "pointer";
+
+                    // Add remove image functionality
+                    img.addEventListener("click", () => {
+                        if (confirm(`Remove this image from preview?`)) {
+                            img.remove();
+                        }
+                    });
+
+                    previewContainer.appendChild(img);
+                });
+            });
+        }
+
+        /**
+         * Initialize modals for dynamically generated modals
+         */
+        function initializeModals() {
+            const modals = document.querySelectorAll(".modal");
+            modals.forEach((modal) => {
+                new bootstrap.Modal(modal); // Ensure modal components are initialized
+            });
+        }
     </script>
 
     {{-- Get Coordinates --}}
@@ -1022,7 +1451,6 @@
 
     {{-- Toastr JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
     <script>
         @if (Session::has('success'))
             Toastify({

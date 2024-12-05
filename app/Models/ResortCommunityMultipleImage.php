@@ -16,4 +16,16 @@ class ResortCommunityMultipleImage extends Model
     {
         return $this->belongsTo(ResortCommunity::class, 'community_id');
     }
+
+    // Accessor for full image path
+    public function getFullImagePathAttribute()
+    {
+        // 如果路径已经包含 "images/"，直接返回完整路径
+        if (strpos($this->image_path, 'images/') !== false) {
+            return asset($this->image_path);
+        }
+
+        // 否则拼接 "images/" 文件夹路径
+        return asset('images/' . $this->image_path);
+    }
 }

@@ -330,7 +330,7 @@ Route::post('/resort/discount/update', [ResortController::class, 'updateDiscount
 Route::get('backend-user/backend-resort/resortcommunity/{id}', [ResortController::class, 'showCommunityForm'])->name('resort.community.form');
 Route::post('backend-user/backend-resort/resortcommunity/{id}', [ResortController::class, 'saveCommunity'])->name('resort.community.save');
 Route::get('/resort/{id}/community/delete', [ResortController::class, 'deleteCommunity'])->name('resort.community.delete');
-Route::post('/resort/community/update', [ResortController::class, 'updateCommunity'])->name('resort.community.update');
+Route::post('/resort/community/update/{id}', [ResortController::class, 'updateCommunity'])->name('resort.community.update');
 
 //---------------------------------------------------Restaurant Area-------------------------------------------------------------//
 //Display Restaurant Page
