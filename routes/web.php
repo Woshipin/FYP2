@@ -331,6 +331,7 @@ Route::get('backend-user/backend-resort/resortcommunity/{id}', [ResortController
 Route::post('backend-user/backend-resort/resortcommunity/{id}', [ResortController::class, 'saveCommunity'])->name('resort.community.save');
 Route::get('/resort/{id}/community/delete', [ResortController::class, 'deleteCommunity'])->name('resort.community.delete');
 Route::post('/resort/community/update/{id}', [ResortController::class, 'updateCommunity'])->name('resort.community.update');
+Route::delete('/community-image/{id}', [CommunityController::class, 'CommunityImageDestroy'])->name('community.image.destroy');
 
 //---------------------------------------------------Restaurant Area-------------------------------------------------------------//
 //Display Restaurant Page

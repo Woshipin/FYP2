@@ -860,7 +860,7 @@
                                 </select>
                             </div>
 
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="image">Images</label>
                                 <div class="file-upload">
                                     <input type="file" id="image" name="image[]" accept="image/*" multiple
@@ -868,6 +868,18 @@
                                     <p>Click or drag images here to upload</p>
                                 </div>
                                 <div class="image-preview-container" id="imagePreview">
+                                    <p>No image selected</p>
+                                </div>
+                            </div> --}}
+
+                            <div class="form-group">
+                                <label for="imageAdd">Images</label>
+                                <div class="file-upload">
+                                    <input type="file" id="imageAdd" name="image[]" accept="image/*" multiple
+                                        required>
+                                    <p>Click or drag images here to upload</p>
+                                </div>
+                                <div class="image-preview-container" id="imagePreviewAdd">
                                     <p>No image selected</p>
                                 </div>
                             </div>
@@ -963,18 +975,6 @@
                                     </select>
                                 </div>
 
-                                {{-- <div class="form-group">
-                                    <label for="image{{ $community->id }}">Images</label>
-                                    <div class="file-upload">
-                                        <input type="file" id="image{{ $community->id }}" name="image[]"
-                                            accept="image/*" multiple>
-                                        <p>Click or drag images here to upload</p>
-                                    </div>
-                                    <div class="image-preview-container" id="imagePreview{{ $community->id }}">
-                                        <p>No image selected</p>
-                                    </div>
-                                </div> --}}
-
                                 <div class="form-group">
                                     <label for="image{{ $community->id }}">Images</label>
                                     <div class="file-upload">
@@ -983,7 +983,7 @@
                                         <p>Click or drag images here to upload</p>
                                     </div>
                                     <div class="image-preview-container" id="imagePreview{{ $community->id }}">
-                                        <!-- 动态生成的预览图像将在这里显示 -->
+                                        <p>No image selected</p>
                                     </div>
                                 </div>
 
@@ -1179,7 +1179,29 @@
     </script> --}}
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Handle expand/collapse functionality
+            // 初始化展开/折叠功能
+            initializeCommunityToggle();
+
+            // 初始化图片网格导航
+            initializeImageGridNavigation();
+
+            // 初始化图片上传与预览功能
+            initializeImageUpload();
+
+            // 加载数据库中的现有图片
+            loadExistingImages();
+
+            // 初始化动态模态框
+            initializeModals();
+
+            // 编辑时初始化已选择图片
+            initializeEditImageSelection();
+        });
+
+        /**
+         * 初始化展开/折叠功能
+         */
+        function initializeCommunityToggle() {
             const communityHeaders = document.querySelectorAll(".community-header");
 
             communityHeaders.forEach((header) => {
@@ -1188,8 +1210,12 @@
                     communityItem.classList.toggle("expanded");
                 });
             });
+        }
 
-            // Handle image grid navigation
+        /**
+         * 初始化图片网格导航（分页显示）
+         */
+        function initializeImageGridNavigation() {
             document.querySelectorAll(".image-grid").forEach((grid) => {
                 const images = Array.from(grid.querySelectorAll(".grid-image"));
                 const prevBtn = grid.querySelector(".prev");
@@ -1221,27 +1247,18 @@
                     });
                 }
 
-                // Show initial images
+                // 显示初始图片
                 showImages(0);
             });
-
-            // Initialize image upload with preview functionality
-            initializeImageUpload();
-
-            // Modal initialization (for dynamically generated modals)
-            initializeModals();
-
-            // Load existing images from the database
-            loadExistingImages();
-        });
+        }
 
         /**
-         * Initialize the image upload with preview functionality
+         * 初始化图片上传与预览功能
          */
         function initializeImageUpload() {
-            // Add event listeners to all file inputs with class `file-upload-input`
             document.querySelectorAll('input[type="file"]').forEach((imageInput) => {
-                const previewContainerId = imageInput.dataset.previewTarget || "imagePreview";
+                const previewContainerId = imageInput.dataset.previewTarget ||
+                    `imagePreview${imageInput.id.replace('image', '')}`;
                 const previewContainer = document.getElementById(previewContainerId);
                 const maxFileSize = 5 * 1024 * 1024; // 5MB
 
@@ -1252,7 +1269,7 @@
 
                 imageInput.addEventListener("change", function(event) {
                     const files = event.target.files;
-                    previewContainer.innerHTML = ""; // Clear previous content
+                    previewContainer.innerHTML = ""; // 清空现有内容
 
                     if (files.length === 0) {
                         previewContainer.innerHTML = '<p class="text-muted">No image selected</p>';
@@ -1260,42 +1277,23 @@
                     }
 
                     Array.from(files).forEach((file, index) => {
-                        // Check if the file is an image
+                        // 检查文件类型
                         if (!file.type.startsWith("image/")) {
                             alert(`File "${file.name}" is not a valid image.`);
                             return;
                         }
 
-                        // Check file size
+                        // 检查文件大小
                         if (file.size > maxFileSize) {
                             alert(`File "${file.name}" exceeds the 5MB size limit.`);
                             return;
                         }
 
                         const reader = new FileReader();
-
-                        // Load image and show preview
                         reader.onload = function(e) {
-                            const img = document.createElement("img");
-                            img.src = e.target.result;
-                            img.alt = file.name;
-                            img.title = `Image ${index + 1}`;
-                            img.style.maxWidth = "100px";
-                            img.style.margin = "5px";
-                            img.style.borderRadius = "8px";
-                            img.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-                            img.style.cursor = "pointer";
-
-                            // Add remove image functionality
-                            img.addEventListener("click", () => {
-                                if (confirm(`Remove "${file.name}" from upload?`)) {
-                                    img.remove();
-                                }
-                            });
-
-                            previewContainer.appendChild(img);
+                            const imgDiv = createPreviewImageDiv(e.target.result, file.name);
+                            previewContainer.appendChild(imgDiv);
                         };
-
                         reader.readAsDataURL(file);
                     });
                 });
@@ -1303,12 +1301,12 @@
         }
 
         /**
-         * Load existing images from the database
+         * 初始化编辑时显示已选图片
          */
-        function loadExistingImages() {
-            // Assuming you have a data attribute on the file input that contains the image URLs
+        function initializeEditImageSelection() {
             document.querySelectorAll('input[type="file"]').forEach((imageInput) => {
-                const previewContainerId = imageInput.dataset.previewTarget || "imagePreview";
+                const previewContainerId = imageInput.dataset.previewTarget ||
+                    `imagePreview${imageInput.id.replace('image', '')}`;
                 const previewContainer = document.getElementById(previewContainerId);
                 const imageUrls = JSON.parse(imageInput.dataset.imageUrls || "[]");
 
@@ -1317,44 +1315,105 @@
                     return;
                 }
 
+                previewContainer.innerHTML = ""; // 清空现有内容
+
                 if (imageUrls.length === 0) {
                     previewContainer.innerHTML = '<p class="text-muted">No image selected</p>';
                     return;
                 }
 
-                imageUrls.forEach((url, index) => {
-                    const img = document.createElement("img");
-                    img.src = url;
-                    img.alt = `Image ${index + 1}`;
-                    img.title = `Image ${index + 1}`;
-                    img.style.maxWidth = "100px";
-                    img.style.margin = "5px";
-                    img.style.borderRadius = "8px";
-                    img.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-                    img.style.cursor = "pointer";
-
-                    // Add remove image functionality
-                    img.addEventListener("click", () => {
-                        if (confirm(`Remove this image from preview?`)) {
-                            img.remove();
-                        }
-                    });
-
-                    previewContainer.appendChild(img);
+                // 循环生成图片预览
+                imageUrls.forEach((url) => {
+                    const imgDiv = createPreviewImageDiv(url, url, true);
+                    previewContainer.appendChild(imgDiv);
                 });
             });
         }
 
         /**
-         * Initialize modals for dynamically generated modals
+         * 从服务器删除图片
+         */
+        function deleteImageFromServer(imageUrl, imgDiv) {
+            // 显示确认提示
+            if (confirm("Are you sure you want to delete this image?")) {
+                $.ajax({
+                    url: `/resort-image/${imageUrl}`,
+                    type: "DELETE",
+                    data: {
+                        "_token": "{{ csrf_token() }}",
+                    },
+                    success: function(data) {
+                        console.log(data.message);
+                        imgDiv.remove();
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                    },
+                });
+            }
+        }
+
+        /**
+         * 初始化动态模态框
          */
         function initializeModals() {
             const modals = document.querySelectorAll(".modal");
             modals.forEach((modal) => {
-                new bootstrap.Modal(modal); // Ensure modal components are initialized
+                new bootstrap.Modal(modal); // 确保模态框组件被初始化
             });
         }
+
+        /**
+         * 创建图片预览容器，包含删除功能
+         */
+        function createPreviewImageDiv(src, title, isExisting = false) {
+            const imgDiv = document.createElement("div");
+            imgDiv.style.position = "relative";
+            imgDiv.style.margin = "5px";
+            imgDiv.style.width = "120px"; // 增加宽度
+            imgDiv.style.height = "100px"; // 减少高度
+            imgDiv.style.display = "inline-block"; // 使图像水平排列
+
+            const img = document.createElement("img");
+            img.src = src;
+            img.alt = title;
+            img.title = title;
+            img.style.width = "100%";
+            img.style.height = "100%";
+            img.style.objectFit = "cover";
+            img.style.borderRadius = "8px";
+            img.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
+            img.style.cursor = "pointer";
+
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "btn btn-danger btn-sm delete-image";
+            deleteButton.textContent = "X";
+            deleteButton.style.position = "absolute";
+            deleteButton.style.top = "5px";
+            deleteButton.style.right = "5px";
+
+            if (isExisting) {
+                deleteButton.addEventListener("click", () => {
+                    if (confirm(`Remove this image from server?`)) {
+                        deleteImageFromServer(src, imgDiv);
+                    }
+                });
+            } else {
+                deleteButton.addEventListener("click", () => {
+                    if (confirm(`Remove "${title}" from upload?`)) {
+                        imgDiv.remove();
+                    }
+                });
+            }
+
+            imgDiv.appendChild(img);
+            imgDiv.appendChild(deleteButton);
+
+            return imgDiv;
+        }
     </script>
+
 
     {{-- Get Coordinates --}}
     <script>

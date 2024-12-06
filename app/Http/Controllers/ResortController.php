@@ -859,6 +859,27 @@ class ResortController extends Controller
         return view('backend-user.backend-resort.resort-community', compact('communities', 'id'));
     }
 
+    // public function showCommunityForm($id)
+    // {
+    //     // 确保用户已登录
+    //     if (!auth()->check()) {
+    //         return redirect()->route('login')->with('fail', 'You must be logged in to view the community form.');
+    //     }
+
+    //     // 获取指定 resort_id 的所有社区，并预加载 multipleImages
+    //     $communities = ResortCommunity::with('multipleImages')->where('resort_id', $id)->get();
+
+    //     // 为每个社区的图片生成完整 URL，并格式化成数组
+    //     $communities->each(function ($community) {
+    //         $community->imageUrls = $community->multipleImages->pluck('image_path')->map(function ($imagePath) {
+    //             return asset('images/' . $imagePath);
+    //         })->toArray(); // 转换成数组形式
+    //     });
+
+    //     // 返回视图并传递数据
+    //     return view('backend-user.backend-resort.resort-community', compact('communities', 'id'));
+    // }
+
     // Save a new resort community
     public function saveCommunity(Request $request, $id)
     {
@@ -975,5 +996,22 @@ class ResortController extends Controller
         // Redirect with success message
         return redirect()->back()->with('success', 'Community deleted successfully.');
     }
+
+    public function CommunityImageDestroy($id)
+    {
+        $image = ResortCommunityMultipleImage::findOrFail($id);
+
+        // 删除图片文件
+        $imagePath = public_path('images/' . $image->image);
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+
+        // 从数据库中删除记录
+        $image->delete();
+
+        return response()->json(['message' => 'Image deleted successfully.']);
+    }
+
 
 }
