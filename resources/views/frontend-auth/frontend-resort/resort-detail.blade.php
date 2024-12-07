@@ -639,7 +639,7 @@
         }
 
         /* 当到达第5张图片时显示 View More */
-        .thumbnail:nth-child(5) .view-more {
+        .thumbnail:nth-child(10) .view-more {
             display: block;
         }
 
@@ -969,6 +969,61 @@
             font-size: 13px;
             color: black;
         }
+
+        /* 360 Image Modal 样式 */
+        #pannellumModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        #closeBtn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            /* 半透明白色 */
+            color: #333;
+            /* 深色文本 */
+
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            /* 添加box-shadow过渡 */
+            z-index: 2;
+            /* 确保按钮在图片上面 */
+        }
+
+        #closeBtn:hover {
+            background-color: rgba(255, 255, 255, 1);
+            /* 鼠标悬停时变为完全不透明 */
+            color: #ff4500;
+            /* 鼠标悬停时文字颜色变为橙色 */
+            transform: translateY(-5px);
+            /* 向上浮动5px */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            /* 添加阴影效果，避免显示黑色边框 */
+        }
+
+
+        /* 图片显示区域 */
+        #panorama {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            overflow: hidden;
+            background-color: black;
+        }
     </style>
 
     {{-- Rating CSS --}}
@@ -1262,21 +1317,26 @@
             <div class="image-column">
                 <div class="image-gallery">
                     @if ($resort->images->isNotEmpty())
+                        <!-- 主图片显示 -->
                         <div class="main-image-container">
                             <img src="{{ asset('images/' . $resort->images->first()->image) }}" alt="Resort view"
                                 class="main-image">
                         </div>
+                        <!-- 缩略图网格 -->
                         <div class="thumbnail-grid">
-                            @foreach ($resort->images->slice(1, 5) as $image)
+                            @foreach ($resort->images->slice(1, 10) as $image)
                                 <div class="thumbnail">
-                                    <img src="{{ asset('images/' . $image->image) }}" alt="Resort view">
-                                    @if ($loop->index == 4 && $resort->images->count() > 6)
+                                    <img src="{{ asset('images/' . $image->image) }}" alt="Resort view"
+                                        onclick="show360Image('{{ asset('images/' . $image->image) }}')">
+                                    <!-- 如果是第10张图片，显示 View More -->
+                                    @if ($loop->index == 9 && $resort->images->count() > 10)
                                         <div class="view-more" id="viewMore">View More</div>
                                     @endif
                                 </div>
                             @endforeach
                         </div>
                     @else
+                        <!-- 如果没有图片，显示提示 -->
                         <div class="main-image">No Image Available</div>
                     @endif
                 </div>
@@ -1380,8 +1440,9 @@
 
         <!-- 360 Image Modal -->
         <div id="pannellumModal" style="display: none;">
-            <div id="panorama"></div>
-            <button onclick="close360View()">Close</button>
+            <!-- Close 按钮放置在右上角 -->
+            <button onclick="close360View()" id="closeBtn">Close</button>
+            <div id="panorama" class="photosphere-container"></div>
         </div>
 
         <!-- Modal for additional images -->
@@ -1389,7 +1450,7 @@
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <div class="modal-thumbnail-grid">
-                    @foreach ($resort->images->slice(6) as $image)
+                    @foreach ($resort->images->slice(10) as $image)
                         <div class="modal-thumbnail">
                             <img src="{{ asset('images/' . $image->image) }}" alt="Resort view">
                         </div>
@@ -1412,14 +1473,29 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.css">
+    <script src="https://cdn.jsdelivr.net/npm/pannellum/build/pannellum.js"></script>
+
+    {{-- 360 and Modal Function --}}
     <script>
         // 显示360度视图
         function show360Image(imageUrl) {
-            document.getElementById('pannellumModal').style.display = 'block';
+            const modal = document.getElementById('pannellumModal');
+            const panoramaContainer = document.getElementById('panorama');
+
+            // 显示模态框
+            modal.style.display = 'block';
+
+            // 清空之前的内容，防止重复初始化
+            panoramaContainer.innerHTML = '';
+
+            // 初始化Pannellum
             pannellum.viewer('panorama', {
                 type: 'equirectangular',
                 panorama: imageUrl,
-                autoLoad: true
+                autoLoad: true,
+                autoRotate: -2, // 自动旋转速度，可选
+                showFullscreenCtrl: true // 显示全屏按钮
             });
         }
 
