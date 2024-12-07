@@ -549,26 +549,6 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     {{-- Three Column CSS --}}
     <style>
-        /* :root {
-                                            --primary-color: #333;
-                                            --secondary-color: #666;
-                                            --shadow-color: rgba(0, 0, 0, 0.1);
-                                        }
-
-                                        body {
-                                            font-family: sans-serif;
-                                            margin: 0;
-                                            padding: 0;
-                                            line-height: 1.6;
-                                            color: var(--primary-color);
-                                        }
-
-                                        .container {
-                                            max-width: 1200px;
-                                            margin: 0 auto;
-                                            padding: 1rem;
-                                        } */
-
         /* Styles for the three-column section */
         .columns {
             display: flex;
@@ -607,17 +587,11 @@
 
     {{-- Community CSS --}}
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <!-- 引入 Leaflet.js -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
+    <!-- Leaflet 样式和脚本 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+    <style>
         .community-button {
             background-color: #fff;
             border: 1px solid #ccc;
@@ -689,34 +663,25 @@
             min-height: 500px;
         }
 
-        .community-map-container {
-            flex: 1;
-            position: relative;
-            height: 100%;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        /* Map CSS */
+        #map {
+            width: 100%;
+            height: 500px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
         }
 
         .community-map-controls {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
             display: flex;
-            gap: 5px;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
         .community-map-button {
-            background-color: white;
+            background-color: #fff;
             border: 1px solid #ccc;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
+            padding: 5px 10px;
             cursor: pointer;
-            border-radius: 4px;
         }
 
         .community-info-container {
@@ -1102,7 +1067,6 @@
             <div class="column" id="community-column">
                 <h3><i class="fas fa-users"></i> Community</h3>
                 <div class="column-content">
-                    <!-- Add your community content here -->
                     <p>Community information and activities</p>
                 </div>
             </div>
@@ -1148,28 +1112,18 @@
                 </div>
                 <div class="community-modal-body">
 
-                    {{-- <div class="community-map-container">
-                        <iframe
-                            src="https://www.openstreetmap.org/export/embed.html?bbox=103.62410736083984%2C1.5447807095870226%2C103.6279067993164%2C1.547779402397805&layer=mapnik"
-                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-                        <div class="community-map-controls">
-                            <button class="community-map-button">+</button>
-                            <button class="community-map-button">-</button>
-                        </div>
-                    </div> --}}
-
-                    <div class="community-map-container" id="map" style="width: 100%; height: 500px; border: 0;">
-                        <!-- 地图显示区域 -->
-                    </div>
+                    <!-- 地图显示区域 -->
+                    <div id="map" style="width: 100%; height: 500px; border: 1px solid #ccc;"></div>
 
                     <!-- 控制按钮 -->
-                    <div class="community-map-controls">
-                        <button class="community-map-button">+</button>
-                        <button class="community-map-button">-</button>
-                    </div>
+                    {{-- <div class="community-map-controls">
+                        <button id="zoom-in" class="community-map-button">+</button>
+                        <button id="zoom-out" class="community-map-button">-</button>
+                    </div> --}}
 
                     <div class="community-info-container">
-                        <p class="community-address" id="detail"><span class="community-icon">📍</span>{{ $resort->location }}</p>
+                        <p class="community-address" id="detail"><span
+                                class="community-icon">📍</span>{{ $resort->location }}</p>
                         <div class="community-rating">
                             <span class="community-rating-score">{{ $averageRating ?? '0' }}</span>
                             {{-- <span class="community-rating-text">{{ $resort->location }}</span> --}}
@@ -1333,11 +1287,8 @@
 
     {{-- Community JS --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- 引入 Leaflet.js -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     {{-- Community Modal JS --}}
-    <script>
+    {{-- <script>
         const communityModal = document.getElementById("community-modal");
         const communityColumn = document.getElementById("community-column"); // 选择 community-column 元素
         const communitySpan = document.getElementsByClassName("community-close")[0];
@@ -1374,27 +1325,140 @@
                 document.getElementById(tabId).classList.add('active');
             });
         });
-    </script>
+    </script> --}}
+    <!-- Leaflet 样式和脚本 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     {{-- Community Modal Map JS --}}
+    {{-- <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 获取 PHP 传递的经纬度
+            var latitude = {{ $resort->latitude }};
+            var longitude = {{ $resort->longitude }};
+
+            // 初始化地图并设置中心和缩放级别
+            var map = L.map('map').setView([latitude, longitude], 14);
+
+            // 使用 OpenStreetMap 作为地图图层
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // 在指定位置添加标记
+            var marker = L.marker([latitude, longitude]).addTo(map);
+            marker.bindPopup(`<b>{{ $resort->name }}</b><br>Location: ${latitude}, ${longitude}`).openPopup();
+
+            // 添加控制按钮事件
+            document.getElementById("zoom-in").addEventListener("click", function() {
+                map.zoomIn();
+            });
+            document.getElementById("zoom-out").addEventListener("click", function() {
+                map.zoomOut();
+            });
+
+            // Tab 切换逻辑
+            const communityTabs = document.querySelectorAll('.community-tab');
+            const communityTabContents = document.querySelectorAll('.community-tab-content');
+
+            communityTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // 移除 active 类
+                    communityTabs.forEach(t => t.classList.remove('active'));
+                    communityTabContents.forEach(content => content.classList.remove('active'));
+
+                    // 添加 active 类到当前 tab 和对应内容
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    const targetContent = document.getElementById(tabId);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script> --}}
+    {{-- <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 获取 PHP 传递的经纬度
+            var latitude = {{ $resort->latitude ?? 1.3521 }}; // 使用 Blade 渲染默认经纬度
+            var longitude = {{ $resort->longitude ?? 103.8198 }};
+
+            // 初始化地图并设置中心和缩放级别
+            var map = L.map('map').setView([latitude, longitude], 14);
+
+            // 使用 OpenStreetMap 作为地图图层
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // 添加标记
+            var marker = L.marker([latitude, longitude]).addTo(map);
+            marker.bindPopup(`<b>{{ $resort->name }}</b><br>Location: ${latitude}, ${longitude}`).openPopup();
+
+            // 强制调整地图大小
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 500); // 延时以确保地图容器完成渲染
+        });
+    </script> --}}
     <script>
-        // 获取 PHP 传递的经纬度
-        var latitude = {{ $resort->latitude }};
-        var longitude = {{ $resort->longitude }};
+        document.addEventListener("DOMContentLoaded", function() {
+            const latitude = {{ $resort->latitude ?? 1.3521 }};
+            const longitude = {{ $resort->longitude ?? 103.8198 }};
+            const resortName = "{{ $resort->name }}";
 
-        // 初始化地图并设置中心和缩放级别
-        var map = L.map('map').setView([latitude, longitude], 14);
+            // 初始化地图
+            let map;
+            const initMap = () => {
+                map = L.map('map').setView([latitude, longitude], 14);
 
-        // 使用 OpenStreetMap 作为地图图层
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                }).addTo(map);
 
-        // 在指定位置添加标记
-        var marker = L.marker([latitude, longitude]).addTo(map);
+                const marker = L.marker([latitude, longitude]).addTo(map);
+                marker.bindPopup(`<b>${resortName}</b><br>Location: ${latitude}, ${longitude}`).openPopup();
+            };
 
-        // 设置标记的弹出信息
-        marker.bindPopup("<b>{{ $resort->name }}</b><br>Location: {{ $resort->latitude }}, {{ $resort->longitude }}")
-            .openPopup();
+            // 打开模态框
+            const communityModal = document.getElementById("community-modal");
+            const openModal = () => {
+                communityModal.style.display = "block";
+                setTimeout(() => map.invalidateSize(), 500); // 防止地图显示问题
+            };
+
+            // 关闭模态框
+            const closeModal = () => {
+                communityModal.style.display = "none";
+            };
+
+            // 添加模态框关闭事件
+            document.querySelector(".community-close").addEventListener("click", closeModal);
+            window.addEventListener("click", (event) => {
+                if (event.target === communityModal) closeModal();
+            });
+
+            // 添加点击事件到 community-column
+            document.getElementById("community-column").addEventListener("click", () => {
+                openModal();
+                if (!map) initMap(); // 确保地图只初始化一次
+            });
+
+            // 初始化 Tabs
+            const tabs = document.querySelectorAll(".community-tab");
+            const tabContents = document.querySelectorAll(".community-tab-content");
+
+            tabs.forEach((tab) => {
+                tab.addEventListener("click", () => {
+                    tabs.forEach((t) => t.classList.remove("active"));
+                    tabContents.forEach((content) => content.classList.remove("active"));
+
+                    tab.classList.add("active");
+                    document.getElementById(tab.getAttribute("data-tab")).classList.add("active");
+                });
+            });
+        });
     </script>
 
     {{-- Toastr New JS --}}
