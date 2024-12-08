@@ -348,8 +348,13 @@ class ResortController extends Controller
 
         $communitycategorys = CommunityCategory::all();
 
+        // 获取该 resort 的所有 community
+        $communities = DB::table('resort_communities')
+        ->where('resort_id', $resort->id)
+        ->get();
+
         return view('frontend-auth.frontend-resort.resort-detail', compact('resort', 'averageRating', 'ratingCount', 'singleRating'
-            ,'communitycategorys'));
+            ,'communitycategorys','communities'));
     }
 
     public function frontendresortsearch(Request $request)

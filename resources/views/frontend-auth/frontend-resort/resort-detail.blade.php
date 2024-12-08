@@ -1129,98 +1129,41 @@
                             {{-- <span class="community-rating-text">{{ $resort->location }}</span> --}}
                             <span class="community-review-count" id="detail">• 1,318 reviews</span>
                         </div>
-                        {{-- <button class="community-select-rooms">Select Rooms</button> --}}
+
+                        {{-- <button class="community-select-rooms">Resort Community</button> --}}
+
                         <div class="community-tabs">
-                            <button class="community-tab active" data-tab="community-transport">Transport</button>
-                            <button class="community-tab" data-tab="community-landmarks">Landmarks</button>
-                            <button class="community-tab" data-tab="community-dining">Dining</button>
-                            <button class="community-tab" data-tab="community-shopping">Shopping</button>
+                            @foreach ($communitycategorys as $category)
+                                <button class="community-tab {{ $loop->first ? 'active' : '' }}"
+                                    data-tab="community-{{ strtolower($category->name) }}">
+                                    {{ $category->name }}
+                                </button>
+                            @endforeach
                         </div>
 
-                        <!-- Transport tab content -->
-                        <div class="community-tab-content active" id="community-transport">
-                            <h3><span class="community-icon">🚇</span> Metro station</h3>
-                            <div class="community-station-info">
-                                <div class="community-station-card">
-                                    <p><strong>Somerset</strong></p>
-                                    <p>About 7 mins from hotel by foot (440m)</p>
-                                    <div class="community-view-icon">
-                                        <svg viewBox="0 0 24 24">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg>
-                                        <span class="community-tooltip">View more</span>
-                                    </div>
-                                </div>
-                                <!-- Other transport content remains the same -->
-                            </div>
-                        </div>
-
-                        <!-- Landmarks tab content -->
-                        <div class="community-tab-content" id="community-landmarks">
-                            <h3><span class="community-icon">🏛️</span> Notable Landmarks</h3>
-                            <div class="community-station-info">
-                                <div class="community-station-card">
-                                    <p><strong>Orchard Road Shopping District</strong></p>
-                                    <p>1 min walk from hotel (100m)</p>
-                                    <div class="community-view-icon">
-                                        <svg viewBox="0 0 24 24">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg>
-                                        <span class="community-tooltip">View more</span>
-                                    </div>
-                                </div>
-                                <div class="community-station-card">
-                                    <p><strong>ION Orchard</strong></p>
-                                    <p>5 mins walk from hotel (400m)</p>
-                                    <div class="community-view-icon">
-                                        <svg viewBox="0 0 24 24">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg>
-                                        <span class="community-tooltip">View more</span>
-                                    </div>
+                        @foreach ($communitycategorys as $category)
+                            <div class="community-tab-content {{ $loop->first ? 'active' : '' }}"
+                                id="community-{{ strtolower($category->name) }}">
+                                <h3><span class="community-icon">🏛️</span> {{ $category->name }}</h3>
+                                <div class="community-station-info">
+                                    @foreach ($communities as $community)
+                                        @if ($community->category == $category->name)
+                                            <div class="community-station-card">
+                                                <p><strong>{{ $community->name }}</strong></p>
+                                                <p>{{ $community->address }}</p>
+                                                <div class="community-view-icon">
+                                                    <svg viewBox="0 0 24 24">
+                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                        <circle cx="12" cy="12" r="3"></circle>
+                                                    </svg>
+                                                    <span class="community-tooltip">View more</span>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- Dining and Shopping tab content would go here -->
-                        <div class="community-tab-content" id="community-dining">
-                            <h3><span class="community-icon">🚇</span> Metro station</h3>
-                            <div class="community-station-info">
-                                <div class="community-station-card">
-                                    <p><strong>Somerset</strong></p>
-                                    <p>About 7 mins from hotel by foot (490m)</p>
-                                    <div class="community-view-icon">
-                                        <svg viewBox="0 0 24 24">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg>
-                                        <span class="community-tooltip">View more</span>
-                                    </div>
-                                </div>
-                                <!-- Other transport content remains the same -->
-                            </div>
-                        </div>
-
-                        <div class="community-tab-content" id="community-shopping">
-                            <h3><span class="community-icon">🚇</span> Metro station</h3>
-                            <div class="community-station-info">
-                                <div class="community-station-card">
-                                    <p><strong>Somerset</strong></p>
-                                    <p>About 7 mins from hotel by foot (450m)</p>
-                                    <div class="community-view-icon">
-                                        <svg viewBox="0 0 24 24">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                            <circle cx="12" cy="12" r="3"></circle>
-                                        </svg>
-                                        <span class="community-tooltip">View more</span>
-                                    </div>
-                                </div>
-                                <!-- Other transport content remains the same -->
-                            </div>
-                        </div>
+                        @endforeach
 
                     </div>
                 </div>
@@ -1402,7 +1345,9 @@
             }, 500); // 延时以确保地图容器完成渲染
         });
     </script> --}}
-    <script>
+
+    {{-- OK --}}
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             const latitude = {{ $resort->latitude ?? 1.3521 }};
             const longitude = {{ $resort->longitude ?? 103.8198 }};
@@ -1419,6 +1364,157 @@
 
                 const marker = L.marker([latitude, longitude]).addTo(map);
                 marker.bindPopup(`<b>${resortName}</b><br>Location: ${latitude}, ${longitude}`).openPopup();
+            };
+
+            // 打开模态框
+            const communityModal = document.getElementById("community-modal");
+            const openModal = () => {
+                communityModal.style.display = "block";
+                setTimeout(() => map.invalidateSize(), 500); // 防止地图显示问题
+            };
+
+            // 关闭模态框
+            const closeModal = () => {
+                communityModal.style.display = "none";
+            };
+
+            // 添加模态框关闭事件
+            document.querySelector(".community-close").addEventListener("click", closeModal);
+            window.addEventListener("click", (event) => {
+                if (event.target === communityModal) closeModal();
+            });
+
+            // 添加点击事件到 community-column
+            document.getElementById("community-column").addEventListener("click", () => {
+                openModal();
+                if (!map) initMap(); // 确保地图只初始化一次
+            });
+
+            // 初始化 Tabs
+            const tabs = document.querySelectorAll(".community-tab");
+            const tabContents = document.querySelectorAll(".community-tab-content");
+
+            tabs.forEach((tab) => {
+                tab.addEventListener("click", () => {
+                    tabs.forEach((t) => t.classList.remove("active"));
+                    tabContents.forEach((content) => content.classList.remove("active"));
+
+                    tab.classList.add("active");
+                    document.getElementById(tab.getAttribute("data-tab")).classList.add("active");
+                });
+            });
+        });
+    </script> --}}
+    {{-- Final --}}
+    {{-- <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const latitude = {{ $resort->latitude ?? 1.3521 }};
+            const longitude = {{ $resort->longitude ?? 103.8198 }};
+            const resortName = "{{ $resort->name }}";
+
+            // 初始化地图
+            let map;
+            const initMap = () => {
+                map = L.map('map').setView([latitude, longitude], 14);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                }).addTo(map);
+
+                const resortMarker = L.marker([latitude, longitude]).addTo(map);
+                resortMarker.bindPopup(`<b>${resortName}</b><br>Location: ${latitude}, ${longitude}`)
+                .openPopup();
+
+                // 添加 community 标记
+                let communityMarker;
+                @foreach ($communities as $community)
+                    communityMarker = L.marker([{{ $community->latitude }}, {{ $community->longitude }}])
+                        .addTo(map);
+                    communityMarker.bindPopup(
+                        `<b>{{ $community->name }}</b><br>Location: {{ $community->latitude }}, {{ $community->longitude }}<br>Description: {{ $community->description }}`
+                        );
+                @endforeach
+            };
+
+            // 打开模态框
+            const communityModal = document.getElementById("community-modal");
+            const openModal = () => {
+                communityModal.style.display = "block";
+                setTimeout(() => map.invalidateSize(), 500); // 防止地图显示问题
+            };
+
+            // 关闭模态框
+            const closeModal = () => {
+                communityModal.style.display = "none";
+            };
+
+            // 添加模态框关闭事件
+            document.querySelector(".community-close").addEventListener("click", closeModal);
+            window.addEventListener("click", (event) => {
+                if (event.target === communityModal) closeModal();
+            });
+
+            // 添加点击事件到 community-column
+            document.getElementById("community-column").addEventListener("click", () => {
+                openModal();
+                if (!map) initMap(); // 确保地图只初始化一次
+            });
+
+            // 初始化 Tabs
+            const tabs = document.querySelectorAll(".community-tab");
+            const tabContents = document.querySelectorAll(".community-tab-content");
+
+            tabs.forEach((tab) => {
+                tab.addEventListener("click", () => {
+                    tabs.forEach((t) => t.classList.remove("active"));
+                    tabContents.forEach((content) => content.classList.remove("active"));
+
+                    tab.classList.add("active");
+                    document.getElementById(tab.getAttribute("data-tab")).classList.add("active");
+                });
+            });
+        });
+    </script> --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const latitude = {{ $resort->latitude ?? 1.3521 }};
+            const longitude = {{ $resort->longitude ?? 103.8198 }};
+            const resortName = "{{ $resort->name }}";
+
+            // 初始化地图
+            let map;
+            const initMap = () => {
+                map = L.map('map');
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                }).addTo(map);
+
+                const resortMarker = L.marker([latitude, longitude]).addTo(map);
+                resortMarker.bindPopup(`<b>${resortName}</b><br>Location: ${latitude}, ${longitude}`)
+                .openPopup();
+
+                // 创建一个数组来存储所有的标记
+                let markers = [resortMarker];
+
+                // 添加 community 标记
+                @foreach ($communities as $community)
+                    let communityMarker{{ $loop->index }} = L.marker([{{ $community->latitude }},
+                        {{ $community->longitude }}
+                    ]).addTo(map);
+                    communityMarker{{ $loop->index }}.bindPopup(
+                        `<b>{{ $community->name }}</b><br>Location: {{ $community->latitude }}, {{ $community->longitude }}<br>Description: {{ $community->description }}`
+                        );
+                    markers.push(communityMarker{{ $loop->index }});
+                @endforeach
+
+                // 创建一个边界框来包含所有的标记
+                let bounds = L.latLngBounds(markers.map(marker => marker.getLatLng()));
+
+                // 调整地图视图以适应所有的标记
+                map.fitBounds(bounds, {
+                    padding: [50, 50]
+                }); // 添加一些 padding 以确保所有标记都在视图中
             };
 
             // 打开模态框

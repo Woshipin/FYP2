@@ -997,7 +997,7 @@
                                     <select class="form-control" name="category">
                                         <option value="">---------Select Community Categories---------</option>
                                         @foreach ($communitycategorys as $communitycategory)
-                                            <option value="{{ $communitycategory->id }}"
+                                            <option value="{{ $communitycategory->name }}"
                                                 {{ $communitycategory->id ? 'selected' : '' }}>
                                                 {{ $communitycategory->name }}
                                             </option>
