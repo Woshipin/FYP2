@@ -23,6 +23,7 @@ use App\Http\Controllers\ChatbotController;
 use App\Http\Controllers\RatingController;
 use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\FacilityController;
+use App\Http\Controllers\CommunityCategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -214,6 +215,17 @@ Route::get('/admin/editGender/{id}/edit', [GenderController::class, 'editGender'
 Route::put('/admin/updateGender/{id}', [GenderController::class, 'updateGender'])->name('admin-updateGender');
 //Admin Delete Gender Function
 Route::get('/admin/deleteGender/{id}/delete', [GenderController::class, 'deleteGender'])->name('admin-deleteGender');
+
+// 显示 Community 页面
+Route::get('/admin/community', [CommunityCategoryController::class, 'ShowCommunity'])->name('Show.CommunityCategory');
+// 添加 Community
+Route::post('/admin/community/add', [CommunityCategoryController::class, 'AddCommunity'])->name('Add.CommunityCategory');
+// 编辑 Community 页面
+// Route::get('/admin/community/edit/{communityCategory}', [CommunityCategoryController::class, 'EditCommunity'])->name('Edit.CommunityCategory');
+// // 更新 Community
+// Route::put('/admin/community/update/{communityCategory}', [CommunityCategoryController::class, 'UpdateCommunity'])->name('Update.CommunityCategory');
+// 删除 Community
+Route::delete('/admin/community/destroy/{communityCategory}', [CommunityCategoryController::class, 'DestroyCommunity'])->name('Delete.CommunityCategory');
 
 //Staff Area
 //Display Staff Page

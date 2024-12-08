@@ -12,6 +12,8 @@ use App\Models\ResortRating;
 use App\Models\ResortImage;
 use App\Models\ResortCommunity;
 use App\Models\ResortCommunityMultipleImage;
+use App\Models\CommunityCategory;
+use App\Models\Facility;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -344,7 +346,10 @@ class ResortController extends Controller
         // 调试信息
         // dd($averageRating, $ratingCount, $singleRating);
 
-        return view('frontend-auth.frontend-resort.resort-detail', compact('resort', 'averageRating', 'ratingCount', 'singleRating'));
+        $communitycategorys = CommunityCategory::all();
+
+        return view('frontend-auth.frontend-resort.resort-detail', compact('resort', 'averageRating', 'ratingCount', 'singleRating'
+            ,'communitycategorys'));
     }
 
     public function frontendresortsearch(Request $request)
@@ -855,8 +860,10 @@ class ResortController extends Controller
         // 获取指定 resort_id 的所有社区，并预加载 multipleImages
         $communities = ResortCommunity::with('multipleImages')->where('resort_id', $id)->get();
 
+        $communitycategorys = CommunityCategory::all();
+
         // 返回视图并传递数据
-        return view('backend-user.backend-resort.resort-community', compact('communities', 'id'));
+        return view('backend-user.backend-resort.resort-community', compact('communities', 'id','communitycategorys'));
     }
 
     // public function showCommunityForm($id)

@@ -2,8 +2,8 @@
 
 @section('admin-section')
 
-    {{-- Modal CSS --}}
-    <style>
+    {{-- Community Modal CSS --}}
+    {{-- <style>
         .modal-dialog {
             max-width: 80%;
             width: 80%;
@@ -82,30 +82,30 @@
                 /* 在小屏幕上减小高度 */
             }
         }
-    </style>
+    </style> --}}
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <br><br><br>
 
-    {{-- Show Facility --}}
+    {{-- Show Community --}}
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">
-                            Facilities Category
+                            Community Category
                         </h3>
                         <div class="card-tools">
-                            <!-- Add Facility Button -->
+                            <!-- Add Community Button -->
                             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                data-target="#addFacilityModal">
-                                <i class="fas fa-plus"></i> Add Facility
+                                data-target="#addCommunityModal">
+                                <i class="fas fa-plus"></i> Add Community
                             </button>
                             <!-- Import Excel Button -->
                             <button type="button" class="btn btn-success btn-sm" data-toggle="modal"
-                                data-target="#importFacilityModal">
+                                data-target="#importCommunityModal">
                                 <i class="fas fa-file-import"></i> Import Excel
                             </button>
                         </div>
@@ -114,35 +114,25 @@
                         <table class="table table-bordered table-striped">
                             <thead>
                                 <tr>
-                                    <th>Icon</th>
-                                    <th>Name</th>
-                                    <th>Charge Type</th>
-                                    <th>Display Order</th>
+                                    <th>Community Icon</th>
+                                    <th>Community Name</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($facilities as $facility)
+                                @foreach ($communitycategorys as $communitycategory)
                                     <tr>
                                         <td>
-                                            <i class="fas {{ $facility->icon_class }}"></i>
+                                            <i class="fas {{ $communitycategory->icon }}"></i>
                                         </td>
-                                        <td>{{ $facility->name }}</td>
+                                        <td>{{ $communitycategory->name }}</td>
+
                                         <td>
-                                            @if ($facility->charge_type === 'free')
-                                                <span class="badge badge-success">Free</span>
-                                            @elseif($facility->charge_type === 'additional_charge')
-                                                <span class="badge badge-warning">Additional Charge</span>
-                                            @else
-                                                <span class="badge badge-info">None</span>
-                                            @endif
-                                        </td>
-                                        <td>{{ $facility->display_order }}</td>
-                                        <td>
-                                            <form action="{{ route('delete.facilities', $facility->id) }}" method="POST" style="display:inline;">
+                                            <!-- 删除社区类别的表单 -->
+                                            <form action="{{ route('Delete.CommunityCategory', $communitycategory->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure to delete this data?')">
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure to delete this community category?')">
                                                     <i class="fa fa-trash"></i>&nbsp;Delete
                                                 </button>
                                             </form>
@@ -157,39 +147,27 @@
         </div>
     </div>
 
-    <!-- Add Facility Modal -->
-    <div class="modal fade" id="addFacilityModal" tabindex="-1" role="dialog">
+    <!-- Add Community Modal -->
+    <div class="modal fade" id="addCommunityModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form action="{{ route('addfacilities') }}" method="POST">
+                <form action="{{ route('Add.CommunityCategory')}}" method="POST">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title">Add New Facility</h5>
+                        <h5 class="modal-title">Add New Community</h5>
                         <button type="button" class="close" data-dismiss="modal">
                             <span>&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label>Name</label>
+                            <label>Community Name</label>
                             <input type="text" name="name" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Charge Type</label>
-                            <select name="charge_type" class="form-control" required>
-                                <option value="none">None</option>
-                                <option value="free">Free</option>
-                                <option value="additional_charge">Additional Charge</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Display Order</label>
-                            <input type="number" name="display_order" class="form-control" value="0" required>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Add Facility</button>
+                        <button type="submit" class="btn btn-primary">Add Community</button>
                     </div>
                 </form>
             </div>
@@ -197,7 +175,7 @@
     </div>
 
     <!-- Import Excel Modal -->
-    <div class="modal fade" id="importFacilityModal" tabindex="-1" role="dialog">
+    {{-- <div class="modal fade" id="importFacilityModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <form action="{{ route('backend-resort.facilities.import') }}" method="POST" enctype="multipart/form-data">
@@ -221,13 +199,13 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div> --}}
 
     {{-- Read Excel File Data JS --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script> --}}
 
     {{-- Read Excel File Data --}}
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             // 获取文件输入框和模态框内容区域的元素
             const fileInput = document.querySelector('#importFacilityModal input[type="file"]');
@@ -286,5 +264,6 @@
                 }
             });
         });
-    </script>
+    </script> --}}
+
 @endsection

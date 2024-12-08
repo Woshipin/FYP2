@@ -173,6 +173,25 @@
             background: #666;
         }
     </style>
+    {{-- <style>
+        .select2-container--default .select2-selection--multiple {
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            margin-top: 5px;
+            border-radius: 4px;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: white;
+        }
+    </style> --}}
 
     {{-- Form CSS --}}
     <style>
@@ -681,6 +700,10 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     <div class="container">
 
         <h1>Community</h1><br>
@@ -762,7 +785,7 @@
                     <button class="community-header">
                         <div class="community-info">
                             <!-- Display first letter of community name as avatar -->
-                            <div class="avatar">{{ strtoupper(substr($community->name, 0, 1)) }}</div>
+                            {{-- <div class="avatar">{{ strtoupper(substr($community->name, 0, 1)) }}</div> --}}
                             <div class="community-details">
                                 <h2>{{ $community->name }}</h2>
                                 <div class="member-count">
@@ -787,6 +810,8 @@
                         <div class="content-inner">
                             <!-- Community Description -->
                             <p class="community-description">{{ $community->description }}</p>
+                            <p class="community-address">{{ $community->cultural }}</p>
+                            <p class="community-address">{{ $community->address }}</p>
 
                             <div class="image-grid">
                                 <!-- Left navigation button -->
@@ -802,12 +827,14 @@
                                 <button class="image-grid-nav next">&gt;</button>
                             </div>
 
-                            <div class="tags">
+                            <br>
+
+                            {{-- <div class="tags">
                                 <!-- Loop through categories -->
                                 @foreach (explode(',', $community->category) as $category)
                                     <span class="tag">{{ $category }}</span>
                                 @endforeach
-                            </div>
+                            </div> --}}
                         </div>
 
                         <!-- Edit and Delete icons as buttons -->
@@ -850,13 +877,26 @@
                                     required>
                             </div>
 
+                            {{-- <div class="form-group">
+                                <label for="communitycategory" class="form-label">Community Category</label>
+                                <select class="form-control" id="communitycategory" name="category[]" multiple required>
+                                    <option value="" disabled>---------Select Community Categories---------</option>
+                                    @foreach ($communitycategorys as $communitycategory)
+                                        <option value="{{ $communitycategory->name }}"
+                                            @if (isset($community) && in_array($communitycategory->name, explode(',', $community->communitycategory))) selected @endif>
+                                            {{ $communitycategory->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div> --}}
+
                             <div class="form-group">
-                                <label for="category">Category</label>
-                                <select id="category" name="category" required>
-                                    <option value="transport">Transport</option>
-                                    <option value="community">Community</option>
-                                    <option value="social">Social</option>
-                                    <option value="cultural">Cultural</option>
+                                <label for="communitycategory" class="form-label">Community Category</label>
+                                <select class="form-control" name="category">
+                                    <option value="">---------Select Community Categories---------</option>
+                                    @foreach ($communitycategorys as $communitycategory)
+                                        <option value="{{ $communitycategory->id }}">{{ $communitycategory->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
 
@@ -953,25 +993,15 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="category{{ $community->id }}">Category</label>
-                                    <select id="category{{ $community->id }}" name="category" class="form-select"
-                                        required>
-                                        <option value="transport"
-                                            {{ in_array('transport', explode(',', $community->category)) ? 'selected' : '' }}>
-                                            Transport
-                                        </option>
-                                        <option value="community"
-                                            {{ in_array('community', explode(',', $community->category)) ? 'selected' : '' }}>
-                                            Community
-                                        </option>
-                                        <option value="social"
-                                            {{ in_array('social', explode(',', $community->category)) ? 'selected' : '' }}>
-                                            Social
-                                        </option>
-                                        <option value="cultural"
-                                            {{ in_array('cultural', explode(',', $community->category)) ? 'selected' : '' }}>
-                                            Cultural
-                                        </option>
+                                    <label for="communitycategory" class="form-label">Community Category</label>
+                                    <select class="form-control" name="category">
+                                        <option value="">---------Select Community Categories---------</option>
+                                        @foreach ($communitycategorys as $communitycategory)
+                                            <option value="{{ $communitycategory->id }}"
+                                                {{ $communitycategory->id ? 'selected' : '' }}>
+                                                {{ $communitycategory->name }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                 </div>
 
@@ -1043,6 +1073,19 @@
 
     <!-- Include jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- Select2 JS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#communitycategory').select2({
+                placeholder: "Select Community Categories",
+                allowClear: true
+            });
+        });
+    </script>
 
     {{-- JS Code --}}
     {{-- <script>
@@ -1413,7 +1456,6 @@
             return imgDiv;
         }
     </script>
-
 
     {{-- Get Coordinates --}}
     <script>

@@ -79,6 +79,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ url('/admin/community') }}">
+                            <span class="fas fa-globe"></span>
+                            <small>Community Category</small>
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ url('/admin/Resorts') }}">
                             <span class="fas fa-umbrella-beach"></span>
                             <small>Resort</small>
