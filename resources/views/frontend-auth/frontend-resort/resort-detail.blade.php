@@ -889,6 +889,238 @@
             display: block;
         }
     </style>
+    {{-- Facility Modal CSS --}}
+    <style>
+        .facility-modal {
+            display: none;
+            /* Hidden by default */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .facility-modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            position: relative;
+        }
+
+        .facility-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .facility-close:hover,
+        .facility-close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .facility-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .facility-item i {
+            margin-right: 10px;
+        }
+    </style>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --background: #f3f4f6;
+            --card-background: #ffffff;
+            --text: #1f2937;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* body {
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                    background-color: var(--background);
+                    color: var(--text);
+                    line-height: 1.5;
+                } */
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .facilities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .facility-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .facility-item:hover {
+            background-color: var(--background);
+        }
+
+        .facility-item input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            height: 20px;
+            width: 20px;
+            background-color: #fff;
+            border: 2px solid var(--border);
+            border-radius: 4px;
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .facility-item input[type="checkbox"]:checked~.checkmark {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .checkmark:after {
+            content: "";
+            display: none;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .facility-item input[type="checkbox"]:checked~.checkmark:after {
+            display: block;
+        }
+
+        .facility-name {
+            /* font-size: 0.875rem; */
+            font-size: 1rem;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .submit-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        @media (max-width: 640px) {
+            .facilities-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .facility-modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .facility-modal-content {
+            background-color: var(--card-background);
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid var(--border);
+            width: 80%;
+            position: relative;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .facility-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .facility-close:hover,
+        .facility-close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
 
     {{-- Img 360 View --}}
     <!-- 引入 Photo Sphere Viewer 库 -->
@@ -1052,7 +1284,9 @@
         <div class="columns">
             <!-- Comments Column -->
             <div class="column">
-                <h3><i class="fas fa-comments"></i> Comments</h3>
+                <a href="{{ route('resorts.comment', ['id' => $resort->id]) }}">
+                    <h3><i class="fas fa-comments"></i> Comments</h3>
+                </a>
                 <div class="column-content">
                     <!-- Add your comments content here -->
                     <p>Guest reviews and comments will appear here</p>
@@ -1060,7 +1294,7 @@
             </div>
 
             <!-- Facility Column -->
-            <div class="column">
+            <div class="column facility-column" id="facility-column">
                 <h3><i class="fas fa-building"></i> Facility</h3>
                 <div class="column-content">
                     <!-- Add your facility content here -->
@@ -1241,8 +1475,28 @@
                             </div>
                         @endforeach
 
+                    </div>
+                </div>
+            </div>
+        </div>
 
-
+        <!-- Facility Modal -->
+        <div id="facility-modal" class="facility-modal">
+            <div class="facility-modal-content">
+                <div class="card-header">
+                    <h2 class="card-title">{{ $resort->name }} Facility</h2>
+                    <span class="facility-close">&times;</span>
+                </div>
+                <div class="card-content">
+                    <div class="facilities-grid">
+                        @foreach ($resort->facilities as $facility)
+                            <label class="facility-item">
+                                <input type="checkbox" name="facilities[]" value="{{ $facility->id }}">
+                                {{-- <span class="checkmark"></span> --}}
+                                <i class="fas {{ $facility->icon_class }}"></i>
+                                <span class="facility-name">{{ $facility->name }}</span>
+                            </label>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -1790,8 +2044,8 @@
             });
         });
     </script> --}}
-    {{-- Final Map Coordinate --}}
-    <script>
+    {{-- Final Map Coordinate Back Up --}}
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             const latitude = {{ $resort->latitude ?? 1.3521 }};
             const longitude = {{ $resort->longitude ?? 103.8198 }};
@@ -1924,9 +2178,9 @@
                 });
             });
         });
-    </script>
+    </script> --}}
 
-    {{-- backup --}}
+    {{-- Final Map Coordinate --}}
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const latitude = {{ $resort->latitude ?? 1.3521 }};
@@ -2065,6 +2319,168 @@
             });
         });
     </script>
+    {{-- Facility Modal --}}
+    <script>
+        // 打开模态框
+        const facilityModal = document.getElementById("facility-modal");
+        const openFacilityModal = () => {
+            facilityModal.style.display = "block";
+        };
+
+        // 关闭模态框
+        const closeFacilityModal = () => {
+            facilityModal.style.display = "none";
+        };
+
+        // 添加模态框关闭事件
+        document.querySelector(".facility-close").addEventListener("click", closeFacilityModal);
+        window.addEventListener("click", (event) => {
+            if (event.target === facilityModal) closeFacilityModal();
+        });
+
+        // 点击Facility列打开模态框
+        document.getElementById("facility-column").addEventListener("click", openFacilityModal);
+    </script>
+
+    {{-- Back UP --}}
+    {{-- <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const latitude = {{ $resort->latitude ?? 1.3521 }};
+            const longitude = {{ $resort->longitude ?? 103.8198 }};
+            const resortName = "{{ $resort->name }}";
+
+            // 初始化地图
+            let map;
+            let currentPolyline; // 用于存储当前的路线
+            const initMap = () => {
+                map = L.map('map');
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                }).addTo(map);
+
+                const resortMarker = L.marker([latitude, longitude]).addTo(map);
+                resortMarker.bindPopup(`<b>${resortName}</b><br>Location: ${latitude}, ${longitude}`)
+                    .openPopup();
+
+                // 创建一个数组来存储所有的标记
+                let markers = [resortMarker];
+
+                // 添加 community 标记
+                @foreach ($communities as $community)
+                    let communityMarker{{ $loop->index }} = L.marker([{{ $community->latitude }},
+                        {{ $community->longitude }}
+                    ]).addTo(map);
+                    communityMarker{{ $loop->index }}.bindPopup(
+                        `<b>{{ $community->name }}</b><br>Location: {{ $community->latitude }}, {{ $community->longitude }}<br>Description: {{ $community->description }}`
+                    );
+                    markers.push(communityMarker{{ $loop->index }});
+                @endforeach
+
+                // 创建一个边界框来包含所有的标记
+                let bounds = L.latLngBounds(markers.map(marker => marker.getLatLng()));
+
+                // 调整地图视图以适应所有的标记
+                map.fitBounds(bounds, {
+                    padding: [50, 50]
+                }); // 添加一些 padding 以确保所有标记都在视图中
+            };
+
+            // 计算路线
+            const calculateRoute = (start, end, communityName) => {
+                const distance = haversineDistance(start, end);
+                const time = (distance / 80) * 60; // 假设平均速度为 80 km/h
+
+                // 显示距离和时间
+                const communityElement = document.querySelector(
+                    `[data-community-name="${communityName}"] .community-distance`);
+                if (communityElement) {
+                    communityElement.innerHTML =
+                        `<p>Distance: ${distance.toFixed(2)} km</p><p>Time: ${time.toFixed(2)} min</p>`;
+                }
+
+                // 清除之前的路线
+                if (currentPolyline) {
+                    map.removeLayer(currentPolyline);
+                }
+
+                // 绘制新的路线
+                currentPolyline = L.polyline([start, end], {
+                    color: 'blue'
+                }).addTo(map);
+                map.fitBounds(currentPolyline.getBounds());
+            };
+
+            // Haversine 公式计算距离
+            const haversineDistance = (coord1, coord2) => {
+                const toRad = x => x * Math.PI / 180;
+                const R = 6371; // Earth radius in kilometers
+                const dLat = toRad(coord2[0] - coord1[0]);
+                const dLon = toRad(coord2[1] - coord1[1]);
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(toRad(coord1[0])) * Math.cos(toRad(coord2[0])) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c; // Distance in kilometers
+            };
+
+            // 打开模态框
+            const communityModal = document.getElementById("community-modal");
+            const openModal = () => {
+                communityModal.style.display = "block";
+                setTimeout(() => map.invalidateSize(), 500); // 防止地图显示问题
+            };
+
+            // 关闭模态框
+            const closeModal = () => {
+                communityModal.style.display = "none";
+            };
+
+            // 添加模态框关闭事件
+            document.querySelector(".community-close").addEventListener("click", closeModal);
+            window.addEventListener("click", (event) => {
+                if (event.target === communityModal) closeModal();
+            });
+
+            // 添加点击事件到 community-column
+            document.getElementById("community-column").addEventListener("click", () => {
+                openModal();
+                if (!map) initMap(); // 确保地图只初始化一次
+            });
+
+            // 初始化 Tabs
+            const tabs = document.querySelectorAll(".community-tab");
+            const tabContents = document.querySelectorAll(".community-tab-content");
+
+            tabs.forEach((tab) => {
+                tab.addEventListener("click", () => {
+                    tabs.forEach((t) => t.classList.remove("active"));
+                    tabContents.forEach((content) => content.classList.remove("active"));
+
+                    tab.classList.add("active");
+                    document.getElementById(tab.getAttribute("data-tab")).classList.add("active");
+                });
+            });
+
+            // 添加点击事件到 community 列表项
+            const communityCards = document.querySelectorAll(".community-station-card");
+            const communities = {!! json_encode($communities) !!};
+
+            communityCards.forEach((card) => {
+                card.addEventListener("click", () => {
+                    const communityName = card.getAttribute("data-community-name");
+                    const community = communities.find(function(c) {
+                        return c.name === communityName;
+                    });
+                    if (community) {
+                        calculateRoute([latitude, longitude], [community.latitude, community
+                            .longitude
+                        ], communityName);
+                    }
+                });
+            });
+        });
+    </script> --}}
 
     {{-- Toastr New JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>

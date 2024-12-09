@@ -1025,5 +1025,32 @@ class ResortController extends Controller
         return response()->json(['message' => 'Image deleted successfully.']);
     }
 
+    // --------------------------------------------------------- Resort Facilities Area  ---------------------------------------------- //
+    public function showFacilities($resortId)
+    {
+        // 确保用户已登录
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('fail', 'You must be logged in to view the community form.');
+        }
+
+        $facilities = Facility::all();
+        $resort = Resort::find($resortId);
+
+        // 获取当前度假村已经选中的设施
+        $selectedFacilities = $resort->facilities()->pluck('facilities.id')->toArray();
+
+        return view('backend-user.backend-resort.resort-facility', compact('facilities', 'resort', 'selectedFacilities'));
+    }
+
+    public function addFacilities(Request $request, $resortId)
+    {
+        $resort = Resort::find($resortId);
+        $selectedFacilities = $request->input('facilities', []);
+
+        // 假设你有一个关联表来存储度假村和设施的关系
+        $resort->facilities()->sync($selectedFacilities);
+
+        return redirect()->back()->with('success', 'Facilities added successfully.');
+    }
 
 }

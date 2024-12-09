@@ -817,6 +817,10 @@
                                                         class="btn btn-success btn-sm"><i
                                                             class="fa fa-tag"></i>&nbsp;Discount</a>
 
+                                                    <a href="{{ url('backend-user/backend-resort/resortfacility/' . $resort->id . '/facilities') }}"
+                                                        class="btn btn-success btn-sm"><i
+                                                            class="fa fa-tag"></i>&nbsp;Facility</a>
+
                                                     <a href="{{ url('backend-user/backend-resort/resortcommunity/' . $resort->id) }}"
                                                         class="btn btn-success btn-sm">
                                                         <i class="fa fa-people-group"></i>

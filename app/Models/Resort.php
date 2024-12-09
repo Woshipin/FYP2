@@ -75,6 +75,6 @@ class Resort extends Model
 
     public function facilities()
     {
-        return $this->hasMany(ResortFacility::class);
+        return $this->belongsToMany(Facility::class, 'resort_facilities');
     }
 }

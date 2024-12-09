@@ -19,9 +19,9 @@ class Facility extends Model
 
     protected $appends = ['icon_class'];
 
-    public function resort()
+    public function resorts()
     {
-        return $this->belongsTo(Resort::class);
+        return $this->belongsToMany(Resort::class, 'resort_facilities');
     }
 
     public function getIconClassAttribute()
