@@ -52,5 +52,9 @@ class Hotel extends Model
         // Adjust this according to your actual URL generation logic
         return route('bookinghotel', ['id' => $this->id]); // Assuming you have a route named 'restaurant.booking'
     }
-    
+
+    public function facilities()
+    {
+        return $this->belongsToMany(Facility::class, 'hotel_facilities');
+    }
 }

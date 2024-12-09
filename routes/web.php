@@ -261,9 +261,13 @@ Route::get('/changeroom-status/{id}',[RoomController::class,'changeroomStatus'])
 //Change Table Status Function
 Route::get('/changetable-status/{id}',[TableController::class,'changetableStatus']);
 
-//------------------------------------------------------User Change Status Area------------------------------------------------------//
-Route::get('backend-user/backend-resort/resortfacility/{resortId}/facilities', [ResortController::class, 'showFacilities']);
-Route::post('backend-user/backend-resort/resortfacility/{resortId}/add-facilities', [ResortController::class, 'addFacilities']);
+//------------------------------------------------------Resort Facility Area------------------------------------------------------//
+Route::get('backend-user/backend-resort/resortfacility/{resortId}/facilities', [ResortController::class, 'showResortFacilities']);
+Route::post('backend-user/backend-resort/resortfacility/{resortId}/add-facilities', [ResortController::class, 'addResortFacilities']);
+
+//------------------------------------------------------Hotel Facility Area------------------------------------------------------//
+Route::get('backend-user/backend-hotel/hotelfacility/{hotelId}/facilities', [HotelController::class, 'showHotelFacilities']);
+Route::post('backend-user/backend-hotel/hotelfacility/{hotelId}/add-facilities', [HotelController::class, 'addHotelFacilities']);
 
 //--------------------------------------------------- User Dashboard Area------------------------------------------------------------//
 

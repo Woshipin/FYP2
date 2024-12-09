@@ -763,6 +763,15 @@
                                                         href="{{ url('deleteHotel/' . $hotel->id) . '/delete' }}"
                                                         class="btn btn-danger btn-sm"><i
                                                             class="fa fa-trash"></i>&nbsp;Delete</a>
+                                                    <a href="{{ url('backend-user/backend-hotel/hotelfacility/' . $hotel->id . '/facilities') }}"
+                                                        class="btn btn-success btn-sm"><i
+                                                            class="fa fa-tag"></i>&nbsp;Facility</a>
+
+                                                    <a href="{{ url('backend-user/backend-hotel/hotelcommunity/' . $hotel->id) }}"
+                                                        class="btn btn-success btn-sm">
+                                                        <i class="fa fa-people-group"></i>
+                                                        &nbsp;Community
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach

@@ -12,6 +12,10 @@ use App\Models\HotelImage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\HotelCommunity;
+use App\Models\HotelCommunityMultipleImage;
+use App\Models\CommunityCategory;
+use App\Models\Facility;
 
 use Intervention\Image\Facades\Image;
 use Jenssegers\ImageHash\ImageHash;
@@ -393,13 +397,13 @@ class HotelController extends Controller
 
     public function HotelDetail($id)
     {
-        // Retrieve the resort with the given ID from the database
+        // Retrieve the hotel with the given ID from the database
         $hotels = Hotel::find($id);
         $hotelId = Hotel::find($id);
 
         if (!$hotels) {
-            // Resort not found, handle the error accordingly (e.g., redirect or show an error message)
-            return redirect()->back()->with('error', 'Resort not found.');
+            // Hotel not found, handle the error accordingly (e.g., redirect or show an error message)
+            return redirect()->back()->with('error', 'Hotel not found.');
         }
 
         // 使用原生 SQL 查询计算平均评分
@@ -420,8 +424,16 @@ class HotelController extends Controller
                             ->where('rateable_name', $hotels->name)
                             ->value('rating');
 
-        // Pass the resort data to the view
-        return view('frontend-auth.frontend-hotel.hotel-detail', compact('hotels','hotelId','averageRating', 'ratingCount', 'singleRating'));
+        $communitycategorys = CommunityCategory::all();
+
+        // 获取该 hotel 的所有 community
+        $communities = DB::table('hotel_communities')
+        ->where('hotel_id', $hotels->id)
+        ->get();
+
+        // Pass the hotel data to the view
+        return view('frontend-auth.frontend-hotel.hotel-detail', compact('hotels','hotelId','averageRating', 'ratingCount', 'singleRating'
+            ,'communitycategorys','communities'));
     }
 
     public function frontendhotelsearch(Request $request)
@@ -601,6 +613,34 @@ class HotelController extends Controller
                 'message' => 'An error occurred while processing your request. Please try again.'
             ], 500);
         }
+    }
+
+    // --------------------------------------------------------- Hotel Facilities Area  ---------------------------------------------- //
+    public function showHotelFacilities($hotelId)
+    {
+        // 确保用户已登录
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('fail', 'You must be logged in to view the community form.');
+        }
+
+        $facilities = Facility::all();
+        $hotel = Hotel::find($hotelId);
+
+        // 获取当前度假村已经选中的设施
+        $selectedFacilities = $hotel->facilities()->pluck('facilities.id')->toArray();
+
+        return view('backend-user.backend-hotel.hotel-facility', compact('facilities', 'hotel', 'selectedFacilities'));
+    }
+
+    public function addHotelFacilities(Request $request, $hotelId)
+    {
+        $hotel = Hotel::find($hotelId);
+        $selectedFacilities = $request->input('facilities', []);
+
+        // 假设你有一个关联表来存储度假村和设施的关系
+        $hotel->facilities()->sync($selectedFacilities);
+
+        return redirect()->back()->with('success', 'Facilities added successfully.');
     }
 
 }

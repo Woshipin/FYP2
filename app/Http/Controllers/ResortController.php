@@ -1026,7 +1026,7 @@ class ResortController extends Controller
     }
 
     // --------------------------------------------------------- Resort Facilities Area  ---------------------------------------------- //
-    public function showFacilities($resortId)
+    public function showResortFacilities($resortId)
     {
         // 确保用户已登录
         if (!auth()->check()) {
@@ -1042,7 +1042,7 @@ class ResortController extends Controller
         return view('backend-user.backend-resort.resort-facility', compact('facilities', 'resort', 'selectedFacilities'));
     }
 
-    public function addFacilities(Request $request, $resortId)
+    public function addResortFacilities(Request $request, $resortId)
     {
         $resort = Resort::find($resortId);
         $selectedFacilities = $request->input('facilities', []);
