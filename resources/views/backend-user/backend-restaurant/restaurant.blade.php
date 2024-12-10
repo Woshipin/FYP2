@@ -2,6 +2,20 @@
 
 @section('newuser-section')
 
+    <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    {{-- Community Icon --}}
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
     {{-- Modal CSS --}}
     <style>
         .modal-dialog {
@@ -776,14 +790,22 @@
                                                     <a href="{{ url('viewRestaurant/' . $restaurant->id . '/view') }}"
                                                         class="btn btn-info btn-sm"><i
                                                             class="fas fa-eye"></i>&nbsp;View</a>
+
                                                     <a href="{{ url('editRestaurant/' . $restaurant->id . '/edit') }}"
                                                         class="btn btn-primary btn-sm" data-toggle="modal"
                                                         data-target="#restauranteditModal{{ $restaurant->id }}"><i
                                                             class="fa fa-edit"></i>&nbsp;Edit</a><br>
+
                                                     <a onclick="return confirm('Are you sure to delete this data?')"
                                                         href="{{ url('deleteRestaurant/' . $restaurant->id . '/delete') }}"
                                                         class="btn btn-danger btn-sm"><i
                                                             class="fa fa-trash"></i>&nbsp;Delete</a>
+
+                                                    <a href="{{ url('backend-user/backend-restaurant/restaurantcommunity/' . $restaurant->id) }}"
+                                                        class="btn btn-success btn-sm">
+                                                        <i class="fa fa-people-group"></i>
+                                                        &nbsp;Community
+                                                    </a>
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -962,10 +984,12 @@
                                                 <td>
                                                     <!-- <a href="" class="btn btn-info btn-sm"><i class="las la-eye"></i></a> -->
                                                     <a href="" class="btn btn-primary btn-sm" data-toggle="modal"
-                                                        data-target="#tableeditModal{{ $table->id }}"><i class="fa fa-edit"></i>&nbsp;Edit</a>
+                                                        data-target="#tableeditModal{{ $table->id }}"><i
+                                                            class="fa fa-edit"></i>&nbsp;Edit</a>
                                                     <a onclick="return confirm('Are you sure to delete this data?')"
                                                         href="{{ url('deleteTable/' . $table->id) . '/delete' }}"
-                                                        class="btn btn-danger btn-sm"><i class="fa fa-trash"></i>&nbsp;Delete</a>
+                                                        class="btn btn-danger btn-sm"><i
+                                                            class="fa fa-trash"></i>&nbsp;Delete</a>
                                                 </td>
                                             </tr>
                                         @endforeach

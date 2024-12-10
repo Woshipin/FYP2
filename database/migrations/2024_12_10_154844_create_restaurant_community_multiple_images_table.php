@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hotel_community_mutliple_images', function (Blueprint $table) {
+        Schema::create('restaurant_community_multiple_images', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('community_id')->constrained('hotel_communities')->onDelete('cascade');
+            $table->foreignId('community_id')->constrained('restaurant_communities')->onDelete('cascade');
             $table->string('image_path');
             $table->timestamps();
         });
@@ -24,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hotel_community_mutliple_images');
+        Schema::dropIfExists('restaurant_community_multiple_images');
     }
 };

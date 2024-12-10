@@ -1,6 +1,7 @@
 @extends('backend-user.newlayout')
 
 @section('newuser-section')
+
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
@@ -19,88 +20,6 @@
 
     {{-- Modal CSS --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    {{-- <style>
-        /* Modal 通用样式 */
-        .modal-dialog {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            border-radius: 12px;
-            padding: 20px;
-            /* Adjust padding as needed */
-            max-height: 80vh;
-            overflow-y: auto;
-            max-width: 800px;
-            /* 增加宽度 */
-        }
-
-        /* Modal Header */
-        .modal-header {
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid #ddd;
-        }
-
-        /* Form 样式优化 */
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-        }
-
-        /* 自适应文件上传框 */
-        .file-upload {
-            border: 2px dashed #ddd;
-            padding: 15px;
-            text-align: center;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        /* 提交按钮样式 */
-        .submit-button {
-            background-color: #2563eb;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .submit-button:hover {
-            background-color: #1d4ed8;
-        }
-
-        /* 自定义滚动条 */
-        .modal-body::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
-        }
-
-        .modal-body::-webkit-scrollbar-thumb:hover {
-            background: #666;
-        }
-    </style> --}}
     <style>
         /* Modal 通用样式 */
         .modal-lg {
@@ -173,25 +92,6 @@
             background: #666;
         }
     </style>
-    {{-- <style>
-        .select2-container--default .select2-selection--multiple {
-            border: 1px solid #ddd;
-            border-radius: 6px;
-        }
-
-        .select2-container--default .select2-selection--multiple .select2-selection__choice {
-            background-color: #007bff;
-            border-color: #007bff;
-            color: white;
-            padding: 5px 10px;
-            margin-top: 5px;
-            border-radius: 4px;
-        }
-
-        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-            color: white;
-        }
-    </style> --}}
 
     {{-- Form CSS --}}
     <style>
@@ -530,16 +430,16 @@
             background-color: #1d4ed8;
         }
 
-        .resort-list {
+        .hotel-list {
             margin-top: 20px;
         }
 
-        .resort-list ul {
+        .hotel-list ul {
             list-style: none;
             padding: 0;
         }
 
-        .resort-list li {
+        .hotel-list li {
             background-color: #fff;
             padding: 10px;
             margin-bottom: 10px;
@@ -551,11 +451,11 @@
             align-items: center;
         }
 
-        .resort-list li:hover {
+        .hotel-list li:hover {
             background-color: #f0f0f0;
         }
 
-        .resort-details {
+        .hotel-details {
             display: none;
             margin-top: 20px;
             padding: 20px;
@@ -564,11 +464,11 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .resort-details.active {
+        .hotel-details.active {
             display: block;
         }
 
-        .resort-details p {
+        .hotel-details p {
             margin-bottom: 10px;
         }
 
@@ -709,75 +609,12 @@
         <h1>Community</h1><br>
 
         <!-- Button to trigger the modal -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resortModal">
-            Add New Resort Community
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#hotelModal">
+            Add New Hotel Community
         </button>
 
         <br><br>
 
-        {{-- Show Community --}}
-        {{-- <div class="community-list">
-            @foreach ($communities as $community)
-                <div class="community-item">
-                    <button class="community-header">
-                        <div class="community-info">
-                            <!-- Display first letter of community name as avatar -->
-                            <div class="avatar">{{ strtoupper(substr($community->name, 0, 1)) }}</div>
-                            <div class="community-details">
-                                <h2>{{ $community->name }}</h2>
-                                <div class="member-count">
-                                    <!-- SVG icon for member count -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-
-                                    @foreach (explode(',', $community->category) as $category)
-                                        <span class="tag">{{ $category }}</span>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </div>
-                        <svg class="chevron" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </button>
-                    <div class="community-content">
-                        <div class="content-inner">
-                            <!-- Community Description -->
-                            <p class="community-description">{{ $community->description }}</p>
-
-                            <div class="image-grid">
-                                <!-- 左侧导航按钮 -->
-                                <button class="image-grid-nav prev">&lt;</button>
-
-                                <!-- 遍历社区的图片 -->
-                                @foreach ($communities as $community)
-                                    @foreach ($community->multipleImages as $image)
-                                        <img src="{{ $image->full_image_path }}" alt="{{ $community->name }}" class="grid-image">
-                                    @endforeach
-                                @endforeach
-
-                                <!-- 右侧导航按钮 -->
-                                <button class="image-grid-nav next">&gt;</button>
-                            </div>
-
-                            <div class="tags">
-                                <!-- Loop through categories -->
-                                @foreach (explode(',', $community->category) as $category)
-                                    <span class="tag">{{ $category }}</span>
-                                @endforeach
-                            </div>
-                        </div>
-
-                        <button>Edit</button>
-                        <button>delete</button>
-                    </div>
-                </div>
-            @endforeach
-        </div> --}}
         {{-- Show Community --}}
         <div class="community-list">
             @foreach ($communities as $community)
@@ -842,13 +679,13 @@
 
                             <!-- Edit Button -->
                             <a href="#" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                data-bs-target="#resortEditModal{{ $community->id }}">
+                                data-bs-target="#hotelEditModal{{ $community->id }}">
                                 <i class="fa fa-edit"></i>&nbsp;Edit
                             </a>
 
                             <!-- Delete button -->
                             <a onclick="return confirm('Are you sure to delete this data?')"
-                                href="{{ route('resort.community.delete', $community->id) }}" class="btn btn-danger btn-sm">
+                                href="{{ route('hotel.community.delete', $community->id) }}" class="btn btn-danger btn-sm">
                                 <i class="fa fa-trash"></i>&nbsp;Delete
                             </a>
                         </div>
@@ -859,16 +696,16 @@
         </div>
 
         <!-- Bootstrap Add Community Modal -->
-        <div class="modal fade" id="resortModal" tabindex="-1" role="dialog" aria-labelledby="resortModalLabel"
+        <div class="modal fade" id="hotelModal" tabindex="-1" role="dialog" aria-labelledby="hotelModalLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document"> <!-- 使用modal-lg类来增加宽度 -->
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="resortModalLabel">Add New Resort Community</h5>
+                        <h5 class="modal-title" id="hotelModalLabel">Add New Hotel Community</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="resortForm" action="{{ route('resort.community.save', ['id' => $id]) }}" method="POST"
+                        <form id="hotelForm" action="{{ route('hotel.community.save', ['id' => $id]) }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
                             <div class="form-group">
@@ -876,19 +713,6 @@
                                 <input type="text" id="name" name="name" placeholder="Enter community name"
                                     required>
                             </div>
-
-                            {{-- <div class="form-group">
-                                <label for="communitycategory" class="form-label">Community Category</label>
-                                <select class="form-control" id="communitycategory" name="category[]" multiple required>
-                                    <option value="" disabled>---------Select Community Categories---------</option>
-                                    @foreach ($communitycategorys as $communitycategory)
-                                        <option value="{{ $communitycategory->name }}"
-                                            @if (isset($community) && in_array($communitycategory->name, explode(',', $community->communitycategory))) selected @endif>
-                                            {{ $communitycategory->name }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div> --}}
 
                             <div class="form-group">
                                 <label for="communitycategory" class="form-label">Community Category</label>
@@ -899,18 +723,6 @@
                                     @endforeach
                                 </select>
                             </div>
-
-                            {{-- <div class="form-group">
-                                <label for="image">Images</label>
-                                <div class="file-upload">
-                                    <input type="file" id="image" name="image[]" accept="image/*" multiple
-                                        required>
-                                    <p>Click or drag images here to upload</p>
-                                </div>
-                                <div class="image-preview-container" id="imagePreview">
-                                    <p>No image selected</p>
-                                </div>
-                            </div> --}}
 
                             <div class="form-group">
                                 <label for="imageAdd">Images</label>
@@ -966,20 +778,20 @@
 
         <!-- Dynamically Generated Edit Community Modal -->
         @foreach ($communities as $community)
-            <div class="modal fade" id="resortEditModal{{ $community->id }}" tabindex="-1" role="dialog"
-                aria-labelledby="resortEditModalLabel{{ $community->id }}" aria-hidden="true">
+            <div class="modal fade" id="hotelEditModal{{ $community->id }}" tabindex="-1" role="dialog"
+                aria-labelledby="hotelEditModalLabel{{ $community->id }}" aria-hidden="true">
                 <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="resortEditModalLabel{{ $community->id }}">
+                            <h5 class="modal-title" id="hotelEditModalLabel{{ $community->id }}">
                                 Edit Community
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                 aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="resortEditForm{{ $community->id }}"
-                                action="{{ route('resort.community.update', $community->id) }}" method="POST"
+                            <form id="hotelEditForm{{ $community->id }}"
+                                action="{{ route('hotel.community.update', $community->id) }}" method="POST"
                                 enctype="multipart/form-data">
 
                                 @csrf
@@ -989,7 +801,7 @@
                                     <label for="name{{ $community->id }}">Name</label>
                                     <input type="text" id="name{{ $community->id }}" name="name"
                                         value="{{ $community->name }}" class="form-control"
-                                        placeholder="Enter resort name" required />
+                                        placeholder="Enter hotel name" required />
                                 </div>
 
                                 <div class="form-group">
@@ -1088,138 +900,6 @@
     </script>
 
     {{-- JS Code --}}
-    {{-- <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            // Handle expand/collapse functionality
-            const communityHeaders = document.querySelectorAll(".community-header");
-
-            communityHeaders.forEach((header) => {
-                header.addEventListener("click", () => {
-                    const communityItem = header.closest(".community-item");
-                    communityItem.classList.toggle("expanded");
-                });
-            });
-
-            // Handle image grid navigation
-            document.querySelectorAll(".image-grid").forEach((grid) => {
-                const images = Array.from(grid.querySelectorAll(".grid-image"));
-                const prevBtn = grid.querySelector(".prev");
-                const nextBtn = grid.querySelector(".next");
-                let currentPage = 0;
-                const imagesPerPage = 3;
-                const totalPages = Math.ceil(images.length / imagesPerPage);
-
-                function showImages(page) {
-                    const start = page * imagesPerPage;
-                    const end = start + imagesPerPage;
-
-                    images.forEach((img, index) => {
-                        img.style.display = index >= start && index < end ? "block" : "none";
-                    });
-                }
-
-                if (prevBtn && nextBtn) {
-                    prevBtn.addEventListener("click", (e) => {
-                        e.preventDefault();
-                        currentPage = (currentPage - 1 + totalPages) % totalPages;
-                        showImages(currentPage);
-                    });
-
-                    nextBtn.addEventListener("click", (e) => {
-                        e.preventDefault();
-                        currentPage = (currentPage + 1) % totalPages;
-                        showImages(currentPage);
-                    });
-                }
-
-                // Show initial images
-                showImages(0);
-            });
-
-            // Initialize image upload with preview functionality
-            initializeImageUpload();
-
-            // Modal initialization (for dynamically generated modals)
-            initializeModals();
-        });
-
-        /**
-         * Initialize the image upload with preview functionality
-         */
-        function initializeImageUpload() {
-            // Add event listeners to all file inputs with class `file-upload-input`
-            document.querySelectorAll('input[type="file"]').forEach((imageInput) => {
-                const previewContainerId = imageInput.dataset.previewTarget || "imagePreview";
-                const previewContainer = document.getElementById(previewContainerId);
-                const maxFileSize = 5 * 1024 * 1024; // 5MB
-
-                if (!previewContainer) {
-                    console.warn(`Preview container with ID "${previewContainerId}" not found`);
-                    return;
-                }
-
-                imageInput.addEventListener("change", function(event) {
-                    const files = event.target.files;
-                    previewContainer.innerHTML = ""; // Clear previous content
-
-                    if (files.length === 0) {
-                        previewContainer.innerHTML = '<p class="text-muted">No image selected</p>';
-                        return;
-                    }
-
-                    Array.from(files).forEach((file, index) => {
-                        // Check if the file is an image
-                        if (!file.type.startsWith("image/")) {
-                            alert(`File "${file.name}" is not a valid image.`);
-                            return;
-                        }
-
-                        // Check file size
-                        if (file.size > maxFileSize) {
-                            alert(`File "${file.name}" exceeds the 5MB size limit.`);
-                            return;
-                        }
-
-                        const reader = new FileReader();
-
-                        // Load image and show preview
-                        reader.onload = function(e) {
-                            const img = document.createElement("img");
-                            img.src = e.target.result;
-                            img.alt = file.name;
-                            img.title = `Image ${index + 1}`;
-                            img.style.maxWidth = "100px";
-                            img.style.margin = "5px";
-                            img.style.borderRadius = "8px";
-                            img.style.boxShadow = "0 2px 5px rgba(0, 0, 0, 0.2)";
-                            img.style.cursor = "pointer";
-
-                            // Add remove image functionality
-                            img.addEventListener("click", () => {
-                                if (confirm(`Remove "${file.name}" from upload?`)) {
-                                    img.remove();
-                                }
-                            });
-
-                            previewContainer.appendChild(img);
-                        };
-
-                        reader.readAsDataURL(file);
-                    });
-                });
-            });
-        }
-
-        /**
-         * Initialize modals for dynamically generated modals
-         */
-        function initializeModals() {
-            const modals = document.querySelectorAll(".modal");
-            modals.forEach((modal) => {
-                new bootstrap.Modal(modal); // Ensure modal components are initialized
-            });
-        }
-    </script> --}}
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             // 初始化展开/折叠功能
@@ -1380,7 +1060,7 @@
             // 显示确认提示
             if (confirm("Are you sure you want to delete this image?")) {
                 $.ajax({
-                    url: `/resort-image/${imageUrl}`,
+                    url: `/hotel-image/${imageUrl}`,
                     type: "DELETE",
                     data: {
                         "_token": "{{ csrf_token() }}",
@@ -1505,59 +1185,6 @@
             });
         });
     </script>
-    
-    {{-- <script>
-        // 防抖机制，用于减少 API 调用次数
-        let debounceTimer;
-
-        document.getElementById('location').addEventListener('input', function() {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => {
-                let address = this.value.trim();
-
-                // 清理字符串：移除特殊字符和前导符号
-                address = address.replace(/^-|[^a-zA-Z0-9\s,]/g, '');
-
-                // 尝试简化地址，仅保留主要部分
-                const simplifiedAddress = address.split(',').slice(0, 3).join(',');
-
-                // 如果地址为空，清空经纬度输入框
-                if (address === '') {
-                    document.getElementById('latitude').value = '';
-                    document.getElementById('longitude').value = '';
-                    return;
-                }
-
-                // 调用 Nominatim API
-                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(simplifiedAddress)}&countrycodes=my`, {
-                        headers: {
-                            'User-Agent': 'YourAppName/1.0 (ahpin7762@gmail.com)',
-                        },
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.length > 0) {
-                            const sortedData = data.sort((a, b) => b.importance - a.importance);
-                            const location = sortedData[0];
-
-                            // 填入经纬度
-                            document.getElementById('latitude').value = location.lat;
-                            document.getElementById('longitude').value = location.lon;
-                        } else {
-                            // 未找到结果，清空经纬度输入框
-                            document.getElementById('latitude').value = '';
-                            document.getElementById('longitude').value = '';
-                            console.error('No results found for the given address.');
-                        }
-                    })
-                    .catch(error => {
-                        document.getElementById('latitude').value = '';
-                        document.getElementById('longitude').value = '';
-                        console.error('Error fetching geocoding data:', error);
-                    });
-            }, 500); // 防抖延迟 500 毫秒
-        });
-    </script> --}}
 
     {{-- Toastr JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>

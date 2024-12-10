@@ -7,6 +7,7 @@
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
 
+    {{-- Community Icon --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
@@ -542,25 +543,6 @@
                                     @enderror
                                 </span>
                             </div>
-                            <div class="form-group">
-                                <label for="description">Resort Description</label>
-                                <textarea class="form-control" name="description" id="description" rows="10">{{ old('description', $resort->description) }}</textarea>
-                                <span class="text-danger">
-                                    @error('description')
-                                        {{ $message }}
-                                    @enderror
-                                </span>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="map">Resort Map</label>
-                                <textarea class="form-control" name="map" rows="10" id="map">{{ old('map', $resort->map) }}</textarea>
-                                <span class="text-danger">
-                                    @error('map')
-                                        {{ $message }}
-                                    @enderror
-                                </span>
-                            </div>
 
                             <div class="form-group">
                                 <label for="longitude">Resort Longitude</label>
@@ -579,6 +561,26 @@
                                     value="{{ old('latitude', $resort->latitude) }}">
                                 <span class="text-danger">
                                     @error('latitude')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="description">Resort Description</label>
+                                <textarea class="form-control" name="description" id="description" rows="10">{{ old('description', $resort->description) }}</textarea>
+                                <span class="text-danger">
+                                    @error('description')
+                                        {{ $message }}
+                                    @enderror
+                                </span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="map">Resort Map</label>
+                                <textarea class="form-control" name="map" rows="10" id="map">{{ old('map', $resort->map) }}</textarea>
+                                <span class="text-danger">
+                                    @error('map')
                                         {{ $message }}
                                     @enderror
                                 </span>
@@ -819,7 +821,7 @@
 
                                                     <a href="{{ url('backend-user/backend-resort/resortfacility/' . $resort->id . '/facilities') }}"
                                                         class="btn btn-success btn-sm"><i
-                                                            class="fa fa-tag"></i>&nbsp;Facility</a>
+                                                            class="fa fa-building"></i>&nbsp;Facility</a>
 
                                                     <a href="{{ url('backend-user/backend-resort/resortcommunity/' . $resort->id) }}"
                                                         class="btn btn-success btn-sm">
@@ -1103,38 +1105,49 @@
 
     {{-- Get Coordinates --}}
     <script>
-        document.getElementById('location').addEventListener('input', function() {
-            const address = this.value;
-            if (address.trim() === '') {
-                document.getElementById('latitude').value = '';
-                document.getElementById('longitude').value = '';
-                return;
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取地址输入框
+            const addressInput = document.getElementById('location');
 
-            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`, {
-                    headers: {
-                        'User-Agent': 'YourAppName/1.0 (YourContactEmail)'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.length > 0) {
-                        const location = data[0];
-                        document.getElementById('latitude').value = location.lat;
-                        document.getElementById('longitude').value = location.lon;
-                    } else {
+            if (addressInput) {
+                addressInput.addEventListener('input', function() {
+                    const address = this.value.trim();
+
+                    // 如果地址为空，清空经纬度输入框
+                    if (address === '') {
                         document.getElementById('latitude').value = '';
                         document.getElementById('longitude').value = '';
-                        // alert('未找到该地址，请检查输入是否正确。');
-                        console.error('No results found for the given address.');
+                        return;
                     }
-                })
-                .catch(error => {
-                    document.getElementById('latitude').value = '';
-                    document.getElementById('longitude').value = '';
-                    // alert('获取地理编码数据时发生错误。');
-                    console.error('Error fetching geocoding data:', error);
+
+                    // 调用 Nominatim API 获取地理编码数据
+                    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`, {
+                            headers: {
+                                'User-Agent': 'YourAppName/1.0 (YourContactEmail)', // 替换为你的应用信息
+                            },
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                // 获取第一个结果的经纬度信息
+                                const location = data[0];
+                                document.getElementById('latitude').value = location.lat;
+                                document.getElementById('longitude').value = location.lon;
+                            } else {
+                                // 地址未找到时清空输入框
+                                document.getElementById('latitude').value = '';
+                                document.getElementById('longitude').value = '';
+                                console.error('No results found for the given address.');
+                            }
+                        })
+                        .catch(error => {
+                            // 捕获网络错误并清空输入框
+                            document.getElementById('latitude').value = '';
+                            document.getElementById('longitude').value = '';
+                            console.error('Error fetching geocoding data:', error);
+                        });
                 });
+            }
         });
     </script>
 

@@ -1,6 +1,7 @@
 @extends('frontend-auth.newlayout')
 
 @section('frontend-section')
+
     {{-- Payment Card CSS --}}
     <link rel="stylesheet" href="{{ asset('paymentcard/css/style.css') }}">
 

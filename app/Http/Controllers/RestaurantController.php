@@ -11,6 +11,9 @@ use App\Models\RestaurantImage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\RestaurantCommunity;
+use App\Models\RestaurantCommunityMultipleImage;
+use App\Models\CommunityCategory;
 
 use Intervention\Image\Facades\Image;
 use Jenssegers\ImageHash\ImageHash;
@@ -335,7 +338,15 @@ class RestaurantController extends Controller
                             ->where('rateable_name', $restaurants->name)
                             ->value('rating');
 
-        return view('frontend-auth.frontend-restaurant.restaurant-detail',compact('restaurants','restaurantId','averageRating', 'ratingCount', 'singleRating'));
+        $communitycategorys = CommunityCategory::all();
+
+        // 获取该 hotel 的所有 community
+        $communities = DB::table('restaurant_communities')
+        ->where('restaurant_id', $restaurants->id)
+        ->get();
+
+        return view('frontend-auth.frontend-restaurant.restaurant-detail',compact('restaurants','restaurantId','averageRating', 'ratingCount'
+        , 'singleRating','communitycategorys','communities'));
     }
 
     public function frontendrestaurantsearch(Request $request)
@@ -472,6 +483,157 @@ class RestaurantController extends Controller
                 'message' => 'An error occurred while processing your request. Please try again.'
             ], 500);
         }
+    }
+
+    // --------------------------------------------------------- Restaurant Community Area  ---------------------------------------------- //
+    // Show the community form
+    public function showRestaurantCommunityForm($id)
+    {
+        // 确保用户已登录
+        if (!auth()->check()) {
+            return redirect()->route('login')->with('fail', 'You must be logged in to view the community form.');
+        }
+
+        // 获取指定 restaurant_id 的所有社区，并预加载 multipleImages
+        $communities = RestaurantCommunity::with('multipleImages')->where('restaurant_id', $id)->get();
+
+        $communitycategorys = CommunityCategory::all();
+
+        // 返回视图并传递数据
+        return view('backend-user.backend-restaurant.restaurant-community', compact('communities', 'id','communitycategorys'));
+    }
+
+    // Save a new restaurant community
+    public function saveRestaurantCommunity(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string',
+            'image' => 'nullable|array',
+            'cultural' => 'nullable|string',
+            'address' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'description' => 'required|string',
+        ]);
+
+        // 创建社区记录
+        $community = new RestaurantCommunity();
+        $community->restaurant_id = $id;
+        $community->name = $request->name;
+        $community->category = $request->category;
+        $community->cultural = $request->cultural;
+        $community->address = $request->address;
+        $community->latitude = $request->latitude;
+        $community->longitude = $request->longitude;
+        $community->description = $request->description;
+        $community->save();
+
+        // 处理图像上传
+        if ($request->hasFile('image')) {
+            foreach ($request->file('image') as $image) {
+                Log::info('Uploading image: ' . $image->getClientOriginalName());
+
+                // 防止文件名重复
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('images'), $imageName);
+
+                Log::info('Saving image to database: ' . $imageName);
+
+                // 保存到 RestaurantCommunityMultipleImage 表
+                $communityImage = new RestaurantCommunityMultipleImage();
+                $communityImage->community_id = $community->id;
+                $communityImage->image_path = 'images/' . $imageName; // 保存完整路径
+                $communityImage->save();
+            }
+        }
+
+        return redirect()->back()->with('success', 'Community added successfully.');
+    }
+
+    // Update a restaurant community
+    public function updateRestaurantCommunity(Request $request, $id)
+    {
+        $community = RestaurantCommunity::findOrFail($id);
+
+        // Validate the request data
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'category' => 'required|string',
+            'image' => 'nullable|array',
+            'cultural' => 'nullable|string',
+            'address' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'description' => 'required|string',
+        ]);
+
+        // Update the community data
+        $community->name = $request->name;
+        $community->category = $request->category;
+        $community->cultural = $request->cultural;
+        $community->address = $request->address;
+        $community->latitude = $request->latitude;
+        $community->longitude = $request->longitude;
+        $community->description = $request->description;
+
+        // Handle image uploads using the same approach as `saveCommunity`
+        if ($request->hasFile('image')) {
+            // 删除旧图片记录及文件
+            foreach ($community->multipleImages as $existingImage) {
+                $existingImagePath = public_path($existingImage->image_path);
+                if (file_exists($existingImagePath)) {
+                    unlink($existingImagePath); // 删除实际文件
+                }
+                $existingImage->delete(); // 删除数据库记录
+            }
+
+            // 上传新图片并保存数据库记录
+            foreach ($request->file('image') as $image) {
+                // 防止文件名冲突
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('images'), $imageName);
+
+                // 保存到数据库
+                $community->multipleImages()->create([
+                    'image_path' => 'images/' . $imageName, // 保存完整路径
+                ]);
+            }
+        }
+
+        // Save the updated community
+        $community->save();
+
+        return redirect()->back()->with('success', 'Community updated successfully.');
+    }
+
+    // Delete a restaurant community
+    public function deleteRestaurantCommunity($id)
+    {
+        // Find the community by id
+        $community = RestaurantCommunity::findOrFail($id);
+
+        // Delete the community
+        $community->delete();
+
+        // Redirect with success message
+        return redirect()->back()->with('success', 'Community deleted successfully.');
+    }
+
+    public function RestaurantCommunityImageDestroy($id)
+    {
+        $image = RestaurantCommunityMultipleImage::findOrFail($id);
+
+        // 删除图片文件
+        $imagePath = public_path('images/' . $image->image);
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+
+        // 从数据库中删除记录
+        $image->delete();
+
+        return response()->json(['message' => 'Image deleted successfully.']);
     }
 
 }

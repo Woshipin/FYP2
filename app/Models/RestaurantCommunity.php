@@ -5,12 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class HotelCommunity extends Model
+class RestaurantCommunity extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'hotel_id',
+        'restaurant_id',
         'name',
         'image',
         'cultural',
@@ -21,9 +21,9 @@ class HotelCommunity extends Model
         'category', // Added category to fillable fields
     ];
 
-    // Relationship to the HotelCommunityMutlipleImage model
+    // Relationship to the RestaurantCommunityMultipleImage model
     public function multipleImages()
     {
-        return $this->hasMany(HotelCommunityMultipleImage::class, 'community_id');
+        return $this->hasMany(RestaurantCommunityMultipleImage::class, 'community_id');
     }
 }

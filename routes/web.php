@@ -395,6 +395,13 @@ Route::get('/viewBookedRestaurant/{id}/view',[BookingController::class,'viewBook
 // GPS Auto Search Restaurant
 Route::get('/restaurant-gps-search', [RestaurantController::class, 'RestaurantgpsSearch'])->name('restaurant.gps.search');
 
+// Restaurant Community
+Route::get('backend-user/backend-restaurant/restaurantcommunity/{id}', [RestaurantController::class, 'showRestaurantCommunityForm'])->name('restaurant.community.form');
+Route::post('backend-user/backend-restaurant/restaurantcommunity/{id}', [RestaurantController::class, 'saveRestaurantCommunity'])->name('restaurant.community.save');
+Route::get('/restaurant/{id}/community/delete', [RestaurantController::class, 'deleteRestaurantCommunity'])->name('restaurant.community.delete');
+Route::post('/restaurant/community/update/{id}', [RestaurantController::class, 'updateRestaurantCommunity'])->name('restaurant.community.update');
+Route::delete('/community-image/{id}', [CommunityController::class, 'RestaurantCommunityImageDestroy'])->name('community.image.destroy');
+
 //---------------------------------------------------My Restaurant Area---------------------------------------------------------------//
 //show Customer bookeds restaurant
 Route::get('/mybookingsrestaurant',[BookingController::class, 'mybookedRestaurant']);
@@ -457,6 +464,13 @@ Route::get('/HotelSearch',[HotelController::class, 'HotelSearch'])->name('HotelS
 Route::get('/viewBookedHotel/{id}/view',[BookingController::class,'viewBookedHotel'])->name('viewBookedHotel');
 // GPS Auto Search Hotel
 Route::get('/hotel-gps-search', [HotelController::class, 'HotelgpsSearch'])->name('hotel.gps.search');
+
+// Hotel Community
+Route::get('backend-user/backend-hotel/hotelcommunity/{id}', [HotelController::class, 'showHotelCommunityForm'])->name('hotel.community.form');
+Route::post('backend-user/backend-hotel/hotelcommunity/{id}', [HotelController::class, 'saveHotelCommunity'])->name('hotel.community.save');
+Route::get('/hotel/{id}/community/delete', [HotelController::class, 'deleteHotelCommunity'])->name('hotel.community.delete');
+Route::post('/hotel/community/update/{id}', [HotelController::class, 'updateHotelCommunity'])->name('hotel.community.update');
+Route::delete('/community-image/{id}', [CommunityController::class, 'HotelCommunityImageDestroy'])->name('community.image.destroy');
 
 //---------------------------------------------------Table Area--------------------------------------------------------------//
 //Display Table Page
