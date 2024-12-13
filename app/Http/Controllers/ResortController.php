@@ -639,11 +639,12 @@ class ResortController extends Controller
     //     }
     // }
 
+    // Final Full GPS Search
     public function ResortgpsSearch(Request $request)
     {
         $latitude = $request->query('latitude');
         $longitude = $request->query('longitude');
-        $radius = 150; // 50 km range
+        $radius = 15; // 50 km range
 
         try {
             $resorts = DB::table('resorts')
@@ -682,6 +683,61 @@ class ResortController extends Controller
             ], 500);
         }
     }
+
+    // Testing
+    // public function ResortgpsSearch(Request $request)
+    // {
+    //     $latitude = $request->query('latitude');
+    //     $longitude = $request->query('longitude');
+    //     $radius = 15; // 15 km range
+
+    //     try {
+    //         // 打印接收到的参数
+    //         \Log::info('Received GPS coordinates:', [
+    //             'latitude' => $latitude,
+    //             'longitude' => $longitude,
+    //         ]);
+
+    //         // 增加距离计算
+    //         $resorts = DB::table('resorts')
+    //             ->select('resorts.*',
+    //                 DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
+    //             ->where('register_status', 1) // 只选择 register_status 为 1 的酒店
+    //             ->having('distance', '<', $radius)
+    //             ->orderBy('distance')
+    //             ->setBindings([$latitude, $longitude, $latitude])
+    //             ->get();
+
+    //         // 打印查询结果
+    //         \Log::info('Query result:', ['resorts' => $resorts]);
+
+    //         // Fetch the first image for each resort
+    //         foreach ($resorts as $resort) {
+    //             $image = DB::table('resort_images')
+    //                 ->where('resort_id', $resort->id)
+    //                 ->value('image');
+    //             $resort->image = $image;
+    //         }
+
+    //         return response()->json($resorts);
+
+    //     } catch (\Exception $e) {
+    //         // Log the error to Laravel's log files
+    //         \Log::error('Error in GPS Search:', [
+    //             'message' => $e->getMessage(),
+    //             'exception' => get_class($e),
+    //             'file' => $e->getFile(),
+    //             'line' => $e->getLine(),
+    //             'trace' => $e->getTraceAsString(), // Using getTraceAsString to limit the output
+    //         ]);
+
+    //         // Return a JSON response indicating failure
+    //         return response()->json([
+    //             'error' => 'Internal Server Error',
+    //             'message' => 'An error occurred while processing your request. Please try again.'
+    //         ], 500);
+    //     }
+    // }
 
     // --------------------------------------------------------- Resort Promotion Area  ---------------------------------------------- //
 
