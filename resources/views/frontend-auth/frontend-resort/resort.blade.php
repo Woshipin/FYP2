@@ -2148,7 +2148,7 @@
                 }
             });
 
-            const API_KEY = "AIzaSyDQVtdIHsPihe5km66Ptiukc7D3UcHr5RY"; // Replace with your API key
+            const API_KEY = ""; // Replace with your API key
             const genAI = new GoogleGenerativeAI(API_KEY);
             const model = genAI.getGenerativeModel({
                 model: "gemini-1.5-flash"

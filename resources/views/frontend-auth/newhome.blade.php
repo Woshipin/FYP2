@@ -2630,7 +2630,8 @@
         } from "@google/generative-ai";
 
         // Replace with your actual API key
-        const API_KEY = "AIzaSyDQVtdIHsPihe5km66Ptiukc7D3UcHr5RY";
+        const API_KEY = "";
+        
         // AIzaSyDB_xvNfturII_zXvYBwlPhcHp6p5J5abQ My Api Key
         const genAI = new GoogleGenerativeAI(API_KEY);
         const model = genAI.getGenerativeModel({
