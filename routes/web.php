@@ -40,6 +40,8 @@ use App\Http\Controllers\CommunityCategoryController;
 //     return view('auth.newhome');
 // });
 
+// Route::post('/analyze-query', [ChatbotController::class, 'analyzeQuery']);
+
 Route::get('excel', function () {
     return view('staff.excel');
 });

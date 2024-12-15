@@ -12,9 +12,40 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 use OpenAI\Laravel\Facades\OpenAI;
 use Gemini\Laravel\Facades\Gemini;
+use PhpInsight\PhpInsight;
 
 class ChatBotController extends Controller
 {
+
+    // public function analyzeQuery(Request $request)
+    // {
+    //     try {
+    //         $query = $request->input('query');
+
+    //         // 使用 PHP Insight 库进行自然语言处理
+    //         $nlp = new PhpInsight();
+    //         $doc = $nlp->load($query);
+    //         $keywords = $doc->entities()->map(function($entity) {
+    //             return $entity->text();
+    //         })->toArray();
+
+    //         $resorts = Resort::where(function ($query) use ($keywords) {
+    //             foreach ($keywords as $keyword) {
+    //                 $query->orWhere('name', 'like', '%' . $keyword . '%')
+    //                     ->orWhere('type', 'like', '%' . $keyword . '%')
+    //                     ->orWhere('country', 'like', '%' . $keyword . '%')
+    //                     ->orWhere('state', 'like', '%' . $keyword . '%')
+    //                     ->orWhere('location', 'like', '%' . $keyword . '%')
+    //                     ->orWhere('description', 'like', '%' . $keyword . '%');
+    //             }
+    //         })->get();
+
+    //         return response()->json($resorts);
+    //     } catch (\Exception $e) {
+    //         Log::error('Error in analyze-query: ' . $e->getMessage());
+    //         return response()->json(['error' => 'An error occurred while processing your request.'], 500);
+    //     }
+    // }
 
     public function AISearch(Request $request)
     {

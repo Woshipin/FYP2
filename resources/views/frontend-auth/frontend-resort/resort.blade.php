@@ -1,6 +1,8 @@
 @extends('frontend-auth.newlayout')
 
 @section('frontend-section')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     {{-- HotelStatus Pusher --}}
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
@@ -466,7 +468,8 @@
     {{-- GPS CSS and JS --}}
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.min.css" />
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -1856,8 +1859,11 @@
         });
     </script> --}}
 
-    <script type="module">
-        import { GoogleGenerativeAI } from "@google/generative-ai";
+    {{-- gemini best --}}
+    {{-- <script type="module">
+        import {
+            GoogleGenerativeAI
+        } from "@google/generative-ai";
 
         document.addEventListener('DOMContentLoaded', function() {
             const chatButton = document.querySelector('.chatbox__button');
@@ -1965,9 +1971,9 @@
                     <div class="resort-card ${isDisabled ? 'disabled' : ''}" id="resortcard_${resortId}">
                         <div class="resort-image">
                             ${imageURL ? `<img src="${imageURL}" alt="${resortName}">` : `
-                                    <div class="no-image-box">
-                                        <span>No Image</span>
-                                    </div>`}
+                                                                <div class="no-image-box">
+                                                                    <span>No Image</span>
+                                                                </div>`}
                         </div>
                         <div class="resort-content">
                             <h2 class="resort-title">
@@ -1992,14 +1998,14 @@
                                 ${isDisabled ?
                                     '<button class="btn btn-disabled">Closed</button>' :
                                     `<div class="actions">
-                                            <form id="wishlistForm_${resortId}" action="{{ url('/wishlist/add/resort') }}/${resortId}" method="POST" style="display: inline;">
-                                                @csrf
-                                                <button type="submit" id="wishlist" class="btn btn-wishlist">
-                                                    <i class="fas fa-heart"></i> Wishlist
-                                                </button>
-                                            </form>
-                                            <a href="{{ url('Resortdetail/') }}/${resortId}/view" class="btn btn-book" id="viewresort${resortId}">Book Now</a>
-                                        </div>`
+                                                                        <form id="wishlistForm_${resortId}" action="{{ url('/wishlist/add/resort') }}/${resortId}" method="POST" style="display: inline;">
+                                                                            @csrf
+                                                                            <button type="submit" id="wishlist" class="btn btn-wishlist">
+                                                                                <i class="fas fa-heart"></i> Wishlist
+                                                                            </button>
+                                                                        </form>
+                                                                        <a href="{{ url('Resortdetail/') }}/${resortId}/view" class="btn btn-book" id="viewresort${resortId}">Book Now</a>
+                                                                    </div>`
                                 }
                             </div>
                         </div>
@@ -2148,7 +2154,7 @@
                 }
             });
 
-            const API_KEY = ""; // Replace with your API key
+            const API_KEY = "AIzaSyDQVtdIHsPihe5km66Ptiukc7D3UcHr5RY"; // Replace with your API key
             const genAI = new GoogleGenerativeAI(API_KEY);
             const model = genAI.getGenerativeModel({
                 model: "gemini-1.5-flash"
@@ -2189,44 +2195,521 @@
                 }
             }
 
+            // function handleUserQuery(query) {
+            //     const resorts = @json($resort);
+            //     const resortRatings = @json($resortRatings);
+
+            //     // 解析查询
+            //     const keywords = query.toLowerCase().split(' ');
+            //     console.log('Keywords:', keywords);
+
+            //     let matchedResorts = [];
+
+            //     // 检查是否有价格范围
+            //     const priceRange = keywords.find(keyword => keyword.includes('-'));
+            //     if (priceRange) {
+            //         const [minPrice, maxPrice] = priceRange.split('-').map(Number);
+            //         matchedResorts = resorts.filter(resort => {
+            //             const price = parseFloat(resort.price);
+            //             return price >= minPrice && price <= maxPrice;
+            //         });
+            //     } else {
+            //         matchedResorts = resorts;
+            //     }
+
+            //     // 筛选逻辑：只要酒店卡片中有符合问题的字或内容就显示符合问题的酒店卡片和位置
+            //     matchedResorts = matchedResorts.filter(resort => {
+            //         return keywords.some(keyword => {
+            //             return resort.name.toLowerCase().includes(keyword) ||
+            //                 resort.type.toLowerCase().includes(keyword) ||
+            //                 resort.country.toLowerCase().includes(keyword) ||
+            //                 resort.state.toLowerCase().includes(keyword) ||
+            //                 resort.location.toLowerCase().includes(keyword) ||
+            //                 resort.description.toLowerCase().includes(keyword);
+            //         });
+            //     });
+
+            //     console.log('Matched Resorts:', matchedResorts);
+
+            //     updateMapMarkers(matchedResorts);
+            //     updateSearchResults(matchedResorts);
+            // }
+
             function handleUserQuery(query) {
                 const resorts = @json($resort);
                 const resortRatings = @json($resortRatings);
 
-                // 解析查询
-                const keywords = query.toLowerCase().split(' ');
-                console.log('Keywords:', keywords);
+                // Trim and normalize the query
+                query = query.trim().toLowerCase();
 
-                let matchedResorts = [];
+                // Split the query into keywords, handling phrases in quotes
+                const keywords = [];
+                const quotedPhraseRegex = /"([^"]*)"/g;
+                let match;
 
-                // 检查是否有价格范围
-                const priceRange = keywords.find(keyword => keyword.includes('-'));
-                if (priceRange) {
-                    const [minPrice, maxPrice] = priceRange.split('-').map(Number);
-                    matchedResorts = resorts.filter(resort => {
-                        const price = parseFloat(resort.price);
-                        return price >= minPrice && price <= maxPrice;
-                    });
-                } else {
-                    matchedResorts = resorts;
+                // Extract quoted phrases first
+                while ((match = quotedPhraseRegex.exec(query)) !== null) {
+                    keywords.push(match[1].toLowerCase());
+                    query = query.replace(match[0], '');
                 }
 
-                // 筛选逻辑：只要酒店卡片中有符合问题的字或内容就显示符合问题的酒店卡片和位置
-                matchedResorts = matchedResorts.filter(resort => {
-                    return keywords.some(keyword => {
-                        return resort.name.toLowerCase().includes(keyword) ||
-                            resort.type.toLowerCase().includes(keyword) ||
-                            resort.country.toLowerCase().includes(keyword) ||
-                            resort.state.toLowerCase().includes(keyword) ||
-                            resort.location.toLowerCase().includes(keyword) ||
-                            resort.description.toLowerCase().includes(keyword);
-                    });
-                });
+                // Add remaining non-quoted words
+                keywords.push(...query.split(/\s+/).filter(k => k.trim() !== ''));
+
+                console.log('Processed Keywords:', keywords);
+
+                // Function to check if a resort matches the keywords
+                function isResortsMatch(resort) {
+                    // Check for price range first (if applicable)
+                    const priceRangeKeyword = keywords.find(k => /^\d+-\d+$/.test(k));
+                    if (priceRangeKeyword) {
+                        const [minPrice, maxPrice] = priceRangeKeyword.split('-').map(Number);
+                        const price = parseFloat(resort.price);
+                        if (price < minPrice || price > maxPrice) return false;
+                    }
+
+                    // Create a searchable string for the resort
+                    const searchString = [
+                        resort.name.toLowerCase(),
+                        resort.type.toLowerCase(),
+                        resort.country.toLowerCase(),
+                        resort.state.toLowerCase(),
+                        resort.location.toLowerCase(),
+                        resort.description.toLowerCase()
+                    ].join(' ');
+
+                    // Check if ANY keyword matches
+                    return keywords.some(keyword => searchString.includes(keyword));
+                }
+
+                // Filter resorts based on the matching function
+                const matchedResorts = resorts.filter(isResortsMatch);
+
+                // Additional filtering for exact match on resort name
+                const exactMatchedResorts = matchedResorts.filter(resort =>
+                    resort.name.toLowerCase() === query
+                );
 
                 console.log('Matched Resorts:', matchedResorts);
+                console.log('Exact Matched Resorts:', exactMatchedResorts);
 
-                updateMapMarkers(matchedResorts);
-                updateSearchResults(matchedResorts);
+                // Update map and search results
+                updateMapMarkers(exactMatchedResorts.length > 0 ? exactMatchedResorts : matchedResorts);
+                updateSearchResults(exactMatchedResorts.length > 0 ? exactMatchedResorts : matchedResorts);
+            }
+
+
+
+            document.getElementById('send-button').addEventListener('click', sendMessage);
+            document.getElementById('chat-input').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script> --}}
+
+    {{-- Gemini Filter --}}
+    <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatButton = document.querySelector('.chatbox__button');
+            const chatSupport = document.querySelector('.chatbox__support');
+            const chatInput = document.getElementById('chat-input');
+            const contentBox = document.getElementById('content-box');
+
+            chatButton.addEventListener('click', function() {
+                chatSupport.classList.toggle('chatbox--active');
+            });
+
+            function addMessage(message, sender) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('messages__item', `messages__item--${sender}`);
+                messageElement.textContent = message;
+                contentBox.appendChild(messageElement);
+                contentBox.scrollTop = contentBox.scrollHeight;
+            }
+
+            var map = null;
+            var markers = [];
+            var userMarker = null;
+            var resorts = @json($resort);
+            var resortRatings = @json($resortRatings);
+
+            console.log('Resorts:', resorts);
+            console.log('Resort Ratings:', resortRatings);
+
+            if (!Array.isArray(resorts)) {
+                resorts = [resorts];
+            }
+
+            function initMap() {
+                if (map === null) {
+                    map = L.map('map').setView([4.2105, 101.9758], 7);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                }
+            }
+
+            function updateMapMarkers(resorts) {
+                if (map === null) {
+                    console.error('Map not initialized');
+                    return;
+                }
+
+                markers.forEach(function(marker) {
+                    if (marker !== userMarker) {
+                        map.removeLayer(marker);
+                    }
+                });
+                markers = markers.filter(marker => marker !== userMarker);
+
+                if (Array.isArray(resorts)) {
+                    resorts.forEach(function(resort) {
+                        if (resort.latitude && resort.longitude && resort.register_status === 1) {
+                            var marker = L.marker([resort.latitude, resort.longitude]).addTo(map)
+                                .bindPopup('<b>' + resort.name + '</b><br>' + resort.location + '<br>' +
+                                    resort.price);
+                            markers.push(marker);
+                        }
+                    });
+                } else {
+                    console.error('Expected an array of resorts but received:', resorts);
+                }
+            }
+
+            function generateStarRating(rating) {
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                        stars += '<i class="fas fa-star" style="color: gold; font-size: 20px;"></i>';
+                    } else if (i - 0.5 <= rating) {
+                        stars += '<i class="fas fa-star-half-alt" style="color: gold; font-size: 20px;"></i>';
+                    } else {
+                        stars += '<i class="far fa-star" style="font-size: 20px; color: black;"></i>';
+                    }
+                }
+                return stars;
+            }
+
+            function generateResortHTML(resort) {
+                var isDisabled = resort.status === 1;
+                const resortId = resort.id;
+                var resortName = resort.name;
+                var resortLocation = resort.location;
+                var resortState = resort.state;
+                var resortCountry = resort.country;
+                var resortDescription = resort.description;
+                var resortImages = resort.images || [];
+                var resortRating = resortRatings[resortId] || {
+                    averageRating: 0,
+                    count: 0
+                };
+
+                var averageRating = resortRating.averageRating !== undefined && !isNaN(resortRating.averageRating) ?
+                    resortRating.averageRating : 0;
+
+                var imageURL = (resort.image || (resortImages.length > 0 && resortImages[0].image)) ?
+                    "{{ asset('images/') }}/" + (resort.image || resortImages[0].image) :
+                    null;
+
+                return `
+                    <div class="resort-card ${isDisabled ? 'disabled' : ''}" id="resortcard_${resortId}">
+                        <div class="resort-image">
+                            ${imageURL ? `<img src="${imageURL}" alt="${resortName}">` : `
+                                                            <div class="no-image-box">
+                                                                <span>No Image</span>
+                                                            </div>`}
+                        </div>
+                        <div class="resort-content">
+                            <h2 class="resort-title">
+                                <i class="fas fa-hotel"></i> ${resortName}
+                            </h2>
+                            <p class="resort-location">
+                                <i class="fas fa-map-marker-alt"></i> ${resortLocation}, ${resortState}, ${resortCountry}
+                            </p>
+                            <p class="resort-description">
+                                <i class="fas fa-info-circle"></i> ${resortDescription.length > 100 ? resortDescription.substring(0, 100) + '...' : resortDescription}
+                            </p>
+                            <div class="resort-amenities">
+                                <span><i class="fas fa-swimming-pool"></i> Pool</span>
+                                <span><i class="fas fa-wifi"></i> Free WiFi</span>
+                                <span><i class="fas fa-parking"></i> Parking</span>
+                            </div>
+                            <div class="resort-rating">
+                                ${generateStarRating(averageRating)}
+                                <span>(${averageRating.toFixed(1)})</span>
+                            </div>
+                            <div class="resort-actions">
+                                ${isDisabled ?
+                                    '<button class="btn btn-disabled">Closed</button>' :
+                                    `<div class="actions">
+                                                                <form id="wishlistForm_${resortId}" action="{{ url('/wishlist/add/resort') }}/${resortId}" method="POST" style="display: inline;">
+                                                                    @csrf
+                                                                    <button type="submit" id="wishlist" class="btn btn-wishlist">
+                                                                        <i class="fas fa-heart"></i> Wishlist
+                                                                    </button>
+                                                                </form>
+                                                                <a href="{{ url('Resortdetail/') }}/${resortId}/view" class="btn btn-book" id="viewresort${resortId}">Book Now</a>
+                                                            </div>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function updateSearchResults(filteredResorts) {
+                var resultsContainer = $('#searchResultsContainer');
+                resultsContainer.empty();
+
+                if (Array.isArray(filteredResorts) && filteredResorts.length > 0) {
+                    filteredResorts.forEach(function(resort) {
+                        if (resort.register_status === 1) {
+                            var resortHTML = generateResortHTML(resort);
+                            resultsContainer.append(resortHTML);
+                        }
+                    });
+                } else {
+                    resultsContainer.html('<p class="no-results">No Resorts Found</p>');
+                }
+            }
+
+            function performSearch() {
+                var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
+                var filteredResorts = resorts.filter(function(resort) {
+                    return resort.name.toLowerCase().includes(searchInputValue) ||
+                        resort.country.toLowerCase().includes(searchInputValue) ||
+                        resort.state.toLowerCase().includes(searchInputValue) ||
+                        resort.location.toLowerCase().includes(searchInputValue) ||
+                        resort.description.toLowerCase().includes(searchInputValue);
+                });
+
+                updateMapMarkers(filteredResorts);
+                updateSearchResults(filteredResorts);
+            }
+
+            document.getElementById('searchInput').addEventListener('input', function() {
+                performSearch();
+            });
+
+            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                var fileInput = document.getElementById('imageInput');
+                if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                    console.error('No file selected');
+                    return;
+                }
+
+                fetch('{{ route('uploadAndSearch') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Upload and search data:', data);
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            alert('Detected image result: ' + data.length + ' matching resorts found.');
+                        } else {
+                            alert('Detected image result: No matching resorts found.');
+                        }
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.log('No matching resorts found');
+                            updateSearchResults([]);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error occurred during image upload and search.');
+                        updateSearchResults([]);
+                    });
+            });
+
+            initMap();
+
+            if (Array.isArray(resorts)) {
+                updateMapMarkers(resorts);
+                updateSearchResults(resorts);
+            } else {
+                console.error('resorts is not an array:', resorts);
+            }
+
+            function fetchNearbyResorts(latitude, longitude) {
+                fetch(`/resort-gps-search?latitude=${latitude}&longitude=${longitude}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Nearby resorts data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else if (data.error) {
+                            alert(data.message);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching nearby resorts:', error);
+                    });
+            }
+
+            document.getElementById('openGPSButton').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+
+                        if (userMarker) {
+                            map.removeLayer(userMarker);
+                        }
+                        userMarker = L.marker([latitude, longitude]).addTo(map).bindPopup(
+                            "You are here!").openPopup();
+                        markers.push(userMarker);
+
+                        L.circle([latitude, longitude], {
+                            color: 'blue',
+                            fillColor: '#30f',
+                            fillOpacity: 0.2,
+                            radius: 15000 // 15 km radius
+                        }).addTo(map);
+
+                        fetchNearbyResorts(latitude, longitude);
+                        map.setView([latitude, longitude], 13);
+                    });
+                } else {
+                    alert("Geolocation is not supported by this browser.");
+                }
+            });
+
+            const API_KEY = "AIzaSyDQVtdIHsPihe5km66Ptiukc7D3UcHr5RY"; // Replace with your API key
+            const genAI = new GoogleGenerativeAI(API_KEY);
+            const model = genAI.getGenerativeModel({
+                model: "gemini-1.5-flash"
+            });
+
+            async function sendMessage() {
+                const input = document.getElementById('chat-input');
+                const message = input.value;
+                if (message.trim() === '') return;
+
+                const contentBox = document.getElementById('content-box');
+                const visitorMessage = document.createElement('div');
+                visitorMessage.className = 'messages__item messages__item--visitor';
+                visitorMessage.textContent = message;
+                contentBox.appendChild(visitorMessage);
+                contentBox.scrollTop = contentBox.scrollHeight;
+
+                input.value = '';
+
+                try {
+                    const result = await model.generateContent(message);
+                    const response = result.response.text();
+                    const operatorMessage = document.createElement('div');
+                    operatorMessage.className = 'messages__item messages__item--operator';
+                    operatorMessage.textContent = response;
+                    contentBox.appendChild(operatorMessage);
+                    contentBox.scrollTop = contentBox.scrollHeight;
+
+                    // 处理用户查询
+                    handleUserQuery(message);
+                } catch (error) {
+                    console.error('Error:', error);
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'messages__item messages__item--error';
+                    errorMessage.textContent = 'Error: ' + error.message;
+                    contentBox.appendChild(errorMessage);
+                    contentBox.scrollTop = contentBox.scrollHeight;
+                }
+            }
+
+            async function handleUserQuery(query) {
+                const resorts = @json($resort);
+                const resortRatings = @json($resortRatings);
+
+                // Trim and normalize the query
+                query = query.trim().toLowerCase();
+
+                // Extract keywords manually
+                const keywords = extractKeywordsManually(query);
+                console.log('Extracted Keywords:', keywords);
+
+                // Function to check if a resort matches the keywords
+                function isResortsMatch(resort) {
+                    // Check for price range first (if applicable)
+                    const priceRangeKeyword = keywords.find(k => /^\d+-\d+$/.test(k));
+                    if (priceRangeKeyword) {
+                        const [minPrice, maxPrice] = priceRangeKeyword.split('-').map(Number);
+                        const price = parseFloat(resort.price);
+                        if (price < minPrice || price > maxPrice) return false;
+                    }
+
+                    // Create a searchable string for the resort
+                    const searchString = [
+                        resort.name.toLowerCase(),
+                        resort.type.toLowerCase(),
+                        resort.country.toLowerCase(),
+                        resort.state.toLowerCase(),
+                        resort.location.toLowerCase(),
+                        resort.description.toLowerCase()
+                    ].join(' ');
+
+                    // Check if ANY keyword matches
+                    return keywords.some(keyword => searchString.includes(keyword));
+                }
+
+                // Filter resorts based on the matching function
+                const matchedResorts = resorts.filter(isResortsMatch);
+
+                // Additional filtering for exact match on resort name
+                const exactMatchedResorts = matchedResorts.filter(resort =>
+                    resort.name.toLowerCase() === query
+                );
+
+                console.log('Matched Resorts:', matchedResorts);
+                console.log('Exact Matched Resorts:', exactMatchedResorts);
+
+                // Update map and search results
+                updateMapMarkers(exactMatchedResorts.length > 0 ? exactMatchedResorts : matchedResorts);
+                updateSearchResults(exactMatchedResorts.length > 0 ? exactMatchedResorts : matchedResorts);
+            }
+
+            function extractKeywordsManually(query) {
+                // Split the query into keywords, handling phrases in quotes
+                const keywords = [];
+                const quotedPhraseRegex = /"([^"]*)"/g;
+                let match;
+
+                // Extract quoted phrases first
+                while ((match = quotedPhraseRegex.exec(query)) !== null) {
+                    keywords.push(match[1].toLowerCase());
+                    query = query.replace(match[0], '');
+                }
+
+                // Add remaining non-quoted words
+                keywords.push(...query.split(/\s+/).filter(k => k.trim() !== ''));
+
+                return keywords;
             }
 
             document.getElementById('send-button').addEventListener('click', sendMessage);
@@ -2238,4 +2721,390 @@
         });
     </script>
 
+
+
+    {{-- NLP Testing --}}
+    {{-- <script type="module">
+        import { GoogleGenerativeAI } from "@google/generative-ai";
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatButton = document.querySelector('.chatbox__button');
+            const chatSupport = document.querySelector('.chatbox__support');
+            const chatInput = document.getElementById('chat-input');
+            const contentBox = document.getElementById('content-box');
+
+            chatButton.addEventListener('click', function() {
+                chatSupport.classList.toggle('chatbox--active');
+            });
+
+            function addMessage(message, sender) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('messages__item', `messages__item--${sender}`);
+                messageElement.textContent = message;
+                contentBox.appendChild(messageElement);
+                contentBox.scrollTop = contentBox.scrollHeight;
+            }
+
+            var map = null;
+            var markers = [];
+            var userMarker = null;
+            var resorts = @json($resortArray);
+            var resortRatings = @json($resortRatings);
+
+            console.log('Resorts:', resorts);
+            console.log('Resort Ratings:', resortRatings);
+
+            if (!Array.isArray(resorts)) {
+                resorts = [resorts];
+            }
+
+            function initMap() {
+                if (map === null) {
+                    map = L.map('map').setView([4.2105, 101.9758], 7);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(map);
+                }
+            }
+
+            function updateMapMarkers(resorts) {
+                if (map === null) {
+                    console.error('Map not initialized');
+                    return;
+                }
+
+                markers.forEach(function(marker) {
+                    if (marker !== userMarker) {
+                        map.removeLayer(marker);
+                    }
+                });
+                markers = markers.filter(marker => marker !== userMarker);
+
+                if (Array.isArray(resorts)) {
+                    resorts.forEach(function(resort) {
+                        if (resort.latitude && resort.longitude && resort.register_status === 1) {
+                            var marker = L.marker([resort.latitude, resort.longitude]).addTo(map)
+                                .bindPopup('<b>' + resort.name + '</b><br>' + resort.location + '<br>' +
+                                    resort.price);
+                            markers.push(marker);
+                        }
+                    });
+                } else {
+                    console.error('Expected an array of resorts but received:', resorts);
+                }
+            }
+
+            function generateStarRating(rating) {
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= rating) {
+                        stars += '<i class="fas fa-star" style="color: gold; font-size: 20px;"></i>';
+                    } else if (i - 0.5 <= rating) {
+                        stars += '<i class="fas fa-star-half-alt" style="color: gold; font-size: 20px;"></i>';
+                    } else {
+                        stars += '<i class="far fa-star" style="font-size: 20px; color: black;"></i>';
+                    }
+                }
+                return stars;
+            }
+
+            function generateResortHTML(resort) {
+                var isDisabled = resort.status === 1;
+                const resortId = resort.id;
+                var resortName = resort.name;
+                var resortLocation = resort.location;
+                var resortState = resort.state;
+                var resortCountry = resort.country;
+                var resortDescription = resort.description;
+                var resortImages = resort.images || [];
+                var resortRating = resortRatings[resortId] || {
+                    averageRating: 0,
+                    count: 0
+                };
+
+                var averageRating = resortRating.averageRating !== undefined && !isNaN(resortRating.averageRating) ?
+                    resortRating.averageRating : 0;
+
+                var imageURL = (resort.image || (resortImages.length > 0 && resortImages[0].image)) ?
+                    "{{ asset('images/') }}/" + (resort.image || resortImages[0].image) :
+                    null;
+
+                return `
+                    <div class="resort-card ${isDisabled ? 'disabled' : ''}" id="resortcard_${resortId}">
+                        <div class="resort-image">
+                            ${imageURL ? `<img src="${imageURL}" alt="${resortName}">` : `
+                                                        <div class="no-image-box">
+                                                            <span>No Image</span>
+                                                        </div>`}
+                        </div>
+                        <div class="resort-content">
+                            <h2 class="resort-title">
+                                <i class="fas fa-hotel"></i> ${resortName}
+                            </h2>
+                            <p class="resort-location">
+                                <i class="fas fa-map-marker-alt"></i> ${resortLocation}, ${resortState}, ${resortCountry}
+                            </p>
+                            <p class="resort-description">
+                                <i class="fas fa-info-circle"></i> ${resortDescription.length > 100 ? resortDescription.substring(0, 100) + '...' : resortDescription}
+                            </p>
+                            <div class="resort-amenities">
+                                <span><i class="fas fa-swimming-pool"></i> Pool</span>
+                                <span><i class="fas fa-wifi"></i> Free WiFi</span>
+                                <span><i class="fas fa-parking"></i> Parking</span>
+                            </div>
+                            <div class="resort-rating">
+                                ${generateStarRating(averageRating)}
+                                <span>(${averageRating.toFixed(1)})</span>
+                            </div>
+                            <div class="resort-actions">
+                                ${isDisabled ?
+                                    '<button class="btn btn-disabled">Closed</button>' :
+                                    `<div class="actions">
+                                                                <form id="wishlistForm_${resortId}" action="{{ url('/wishlist/add/resort') }}/${resortId}" method="POST" style="display: inline;">
+                                                                    @csrf
+                                                                    <button type="submit" id="wishlist" class="btn btn-wishlist">
+                                                                        <i class="fas fa-heart"></i> Wishlist
+                                                                    </button>
+                                                                </form>
+                                                                <a href="{{ url('Resortdetail/') }}/${resortId}/view" class="btn btn-book" id="viewresort${resortId}">Book Now</a>
+                                                            </div>`
+                                }
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function updateSearchResults(matchedResorts) {
+                var resultsContainer = $('#searchResultsContainer');
+                resultsContainer.empty();
+
+                if (Array.isArray(matchedResorts) && matchedResorts.length > 0) {
+                    matchedResorts.forEach(function(resort) {
+                        if (resort.register_status === 1) {
+                            var resortHTML = generateResortHTML(resort);
+                            resultsContainer.append(resortHTML);
+                        }
+                    });
+                } else {
+                    resultsContainer.html('<p class="no-results">No Resorts Found</p>');
+                }
+            }
+
+            function performSearch() {
+                var searchInputValue = document.getElementById('searchInput').value.toLowerCase();
+                var matchedResorts = resorts.filter(function(resort) {
+                    return resort.name.toLowerCase().includes(searchInputValue) ||
+                        resort.country.toLowerCase().includes(searchInputValue) ||
+                        resort.state.toLowerCase().includes(searchInputValue) ||
+                        resort.location.toLowerCase().includes(searchInputValue) ||
+                        resort.description.toLowerCase().includes(searchInputValue);
+                });
+
+                updateMapMarkers(matchedResorts);
+                updateSearchResults(matchedResorts);
+            }
+
+            document.getElementById('searchInput').addEventListener('input', function() {
+                performSearch();
+            });
+
+            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                var formData = new FormData(this);
+
+                var fileInput = document.getElementById('imageInput');
+                if (!fileInput || !fileInput.files || !fileInput.files[0]) {
+                    console.error('No file selected');
+                    return;
+                }
+
+                fetch('{{ route('uploadAndSearch') }}', {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Upload and search data:', data);
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            alert('Detected image result: ' + data.length + ' matching resorts found.');
+                        } else {
+                            alert('Detected image result: No matching resorts found.');
+                        }
+
+                        if (Array.isArray(data) && data.length > 0) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else {
+                            console.log('No matching resorts found');
+                            updateSearchResults([]);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error occurred during image upload and search.');
+                        updateSearchResults([]);
+                    });
+            });
+
+            initMap();
+
+            if (Array.isArray(resorts)) {
+                updateMapMarkers(resorts);
+                updateSearchResults(resorts);
+            } else {
+                console.error('resorts is not an array:', resorts);
+            }
+
+            function fetchNearbyResorts(latitude, longitude) {
+                fetch(`/resort-gps-search?latitude=${latitude}&longitude=${longitude}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Nearby resorts data:', data);
+                        if (Array.isArray(data)) {
+                            updateMapMarkers(data);
+                            updateSearchResults(data);
+                        } else if (data.error) {
+                            alert(data.message);
+                        } else {
+                            console.error('Received data is not an array:', data);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching nearby resorts:', error);
+                    });
+            }
+
+            document.getElementById('openGPSButton').addEventListener('click', function() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+
+                        if (userMarker) {
+                            map.removeLayer(userMarker);
+                        }
+                        userMarker = L.marker([latitude, longitude]).addTo(map).bindPopup(
+                            "You are here!").openPopup();
+                        markers.push(userMarker);
+
+                        L.circle([latitude, longitude], {
+                            color: 'blue',
+                            fillColor: '#30f',
+                            fillOpacity: 0.2,
+                            radius: 15000 // 15 km radius
+                        }).addTo(map);
+
+                        fetchNearbyResorts(latitude, longitude);
+                        map.setView([latitude, longitude], 13);
+                    });
+                } else {
+                    alert("Geolocation is not supported by this browser.");
+                }
+            });
+
+            const API_KEY = "AIzaSyDQVtdIHsPihe5km66Ptiukc7D3UcHr5RY"; // Replace with your API key
+            const genAI = new GoogleGenerativeAI(API_KEY);
+            const model = genAI.getGenerativeModel({
+                model: "gemini-1.5-flash"
+            });
+
+            async function sendMessage() {
+                const input = document.getElementById('chat-input');
+                const message = input.value;
+                if (message.trim() === '') return;
+
+                const contentBox = document.getElementById('content-box');
+                const visitorMessage = document.createElement('div');
+                visitorMessage.className = 'messages__item messages__item--visitor';
+                visitorMessage.textContent = message;
+                contentBox.appendChild(visitorMessage);
+                contentBox.scrollTop = contentBox.scrollHeight;
+
+                input.value = '';
+
+                try {
+                    const result = await model.generateContent(message);
+                    const response = result.response.text();
+                    const operatorMessage = document.createElement('div');
+                    operatorMessage.className = 'messages__item messages__item--operator';
+                    operatorMessage.textContent = response;
+                    contentBox.appendChild(operatorMessage);
+                    contentBox.scrollTop = contentBox.scrollHeight;
+
+                    // 处理用户查询
+                    handleUserQuery(message);
+                } catch (error) {
+                    console.error('Error:', error);
+                    const errorMessage = document.createElement('div');
+                    errorMessage.className = 'messages__item messages__item--error';
+                    errorMessage.textContent = 'Error: ' + error.message;
+                    contentBox.appendChild(errorMessage);
+                    contentBox.scrollTop = contentBox.scrollHeight;
+                }
+            }
+
+            async function handleUserQuery(query) {
+                try {
+                    const response = await fetch('/analyze-query', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            query
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(
+                            `Network response was not ok: ${response.status} ${response.statusText}\n${errorText}`
+                        );
+                    }
+
+                    const matchedResorts = await response.json();
+                    console.log('Matched Resorts:', matchedResorts);
+
+                    updateMapMarkers(matchedResorts);
+                    updateSearchResults(matchedResorts);
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error: ' + error.message);
+                }
+            }
+
+            document.getElementById('send-button').addEventListener('click', sendMessage);
+            document.getElementById('chat-input').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+    </script> --}}
 @endsection

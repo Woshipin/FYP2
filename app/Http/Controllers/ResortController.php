@@ -297,6 +297,7 @@ class ResortController extends Controller
     //     return view('frontend-auth.frontend-resort.resort', compact('resort'));
     // }
 
+    // good
     public function AllResort()
     {
         $resort = Resort::with('images')->where('register_status', 1)->get();
@@ -316,6 +317,27 @@ class ResortController extends Controller
 
         return view('frontend-auth.frontend-resort.resort', compact('resort','resortArray', 'resortRatings'));
     }
+
+    // NLP Testing
+    // public function AllResort()
+    // {
+    //     $resort = Resort::with('images')->where('register_status', 1)->get();
+    //     $resortRatings = [];
+
+    //     foreach ($resort as $r) {
+    //         $ratings = $r->ratings;
+    //         $averageRating = $ratings->avg('rating') ?? 0; // 如果没有评分，默认为 0
+    //         $resortRatings[$r->id] = [
+    //             'averageRating' => $averageRating,
+    //             'count' => $ratings->count()
+    //         ];
+    //     }
+
+    //     // 确保 $resort 是一个数组
+    //     $resortArray = $resort->toArray();
+
+    //     return view('frontend-auth.frontend-resort.resort', compact('resort','resortArray', 'resortRatings'));
+    // }
 
     public function ResortDetail($id)
     {
