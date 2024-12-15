@@ -2721,8 +2721,6 @@
         });
     </script>
 
-
-
     {{-- NLP Testing --}}
     {{-- <script type="module">
         import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -3107,4 +3105,5 @@
             });
         });
     </script> --}}
+    
 @endsection
