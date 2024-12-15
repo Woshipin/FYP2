@@ -317,17 +317,17 @@
             function appendReplyForm(well, action, cid, name, token, parentId, parentType) {
                 var form =
                     `<form method="post" action="${action}"><input type="hidden" name="_token" value="${token}"><input type="hidden" name="comment_id" value="${cid}"><input type="hidden" name="name" value="${name}"><input type="hidden" name="parent_id" value="${parentId}"><input type="hidden" name="parent_type" value="${parentType}"><div class="form-group"><textarea class="form-control" name="reply" placeholder="Enter your reply"></textarea></div><div class="form-group"><input class="btn btn-primary" type="submit"></div></form>`;
-                well.find(".reply-form").append(form);
+                well.append(form);
             }
 
             function appendReplyToReplyForm(well, action, rid, rname, token, parentId, parentType) {
                 var form =
                     `<form method="post" action="${action}"><input type="hidden" name="_token" value="${token}"><input type="hidden" name="reply_id" value="${rid}"><input type="hidden" name="name" value="${rname}"><input type="hidden" name="parent_id" value="${parentId}"><input type="hidden" name="parent_type" value="${parentType}"><div class="form-group"><textarea class="form-control" name="reply" placeholder="Enter your reply to ${rname}"></textarea></div><div class="form-group"><input class="btn btn-primary" type="submit"></div></form>`;
-                well.find(".reply-to-reply-form").append(form);
+                well.append(form);
             }
 
             $(".hotel-comment-list").on("click", ".reply", function() {
-                var well = $(this).parent().parent();
+                var well = $(this).closest('.hotel-comment').find('.reply-form');
                 var cid = $(this).attr("cid");
                 var name = $(this).attr('name_a');
                 var token = $(this).attr('token');
@@ -404,7 +404,7 @@
             });
 
             $(".hotel-comment-list").on("click", ".reply-to-reply", function() {
-                var well = $(this).parent().parent();
+                var well = $(this).closest('.hotel-comment-reply').find('.reply-to-reply-form');
                 var rid = $(this).attr("rid");
                 var rname = $(this).attr("rname");
                 var token = $(this).attr("token");
