@@ -416,6 +416,10 @@ Route::get('/mybookingsresort',[BookingController::class, 'mybookedResort']);
 
 // Extand or cancel resort booking date page
 Route::get('/ExtandorCancelResort/{id}',[BookingController::class,'ExtandorCancelResort'])->name('ExtandorCancelResort')->middleware('auth');
+
+// Extand resort booking date 
+Route::post('/extend-booking/{id}', [BookingController::class, 'extendBooking'])->name('booking.extend')->middleware('auth');
+
 // cancel resort booking date
 Route::post('/booking/cancel/{id}', [BookingController::class, 'cancelBookingDate'])->name('booking.cancel');
 

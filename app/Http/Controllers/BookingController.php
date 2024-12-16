@@ -1964,6 +1964,26 @@ class BookingController extends Controller
     //     }
     // }
 
+    // public function ExtandorCancelResort($id)
+    // {
+    //     // 获取度假村预订的详情
+    //     $bookingResort = BookingResort::findOrFail($id);
+
+    //     // 计算预订日期
+    //     $bookingDates = [];
+    //     $currentDate = new DateTime($bookingResort->checkin_date);
+    //     $checkoutDate = new DateTime($bookingResort->checkout_date);
+
+    //     // 包括 checkout_date
+    //     while ($currentDate <= $checkoutDate) {
+    //         $bookingDates[] = $currentDate->format('Y-m-d');
+    //         $currentDate->modify('+1 day');
+    //     }
+
+    //     // 将度假村信息和预订日期传递给视图
+    //     return view('backend-user.mybooked.mybookedresortextandorcancel', compact('bookingResort', 'bookingDates'));
+    // }
+
     public function ExtandorCancelResort($id)
     {
         // 获取度假村预订的详情
@@ -1980,8 +2000,93 @@ class BookingController extends Controller
             $currentDate->modify('+1 day');
         }
 
+        // 获取数据库中所有预订记录
+        $allBookings = BookingResort::all();
+        $allBookingDates = [];
+
+        foreach ($allBookings as $booking) {
+            $currentDate = new DateTime($booking->checkin_date);
+            $checkoutDate = new DateTime($booking->checkout_date);
+
+            while ($currentDate <= $checkoutDate) {
+                $allBookingDates[] = $currentDate->format('Y-m-d');
+                $currentDate->modify('+1 day');
+            }
+        }
+
         // 将度假村信息和预订日期传递给视图
-        return view('backend-user.mybooked.mybookedresortextandorcancel', compact('bookingResort', 'bookingDates'));
+        return view('backend-user.mybooked.mybookedresortextandorcancel', compact('bookingResort', 'bookingDates', 'allBookingDates'));
+    }
+
+    // public function extendBooking(Request $request, $id)
+    // {
+    //     // 获取度假村预订的详情
+    //     $bookingResort = BookingResort::findOrFail($id);
+
+    //     // 获取延长的日期
+    //     $extendDates = $request->input('extend_dates');
+
+    //     // 计算新的 checkout_date
+    //     $currentCheckoutDate = new DateTime($bookingResort->checkout_date);
+    //     foreach ($extendDates as $date) {
+    //         $extendDate = new DateTime($date);
+    //         if ($extendDate > $currentCheckoutDate) {
+    //             $currentCheckoutDate = $extendDate;
+    //         }
+    //     }
+    //     $currentCheckoutDate->modify('+1 day');
+
+    //     // 更新 BookingResort 的 checkout_date
+    //     $bookingResort->checkout_date = $currentCheckoutDate->format('Y-m-d');
+    //     $bookingResort->save();
+
+    //     // 记录延长信息到 ResortExtendRecord
+    //     // $extendRecord = new ResortExtendRecord();
+    //     // $extendRecord->booking_resort_id = $bookingResort->id;
+    //     // $extendRecord->checkin_date = $bookingResort->checkin_date;
+    //     // $extendRecord->checkout_date = $currentCheckoutDate->format('Y-m-d');
+    //     // $extendRecord->extend_dates = json_encode($extendDates);
+    //     // $extendRecord->payment_information = $request->input('payment_information');
+    //     // $extendRecord->save();
+
+    //     return redirect()->route('booking.detail', $bookingResort->id)->with('success', 'Booking extended successfully.');
+    // }
+
+    public function extendBooking(Request $request, $id)
+    {
+        // 获取度假村预订的详情
+        $bookingResort = BookingResort::findOrFail($id);
+
+        // 获取延长的日期
+        $extendDates = $request->input('extend_dates');
+
+        // 将逗号分隔的字符串转换为数组
+        $extendDatesArray = explode(',', $extendDates);
+
+        // 计算新的 checkout_date
+        $currentCheckoutDate = new DateTime($bookingResort->checkout_date);
+        foreach ($extendDatesArray as $date) {
+            $extendDate = new DateTime($date);
+            if ($extendDate > $currentCheckoutDate) {
+                $currentCheckoutDate = $extendDate;
+            }
+        }
+        $currentCheckoutDate->modify('+1 day');
+
+        // 更新 BookingResort 的 checkout_date
+        $bookingResort->checkout_date = $currentCheckoutDate->format('Y-m-d');
+        $bookingResort->save();
+
+        // 记录延长信息到 ResortExtendRecord
+        // $extendRecord = new ResortExtendRecord();
+        // $extendRecord->booking_resort_id = $bookingResort->id;
+        // $extendRecord->checkin_date = $bookingResort->checkin_date;
+        // $extendRecord->checkout_date = $currentCheckoutDate->format('Y-m-d');
+        // $extendRecord->extend_dates = json_encode($extendDatesArray);
+        // $extendRecord->payment_information = $request->input('payment_information');
+        // $extendRecord->save();
+
+        return back()->with('success', 'Booking extended successfully.');
     }
 
     public function cancelBookingDate(Request $request, $id)
