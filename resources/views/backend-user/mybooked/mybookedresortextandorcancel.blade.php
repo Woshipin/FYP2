@@ -1103,9 +1103,9 @@
     {{-- processing --}}
     <script>
         let bookingDates = @json($bookingDates); // Get dates from backend
-        let allBookingDates = @json($allBookingDates); // Get all booking dates from backend
+        let allBookingDates = @json($allBookingDates); // Get all booking dates for the specific resort from backend
 
-        console.log(allBookingDates)
+        console.log(allBookingDates);
 
         const resortInfo = {
             name: "{{ $bookingResort->resort->name }}",
@@ -1188,7 +1188,7 @@
                 mode: "multiple",
                 dateFormat: "Y-m-d",
                 minDate: "today", // Disable past dates
-                disable: allBookingDates, // Disable all booked dates
+                disable: allBookingDates, // Disable all booked dates for the specific resort
                 onChange: function(selectedDates, dateStr, instance) {
                     const totalExtendPrice = selectedDates.length * resortInfo.price;
                     document.getElementById('totalExtendPrice').textContent = totalExtendPrice;
@@ -1270,21 +1270,12 @@
             }
         }
 
-
         document.getElementById('paymentForm').addEventListener('submit', function(event) {
             event.preventDefault();
             // 处理支付逻辑
             // 支付成功后提交表单
             this.submit();
         });
-
-        document.getElementById('paymentForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            // 处理支付逻辑
-            // 支付成功后提交表单
-            this.submit();
-        });
-
 
         function animatePageLoad() {
             const bookingInfo = document.querySelector('.booking-info');

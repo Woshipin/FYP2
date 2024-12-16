@@ -20,6 +20,7 @@ use App\Models\User;
 use App\Models\AdminWallet;
 use App\Models\MyWallet;
 use App\Models\ResortDiscount;
+use App\Models\ResortExtendRecord;
 use Auth;
 use Mail;
 use Carbon\Carbon;
@@ -2000,11 +2001,11 @@ class BookingController extends Controller
             $currentDate->modify('+1 day');
         }
 
-        // 获取数据库中所有预订记录
-        $allBookings = BookingResort::all();
+        // 获取特定度假村的所有预订记录
+        $resortBookings = BookingResort::where('resort_id', $bookingResort->resort_id)->get();
         $allBookingDates = [];
 
-        foreach ($allBookings as $booking) {
+        foreach ($resortBookings as $booking) {
             $currentDate = new DateTime($booking->checkin_date);
             $checkoutDate = new DateTime($booking->checkout_date);
 
@@ -2071,20 +2072,20 @@ class BookingController extends Controller
                 $currentCheckoutDate = $extendDate;
             }
         }
-        $currentCheckoutDate->modify('+1 day');
+        // $currentCheckoutDate->modify('+1 day');
 
         // 更新 BookingResort 的 checkout_date
         $bookingResort->checkout_date = $currentCheckoutDate->format('Y-m-d');
         $bookingResort->save();
 
         // 记录延长信息到 ResortExtendRecord
-        // $extendRecord = new ResortExtendRecord();
-        // $extendRecord->booking_resort_id = $bookingResort->id;
-        // $extendRecord->checkin_date = $bookingResort->checkin_date;
-        // $extendRecord->checkout_date = $currentCheckoutDate->format('Y-m-d');
-        // $extendRecord->extend_dates = json_encode($extendDatesArray);
-        // $extendRecord->payment_information = $request->input('payment_information');
-        // $extendRecord->save();
+        $extendRecord = new ResortExtendRecord();
+        $extendRecord->booking_resort_id = $bookingResort->id;
+        $extendRecord->checkin_date = $bookingResort->checkin_date;
+        $extendRecord->checkout_date = $currentCheckoutDate->format('Y-m-d');
+        $extendRecord->extend_dates = json_encode($extendDatesArray);
+        $extendRecord->payment_information = $request->input('payment_information');
+        $extendRecord->save();
 
         return back()->with('success', 'Booking extended successfully.');
     }
