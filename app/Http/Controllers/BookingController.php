@@ -45,7 +45,7 @@ class BookingController extends Controller
 
     //------------------------------------------------ Frontend Booking Restaurant Area --------------------------------------------------//
     // Special Full Code
-    public function bookingpage(Request $request, $id)
+    public function bookingrestaurantpage(Request $request, $id)
     {
         if (Auth::check()) {
             $tables = Table::where('restaurant_id', $id)

@@ -1244,10 +1244,10 @@
                             <i class="fas fa-calendar-check"></i>
                             Book Now
                         </a>
-                        <a href="" class="btn btn-outline"
+                        <a href="https://wa.me/601110801649" class="btn btn-outline"
                             id="btncontact">
-                            <i class="fas fa-envelope"></i>
-                            Contact
+                            <i class="fab fa-whatsapp"></i>
+                            WhatsApp
                         </a>
                     </div>
                 </div>

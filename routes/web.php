@@ -106,9 +106,9 @@ Route::get('/admin/login', [AdminController::class, 'login'])->middleware('alrea
 Route::get('/admin/register', [AdminController::class, 'registration'])->middleware('alreadyLoggedIn');
 
 //Register Admin Function
-Route::post('/admin/register',[AdminController::class,'registerAdmin'])->name('register-user');
+Route::post('/admin/register',[AdminController::class,'registerAdmin'])->name('register-user')->middleware('alreadyLoggedIn');
 //Login Admin Function
-Route::post('/admin/login',[AdminController::class,'loginAdmin'])->name('login-user');
+Route::post('/admin/login',[AdminController::class,'loginAdmin'])->name('login-user')->middleware('alreadyLoggedIn');
 
 //Display Admin Dashboard Page
 Route::get('/admin/dashboard', [AdminController::class, 'admindashboard'])->middleware('isLoggedIn');
@@ -120,21 +120,21 @@ Route::get('/admin/wallet',[AdminController::class,'AdminWallet'])->middleware('
 Route::get('/admin/logout',[AdminController::class,'logout']);
 
 //Admin Change Status Function
-Route::get('/change-status/{id}',[AdminController::class,'changeStatus']);
+Route::get('/change-status/{id}',[AdminController::class,'changeStatus'])->middleware('alreadyLoggedIn');
 
 //Admin Control Resort
 //Admin View All Resort
-Route::get('/admin/Resorts',[AdminController::class,'showAllResort'])->name('admin-Resort');
+Route::get('/admin/Resorts',[AdminController::class,'showAllResort'])->name('admin-Resort')->middleware('alreadyLoggedIn');
 //Add Resort Function
-Route::post('admin/AddResort',[AdminController::class,'AdminAddResort'])->name('admin-resort');
+Route::post('admin/AddResort',[AdminController::class,'AdminAddResort'])->name('admin-resort')->middleware('alreadyLoggedIn');
 //Admin Edit Resort Function
-Route::get('admin/editResort/{id}/edit', [AdminController::class, 'AdminEditResort'])->name('admin-editResort');
+Route::get('admin/editResort/{id}/edit', [AdminController::class, 'AdminEditResort'])->name('admin-editResort')->middleware('alreadyLoggedIn');
 //Admin Update Resort Function
-Route::put('admin/updateResort/{id}', [AdminController::class, 'AdminUpdateResort'])->name('admin-updateResort');
+Route::put('admin/updateResort/{id}', [AdminController::class, 'AdminUpdateResort'])->name('admin-updateResort')->middleware('alreadyLoggedIn');
 //Admin Delete Resort Function
-Route::get('admin/deleteResort/{id}/delete', [AdminController::class, 'AdminDeleteResort'])->name('admin-deleteResort');
+Route::get('admin/deleteResort/{id}/delete', [AdminController::class, 'AdminDeleteResort'])->name('admin-deleteResort')->middleware('alreadyLoggedIn');
 //Admin View Resort Follow ID Function
-Route::get('/admin/viewResort/{id}/view',[AdminController::class,'AdminViewResort'])->name('admin-viewResort');
+Route::get('/admin/viewResort/{id}/view',[AdminController::class,'AdminViewResort'])->name('admin-viewResort')->middleware('alreadyLoggedIn');
 //View Resort and Google Map
 Route::get('admin/showResortMap/{id}/map',[AdminController::class,'AdminShowResortMap']);
 // Show Resort Mutliple Map and Map with id
@@ -142,73 +142,73 @@ Route::get('admin/showMap',[AdminController::class,'AdminShowAllResortMap']);
 //Search Resort Function
 Route::post('admin/searchResort',[AdminController::class,'AdminSearchResort'])->name('admin.searchResort');
 //Change Resort Register Status Function
-Route::post('/admin/updateResortRegisterStatus/{id}', [AdminController::class, 'updateResortRegisterStatus']);
+Route::post('/admin/updateResortRegisterStatus/{id}', [AdminController::class, 'updateResortRegisterStatus'])->middleware('alreadyLoggedIn');
 //Reject Resort Register Status Function
-Route::post('/admin/rejectResort/{id}', [AdminController::class, 'rejectResort']);
+Route::post('/admin/rejectResort/{id}', [AdminController::class, 'rejectResort'])->middleware('alreadyLoggedIn');
 
 //Admin Control Restaurant
 //Admin View All Restaurant
-Route::get('/admin/Restaurants',[AdminController::class,'showAllRestaurant'])->name('admin-Restaurants');
+Route::get('/admin/Restaurants',[AdminController::class,'showAllRestaurant'])->name('admin-Restaurants')->middleware('alreadyLoggedIn');
 //Admin View Restaurant Follow ID Function
-Route::get('/admin/viewRestaurant/{id}/view',[AdminController::class,'AdminViewRestaurant'])->name('admin-viewRestaurant');
+Route::get('/admin/viewRestaurant/{id}/view',[AdminController::class,'AdminViewRestaurant'])->name('admin-viewRestaurant')->middleware('alreadyLoggedIn');
 //Admin Edit Restaurant Function
-Route::get('/admin/editRestaurant/{id}/edit', [AdminController::class, 'AdminEditRestaurant'])->name('admin-editRestaurant');
+Route::get('/admin/editRestaurant/{id}/edit', [AdminController::class, 'AdminEditRestaurant'])->name('admin-editRestaurant')->middleware('alreadyLoggedIn');
 //Admin Update Restaurant Function
-Route::put('/admin/updateRestaurant/{id}', [AdminController::class, 'AdminUpdateRestaurant'])->name('admin-updateRestaurant');
+Route::put('/admin/updateRestaurant/{id}', [AdminController::class, 'AdminUpdateRestaurant'])->name('admin-updateRestaurant')->middleware('alreadyLoggedIn');
 //Admin Delete Restaurant Function
-Route::get('/admin/deleteRestaurant/{id}/delete', [AdminController::class, 'AdminDeleteRestaurant'])->name('admin-deleteRestaurant');
+Route::get('/admin/deleteRestaurant/{id}/delete', [AdminController::class, 'AdminDeleteRestaurant'])->name('admin-deleteRestaurant')->middleware('alreadyLoggedIn');
 //Search Restaurant Function
 Route::post('admin/searchRestaurant',[AdminController::class,'AdminSearchRestaurant'])->name('admin.searchRestaurant');
 //Change Resort Register Status Function
-Route::post('/admin/updateRestaurantRegisterStatus/{id}', [AdminController::class, 'updateRestaurantRegisterStatus']);
+Route::post('/admin/updateRestaurantRegisterStatus/{id}', [AdminController::class, 'updateRestaurantRegisterStatus'])->middleware('alreadyLoggedIn');
 //Reject Resort Register Status Function
-Route::post('/admin/rejectRestaurant/{id}', [AdminController::class, 'rejectRestaurant']);
+Route::post('/admin/rejectRestaurant/{id}', [AdminController::class, 'rejectRestaurant'])->middleware('alreadyLoggedIn');
 
 //Admin Control Hotel
 //Admin View All Hotel
-Route::get('/admin/Hotels',[AdminController::class,'showAllHotel'])->name('admin-Hotel');
+Route::get('/admin/Hotels',[AdminController::class,'showAllHotel'])->name('admin-Hotel')->middleware('alreadyLoggedIn');
 //Add Hotel Function
-Route::post('admin/AddHotel',[AdminController::class,'AdminAddHotel'])->name('admin-hotel');
+Route::post('admin/AddHotel',[AdminController::class,'AdminAddHotel'])->name('admin-hotel')->middleware('alreadyLoggedIn');
 //Admin Edit Hotel Function
-Route::get('admin/editHotel/{id}/edit', [AdminController::class, 'AdminEditHotel'])->name('admin-editHotel');
+Route::get('admin/editHotel/{id}/edit', [AdminController::class, 'AdminEditHotel'])->name('admin-editHotel')->middleware('alreadyLoggedIn');
 //Admin Update Hotel Function
-Route::put('admin/updateHotel/{id}', [AdminController::class, 'AdminUpdateHotel'])->name('admin-updateHotel');
+Route::put('admin/updateHotel/{id}', [AdminController::class, 'AdminUpdateHotel'])->name('admin-updateHotel')->middleware('alreadyLoggedIn');
 //Admin Delete Hotel Function
-Route::get('admin/deleteHotel/{id}/delete', [AdminController::class, 'AdminDeleteHotel'])->name('admin-deleteHotel');
+Route::get('admin/deleteHotel/{id}/delete', [AdminController::class, 'AdminDeleteHotel'])->name('admin-deleteHotel')->middleware('alreadyLoggedIn');
 //Admin View Resort Follow ID Function
-Route::get('/admin/viewHotel/{id}/view',[AdminController::class,'AdminViewHotel'])->name('admin-viewHotel');
+Route::get('/admin/viewHotel/{id}/view',[AdminController::class,'AdminViewHotel'])->name('admin-viewHotel')->middleware('alreadyLoggedIn');
 //Search Hotel Function
 Route::post('admin/searchHotel',[AdminController::class,'AdminSearchHotel'])->name('admin.searchHotel');
 //Change Resort Register Status Function
-Route::post('/admin/updateHotelRegisterStatus/{id}', [AdminController::class, 'updateHotelRegisterStatus']);
+Route::post('/admin/updateHotelRegisterStatus/{id}', [AdminController::class, 'updateHotelRegisterStatus'])->middleware('alreadyLoggedIn');
 //Reject Resort Register Status Function
-Route::post('/admin/rejectHotel/{id}', [AdminController::class, 'rejectHotel']);
+Route::post('/admin/rejectHotel/{id}', [AdminController::class, 'rejectHotel'])->middleware('alreadyLoggedIn');
 
 //Admin Control Table
 //Admin View All Table
-Route::get('/admin/Tables',[AdminController::class,'showAllTable'])->name('admin-Tables');
+Route::get('/admin/Tables',[AdminController::class,'showAllTable'])->name('admin-Tables')->middleware('alreadyLoggedIn');
 //Admin Edit Table Function
-Route::get('/admin/editTable/{id}/edit', [AdminController::class, 'AdminEditTable'])->name('admin-editTable');
+Route::get('/admin/editTable/{id}/edit', [AdminController::class, 'AdminEditTable'])->name('admin-editTable')->middleware('alreadyLoggedIn');
 //Admin Update Table Function
-Route::put('/admin/updateTable/{id}', [AdminController::class, 'AdminUpdateTable'])->name('admin-updateTable');
+Route::put('/admin/updateTable/{id}', [AdminController::class, 'AdminUpdateTable'])->name('admin-updateTable')->middleware('alreadyLoggedIn');
 //Admin Delete Table Function
-Route::get('/admin/deleteTable/{id}/delete', [AdminController::class, 'AdminDeleteTable'])->name('admin-deleteTable');
+Route::get('/admin/deleteTable/{id}/delete', [AdminController::class, 'AdminDeleteTable'])->name('admin-deleteTable')->middleware('alreadyLoggedIn');
 //Delete Table Function
-Route::get('/deletetable/delete-all', [TableController::class, 'deleteAlltable'])->name('tables.delete');
+Route::get('/deletetable/delete-all', [TableController::class, 'deleteAlltable'])->name('tables.delete')->middleware('alreadyLoggedIn');
 
 //Admin Control Room
 //Admin View All Room
-Route::get('/admin/Rooms',[AdminController::class,'showAllRoom'])->name('admin-Rooms');
+Route::get('/admin/Rooms',[AdminController::class,'showAllRoom'])->name('admin-Rooms')->middleware('alreadyLoggedIn');
 //Admin Edit Room Function
-Route::get('/admin/editRoom/{id}/edit', [AdminController::class, 'AdminEditRoom'])->name('admin-editRoom');
+Route::get('/admin/editRoom/{id}/edit', [AdminController::class, 'AdminEditRoom'])->name('admin-editRoom')->middleware('alreadyLoggedIn');
 //Admin Update Room Function
-Route::put('/admin/updateRoom/{id}', [AdminController::class, 'AdminUpdateRoom'])->name('admin-updateRoom');
+Route::put('/admin/updateRoom/{id}', [AdminController::class, 'AdminUpdateRoom'])->name('admin-updateRoom')->middleware('alreadyLoggedIn');
 //Admin Delete Room Function
-Route::get('/admin/deleteRoom/{id}/delete', [AdminController::class, 'AdminDeleteRoom'])->name('admin-deleteRoom');
+Route::get('/admin/deleteRoom/{id}/delete', [AdminController::class, 'AdminDeleteRoom'])->name('admin-deleteRoom')->middleware('alreadyLoggedIn');
 
 //Admin Control Gender
 //Admin View All Gender
-Route::get('/admin/genders',[GenderController::class,'gender'])->name('admin-genders');
+Route::get('/admin/genders',[GenderController::class,'gender'])->name('admin-genders')->middleware('alreadyLoggedIn');
 //Admin Add Gender Function
 Route::post('/admin/addGender', [GenderController::class, 'addgender'])->name('admin-addgender');
 //Admin Edit Gender Function
@@ -219,9 +219,9 @@ Route::put('/admin/updateGender/{id}', [GenderController::class, 'updateGender']
 Route::get('/admin/deleteGender/{id}/delete', [GenderController::class, 'deleteGender'])->name('admin-deleteGender');
 
 // 显示 Community 页面
-Route::get('/admin/community', [CommunityCategoryController::class, 'ShowCommunity'])->name('Show.CommunityCategory');
+Route::get('/admin/community', [CommunityCategoryController::class, 'ShowCommunity'])->name('Show.CommunityCategory')->middleware('alreadyLoggedIn');
 // 添加 Community
-Route::post('/admin/community/add', [CommunityCategoryController::class, 'AddCommunity'])->name('Add.CommunityCategory');
+Route::post('/admin/community/add', [CommunityCategoryController::class, 'AddCommunity'])->name('Add.CommunityCategory')->middleware('alreadyLoggedIn');
 // 编辑 Community 页面
 // Route::get('/admin/community/edit/{communityCategory}', [CommunityCategoryController::class, 'EditCommunity'])->name('Edit.CommunityCategory');
 // // 更新 Community
@@ -231,7 +231,7 @@ Route::delete('/admin/community/destroy/{communityCategory}', [CommunityCategory
 
 //Staff Area
 //Display Staff Page
-Route::get('/staff',[StaffController::class,'viewstaff']);
+Route::get('/staff',[StaffController::class,'viewstaff'])->middleware('alreadyLoggedIn');
 //Add Staff Function
 Route::post('/addStaff',[StaffController::class,'addStaff'])->name('addStaff');
 //Show Staff Function
@@ -245,7 +245,7 @@ Route::get('/deleteStaff/{id}/delete', [StaffController::class, 'deletestaff'])-
 
 //Facilities Area
 //Display Facilities Page
-Route::get('showfacilities', [FacilityController::class, 'ShowFacilities'])->name('facilities');
+Route::get('showfacilities', [FacilityController::class, 'ShowFacilities'])->name('facilities')->middleware('alreadyLoggedIn');
 //Add Facilities Page
 Route::post('addfacilities', [FacilityController::class, 'AddFacilities'])->name('addfacilities');
 //Delete Facilities Page
@@ -253,23 +253,23 @@ Route::delete('deletefacilities/{facility}', [FacilityController::class, 'Delete
 
 //------------------------------------------------------User Change Status Area------------------------------------------------------//
 //Change Hotel Status Function
-Route::get('/changehotel-status/{id}',[HotelController::class,'changehotelStatus']);
+Route::get('/changehotel-status/{id}',[HotelController::class,'changehotelStatus'])->middleware('auth');
 //Change Restaurant Status Function
-Route::get('/changerestaurant-status/{id}',[RestaurantController::class,'changerestaurantStatus']);
+Route::get('/changerestaurant-status/{id}',[RestaurantController::class,'changerestaurantStatus'])->middleware('auth');
 //Change Reosrt Status Function
-Route::get('/changeresort-status/{id}',[ResortController::class,'changeresortStatus']);
+Route::get('/changeresort-status/{id}',[ResortController::class,'changeresortStatus'])->middleware('auth');
 //Change Room Status Function
-Route::get('/changeroom-status/{id}',[RoomController::class,'changeroomStatus']);
+Route::get('/changeroom-status/{id}',[RoomController::class,'changeroomStatus'])->middleware('auth');
 //Change Table Status Function
-Route::get('/changetable-status/{id}',[TableController::class,'changetableStatus']);
+Route::get('/changetable-status/{id}',[TableController::class,'changetableStatus'])->middleware('auth');
 
 //------------------------------------------------------Resort Facility Area------------------------------------------------------//
-Route::get('backend-user/backend-resort/resortfacility/{resortId}/facilities', [ResortController::class, 'showResortFacilities']);
-Route::post('backend-user/backend-resort/resortfacility/{resortId}/add-facilities', [ResortController::class, 'addResortFacilities']);
+Route::get('backend-user/backend-resort/resortfacility/{resortId}/facilities', [ResortController::class, 'showResortFacilities'])->middleware('auth');
+Route::post('backend-user/backend-resort/resortfacility/{resortId}/add-facilities', [ResortController::class, 'addResortFacilities'])->middleware('auth');
 
 //------------------------------------------------------Hotel Facility Area------------------------------------------------------//
-Route::get('backend-user/backend-hotel/hotelfacility/{hotelId}/facilities', [HotelController::class, 'showHotelFacilities']);
-Route::post('backend-user/backend-hotel/hotelfacility/{hotelId}/add-facilities', [HotelController::class, 'addHotelFacilities']);
+Route::get('backend-user/backend-hotel/hotelfacility/{hotelId}/facilities', [HotelController::class, 'showHotelFacilities'])->middleware('auth');
+Route::post('backend-user/backend-hotel/hotelfacility/{hotelId}/add-facilities', [HotelController::class, 'addHotelFacilities'])->middleware('auth');
 
 //--------------------------------------------------- User Dashboard Area------------------------------------------------------------//
 
@@ -301,21 +301,21 @@ Route::get('/RefundSearch',[DepositController::class, 'RefundSearch'])->name('Re
 
 //---------------------------------------------------Resort Area-------------------------------------------------------------------//
 //Display Resort Page
-Route::get('/resort',[ResortController::class,'viewresort']);
+Route::get('/resort',[ResortController::class,'viewresort'])->middleware('auth');
 //Add Resort Function
-Route::post('/addResort',[ResortController::class,'addResort'])->name('addResort');
+Route::post('/addResort',[ResortController::class,'addResort'])->name('addResort')->middleware('auth');
 //Show Resort Function
-Route::get('/showResort',[ResortController::class,'showResort'])->name('showResort');
+Route::get('/showResort',[ResortController::class,'showResort'])->name('showResort')->middleware('auth');
 //Edit Resort Function
-Route::get('/editResort/{id}/edit', [ResortController::class, 'editResort'])->name('editResort');
+Route::get('/editResort/{id}/edit', [ResortController::class, 'editResort'])->name('editResort')->middleware('auth');
 //Update Resort Function
-Route::post('/updateResort/{id}', [ResortController::class, 'updateResort'])->name('updateResort');
+Route::post('/updateResort/{id}', [ResortController::class, 'updateResort'])->name('updateResort')->middleware('auth');
 //Delete Resort Function
-Route::get('/deleteResort/{id}/delete', [ResortController::class, 'deleteResort'])->name('deleteResort');
+Route::get('/deleteResort/{id}/delete', [ResortController::class, 'deleteResort'])->name('deleteResort')->middleware('auth');
 //MutlipleDelete Resort Function
-Route::post('/mutlipledeleteResort/delete', [ResortController::class, 'deleteMultiple'])->name('resorts.deleteMultiple');
+Route::post('/mutlipledeleteResort/delete', [ResortController::class, 'deleteMultiple'])->name('resorts.deleteMultiple')->middleware('auth');
 //show has bookingsrestaurant
-Route::get('/bookingsresort',[BookingController::class, 'hasbookingResort']);
+Route::get('/bookingsresort',[BookingController::class, 'hasbookingResort'])->middleware('auth');
 //MutlipleDelete Resort Images Function
 Route::delete('/resort-image/{id}', [ResortController::class, 'deleteResortImage'])->name('deleteResortImage');
 
@@ -324,60 +324,63 @@ Route::post('/booking/verify/resort/{id}', [BookingController::class, 'verifyRes
 // Checkout Resort
 Route::post('/booking/checkout/resort/{id}', [BookingController::class, 'checkoutResort'])->name('booking.checkout.resort');
 // cancelling booking resort
-Route::post('/booking/cancel/resort/{bookingId}', [BookingController::class, 'cancelBookingResort'])->name('booking.cancel.resort');
+Route::post('/booking/cancel/resort/{bookingId}', [BookingController::class, 'cancelBookingResort'])->name('booking.cancel.resort')->middleware('auth');
 
 //MutlipleDelete Has Booked Function
-Route::post('/mutlipledeletebookedresort/delete', [BookingController::class, 'deleteMultiplebookedresort'])->name('resorts.deleteMultiplebookedresort');
+Route::post('/mutlipledeletebookedresort/delete', [BookingController::class, 'deleteMultiplebookedresort'])->name('resorts.deleteMultiplebookedresort')->middleware('auth');
 //show Real Time Search Restaurant
 Route::get('/ResortSearch',[ResortController::class, 'ResortSearch'])->name('ResortSearch');
 //View Booked Resort Detail Follow ID Function
-Route::get('/viewBookedResort/{id}/view',[BookingController::class,'viewBookedResort'])->name('viewBookedResort');
+Route::get('/viewBookedResort/{id}/view',[BookingController::class,'viewBookedResort'])->name('viewBookedResort')->middleware('auth');
 // GPS Auto Search Resort
 Route::get('/resort-gps-search', [ResortController::class, 'ResortgpsSearch'])->name('resort.gps.search');
 
 
 // Resort Promotion (Loyalty Program)
-Route::get('backend-user/backend-resort/resortpromotion/{id}', [ResortController::class, 'showPromotionForm'])->name('resort.promotion.form');
-Route::post('backend-user/backend-resort/resortpromotion/{id}', [ResortController::class, 'savePromotionDates'])->name('resort.promotion.save');
-Route::get('/resort/{id}/promotion/delete', [ResortController::class, 'deletePromotionDate'])->name('resort.promotion.delete');
-Route::post('/resort/promotion/update', [ResortController::class, 'updatePromotionPrice'])->name('resort.promotion.update');
+Route::get('backend-user/backend-resort/resortpromotion/{id}', [ResortController::class, 'showPromotionForm'])->name('resort.promotion.form')->middleware('auth');
+Route::post('backend-user/backend-resort/resortpromotion/{id}', [ResortController::class, 'savePromotionDates'])->name('resort.promotion.save')->middleware('auth');
+Route::get('/resort/{id}/promotion/delete', [ResortController::class, 'deletePromotionDate'])->name('resort.promotion.delete')->middleware('auth');
+Route::post('/resort/promotion/update', [ResortController::class, 'updatePromotionPrice'])->name('resort.promotion.update')->middleware('auth');
 
 // Resort Discount (Loyalty Program)
-Route::get('backend-user/backend-resort/resortdiscount/{id}', [ResortController::class, 'showDiscountForm'])->name('resort.discount.form');
-Route::post('backend-user/backend-resort/resortdiscount/{id}', [ResortController::class, 'saveDiscountDates'])->name('resort.discount.save');
-Route::get('/resort/{id}/discount/delete', [ResortController::class, 'deleteDiscountDate'])->name('resort.discount.delete');
-Route::post('/resort/discount/update', [ResortController::class, 'updateDiscountPrice'])->name('resort.discount.update');
+Route::get('backend-user/backend-resort/resortdiscount/{id}', [ResortController::class, 'showDiscountForm'])->name('resort.discount.form')->middleware('auth');
+Route::post('backend-user/backend-resort/resortdiscount/{id}', [ResortController::class, 'saveDiscountDates'])->name('resort.discount.save')->middleware('auth');
+Route::get('/resort/{id}/discount/delete', [ResortController::class, 'deleteDiscountDate'])->name('resort.discount.delete')->middleware('auth');
+Route::post('/resort/discount/update', [ResortController::class, 'updateDiscountPrice'])->name('resort.discount.update')->middleware('auth');
 
 // Resort Community
-Route::get('backend-user/backend-resort/resortcommunity/{id}', [ResortController::class, 'showCommunityForm'])->name('resort.community.form');
-Route::post('backend-user/backend-resort/resortcommunity/{id}', [ResortController::class, 'saveCommunity'])->name('resort.community.save');
-Route::get('/resort/{id}/community/delete', [ResortController::class, 'deleteCommunity'])->name('resort.community.delete');
-Route::post('/resort/community/update/{id}', [ResortController::class, 'updateCommunity'])->name('resort.community.update');
+Route::get('backend-user/backend-resort/resortcommunity/{id}', [ResortController::class, 'showCommunityForm'])->name('resort.community.form')->middleware('auth');
+Route::post('backend-user/backend-resort/resortcommunity/{id}', [ResortController::class, 'saveCommunity'])->name('resort.community.save')->middleware('auth');
+Route::get('/resort/{id}/community/delete', [ResortController::class, 'deleteCommunity'])->name('resort.community.delete')->middleware('auth');
+Route::post('/resort/community/update/{id}', [ResortController::class, 'updateCommunity'])->name('resort.community.update')->middleware('auth');
 Route::delete('/community-image/{id}', [CommunityController::class, 'CommunityImageDestroy'])->name('community.image.destroy');
+
+// frontend-user community detail page
+Route::get('/resort/community/{id}', [ResortController::class, 'showResortCommunityDetail'])->name('resort.community.detail')->middleware('auth');
 
 //---------------------------------------------------Restaurant Area-------------------------------------------------------------//
 //Display Restaurant Page
-Route::get('/restaurant',[RestaurantController::class,'viewrestaurant']);
+Route::get('/restaurant',[RestaurantController::class,'viewrestaurant'])->middleware('auth');
 //Add Restaurant Function
-Route::post('/addRestaurant',[RestaurantController::class,'addRestaurant'])->name('addRestaurant');
+Route::post('/addRestaurant',[RestaurantController::class,'addRestaurant'])->name('addRestaurant')->middleware('auth');
 //Show Restaurant Function
-Route::get('/showRestaurant',[RestaurantController::class,'showRestaurant'])->name('showRestaurant');
+Route::get('/showRestaurant',[RestaurantController::class,'showRestaurant'])->name('showRestaurant')->middleware('auth');
 //View Restaurant Follow ID Function
-Route::get('/viewRestaurant/{id}/view',[RestaurantController::class,'viewRestaurant'])->name('viewRestaurant');
+Route::get('/viewRestaurant/{id}/view',[RestaurantController::class,'viewRestaurant'])->name('viewRestaurant')->middleware('auth');
 //Edit Restaurant Function
-Route::get('/editRestaurant/{id}/edit', [RestaurantController::class, 'editRestaurant'])->name('editRestaurant');
+Route::get('/editRestaurant/{id}/edit', [RestaurantController::class, 'editRestaurant'])->name('editRestaurant')->middleware('auth');
 //Update Restaurant Function
-Route::put('/updateRestaurant/{id}', [RestaurantController::class, 'updateRestaurant'])->name('updateRestaurant');
+Route::put('/updateRestaurant/{id}', [RestaurantController::class, 'updateRestaurant'])->name('updateRestaurant')->middleware('auth');
 //Delete Restaurant Function
-Route::get('/deleteRestaurant/{id}/delete', [RestaurantController::class, 'deleteRestaurant'])->name('deleteRestaurant');
+Route::get('/deleteRestaurant/{id}/delete', [RestaurantController::class, 'deleteRestaurant'])->name('deleteRestaurant')->middleware('auth');
 //MutlipleDelete Restaurant Function
-Route::post('/mutlipledeleterestaurant/delete', [RestaurantController::class, 'deleteMultiplerestaurant'])->name('restaurants.deleteMultiplerestaurant');
+Route::post('/mutlipledeleterestaurant/delete', [RestaurantController::class, 'deleteMultiplerestaurant'])->name('restaurants.deleteMultiplerestaurant')->middleware('auth');
 //Delete Restaurant Table Function
-Route::post('/deleterestauranttable/delete', [RestaurantController::class, 'deleteAllRestaurantTable'])->name('restaurantstable.delete');
+Route::post('/deleterestauranttable/delete', [RestaurantController::class, 'deleteAllRestaurantTable'])->name('restaurantstable.delete')->middleware('auth');
 //show Multiple Search Restaurant
 Route::get('/RestaurantSearch',[RestaurantController::class, 'RestaurantSearch'])->name('RestaurantSearch');
 //show has bookingsrestaurant
-Route::get('/bookingsrestaurant',[BookingController::class, 'hasbookingRestaurant']);
+Route::get('/bookingsrestaurant',[BookingController::class, 'hasbookingRestaurant'])->middleware('auth');
 //MutlipleDelete Restaurant Images Function
 Route::delete('/restaurant-image/{id}', [RestaurantController::class, 'deleteRestaurantImage'])->name('deleteRestaurantImage');
 
@@ -393,35 +396,35 @@ Route::post('/mutlipledeletebookedrestaurant/delete', [BookingController::class,
 //show Multiple Search Restaurant
 Route::get('/BookedRestaurantSearch',[BookingController::class, 'BookedRestaurantSearch'])->name('BookedRestaurantSearch');
 //View Booked Restaurant Detail Follow ID Function
-Route::get('/viewBookedRestaurant/{id}/view',[BookingController::class,'viewBookedRestaurant'])->name('viewBookedRestaurant');
+Route::get('/viewBookedRestaurant/{id}/view',[BookingController::class,'viewBookedRestaurant'])->name('viewBookedRestaurant')->middleware('auth');
 // GPS Auto Search Restaurant
 Route::get('/restaurant-gps-search', [RestaurantController::class, 'RestaurantgpsSearch'])->name('restaurant.gps.search');
 
 // Restaurant Community
-Route::get('backend-user/backend-restaurant/restaurantcommunity/{id}', [RestaurantController::class, 'showRestaurantCommunityForm'])->name('restaurant.community.form');
-Route::post('backend-user/backend-restaurant/restaurantcommunity/{id}', [RestaurantController::class, 'saveRestaurantCommunity'])->name('restaurant.community.save');
-Route::get('/restaurant/{id}/community/delete', [RestaurantController::class, 'deleteRestaurantCommunity'])->name('restaurant.community.delete');
-Route::post('/restaurant/community/update/{id}', [RestaurantController::class, 'updateRestaurantCommunity'])->name('restaurant.community.update');
-Route::delete('/community-image/{id}', [CommunityController::class, 'RestaurantCommunityImageDestroy'])->name('community.image.destroy');
+Route::get('backend-user/backend-restaurant/restaurantcommunity/{id}', [RestaurantController::class, 'showRestaurantCommunityForm'])->name('restaurant.community.form')->middleware('auth');
+Route::post('backend-user/backend-restaurant/restaurantcommunity/{id}', [RestaurantController::class, 'saveRestaurantCommunity'])->name('restaurant.community.save')->middleware('auth');
+Route::get('/restaurant/{id}/community/delete', [RestaurantController::class, 'deleteRestaurantCommunity'])->name('restaurant.community.delete')->middleware('auth');
+Route::post('/restaurant/community/update/{id}', [RestaurantController::class, 'updateRestaurantCommunity'])->name('restaurant.community.update')->middleware('auth');
+Route::delete('/community-image/{id}', [CommunityController::class, 'RestaurantCommunityImageDestroy'])->name('community.image.destroy')->middleware('auth');
 
 //---------------------------------------------------My Restaurant Area---------------------------------------------------------------//
 //show Customer bookeds restaurant
-Route::get('/mybookingsrestaurant',[BookingController::class, 'mybookedRestaurant']);
+Route::get('/mybookingsrestaurant',[BookingController::class, 'mybookedRestaurant'])->middleware('auth');
 //MutlipleDelete Customer bookedsrestaurant Function
 Route::post('/customermutlipledeletebookedrestaurant/delete', [BookingController::class, 'customerdeleteMultiplebookedrestaurant'])->name('customer.deleteMultiplebookedrestaurant');
 //show Customer bookeds hotel
-Route::get('/mybookingshotel',[BookingController::class, 'mybookedHotel']);
+Route::get('/mybookingshotel',[BookingController::class, 'mybookedHotel'])->middleware('auth');
 //show Customer bookeds hotel
-Route::get('/mybookingsresort',[BookingController::class, 'mybookedResort']);
+Route::get('/mybookingsresort',[BookingController::class, 'mybookedResort'])->middleware('auth');
 
 // Extand or cancel resort booking date page
 Route::get('/ExtandorCancelResort/{id}',[BookingController::class,'ExtandorCancelResort'])->name('ExtandorCancelResort')->middleware('auth');
 
-// Extand resort booking date 
+// Extand resort booking date
 Route::post('/extend-booking/{id}', [BookingController::class, 'extendBooking'])->name('booking.extend')->middleware('auth');
 
 // cancel resort booking date
-Route::post('/booking/cancel/{id}', [BookingController::class, 'cancelBookingDate'])->name('booking.cancel');
+Route::post('/booking/cancel/{id}', [BookingController::class, 'cancelBookingDate'])->name('booking.cancel')->middleware('auth');
 
 //---------------------------------------------------My Restaurant Area---------------------------------------------------------------//
 //checkout booked restaurant
@@ -433,25 +436,25 @@ Route::post('paymentresort/{id}/view', [BookingController::class, 'processPaymen
 
 //---------------------------------------------------Hotel Area---------------------------------------------------------------//
 //Display Hotel Page
-Route::get('/hotel',[HotelController::class,'index']);
+Route::get('/hotel',[HotelController::class,'index'])->middleware('auth');
 //Add Hotel Function
-Route::post('/addHotel',[HotelController::class,'addHotel'])->name('addHotel');
+Route::post('/addHotel',[HotelController::class,'addHotel'])->name('addHotel')->middleware('auth');
 //Show Hotel Function
-Route::get('/showHotel',[HotelController::class,'showHotel'])->name('showHotel');
+Route::get('/showHotel',[HotelController::class,'showHotel'])->name('showHotel')->middleware('auth');
 //Edit Hotel Function
-Route::get('/editHotel/{id}/edit', [HotelController::class, 'editHotel'])->name('editHotel');
+Route::get('/editHotel/{id}/edit', [HotelController::class, 'editHotel'])->name('editHotel')->middleware('auth');
 //Update Hotel Function
-Route::put('/updateHotel/{id}', [HotelController::class, 'updateHotel'])->name('updateHotel');
+Route::put('/updateHotel/{id}', [HotelController::class, 'updateHotel'])->name('updateHotel')->middleware('auth');
 //Delete Hotel Function
-Route::get('/deleteHotel/{id}/delete', [HotelController::class, 'deleteHotel'])->name('deleteHotel');
+Route::get('/deleteHotel/{id}/delete', [HotelController::class, 'deleteHotel'])->name('deleteHotel')->middleware('auth');
 //View Hotel Follow ID Function
-Route::get('/viewHotel/{id}/view',[HotelController::class,'viewHotel'])->name('viewHotel');
+Route::get('/viewHotel/{id}/view',[HotelController::class,'viewHotel'])->name('viewHotel')->middleware('auth');
 //MutlipleDelete Hotel Function
-Route::post('/mutlipledeletehotel/delete', [HotelController::class, 'mutlipledeletehotel'])->name('hotels.mutlipledeletehotel');
+Route::post('/mutlipledeletehotel/delete', [HotelController::class, 'mutlipledeletehotel'])->name('hotels.mutlipledeletehotel')->middleware('auth');
 //MutlipleDelete Room Function
-Route::post('/mutlipledeleterooms/delete', [HotelController::class, 'mutlipledeleterooms'])->name('rooms.mutlipledeleterooms');
+Route::post('/mutlipledeleterooms/delete', [HotelController::class, 'mutlipledeleterooms'])->name('rooms.mutlipledeleterooms')->middleware('auth');
 //show has bookingsrestaurant
-Route::get('/bookingshotel',[BookingController::class, 'hasbookingHotel']);
+Route::get('/bookingshotel',[BookingController::class, 'hasbookingHotel'])->middleware('auth');
 //MutlipleDelete Hotel Images Function
 Route::delete('/hotel-image/{id}', [HotelController::class, 'deleteHotelImage'])->name('deleteHotelImage');
 
@@ -463,52 +466,52 @@ Route::post('/booking/checkout/hotel/{id}', [BookingController::class, 'checkout
 Route::post('/booking/cancel/hotel/{bookingId}', [BookingController::class, 'cancelBookingHotel'])->name('booking.cancel.hotel');
 
 //MutlipleDelete Has Booked Function
-Route::post('/mutlipledeletebookedhotel/delete', [BookingController::class, 'deleteMultiplebookedhotel'])->name('hotels.deleteMultiplebookedhotel');
+Route::post('/mutlipledeletebookedhotel/delete', [BookingController::class, 'deleteMultiplebookedhotel'])->name('hotels.deleteMultiplebookedhotel')->middleware('auth');
 //show Multiple Search Hotel
 Route::get('/HotelSearch',[HotelController::class, 'HotelSearch'])->name('HotelSearch');
 //View Booked Hotel Detail Follow ID Function
-Route::get('/viewBookedHotel/{id}/view',[BookingController::class,'viewBookedHotel'])->name('viewBookedHotel');
+Route::get('/viewBookedHotel/{id}/view',[BookingController::class,'viewBookedHotel'])->name('viewBookedHotel')->middleware('auth');
 // GPS Auto Search Hotel
 Route::get('/hotel-gps-search', [HotelController::class, 'HotelgpsSearch'])->name('hotel.gps.search');
 
 // Hotel Community
-Route::get('backend-user/backend-hotel/hotelcommunity/{id}', [HotelController::class, 'showHotelCommunityForm'])->name('hotel.community.form');
-Route::post('backend-user/backend-hotel/hotelcommunity/{id}', [HotelController::class, 'saveHotelCommunity'])->name('hotel.community.save');
-Route::get('/hotel/{id}/community/delete', [HotelController::class, 'deleteHotelCommunity'])->name('hotel.community.delete');
-Route::post('/hotel/community/update/{id}', [HotelController::class, 'updateHotelCommunity'])->name('hotel.community.update');
-Route::delete('/community-image/{id}', [CommunityController::class, 'HotelCommunityImageDestroy'])->name('community.image.destroy');
+Route::get('backend-user/backend-hotel/hotelcommunity/{id}', [HotelController::class, 'showHotelCommunityForm'])->name('hotel.community.form')->middleware('auth');
+Route::post('backend-user/backend-hotel/hotelcommunity/{id}', [HotelController::class, 'saveHotelCommunity'])->name('hotel.community.save')->middleware('auth');
+Route::get('/hotel/{id}/community/delete', [HotelController::class, 'deleteHotelCommunity'])->name('hotel.community.delete')->middleware('auth');
+Route::post('/hotel/community/update/{id}', [HotelController::class, 'updateHotelCommunity'])->name('hotel.community.update')->middleware('auth');
+Route::delete('/community-image/{id}', [CommunityController::class, 'HotelCommunityImageDestroy'])->name('community.image.destroy')->middleware('auth');
 
 //---------------------------------------------------Table Area--------------------------------------------------------------//
 //Display Table Page
 // Route::get('/tabel',[TableController::class,'showTables']);
 //Add Table Function
-Route::post('/addTable',[TableController::class,'addTable'])->name('addTable');
+Route::post('/addTable',[TableController::class,'addTable'])->name('addTable')->middleware('auth');
 //Show Table Function
-Route::get('/showTable',[TableController::class,'showTables'])->name('showTable');
+Route::get('/showTable',[TableController::class,'showTables'])->name('showTable')->middleware('auth');
 //Edit Table Function
-Route::get('/editTable/{id}/edit', [TableController::class, 'editTable'])->name('editTable');
+Route::get('/editTable/{id}/edit', [TableController::class, 'editTable'])->name('editTable')->middleware('auth');
 //Update Table Function
-Route::put('/updateTable/{id}', [TableController::class, 'updateTable'])->name('updateTable');
+Route::put('/updateTable/{id}', [TableController::class, 'updateTable'])->name('updateTable')->middleware('auth');
 //Delete Table Function
-Route::get('/deleteTable/{id}/delete', [TableController::class, 'deleteTable'])->name('deleteTable');
+Route::get('/deleteTable/{id}/delete', [TableController::class, 'deleteTable'])->name('deleteTable')->middleware('auth');
 //MutlipleDelete Table Function
-Route::post('/mutlipledeletetable/delete', [TableController::class, 'deleteMultipletable'])->name('tables.deleteMultipletable');
+Route::post('/mutlipledeletetable/delete', [TableController::class, 'deleteMultipletable'])->name('tables.deleteMultipletable')->middleware('auth');
 
 //---------------------------------------------------Room Area----------------------------------------------------------------//
 //Display Room Page
 // Route::get('/room',[RoomController::class,'index']);
 //Add Room Function
-Route::post('/addRoom',[RoomController::class,'addRoom'])->name('addRoom');
+Route::post('/addRoom',[RoomController::class,'addRoom'])->name('addRoom')->middleware('auth');
 //Show Room Function
-Route::get('/showRoom',[RoomController::class,'showRoom'])->name('showRoom');
+Route::get('/showRoom',[RoomController::class,'showRoom'])->name('showRoom')->middleware('auth');
 //Edit Room Function
-Route::get('/editRoom/{id}/edit', [RoomController::class, 'editRoom'])->name('editRoom');
+Route::get('/editRoom/{id}/edit', [RoomController::class, 'editRoom'])->name('editRoom')->middleware('auth');
 //Update Room Function
-Route::put('/updateRoom/{id}', [RoomController::class, 'updateRoom'])->name('updateRoom');
+Route::put('/updateRoom/{id}', [RoomController::class, 'updateRoom'])->name('updateRoom')->middleware('auth');
 //Delete Room Function
-Route::get('/deleteRoom/{id}/delete', [RoomController::class, 'deleteRoom'])->name('deleteRoom');
+Route::get('/deleteRoom/{id}/delete', [RoomController::class, 'deleteRoom'])->name('deleteRoom')->middleware('auth');
 //MutlipleDelete Room Function
-Route::post('/mutlipledeleteroom/delete', [RoomController::class, 'mutlipledeleteroom'])->name('rooms.mutlipledeleteroom');
+Route::post('/mutlipledeleteroom/delete', [RoomController::class, 'mutlipledeleteroom'])->name('rooms.mutlipledeleteroom')->middleware('auth');
 
 //---------------------------------------------------Has Booked Search Area------------------------------------------------------------//
 //show Multiple Search Has Booked Hotel
@@ -525,19 +528,19 @@ Route::get('/verify/hotel/{hotelId}', [BookingController::class, 'verifyHotel'])
 
 //---------------------------------------------------Add To Wishlist Area-------------------------------------------------------------//
 // Hotel Wishlist
-Route::post('/wishlist/add/hotel/{hotelId}', [WishlistController::class, 'addHotelToWishlist']);
-Route::get('/userwishlist', [WishlistController::class, 'showWishlist'])->name('wishlist.show');
-Route::delete('/wishlist/remove/hotel/{hotelId}', [WishlistController::class, 'removeHotelFromWishlist']);
+Route::post('/wishlist/add/hotel/{hotelId}', [WishlistController::class, 'addHotelToWishlist'])->middleware('auth');
+Route::get('/userwishlist', [WishlistController::class, 'showWishlist'])->name('wishlist.show')->middleware('auth');
+Route::delete('/wishlist/remove/hotel/{hotelId}', [WishlistController::class, 'removeHotelFromWishlist'])->middleware('auth');
 
 // Resort Wishlist
-Route::post('/wishlist/add/resort/{resortId}', [WishlistController::class, 'addResortToWishlist']);
+Route::post('/wishlist/add/resort/{resortId}', [WishlistController::class, 'addResortToWishlist'])->middleware('auth');
 // Route::get('/wishlist', [WishlistController::class, 'showWishlist'])->name('wishlist.show');
-Route::delete('/wishlist/remove/resort/{resortId}', [WishlistController::class, 'removeResortFromWishlist']);
+Route::delete('/wishlist/remove/resort/{resortId}', [WishlistController::class, 'removeResortFromWishlist'])->middleware('auth');
 
 // Restaurant Wishlist
-Route::post('/wishlist/add/restaurant/{restaurantId}', [WishlistController::class, 'addRestaurantToWishlist']);
+Route::post('/wishlist/add/restaurant/{restaurantId}', [WishlistController::class, 'addRestaurantToWishlist'])->middleware('auth');
 // Route::get('/wishlist', [WishlistController::class, 'showWishlist'])->name('wishlist.show');
-Route::delete('/wishlist/remove/restaurant/{restaurantId}', [WishlistController::class, 'removeRestaurantFromWishlist']);
+Route::delete('/wishlist/remove/restaurant/{restaurantId}', [WishlistController::class, 'removeRestaurantFromWishlist'])->middleware('auth');
 
 
 //------------------------------------------------------Frontend Area----------------------------------------------------------//
@@ -569,9 +572,9 @@ Route::get('/hotelsearch',[HotelController::class, 'frontendhotelsearch'])->name
 Route::post('/uploadAndSearchHotels', [HotelController::class, 'uploadAndSearchHotels'])->name('uploadAndSearchHotels');
 
 //---------------------------------------------------User Contact Page--------------------------------------------------------//
-Route::get('contact',[ContactController::class,'contact'])->name('contact');
+Route::get('contact',[ContactController::class,'contact'])->name('contact')->middleware('auth');
 // Contact US
-Route::post('/contactus',[ContactController::class,'contactus'])->name('contactus');
+Route::post('/contactus',[ContactController::class,'contactus'])->name('contactus')->middleware('auth');
 
 // Admin Reply User
 Route::post('/send-reply', [ContactController::class, 'sendReply'])->name('send.reply');
@@ -579,7 +582,7 @@ Route::post('/customer/send-reply', [ContactController::class, 'CustomerSendRepl
 
 
 //------------------------------------------------------Frontend Booking Restaurant------------------------------------------------------//
-Route::get('/booking/{id}',[BookingController::class,'bookingpage'])->name('bookingrestaurant')->middleware('auth');
+Route::get('/bookingrestaurant/{id}', [BookingController::class, 'bookingrestaurantpage'])->name('bookingrestaurant')->middleware('auth');
 Route::post('/bookingsrestaurant', [BookingController::class, 'bookingrestaurant'])->middleware('auth');
 Route::post('/check-bookings', [BookingController::class, 'checkBookings']);
 

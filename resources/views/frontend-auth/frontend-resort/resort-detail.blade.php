@@ -1248,10 +1248,10 @@
                             <i class="fas fa-calendar-check"></i>
                             Book Now
                         </a>
-                        <a href="{{ route('resorts.contact', ['id' => $resort->id]) }}" class="btn btn-outline"
+                        <a href="https://wa.me/601110801649" class="btn btn-outline"
                             id="btncontact">
-                            <i class="fas fa-envelope"></i>
-                            Contact
+                            <i class="fab fa-whatsapp"></i>
+                            WhatsApp
                         </a>
                     </div>
                 </div>
@@ -1461,16 +1461,20 @@
                                                 <p><strong>{{ $community->name }}</strong></p>
                                                 <p>{{ $community->address }}</p>
                                                 <div class="community-distance"></div> <!-- 添加容器来显示距离和时间 -->
+
                                                 <div class="community-view-icon">
                                                     <svg viewBox="0 0 24 24">
                                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                                         <circle cx="12" cy="12" r="3"></circle>
                                                     </svg>
-                                                    <span class="community-tooltip">View more</span>
+                                                    <a href="{{ route('resort.community.detail', ['id' => $community->id]) }}" class="community-tooltip">View more</a>
                                                 </div>
+
                                             </div>
                                         @endif
                                     @endforeach
+
+
                                 </div>
                             </div>
                         @endforeach

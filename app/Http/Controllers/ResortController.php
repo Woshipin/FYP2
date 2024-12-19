@@ -1131,4 +1131,11 @@ class ResortController extends Controller
         return redirect()->back()->with('success', 'Facilities added successfully.');
     }
 
+    public function showResortCommunityDetail($id) {
+
+        $community = ResortCommunity::find($id);
+        
+        return view('frontend-auth.frontend-resort.resort-community-detail', compact('community'));
+    }
+
 }

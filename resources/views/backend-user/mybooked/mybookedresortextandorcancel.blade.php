@@ -11,6 +11,7 @@
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    {{-- Payment CSS --}}
     <style>
         :root {
             --gradient-start: #4086f4;
@@ -772,6 +773,7 @@
             <div class="modal-header">
                 <h3>Select Your Payment Method</h3>
             </div>
+
             <div class="modal-body">
                 <form id="paymentForm" action="{{ route('booking.extend', $bookingResort->id) }}" method="POST">
                     @csrf
@@ -852,7 +854,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="modal" id="cancelModal">
         <div class="modal-content">
@@ -1100,7 +1101,7 @@
         }
     </script> --}}
 
-    {{-- processing --}}
+    {{-- Extend Function Done --}}
     <script>
         let bookingDates = @json($bookingDates); // Get dates from backend
         let allBookingDates = @json($allBookingDates); // Get all booking dates for the specific resort from backend
@@ -1703,4 +1704,5 @@
             @endforeach
         @endif
     </script>
+
 @endsection
