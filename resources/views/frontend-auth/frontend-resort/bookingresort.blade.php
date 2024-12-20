@@ -531,6 +531,39 @@
         }
     </style>
 
+    {{-- Notification CSS --}}
+    <style>
+        .notifications {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .notification {
+            flex: 1;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow-y: auto; /* Enable vertical scrolling */
+            max-height: 200px; /* Set a maximum height for scrolling */
+        }
+
+        .notification h2 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .promotion {
+            background-color: #e6f3ff;
+            margin-right: 15px;
+        }
+
+        .discount {
+            background-color: #e6ffe6;
+            margin-left: 15px;
+        }
+    </style>
+
     {{-- BookingStatus Pusher --}}
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
@@ -575,6 +608,19 @@
             <span>w</span>
         </h1>
 
+        {{-- Promotion and Discount Notification --}}
+        <div class="notifications">
+            <div class="notification promotion">
+                <h2>Current Promotion</h2>
+                <div id="promotion-content"></div>
+            </div>
+            <div class="notification discount">
+                <h2>Special Discount</h2>
+                <div id="discount-content"></div>
+            </div>
+        </div>
+
+        {{-- Booking Form --}}
         <div class="row">
             <div class="col-md-12">
                 <ul class="nav nav-tabs custom-tabs">
@@ -800,6 +846,7 @@
                 </form>
             </div>
         </div>
+        
     </section>
     <!-- Book Section Ends -->
 
@@ -1233,6 +1280,8 @@
             // 从 Blade 模板中获取促销日期和价格对象
             const promotionDatesWithPricesObject = @json($promotionDatesWithPricesObject);
 
+            console.log(promotionDatesWithPricesObject);
+
             // 将促销日期和价格转换为更易于使用的格式
             const promotionDatesWithPrices = {};
             promotionDatesWithPricesObject.forEach(promo => {
@@ -1241,6 +1290,25 @@
 
             // 获取度假村折扣信息
             const resortDiscounts = @json($discounts);
+
+            console.log(resortDiscounts);
+
+            // 处理并插入促销数据 notification
+            const promotionContent = document.getElementById('promotion-content');
+            for (const [date, price] of Object.entries(promotionDatesWithPrices)) {
+                const p = document.createElement('p');
+                p.innerText = `Date: ${date}, price now is ${price}`;
+                promotionContent.appendChild(p);
+            }
+
+            // 处理并插入折扣数据
+            const discountContent = document.getElementById('discount-content');
+            resortDiscounts.forEach(discount => {
+                const p = document.createElement('p');
+                p.innerText =
+                    `Booking dates more than or equal ${discount.nights} days discount ${discount.discount}%`;
+                discountContent.appendChild(p);
+            });
 
             function getEarlyBookingDiscount(bookingDate, promotionDate) {
                 const bookingDateTime = new Date(bookingDate);

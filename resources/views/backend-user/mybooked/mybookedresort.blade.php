@@ -193,6 +193,7 @@
             color: white;
             /* 在 hover 时文字变成黑色 */
             transform: translateY(-2px);
+            text-decoration: none; /* 确保没有文字装饰 */
         }
 
 

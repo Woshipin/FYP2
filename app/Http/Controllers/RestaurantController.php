@@ -636,4 +636,10 @@ class RestaurantController extends Controller
         return response()->json(['message' => 'Image deleted successfully.']);
     }
 
+    public function showRestaurantCommunityDetail($id) {
+
+        $community = RestaurantCommunity::find($id);
+
+        return view('frontend-auth.frontend-restaurant.restaurant-community-detail', compact('community'));
+    }
 }

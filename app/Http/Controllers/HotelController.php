@@ -794,4 +794,11 @@ class HotelController extends Controller
         return response()->json(['message' => 'Image deleted successfully.']);
     }
 
+    public function showHotelCommunityDetail($id) {
+
+        $community = HotelCommunity::find($id);
+
+        return view('frontend-auth.frontend-hotel.hotel-community-detail', compact('community'));
+    }
+
 }

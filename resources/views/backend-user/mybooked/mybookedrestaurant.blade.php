@@ -80,6 +80,7 @@
         .ticket:hover {
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            text-decoration: none; /* 确保没有文字装饰 */
         }
 
         .left {
@@ -232,7 +233,9 @@
 
         .navy-blue-button:hover {
             background: linear-gradient(to right, #2c3e50, #3498db);
+            color: white;
             transform: translateY(-2px);
+            text-decoration: none; /* 确保没有文字装饰 */
         }
 
         .status-badge {

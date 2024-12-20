@@ -1385,7 +1385,7 @@
                                                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                                         <circle cx="12" cy="12" r="3"></circle>
                                                     </svg>
-                                                    <span class="community-tooltip">View more</span>
+                                                    <a href="{{ route('hotel.community.detail', ['id' => $community->id]) }}" class="community-tooltip">View more</a>
                                                 </div>
                                             </div>
                                         @endif
@@ -1541,7 +1541,7 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
     {{-- Final Map Coordinate --}}
-    <script>
+    {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             const latitude = {{ $hotel->latitude ?? 1.3521 }};
             const longitude = {{ $hotel->longitude ?? 103.8198 }};
@@ -1674,6 +1674,130 @@
                         calculateRoute([latitude, longitude], [community.latitude, community
                             .longitude
                         ], communityName);
+                    }
+                });
+            });
+        });
+    </script> --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const latitude = {{ $hotel->latitude ?? 1.3521 }};
+            const longitude = {{ $hotel->longitude ?? 103.8198 }};
+            const hotelName = "{{ $hotels->name }}";
+
+            // 初始化地图
+            let map;
+            const initMap = () => {
+                map = L.map('map');
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+                }).addTo(map);
+
+                const hotelMarker = L.marker([latitude, longitude]).addTo(map);
+                hotelMarker.bindPopup(`<b>${hotelName}</b><br>Location: ${latitude}, ${longitude}`)
+                    .openPopup();
+
+                // 创建一个数组来存储所有的标记
+                let markers = [hotelMarker];
+
+                // 添加 community 标记
+                @foreach ($communities as $community)
+                    let communityMarker{{ $loop->index }} = L.marker([{{ $community->latitude }},
+                        {{ $community->longitude }}
+                    ]).addTo(map);
+                    communityMarker{{ $loop->index }}.bindPopup(
+                        `<b>{{ $community->name }}</b><br>Location: {{ $community->latitude }}, {{ $community->longitude }}<br>Description: {{ $community->description }}`
+                    );
+                    markers.push(communityMarker{{ $loop->index }});
+                @endforeach
+
+                // 创建一个边界框来包含所有的标记
+                let bounds = L.latLngBounds(markers.map(marker => marker.getLatLng()));
+
+                // 调整地图视图以适应所有的标记
+                map.fitBounds(bounds, {
+                    padding: [50, 50]
+                }); // 添加一些 padding 以确保所有标记都在视图中
+            };
+
+            // 计算路线
+            const calculateRoute = (start, end, communityName) => {
+                const distance = haversineDistance(start, end);
+                const time = (distance / 80) * 60; // 假设平均速度为 80 km/h
+
+                // 显示距离和时间
+                const communityElement = document.querySelector(
+                    `[data-community-name="${communityName}"] .community-distance`);
+                if (communityElement) {
+                    communityElement.innerHTML =
+                        `<p>Distance: ${distance.toFixed(2)} km</p><p>Time: ${time.toFixed(2)} min</p>`;
+                }
+            };
+
+            // Haversine 公式计算距离
+            const haversineDistance = (coord1, coord2) => {
+                const toRad = x => x * Math.PI / 180;
+                const R = 6371; // Earth radius in kilometers
+                const dLat = toRad(coord2[0] - coord1[0]);
+                const dLon = toRad(coord2[1] - coord1[1]);
+                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(toRad(coord1[0])) * Math.cos(toRad(coord2[0])) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c; // Distance in kilometers
+            };
+
+            // 打开模态框
+            const communityModal = document.getElementById("community-modal");
+            const openModal = () => {
+                communityModal.style.display = "block";
+                setTimeout(() => map.invalidateSize(), 500); // 防止地图显示问题
+            };
+
+            // 关闭模态框
+            const closeModal = () => {
+                communityModal.style.display = "none";
+            };
+
+            // 添加模态框关闭事件
+            document.querySelector(".community-close").addEventListener("click", closeModal);
+            window.addEventListener("click", (event) => {
+                if (event.target === communityModal) closeModal();
+            });
+
+            // 添加点击事件到 community-column
+            document.getElementById("community-column").addEventListener("click", () => {
+                openModal();
+                if (!map) initMap(); // 确保地图只初始化一次
+            });
+
+            // 初始化 Tabs
+            const tabs = document.querySelectorAll(".community-tab");
+            const tabContents = document.querySelectorAll(".community-tab-content");
+
+            tabs.forEach((tab) => {
+                tab.addEventListener("click", () => {
+                    tabs.forEach((t) => t.classList.remove("active"));
+                    tabContents.forEach((content) => content.classList.remove("active"));
+
+                    tab.classList.add("active");
+                    document.getElementById(tab.getAttribute("data-tab")).classList.add("active");
+                });
+            });
+
+            // 添加点击事件到 community 列表项
+            const communityCards = document.querySelectorAll(".community-station-card");
+            const communities = {!! json_encode($communities) !!};
+
+            communityCards.forEach((card) => {
+                card.addEventListener("click", () => {
+                    const communityName = card.getAttribute("data-community-name");
+                    const community = communities.find(function(c) {
+                        return c.name === communityName;
+                    });
+                    if (community) {
+                        calculateRoute([latitude, longitude], [community.latitude, community.longitude], communityName);
                     }
                 });
             });

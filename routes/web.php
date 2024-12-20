@@ -355,8 +355,11 @@ Route::get('/resort/{id}/community/delete', [ResortController::class, 'deleteCom
 Route::post('/resort/community/update/{id}', [ResortController::class, 'updateCommunity'])->name('resort.community.update')->middleware('auth');
 Route::delete('/community-image/{id}', [CommunityController::class, 'CommunityImageDestroy'])->name('community.image.destroy');
 
+//---------------------------------------------------Frontend ViewCommunity Detail Area-------------------------------------------------------------//
 // frontend-user community detail page
 Route::get('/resort/community/{id}', [ResortController::class, 'showResortCommunityDetail'])->name('resort.community.detail')->middleware('auth');
+Route::get('/hotel/community/{id}', [HotelController::class, 'showHotelCommunityDetail'])->name('hotel.community.detail')->middleware('auth');
+Route::get('/restaurant/community/{id}', [RestaurantController::class, 'showRestaurantCommunityDetail'])->name('restaurant.community.detail')->middleware('auth');
 
 //---------------------------------------------------Restaurant Area-------------------------------------------------------------//
 //Display Restaurant Page

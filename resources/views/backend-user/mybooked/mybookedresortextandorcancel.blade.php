@@ -172,6 +172,7 @@
             transform: translateY(-4px);
             box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
             border-color: var(--primary-color);
+            text-decoration: none; /* 确保没有文字装饰 */
         }
 
         .date-card.selected {
@@ -226,6 +227,7 @@
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            text-decoration: none; /* 确保没有文字装饰 */
         }
 
         .modal {
@@ -341,6 +343,7 @@
 
         .payment-option:hover {
             border-color: var(--primary-color);
+            text-decoration: none; /* 确保没有文字装饰 */
         }
 
         .payment-option img {
@@ -547,6 +550,7 @@
         .submit-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            text-decoration: none; /* 确保没有文字装饰 */
         }
     </style>
 
