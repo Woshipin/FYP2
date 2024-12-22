@@ -306,7 +306,7 @@
                             </div>
                             <div class="ticket-barcode">
                                 <?php
-                                $ipAddress = '192.168.50.154';
+                                $ipAddress = '192.168.111.154';
                                 $url =
                                     'http://' .
                                     $ipAddress .

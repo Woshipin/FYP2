@@ -1,6 +1,52 @@
 @extends('frontend-auth.newlayout')
 
 @section('frontend-section')
+    <!-- Contact Section Ends -->
+
+    <style>
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .form-textarea {
+            resize: vertical;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #00b09b;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #96c93d;
+        }
+    </style>
+
     <br><br><br><br><br><br><br>
 
     <!-- Contact Section Starts -->
@@ -19,7 +65,7 @@
             <div class="img">
                 <img src="{{ asset('new/img/book-img.jpg') }}" alt="">
             </div>
-            <form action="{{ url('contactresort') }}" method="post">
+            <form action="{{ url('contactresort') }}" method="post" class="contact-form">
                 @csrf
 
                 <input type="hidden" name="name" value="{{ auth()->user()->name }}">
@@ -29,10 +75,10 @@
                 <input type="hidden" name="ownername" value="{{ $resorts->user->name }}">
 
                 <div class="inputBox">
-                    <input type="number" name="phone" placeholder="Phone Number">
-                    <input type="text" name="subject" placeholder="subject">
+                    <input type="number" name="phone" placeholder="Phone Number" class="form-input">
+                    <input type="text" name="subject" placeholder="subject" class="form-input">
                 </div>
-                <textarea placeholder="message" name="message" cols="30" rows="10"></textarea>
+                <textarea placeholder="message" name="message" cols="30" rows="10" class="form-textarea"></textarea>
                 <input type="submit" class="btn" value="send message">
             </form>
         </div>
@@ -75,7 +121,4 @@
             @endforeach
         @endif
     </script>
-
-    <!-- Contact Section Ends -->
-    
 @endsection

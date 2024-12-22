@@ -544,8 +544,10 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            overflow-y: auto; /* Enable vertical scrolling */
-            max-height: 200px; /* Set a maximum height for scrolling */
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+            max-height: 200px;
+            /* Set a maximum height for scrolling */
         }
 
         .notification h2 {
@@ -639,7 +641,7 @@
                             </div>
                             <div class="col-md-6">
                                 {{-- Hidden Fields --}}
-                                <input type="hidden" name="booking_uuid" id="booking_uuid" value="{{ Str::uuid() }}">
+                                {{-- <input type="hidden" name="booking_uuid" id="booking_uuid" value="{{ Str::uuid() }}"> --}}
                                 <input type="hidden" name="user_id" value="{{ Auth::id() }}">
                                 <input type="hidden" name="user_name" value="{{ auth()->user()->name }}">
                                 <input type="hidden" name="email" value="{{ auth()->user()->email }}">
@@ -846,7 +848,7 @@
                 </form>
             </div>
         </div>
-        
+
     </section>
     <!-- Book Section Ends -->
 
@@ -868,7 +870,7 @@
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <!-- progress bar JS -->
-    <script>
+    {{-- <script>
         document.getElementById('submit-button').addEventListener('click', function(event) {
             event.preventDefault(); // 阻止表单默认提交行为
 
@@ -933,7 +935,7 @@
                 }
             }, 500);
         });
-    </script>
+    </script> --}}
 
     {{-- Calculate Resort Total Price --}}
     {{-- <script>
@@ -1268,7 +1270,7 @@
     </script>
 
     {{-- Final Paypal Payment Method --}}
-    <script>
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const checkinInput = document.getElementById('checkin_date');
             const checkoutInput = document.getElementById('checkout_date');
@@ -1293,22 +1295,36 @@
 
             console.log(resortDiscounts);
 
-            // 处理并插入促销数据 notification
+            // Handle and insert promotion data
             const promotionContent = document.getElementById('promotion-content');
-            for (const [date, price] of Object.entries(promotionDatesWithPrices)) {
+            if (Object.keys(promotionDatesWithPrices).length === 0) {
                 const p = document.createElement('p');
-                p.innerText = `Date: ${date}, price now is ${price}`;
+                p.className = 'no-content';
+                p.innerText = 'No promotions available';
                 promotionContent.appendChild(p);
+            } else {
+                for (const [date, price] of Object.entries(promotionDatesWithPrices)) {
+                    const p = document.createElement('p');
+                    p.innerText = `[Date: ${date} ] - [Price now is ${price}]`;
+                    promotionContent.appendChild(p);
+                }
             }
 
-            // 处理并插入折扣数据
+            // Handle and insert discount data
             const discountContent = document.getElementById('discount-content');
-            resortDiscounts.forEach(discount => {
+            if (resortDiscounts.length === 0) {
                 const p = document.createElement('p');
-                p.innerText =
-                    `Booking dates more than or equal ${discount.nights} days discount ${discount.discount}%`;
+                p.className = 'no-content';
+                p.innerText = 'No discounts available';
                 discountContent.appendChild(p);
-            });
+            } else {
+                resortDiscounts.forEach(discount => {
+                    const p = document.createElement('p');
+                    p.innerText =
+                        `Booking dates more than or equal ${discount.nights} days discount ${discount.discount}%`;
+                    discountContent.appendChild(p);
+                });
+            }
 
             function getEarlyBookingDiscount(bookingDate, promotionDate) {
                 const bookingDateTime = new Date(bookingDate);
@@ -1380,6 +1396,7 @@
 
                     console.log('Duration discount applied:', durationDiscount);
                     console.log('Final total price:', totalPrice);
+
                     totalPriceElement.textContent = totalPrice.toFixed(2);
                 } else {
                     totalPriceElement.textContent = '0.00';
@@ -1419,6 +1436,8 @@
             const cardPaymentSection = document.getElementById('card-payment-section');
             const paypalPaymentSection = document.getElementById('paypal-payment-section');
             const paymentMethodInput = document.getElementById('payment_method');
+
+            let isSubmitting = false; // 防止重复提交的标志
 
             paymentOptions.forEach(option => {
                 option.addEventListener('click', function() {
@@ -1467,9 +1486,26 @@
                 submitBooking();
             });
 
-            function submitBooking() {
+            function submitBooking(source = 'button') {
+                if (isSubmitting) {
+                    console.log('Submission in progress, please wait...');
+                    return;
+                }
+
+                isSubmitting = true;
+
                 const formData = new FormData(document.getElementById('bookingForm'));
                 const paymentMethod = document.getElementById('payment_method').value;
+
+                // 添加价格数据
+                const totalPrice = parseFloat(totalPriceElement.textContent);
+                formData.append('total_price', totalPrice);
+
+                const currentResortPrice = parseFloat(resortPriceElement.value);
+                formData.append('resort_price', currentResortPrice);
+
+                // 添加提交来源
+                formData.append('submission_source', source);
 
                 if (paymentMethod === 'credit_card') {
                     formData.append('card_number', document.getElementById('card_number').value);
@@ -1491,8 +1527,10 @@
                         headers: {
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         }
-                    }).then(response => response.json())
+                    })
+                    .then(response => response.json())
                     .then(data => {
+                        isSubmitting = false;
                         if (data.success) {
                             Swal.fire({
                                 icon: 'success',
@@ -1510,7 +1548,9 @@
                                 text: data.message
                             });
                         }
-                    }).catch(error => {
+                    })
+                    .catch(error => {
+                        isSubmitting = false;
                         console.error('Error:', error);
                         Swal.fire({
                             icon: 'error',
@@ -1519,6 +1559,308 @@
                         });
                     });
             }
+        });
+    </script> --}}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkinInput = document.getElementById('checkin_date');
+            const checkoutInput = document.getElementById('checkout_date');
+            const totalPriceElement = document.getElementById('total_price');
+            const resortPriceElement = document.getElementById('resort_price');
+            const resortPrice = parseFloat(resortPriceElement.value);
+            const depositFee = 100.00; // Fixed deposit fee
+
+            // Get promotion dates and prices from Blade template
+            const promotionDatesWithPricesObject = @json($promotionDatesWithPricesObject);
+            const promotionDatesWithPrices = {};
+            promotionDatesWithPricesObject.forEach(promo => {
+                promotionDatesWithPrices[promo.date] = Number(promo.price);
+            });
+
+            // Get resort discounts
+            const resortDiscounts = @json($discounts);
+
+            // Handle promotions display
+            const promotionContent = document.getElementById('promotion-content');
+            if (Object.keys(promotionDatesWithPrices).length === 0) {
+                promotionContent.innerHTML = '<p class="no-content">No promotions available</p>';
+            } else {
+                promotionContent.innerHTML = Object.entries(promotionDatesWithPrices)
+                    .map(([date, price]) => `<p>[Date: ${date}] - [Price now is ${price}]</p>`)
+                    .join('');
+            }
+
+            // Handle discounts display
+            const discountContent = document.getElementById('discount-content');
+            if (resortDiscounts.length === 0) {
+                discountContent.innerHTML = '<p class="no-content">No discounts available</p>';
+            } else {
+                discountContent.innerHTML = resortDiscounts
+                    .map(discount =>
+                        `<p>Booking dates more than or equal ${discount.nights} days discount ${discount.discount}%</p>`
+                    )
+                    .join('');
+            }
+
+            function getEarlyBookingDiscount(bookingDate, promotionDate) {
+                const bookingDateTime = new Date(bookingDate);
+                const promotionDateTime = new Date(promotionDate);
+                const monthsDiff = (promotionDateTime.getFullYear() - bookingDateTime.getFullYear()) * 12 +
+                    (promotionDateTime.getMonth() - bookingDateTime.getMonth());
+
+                if (monthsDiff >= 2) return 0.5;
+                if (monthsDiff >= 1) return 0.7;
+                return 1;
+            }
+
+            function getDurationDiscount(nights) {
+                const sortedDiscounts = resortDiscounts.sort((a, b) => b.nights - a.nights);
+                for (const discount of sortedDiscounts) {
+                    if (nights >= discount.nights) {
+                        return discount.discount / 100;
+                    }
+                }
+                return 1;
+            }
+
+            function calculateTotalPrice() {
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+
+                if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
+                    let subtotal = 0;
+                    let currentDate = new Date(checkinDate);
+
+                    const timeDiff = checkoutDate.getTime() - checkinDate.getTime();
+                    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+                    for (let i = 0; i < nights; i++) {
+                        const dateString = currentDate.toISOString().split('T')[0];
+                        let dayPrice = promotionDatesWithPrices[dateString];
+
+                        if (dayPrice !== undefined) {
+                            const today = new Date();
+                            const earlyBookingDiscount = getEarlyBookingDiscount(today, dateString);
+                            dayPrice = dayPrice * earlyBookingDiscount;
+                            subtotal += dayPrice;
+                        } else {
+                            subtotal += Number(resortPrice);
+                        }
+
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
+
+                    const durationDiscount = getDurationDiscount(nights);
+                    subtotal = subtotal * durationDiscount;
+
+                    // Add deposit fee to final total
+                    const finalTotal = subtotal + depositFee;
+
+                    totalPriceElement.textContent = finalTotal.toFixed(2);
+                    return finalTotal;
+                } else {
+                    totalPriceElement.textContent = '0.00';
+                    return 0;
+                }
+            }
+
+            function updateResortPrice() {
+                const dateString = checkinInput.value;
+                const promotionPrice = promotionDatesWithPrices[dateString];
+
+                if (promotionPrice !== undefined) {
+                    const today = new Date();
+                    const earlyBookingDiscount = getEarlyBookingDiscount(today, dateString);
+                    const finalPrice = promotionPrice * earlyBookingDiscount;
+                    resortPriceElement.value = finalPrice.toFixed(2);
+                } else {
+                    resortPriceElement.value = Number(resortPrice).toFixed(2);
+                }
+
+                calculateTotalPrice();
+            }
+
+            // Event listeners for date inputs
+            checkinInput.addEventListener('change', updateResortPrice);
+            checkoutInput.addEventListener('change', calculateTotalPrice);
+
+            // Payment method handling
+            const paymentOptions = document.querySelectorAll('.payment-option');
+            const cardPaymentSection = document.getElementById('card-payment-section');
+            const paypalPaymentSection = document.getElementById('paypal-payment-section');
+            const paymentMethodInput = document.getElementById('payment_method');
+
+            // Submission state tracking
+            let isSubmitting = false;
+            let hasSubmitted = false;
+
+            paymentOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    if (isSubmitting) return;
+
+                    paymentOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                    const method = this.getAttribute('data-method');
+                    paymentMethodInput.value = method;
+
+                    cardPaymentSection.style.display = method === 'credit_card' ? 'block' : 'none';
+                    paypalPaymentSection.style.display = method === 'paypal' ? 'block' : 'none';
+
+                    if (method === 'paypal') {
+                        initializePayPalButtons();
+                    }
+                });
+            });
+
+            function initializePayPalButtons() {
+                if (document.querySelector('#paypal-button-container').children.length > 0) {
+                    return; // Prevent multiple PayPal button initializations
+                }
+
+                paypal.Buttons({
+                    createOrder: function(data, actions) {
+                        const displayedTotalPrice = parseFloat(document.getElementById('total_price')
+                            .textContent);
+                        const totalPrice = displayedTotalPrice || 0;
+
+                        if (isNaN(totalPrice) || totalPrice <= 0) {
+                            alert('Invalid total price. Please check your booking details.');
+                            return null;
+                        }
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: {
+                                    value: totalPrice.toFixed(2)
+                                }
+                            }]
+                        });
+                    },
+                    onApprove: function(data, actions) {
+                        return actions.order.capture().then(function(details) {
+                            if (!hasSubmitted) {
+                                submitBooking('paypal');
+                            }
+                        });
+                    }
+                }).render('#paypal-button-container');
+            }
+
+            function submitBooking(source = 'credit_card') {
+                if (isSubmitting || hasSubmitted) {
+                    console.log('Submission already in progress or completed');
+                    return;
+                }
+
+                isSubmitting = true;
+                hasSubmitted = true;
+
+                // Disable the submit button to prevent multiple submissions
+                const submitButton = document.getElementById('submit-button');
+                submitButton.disabled = true;
+
+                // Show progress bar
+                const progressBarContainer = document.getElementById('progressBarContainer');
+                progressBarContainer.style.display = 'block';
+                const progressBar = document.querySelector('.progress-bar');
+                let width = 0;
+
+                const interval = setInterval(function () {
+                    if (width >= 100) {
+                        clearInterval(interval);
+                    } else {
+                        width += 10;
+                        progressBar.style.width = width + '%';
+                        progressBar.setAttribute('aria-valuenow', width);
+                        progressBar.textContent = width + '%';
+                    }
+                }, 500);
+
+                const formData = new FormData(document.getElementById('bookingForm'));
+                const paymentMethod = document.getElementById('payment_method').value;
+
+                // Get the total price directly from the display element
+                const displayedTotalPrice = parseFloat(document.getElementById('total_price').textContent);
+                const totalPrice = displayedTotalPrice || 0;
+
+                // Add price data
+                formData.append('total_price', totalPrice);
+
+                // console.log(totalPrice);
+
+                formData.append('resort_price', resortPriceElement.value);
+                formData.append('submission_source', source);
+
+                // Handle payment details
+                if (paymentMethod === 'credit_card') {
+                    formData.append('card_number', document.getElementById('card_number').value);
+                    formData.append('card_holder', document.getElementById('card_holder').value);
+                    formData.append('card_month', document.getElementById('card_month').value);
+                    formData.append('card_year', document.getElementById('card_year').value);
+                    formData.append('cvv', document.getElementById('cvv').value);
+                } else {
+                    // PayPal placeholder data
+                    formData.append('card_number', '0000000000000000');
+                    formData.append('card_holder', 'PayPal User');
+                    formData.append('card_month', '01');
+                    formData.append('card_year', new Date().getFullYear() + 1);
+                    formData.append('cvv', '000');
+                }
+
+                fetch('{{ url('bookingsresort') }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Booking Successful!',
+                            text: data.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = '{{ route('home') }}';
+                        });
+                    } else {
+                        hasSubmitted = false; // Allow retry on failure
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Booking Failed',
+                            text: data.message
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    hasSubmitted = false; // Allow retry on error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'An error occurred while processing your booking.'
+                    });
+                })
+                .finally(() => {
+                    isSubmitting = false;
+                    // Re-enable the submit button
+                    submitButton.disabled = false;
+                    // Hide progress bar
+                    progressBarContainer.style.display = 'none';
+                    progressBar.style.width = '0%';
+                    progressBar.setAttribute('aria-valuenow', 0);
+                    progressBar.textContent = '0%';
+                });
+            }
+
+            // Add event listener to the submit button
+            document.getElementById('submit-button').addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+                submitBooking();
+            }, { once: true }); // Ensure the event listener is only added once
         });
     </script>
 

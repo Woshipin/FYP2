@@ -109,15 +109,15 @@
         </div>
 
         <div class="total">
-            <p style="font-weight:bold">Room 1 day Price: ${{ $resort_price }}</p>
+            <p style="font-weight:bold">Deposit Fee: RM100</p>
         </div>
 
         <div class="total">
-            <p style="font-weight:bold">Total_Price: ${{ $total_price }}</p>
+            <p style="font-weight:bold">Room 1 day Price: RM{{ $resort_price }}</p>
         </div>
 
         <div class="total">
-            <p style="font-weight:bold">Deposit Fee: $100</p>
+            <p style="font-weight:bold">Total_Price: RM{{ $total_price }}</p>
         </div>
 
         <div class="footer">

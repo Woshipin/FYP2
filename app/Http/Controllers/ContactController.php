@@ -285,8 +285,8 @@ class ContactController extends Controller
     {
         if(Auth::check()){
 
-            $resorts = Hotel::find($id);
-            $resortId = Hotel::find($id);
+            $resorts = Resort::find($id);
+            $resortId = Resort::find($id);
             // dd($comments);
 
             return view('frontend-auth.frontend-resort.resortusercontact', compact('resorts', 'resortId'));

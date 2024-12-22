@@ -1248,6 +1248,12 @@
                             <i class="fas fa-calendar-check"></i>
                             Book Now
                         </a>
+
+                        <a href="{{ route('resorts.contact', ['id' => $resort->id]) }}" class="btn btn-primary" id="btn">
+                            <i class="far fa-envelope"></i>
+                            Contact
+                        </a>
+
                         <a href="https://wa.me/601110801649" class="btn btn-outline"
                             id="btncontact">
                             <i class="fab fa-whatsapp"></i>
@@ -1354,12 +1360,6 @@
                     <!-- 地图显示区域 -->
                     <div id="map" style="width: 100%; height: 500px; border: 1px solid #ccc;"></div>
 
-                    <!-- 控制按钮 -->
-                    {{-- <div class="community-map-controls">
-                        <button id="zoom-in" class="community-map-button">+</button>
-                        <button id="zoom-out" class="community-map-button">-</button>
-                    </div> --}}
-
                     <div class="community-info-container">
                         <p class="community-address" id="detail"><span
                                 class="community-icon">📍</span>{{ $resort->location }}</p>
@@ -1368,77 +1368,6 @@
                             {{-- <span class="community-rating-text">{{ $resort->location }}</span> --}}
                             <span class="community-review-count" id="detail">• 1,318 reviews</span>
                         </div>
-
-                        {{-- <button class="community-select-rooms">Resort Community</button> --}}
-
-                        {{-- <div class="community-tabs">
-                            @foreach ($communitycategorys as $category)
-                                <button class="community-tab {{ $loop->first ? 'active' : '' }}"
-                                    data-tab="community-{{ strtolower($category->name) }}">
-                                    {{ $category->name }}
-                                </button>
-                            @endforeach
-                        </div>
-
-                        @foreach ($communitycategorys as $category)
-                            <div class="community-tab-content {{ $loop->first ? 'active' : '' }}"
-                                id="community-{{ strtolower($category->name) }}">
-                                <h3><span class="community-icon">🏛️</span> {{ $category->name }}</h3>
-                                <div class="community-station-info">
-                                    @foreach ($communities as $community)
-                                        @if ($community->category == $category->name)
-                                            <div class="community-station-card">
-                                                <p><strong>{{ $community->name }}</strong></p>
-                                                <p>{{ $community->address }}</p>
-                                                <div class="community-view-icon">
-                                                    <svg viewBox="0 0 24 24">
-                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                        <circle cx="12" cy="12" r="3"></circle>
-                                                    </svg>
-                                                    <span class="community-tooltip">View more</span>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endforeach --}}
-
-                        {{-- gugulatlat --}}
-                        {{-- <div class="community-tabs">
-                            @foreach ($communitycategorys as $category)
-                                <button class="community-tab {{ $loop->first ? 'active' : '' }}"
-                                    data-tab="community-{{ strtolower($category->name) }}">
-                                    {{ $category->name }}
-                                </button>
-                            @endforeach
-                        </div>
-
-                        @foreach ($communitycategorys as $category)
-                            <div class="community-tab-content {{ $loop->first ? 'active' : '' }}"
-                                id="community-{{ strtolower($category->name) }}">
-                                <h3><span class="community-icon">🏛️</span> {{ $category->name }}</h3>
-                                <div class="community-station-info">
-                                    @foreach ($communities as $community)
-                                        @if ($community->category == $category->name)
-                                            <div class="community-station-card"
-                                                data-community-name="{{ $community->name }}">
-                                                <p><strong>{{ $community->name }}</strong></p>
-                                                <p>{{ $community->address }}</p>
-                                                <div class="community-distance"></div> <!-- 添加容器来显示距离和时间 -->
-                                                <div class="community-view-icon">
-                                                    <svg viewBox="0 0 24 24">
-                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                        <circle cx="12" cy="12" r="3"></circle>
-                                                    </svg>
-                                                    <span class="community-tooltip">View more</span>
-                                                </div>
-                                            </div>
-                                        @endif
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endforeach --}}
 
                         <div class="community-tabs">
                             @foreach ($communitycategorys as $category)
