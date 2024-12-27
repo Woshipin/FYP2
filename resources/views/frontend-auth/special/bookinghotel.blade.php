@@ -56,168 +56,6 @@
     </style>
 
     {{-- Form CSS --}}
-    {{-- <style>
-        .custom-tab-content {
-            background: rgb(143, 239, 236);
-        }
-
-        .h3 {
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        span {
-            /* color: black */
-        }
-    </style>
-    <style>
-        #paypal-payment-section {
-            padding: 20px;
-            text-align: center;
-        }
-
-        #paypal-button-container {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .payment-method-select {
-            margin-bottom: 20px;
-        }
-
-        /* Add any additional custom styles you need */
-    </style>
-    <style>
-        .payment-method-selector {
-            margin-bottom: 2rem;
-        }
-
-        .payment-options {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .payment-option {
-            flex: 1;
-            padding: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .payment-option.active {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
-        }
-
-        .payment-option img {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-        }
-
-        .card-container {
-            perspective: 1000px;
-            margin-bottom: 2rem;
-        }
-
-        .card-input-section {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .card-input {
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.375rem;
-            font-size: 1rem;
-            width: 100%;
-        }
-
-        .card-extra-details {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        .payment-summary {
-            margin-top: 2rem;
-            padding: 1rem;
-            background-color: #f8fafc;
-            border-radius: 0.5rem;
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-        }
-
-        .submit-button {
-            width: 100%;
-            padding: 1rem;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-top: 1.5rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .submit-button:hover {
-            background-color: #2563eb;
-        }
-
-        .progress-container {
-            margin-top: 1.5rem;
-        }
-
-        .progress {
-            height: 0.5rem;
-            background-color: #e2e8f0;
-            border-radius: 9999px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: #3b82f6;
-            transition: width 0.3s ease;
-        }
-
-        .paypal-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            padding: 2rem;
-        }
-
-        .paypal-logo img {
-            width: 200px;
-            height: auto;
-        }
-
-        .paypal-description {
-            text-align: center;
-            color: #64748b;
-        }
-    </style> --}}
     <style>
         /* General Styles */
         body {
@@ -621,11 +459,14 @@
                                 <div class="inputBox">
                                     <h3>Select Room</h3>
                                     <div class="custom-select-container">
-                                        <select class="form-control custom-select" id="room_select" name="room_id" required>
+                                        <select class="form-control custom-select" id="room_select" name="room_id"
+                                            required>
                                             <option value="0" selected disabled>--- Choose a Room ---</option>
                                             @foreach ($rooms as $room)
-                                                <option value="{{ $room->id }}" data-name="{{ $room->name }}" data-type="{{ $room->type }}" data-price="{{ $room->price }}">
-                                                    Name: {{ $room->type }} | Type: {{ $room->name }} | Price: ${{ $room->price }}
+                                                <option value="{{ $room->id }}" data-name="{{ $room->name }}"
+                                                    data-type="{{ $room->type }}" data-price="{{ $room->price }}">
+                                                    Name: {{ $room->type }} | Type: {{ $room->name }} | Price:
+                                                    ${{ $room->price }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -816,7 +657,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     {{-- progress bar JS --}}
-    <script>
+    {{-- <script>
         document.getElementById('submit-button').addEventListener('click', function(event) {
             event.preventDefault(); // 阻止表单默认提交行为
 
@@ -881,7 +722,7 @@
                 }
             }, 500);
         });
-    </script>
+    </script> --}}
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -1019,7 +860,8 @@
         updateRoomOptions();
         disablePastDates();
     </script> --}}
-    <script>
+    {{-- ok code --}}
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const roomSelect = document.getElementById('room_select');
             const roomPriceInput = document.getElementById('room_price_input');
@@ -1151,7 +993,7 @@
 
         updateRoomOptions();
         disablePastDates();
-    </script>
+    </script> --}}
 
     {{-- Check Date Valid and Past Date Check --}}
     <script>
@@ -1273,7 +1115,7 @@
     {{-- Toastr New JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     {{-- New Toastr --}}
-    <script>
+    {{-- <script>
         @if (Session::has('success'))
             Toastify({
                 text: "{{ Session::get('success') }}",
@@ -1305,7 +1147,7 @@
                 }).showToast();
             @endforeach
         @endif
-    </script>
+    </script> --}}
 
     {{-- Check Quantity 1-20 --}}
     <script>
@@ -1584,204 +1426,149 @@
     {{-- Paypal Payment Method --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Payment method selection
-            const paymentOptions = document.querySelectorAll('.payment-option');
-            const cardPaymentSection = document.getElementById('card-payment-section');
-            const paypalPaymentSection = document.getElementById('paypal-payment-section');
-            const paymentMethodInput = document.getElementById('payment_method');
-
-            paymentOptions.forEach(option => {
-                option.addEventListener('click', function() {
-                    paymentOptions.forEach(opt => opt.classList.remove('active'));
-                    this.classList.add('active');
-                    const method = this.getAttribute('data-method');
-                    paymentMethodInput.value = method;
-
-                    if (method === 'credit_card') {
-                        cardPaymentSection.style.display = 'block';
-                        paypalPaymentSection.style.display = 'none';
-                    } else if (method === 'paypal') {
-                        cardPaymentSection.style.display = 'none';
-                        paypalPaymentSection.style.display = 'block';
-                        initializePayPalButtons();
-                    }
-                });
-            });
-
-            function initializePayPalButtons() {
-                paypal.Buttons({
-                    createOrder: function(data, actions) {
-                        const totalPrice = parseFloat(document.getElementById('total_price').innerText
-                            .replace('RM ', ''));
-                        if (isNaN(totalPrice) || totalPrice <= 0) {
-                            alert('Invalid total price. Please check the total price.');
-                            return;
-                        }
-                        return actions.order.create({
-                            purchase_units: [{
-                                amount: {
-                                    value: totalPrice.toFixed(2)
-                                }
-                            }]
-                        });
-                    },
-                    onApprove: function(data, actions) {
-                        return actions.order.capture().then(function(details) {
-                            startProgressBarAndSubmit();
-                        });
-                    }
-                }).render('#paypal-button-container');
-            }
-
-            document.getElementById('submit-button').addEventListener('click', function(event) {
-                event.preventDefault();
-                startProgressBarAndSubmit();
-            });
-
-            function startProgressBarAndSubmit() {
-                let progressBarContainer = document.getElementById('progressBarContainer');
-                progressBarContainer.style.display = 'block';
-                let progressBar = document.querySelector('.progress-bar');
-                let width = 0;
-
-                let interval = setInterval(function() {
-                    if (width >= 100) {
-                        clearInterval(interval);
-                        submitBooking();
-                    } else {
-                        width += 5;
-                        progressBar.style.width = width + '%';
-                        progressBar.setAttribute('aria-valuenow', width);
-                        progressBar.textContent = width + '%';
-                    }
-                }, 50);
-            }
-
-            function submitBooking() {
-                const formData = new FormData(document.getElementById('bookingForm'));
-                const paymentMethod = document.getElementById('payment_method').value;
-
-                if (paymentMethod === 'credit_card') {
-                    formData.append('card_number', document.getElementById('card_number').value);
-                    formData.append('card_holder', document.getElementById('card_holder').value);
-                    formData.append('card_month', document.getElementById('card_month').value);
-                    formData.append('card_year', document.getElementById('card_year').value);
-                    formData.append('cvv', document.getElementById('cvv').value);
-                } else {
-                    formData.append('card_number', '0000000000000000');
-                    formData.append('card_holder', 'PayPal User');
-                    formData.append('card_month', '01');
-                    formData.append('card_year', new Date().getFullYear() + 1);
-                    formData.append('cvv', '000');
-                }
-
-                fetch('{{ url('bookingshotel') }}', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Booking Successful!',
-                                text: data.message,
-                                showConfirmButton: false,
-                                timer: 2000
-                            }).then(() => {
-                                window.location.href = '{{ route('home') }}';
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Booking Failed',
-                                text: data.message
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'An error occurred while processing your booking.'
-                        });
-                    })
-                    .finally(() => {
-                        document.getElementById('progressBarContainer').style.display = 'none';
-                    });
-            }
-
-            // Card input visualization
-            // const cardNumber = document.querySelector('.card-number-box');
-            // const cardHolder = document.querySelector('.card-holder-name');
-            // const cardMonth = document.querySelector('.exp-month');
-            // const cardYear = document.querySelector('.exp-year');
-            // const cardCVV = document.querySelector('.cvv-box');
-
-            // document.querySelector('#card_number').oninput = () => {
-            //     cardNumber.innerText = document.querySelector('#card_number').value;
-            // }
-
-            // document.querySelector('#card_holder').oninput = () => {
-            //     cardHolder.innerText = document.querySelector('#card_holder').value;
-            // }
-
-            // document.querySelector('#card_month').oninput = () => {
-            //     cardMonth.innerText = document.querySelector('#card_month').value;
-            // }
-
-            // document.querySelector('#card_year').oninput = () => {
-            //     cardYear.innerText = document.querySelector('#card_year').value;
-            // }
-
-            // document.querySelector('#cvv').onmouseenter = () => {
-            //     document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(-180deg)';
-            //     document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(0deg)';
-            // }
-
-            // document.querySelector('#cvv').onmouseleave = () => {
-            //     document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(0deg)';
-            //     document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(180deg)';
-            // }
-
-            // document.querySelector('#cvv').oninput = () => {
-            //     cardCVV.innerText = document.querySelector('#cvv').value;
-            // }
-
-            // Calculate total price based on room selection, check-in date, and check-out date
             const roomSelect = document.getElementById('room_select');
+            const roomPriceInput = document.getElementById('room_price_input');
+            const roomNameInput = document.getElementById('room_name_input');
+            const roomTypeInput = document.getElementById('room_type_input');
+            const totalPriceDisplay = document.getElementById('total_price');
             const checkinDateInput = document.getElementById('checkin_date');
             const checkoutDateInput = document.getElementById('checkout_date');
-            const totalPriceElement = document.getElementById('total_price');
-            let roomPrice = 0;
+            const DEPOSIT_AMOUNT = 100;
 
+            // Calculate number of nights between two dates
+            function calculateNights(checkinDate, checkoutDate) {
+                const oneDay = 24 * 60 * 60 * 1000; // hours * minutes * seconds * milliseconds
+                const diffDays = Math.round(Math.abs((checkoutDate - checkinDate) / oneDay));
+                return diffDays;
+            }
+
+            // Calculate total price based on room price and number of nights
             function calculateTotalPrice() {
+                const checkinDate = new Date(checkinDateInput.value);
+                const checkoutDate = new Date(checkoutDateInput.value);
+                const roomPrice = parseFloat(roomPriceInput.value);
+
+                // Reset total price if dates or room price are invalid
+                if (!checkinDateInput.value || !checkoutDateInput.value || isNaN(roomPrice)) {
+                    totalPriceDisplay.textContent = '0.00';
+                    return;
+                }
+
+                // Validate dates
+                if (checkoutDate <= checkinDate) {
+                    alert('Checkout date must be after check-in date');
+                    checkoutDateInput.value = '';
+                    totalPriceDisplay.textContent = '0.00';
+                    return;
+                }
+
+                const numberOfNights = calculateNights(checkinDate, checkoutDate);
+                const roomTotalPrice = roomPrice * numberOfNights;
+                const totalPriceWithDeposit = roomTotalPrice + DEPOSIT_AMOUNT;
+
+                // Update total price display
+                totalPriceDisplay.textContent = totalPriceWithDeposit.toFixed(2);
+            }
+
+            // Handle room selection change
+            roomSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+
+                if (selectedOption.value !== '0') {
+                    // Update hidden inputs with selected room details
+                    roomNameInput.value = selectedOption.dataset.name || '';
+                    roomTypeInput.value = selectedOption.dataset.type || '';
+                    roomPriceInput.value = selectedOption.dataset.price || '0';
+
+                    // Recalculate total price
+                    calculateTotalPrice();
+                } else {
+                    // Reset values if no room is selected
+                    roomNameInput.value = '';
+                    roomTypeInput.value = '';
+                    roomPriceInput.value = '0';
+                    totalPriceDisplay.textContent = '0.00';
+                }
+            });
+
+            // Update available rooms and prices when dates change
+            function updateRoomOptions() {
+                const selectedDates = getSelectedDates();
+                const availableRooms = rooms.filter(room => isRoomAvailable(room.id, selectedDates));
+
+                // Clear and rebuild room select options
+                roomSelect.innerHTML = '<option value="0" disabled selected>--- Choose a Room ---</option>';
+
+                availableRooms.forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room.id;
+                    option.dataset.name = room.name;
+                    option.dataset.type = room.type;
+                    option.dataset.price = room.price;
+                    option.textContent = `Name: ${room.type} | Type: ${room.name} | Price: $${room.price}`;
+                    roomSelect.appendChild(option);
+                });
+
+                // Reset price calculation
+                calculateTotalPrice();
+            }
+
+            // Get array of dates between checkin and checkout
+            function getSelectedDates() {
+                const dates = [];
                 const checkinDate = new Date(checkinDateInput.value);
                 const checkoutDate = new Date(checkoutDateInput.value);
 
                 if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
-                    const timeDifference = checkoutDate.getTime() - checkinDate.getTime();
-                    const dayDifference = timeDifference / (1000 * 3600 * 24);
-                    const totalPrice = dayDifference * roomPrice;
-
-                    totalPriceElement.textContent = totalPrice.toFixed(2);
-                } else {
-                    totalPriceElement.textContent = '0.00';
+                    let currentDate = new Date(checkinDate);
+                    while (currentDate < checkoutDate) {
+                        dates.push(currentDate.toISOString().slice(0, 10));
+                        currentDate.setDate(currentDate.getDate() + 1);
+                    }
                 }
+                return dates;
             }
 
-            roomSelect.addEventListener('change', function() {
-                const selectedOption = roomSelect.options[roomSelect.selectedIndex];
-                roomPrice = parseFloat(selectedOption.getAttribute('data-price'));
-                calculateTotalPrice();
+            // Check if room is available for selected dates
+            function isRoomAvailable(roomId, selectedDates) {
+                return !selectedDates.some(date =>
+                    bookingDates.some(booking =>
+                        booking.room_id === roomId && booking.date === date
+                    )
+                );
+            }
+
+            // Disable past dates in date inputs
+            function disablePastDates() {
+                const today = new Date().toISOString().split('T')[0];
+                checkinDateInput.setAttribute('min', today);
+                checkoutDateInput.setAttribute('min', today);
+            }
+
+            // Event listeners for date changes
+            checkinDateInput.addEventListener('change', function() {
+                // Set minimum checkout date to day after checkin
+                if (this.value) {
+                    const minCheckout = new Date(this.value);
+                    minCheckout.setDate(minCheckout.getDate() + 1);
+                    checkoutDateInput.setAttribute('min', minCheckout.toISOString().split('T')[0]);
+
+                    // Clear checkout date if it's before new minimum
+                    if (checkoutDateInput.value && new Date(checkoutDateInput.value) <= new Date(this
+                        .value)) {
+                        checkoutDateInput.value = '';
+                    }
+                }
+                updateRoomOptions();
             });
 
-            checkinDateInput.addEventListener('change', calculateTotalPrice);
-            checkoutDateInput.addEventListener('change', calculateTotalPrice);
+            checkoutDateInput.addEventListener('change', function() {
+                updateRoomOptions();
+            });
+
+            // Initialize
+            disablePastDates();
+            updateRoomOptions();
         });
     </script>
 

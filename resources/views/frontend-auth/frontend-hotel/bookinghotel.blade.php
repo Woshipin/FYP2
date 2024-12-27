@@ -1,7 +1,6 @@
 @extends('frontend-auth.newlayout')
 
 @section('frontend-section')
-
     {{-- Payment Card CSS --}}
     <link rel="stylesheet" href="{{ asset('paymentcard/css/style.css') }}">
 
@@ -57,168 +56,6 @@
     </style>
 
     {{-- Form CSS --}}
-    {{-- <style>
-        .custom-tab-content {
-            background: rgb(143, 239, 236);
-        }
-
-        .h3 {
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        span {
-            /* color: black */
-        }
-    </style>
-    <style>
-        #paypal-payment-section {
-            padding: 20px;
-            text-align: center;
-        }
-
-        #paypal-button-container {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .payment-method-select {
-            margin-bottom: 20px;
-        }
-
-        /* Add any additional custom styles you need */
-    </style>
-    <style>
-        .payment-method-selector {
-            margin-bottom: 2rem;
-        }
-
-        .payment-options {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .payment-option {
-            flex: 1;
-            padding: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .payment-option.active {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
-        }
-
-        .payment-option img {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-        }
-
-        .card-container {
-            perspective: 1000px;
-            margin-bottom: 2rem;
-        }
-
-        .card-input-section {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .card-input {
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.375rem;
-            font-size: 1rem;
-            width: 100%;
-        }
-
-        .card-extra-details {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        .payment-summary {
-            margin-top: 2rem;
-            padding: 1rem;
-            background-color: #f8fafc;
-            border-radius: 0.5rem;
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-        }
-
-        .submit-button {
-            width: 100%;
-            padding: 1rem;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-top: 1.5rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .submit-button:hover {
-            background-color: #2563eb;
-        }
-
-        .progress-container {
-            margin-top: 1.5rem;
-        }
-
-        .progress {
-            height: 0.5rem;
-            background-color: #e2e8f0;
-            border-radius: 9999px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: #3b82f6;
-            transition: width 0.3s ease;
-        }
-
-        .paypal-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            padding: 2rem;
-        }
-
-        .paypal-logo img {
-            width: 200px;
-            height: auto;
-        }
-
-        .paypal-description {
-            text-align: center;
-            color: #64748b;
-        }
-    </style> --}}
     <style>
         /* General Styles */
         body {
@@ -622,11 +459,14 @@
                                 <div class="inputBox">
                                     <h3>Select Room</h3>
                                     <div class="custom-select-container">
-                                        <select class="form-control custom-select" id="room_select" name="room_id" required>
+                                        <select class="form-control custom-select" id="room_select" name="room_id"
+                                            required>
                                             <option value="0" selected disabled>--- Choose a Room ---</option>
                                             @foreach ($rooms as $room)
-                                                <option value="{{ $room->id }}" data-name="{{ $room->name }}" data-type="{{ $room->type }}" data-price="{{ $room->price }}">
-                                                    Name: {{ $room->type }} | Type: {{ $room->name }} | Price: ${{ $room->price }}
+                                                <option value="{{ $room->id }}" data-name="{{ $room->name }}"
+                                                    data-type="{{ $room->type }}" data-price="{{ $room->price }}">
+                                                    Name: {{ $room->type }} | Type: {{ $room->name }} | Price:
+                                                    ${{ $room->price }}
                                                 </option>
                                             @endforeach
                                         </select>
@@ -817,7 +657,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     {{-- progress bar JS --}}
-    <script>
+    {{-- <script>
         document.getElementById('submit-button').addEventListener('click', function(event) {
             event.preventDefault(); // 阻止表单默认提交行为
 
@@ -882,7 +722,7 @@
                 }
             }, 500);
         });
-    </script>
+    </script> --}}
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -1020,7 +860,8 @@
         updateRoomOptions();
         disablePastDates();
     </script> --}}
-    <script>
+    {{-- ok code --}}
+    {{-- <script>
         document.addEventListener('DOMContentLoaded', function() {
             const roomSelect = document.getElementById('room_select');
             const roomPriceInput = document.getElementById('room_price_input');
@@ -1152,7 +993,7 @@
 
         updateRoomOptions();
         disablePastDates();
-    </script>
+    </script> --}}
 
     {{-- Check Date Valid and Past Date Check --}}
     <script>
@@ -1582,85 +1423,169 @@
         src="https://www.paypal.com/sdk/js?client-id=AevCq5WDpuSoYCJlkxHD-N_Yf13gKJmf9sOESVMmYa9lDzN9bVvgfNUqTy4C62CthVk9r5qoEgwDM8Un">
     </script>
 
-    {{-- Paypal Payment Method --}}
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Payment method selection
+            const checkinInput = document.getElementById('checkin_date');
+            const checkoutInput = document.getElementById('checkout_date');
+            const totalPriceElement = document.getElementById('total_price');
+            const roomSelect = document.getElementById('room_select');
+            const roomPriceInput = document.getElementById('room_price_input');
+            const roomNameInput = document.getElementById('room_name_input');
+            const roomTypeInput = document.getElementById('room_type_input');
+            const roomPriceDisplay = document.getElementById('room_price_display');
             const paymentOptions = document.querySelectorAll('.payment-option');
             const cardPaymentSection = document.getElementById('card-payment-section');
             const paypalPaymentSection = document.getElementById('paypal-payment-section');
             const paymentMethodInput = document.getElementById('payment_method');
 
+            const depositFee = 100.00;
+            let roomPrice = 0;
+            let isSubmitting = false;
+            let hasSubmitted = false;
+
+            function calculateTotalPrice() {
+                const checkinDate = new Date(checkinInput.value);
+                const checkoutDate = new Date(checkoutInput.value);
+                let finalTotalPrice = 0;
+
+                console.log('Check-in Date:', checkinDate);
+                console.log('Check-out Date:', checkoutDate);
+                console.log('depositFee:', depositFee);
+                console.log('Room Price:', roomPrice);
+
+                if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
+                    const timeDifference = checkoutDate.getTime() - checkinDate.getTime();
+                    const dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+                    if (dayDifference > 0 && roomPrice > 0) {
+                        const roomTotalPrice = dayDifference * roomPrice;
+                        if (roomPriceDisplay) {
+                            roomPriceDisplay.textContent = roomTotalPrice.toFixed(2);
+                        }
+                        finalTotalPrice = roomTotalPrice + depositFee;
+                        totalPriceElement.textContent = finalTotalPrice.toFixed(2);
+                        console.log('Total Price:', finalTotalPrice.toFixed(2));
+                    } else {
+                        resetPrices();
+                    }
+                } else {
+                    resetPrices();
+                }
+                return finalTotalPrice;
+            }
+
+            function resetPrices() {
+                if (roomPriceDisplay) {
+                    roomPriceDisplay.textContent = '0.00';
+                }
+                totalPriceElement.textContent = '0.00';
+            }
+
             paymentOptions.forEach(option => {
                 option.addEventListener('click', function() {
+                    if (isSubmitting) return;
                     paymentOptions.forEach(opt => opt.classList.remove('active'));
                     this.classList.add('active');
                     const method = this.getAttribute('data-method');
                     paymentMethodInput.value = method;
-
-                    if (method === 'credit_card') {
-                        cardPaymentSection.style.display = 'block';
-                        paypalPaymentSection.style.display = 'none';
-                    } else if (method === 'paypal') {
-                        cardPaymentSection.style.display = 'none';
-                        paypalPaymentSection.style.display = 'block';
+                    cardPaymentSection.style.display = method === 'credit_card' ? 'block' : 'none';
+                    paypalPaymentSection.style.display = method === 'paypal' ? 'block' : 'none';
+                    if (method === 'paypal') {
                         initializePayPalButtons();
                     }
                 });
             });
 
             function initializePayPalButtons() {
+                if (document.querySelector('#paypal-button-container').children.length > 0) {
+                    return;
+                }
                 paypal.Buttons({
                     createOrder: function(data, actions) {
-                        const totalPrice = parseFloat(document.getElementById('total_price').innerText
-                            .replace('RM ', ''));
-                        if (isNaN(totalPrice) || totalPrice <= 0) {
-                            alert('Invalid total price. Please check the total price.');
-                            return;
+                        const finalTotal = calculateTotalPrice();
+                        if (finalTotal <= 0) {
+                            alert('Please select room and dates before proceeding with payment');
+                            return null;
                         }
                         return actions.order.create({
                             purchase_units: [{
                                 amount: {
-                                    value: totalPrice.toFixed(2)
+                                    value: finalTotal.toFixed(2)
                                 }
                             }]
                         });
                     },
                     onApprove: function(data, actions) {
                         return actions.order.capture().then(function(details) {
-                            startProgressBarAndSubmit();
+                            if (!hasSubmitted) {
+                                submitBooking('paypal');
+                            }
                         });
                     }
                 }).render('#paypal-button-container');
             }
 
-            document.getElementById('submit-button').addEventListener('click', function(event) {
-                event.preventDefault();
-                startProgressBarAndSubmit();
+            roomSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+                if (selectedOption.value !== '0') {
+                    roomPrice = parseFloat(selectedOption.dataset.price);
+                    roomPriceInput.value = selectedOption.dataset.price;
+                    roomNameInput.value = selectedOption.dataset.name;
+                    roomTypeInput.value = selectedOption.dataset.type;
+                    console.log('Selected Room Price:', roomPrice);
+                    calculateTotalPrice();
+                } else {
+                    roomPrice = 0;
+                    resetPrices();
+                }
             });
 
-            function startProgressBarAndSubmit() {
-                let progressBarContainer = document.getElementById('progressBarContainer');
-                progressBarContainer.style.display = 'block';
-                let progressBar = document.querySelector('.progress-bar');
-                let width = 0;
+            checkinInput.addEventListener('change', calculateTotalPrice);
+            checkoutInput.addEventListener('change', calculateTotalPrice);
 
-                let interval = setInterval(function() {
+            document.getElementById('submit-button').addEventListener('click', function(event) {
+                event.preventDefault();
+                submitBooking();
+            }, {
+                once: true
+            });
+
+            function submitBooking(source = 'credit_card') {
+                if (isSubmitting || hasSubmitted) return;
+                const finalTotal = calculateTotalPrice();
+
+                // finalRoomTotal = finalTotal + depositFee;
+
+                if (finalRoomTotal <= 0) {
+                    alert('Please complete your booking details before submitting');
+                    return;
+                }
+                isSubmitting = true;
+                hasSubmitted = true;
+                const submitButton = document.getElementById('submit-button');
+                submitButton.disabled = true;
+                const progressBarContainer = document.getElementById('progressBarContainer');
+                progressBarContainer.style.display = 'block';
+                const progressBar = document.querySelector('.progress-bar');
+                let width = 0;
+                const interval = setInterval(function() {
                     if (width >= 100) {
                         clearInterval(interval);
-                        submitBooking();
                     } else {
-                        width += 5;
+                        width += 10;
                         progressBar.style.width = width + '%';
                         progressBar.setAttribute('aria-valuenow', width);
                         progressBar.textContent = width + '%';
                     }
-                }, 50);
-            }
+                }, 500);
 
-            function submitBooking() {
                 const formData = new FormData(document.getElementById('bookingForm'));
                 const paymentMethod = document.getElementById('payment_method').value;
+
+                formData.append('total_price', finalTotal);
+                formData.append('room_price', roomPrice);
+                formData.append('deposit_fee', depositFee);
+                formData.append('submission_source', source);
 
                 if (paymentMethod === 'credit_card') {
                     formData.append('card_number', document.getElementById('card_number').value);
@@ -1696,6 +1621,7 @@
                                 window.location.href = '{{ route('home') }}';
                             });
                         } else {
+                            hasSubmitted = false;
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Booking Failed',
@@ -1705,6 +1631,7 @@
                     })
                     .catch(error => {
                         console.error('Error:', error);
+                        hasSubmitted = false;
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
@@ -1712,78 +1639,15 @@
                         });
                     })
                     .finally(() => {
-                        document.getElementById('progressBarContainer').style.display = 'none';
+                        isSubmitting = false;
+                        submitButton.disabled = false;
+                        progressBarContainer.style.display = 'none';
+                        progressBar.style.width = '0%';
+                        progressBar.setAttribute('aria-valuenow', 0);
+                        progressBar.textContent = '0%';
                     });
             }
-
-            // Card input visualization
-            // const cardNumber = document.querySelector('.card-number-box');
-            // const cardHolder = document.querySelector('.card-holder-name');
-            // const cardMonth = document.querySelector('.exp-month');
-            // const cardYear = document.querySelector('.exp-year');
-            // const cardCVV = document.querySelector('.cvv-box');
-
-            // document.querySelector('#card_number').oninput = () => {
-            //     cardNumber.innerText = document.querySelector('#card_number').value;
-            // }
-
-            // document.querySelector('#card_holder').oninput = () => {
-            //     cardHolder.innerText = document.querySelector('#card_holder').value;
-            // }
-
-            // document.querySelector('#card_month').oninput = () => {
-            //     cardMonth.innerText = document.querySelector('#card_month').value;
-            // }
-
-            // document.querySelector('#card_year').oninput = () => {
-            //     cardYear.innerText = document.querySelector('#card_year').value;
-            // }
-
-            // document.querySelector('#cvv').onmouseenter = () => {
-            //     document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(-180deg)';
-            //     document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(0deg)';
-            // }
-
-            // document.querySelector('#cvv').onmouseleave = () => {
-            //     document.querySelector('.front').style.transform = 'perspective(1000px) rotateY(0deg)';
-            //     document.querySelector('.back').style.transform = 'perspective(1000px) rotateY(180deg)';
-            // }
-
-            // document.querySelector('#cvv').oninput = () => {
-            //     cardCVV.innerText = document.querySelector('#cvv').value;
-            // }
-
-            // Calculate total price based on room selection, check-in date, and check-out date
-            const roomSelect = document.getElementById('room_select');
-            const checkinDateInput = document.getElementById('checkin_date');
-            const checkoutDateInput = document.getElementById('checkout_date');
-            const totalPriceElement = document.getElementById('total_price');
-            let roomPrice = 0;
-
-            function calculateTotalPrice() {
-                const checkinDate = new Date(checkinDateInput.value);
-                const checkoutDate = new Date(checkoutDateInput.value);
-
-                if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
-                    const timeDifference = checkoutDate.getTime() - checkinDate.getTime();
-                    const dayDifference = timeDifference / (1000 * 3600 * 24);
-                    const totalPrice = dayDifference * roomPrice;
-
-                    totalPriceElement.textContent = totalPrice.toFixed(2);
-                } else {
-                    totalPriceElement.textContent = '0.00';
-                }
-            }
-
-            roomSelect.addEventListener('change', function() {
-                const selectedOption = roomSelect.options[roomSelect.selectedIndex];
-                roomPrice = parseFloat(selectedOption.getAttribute('data-price'));
-                calculateTotalPrice();
-            });
-
-            checkinDateInput.addEventListener('change', calculateTotalPrice);
-            checkoutDateInput.addEventListener('change', calculateTotalPrice);
         });
     </script>
-
+    
 @endsection

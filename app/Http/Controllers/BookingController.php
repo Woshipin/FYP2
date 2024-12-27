@@ -924,6 +924,7 @@ class BookingController extends Controller
 
             $userWallet->profit += $adminWallet->balance;
             $userWallet->balance += $adminWallet->balance;
+
             $adminWallet->refund_user_balance = $adminWallet->balance;
             $adminWallet->balance = 0;
             $adminWallet->transferred_status = 1;
@@ -1668,7 +1669,7 @@ class BookingController extends Controller
             Mail::to('ahpin7762@gmail.com')->send(new ResortPaymentVerification($bookedResort));
 
             // 返回之前的页面，并显示成功消息
-            return redirect('http://192.168.111.154:8000/mybookingsresort')->with('success', 'Payment status updated successfully and verification information sent to your email.');
+            return redirect('http://192.168.119.154:8000/mybookingsresort')->with('success', 'Payment status updated successfully and verification information sent to your email.');
         } else {
             // 如果不匹配，则返回验证失败的信息
             return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');

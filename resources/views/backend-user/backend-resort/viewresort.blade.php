@@ -53,7 +53,7 @@
                         <td>{{$resorts->country}}</td>
                     </tr>
                     <tr>
-                        <th>Resort State</th>
+                        <th>Resort States</th>
                         <td>{{$resorts->state}}</td>
                     </tr>
                     <tr>
@@ -80,7 +80,9 @@
             </div>
         </div>
     </div>
+    
     <div id="map"><iframe src="{{$resorts->map}}" width="1325" height="450"></iframe></div>
+
     <br><br>
 </div>
 <!-- /.container-fluid -->

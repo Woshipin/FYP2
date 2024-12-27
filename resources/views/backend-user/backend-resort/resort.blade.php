@@ -300,7 +300,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="state">Resort State</label>
+                            <label for="state">Resort States</label>
                             <input type="text" class="form-control" name="state" id="state"
                                 placeholder="Enter Resort State">
                             <span class="text-danger">
@@ -524,7 +524,7 @@
                                 </span>
                             </div>
                             <div class="form-group">
-                                <label for="state">Resort State</label>
+                                <label for="state">Resort States</label>
                                 <input type="text" class="form-control" name="state" id="state"
                                     value="{{ old('state', $resort->state) }}">
                                 <span class="text-danger">

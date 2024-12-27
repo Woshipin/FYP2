@@ -56,202 +56,6 @@
     </style>
 
     {{-- Form CSS --}}
-    {{-- <style>
-        .custom-tab-content {
-            background: rgb(143, 239, 236);
-        }
-
-        .h3 {
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-
-        span {
-            /* color: black */
-        }
-    </style>
-    <style>
-        #paypal-payment-section {
-            padding: 20px;
-            text-align: center;
-        }
-
-        #paypal-button-container {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .payment-method-select {
-            margin-bottom: 20px;
-        }
-
-        /* Add any additional custom styles you need */
-    </style>
-    <style>
-        .payment-method-selector {
-            margin-bottom: 2rem;
-        }
-
-        .payment-options {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .payment-option {
-            flex: 1;
-            padding: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .payment-option.active {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
-        }
-
-        .payment-option img {
-            width: 48px;
-            height: 48px;
-            object-fit: contain;
-        }
-
-        .card-container {
-            perspective: 1000px;
-            margin-bottom: 2rem;
-        }
-
-        .card-input-section {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .card-input {
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.375rem;
-            font-size: 1rem;
-            width: 100%;
-        }
-
-        .card-extra-details {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-        }
-
-        .payment-summary {
-            margin-top: 2rem;
-            padding: 1rem;
-            background-color: #f8fafc;
-            border-radius: 0.5rem;
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-        }
-
-        .submit-button {
-            width: 100%;
-            padding: 1rem;
-            background-color: #3b82f6;
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            margin-top: 1.5rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .submit-button:hover {
-            background-color: #2563eb;
-        }
-
-        .progress-container {
-            margin-top: 1.5rem;
-        }
-
-        .progress {
-            height: 0.5rem;
-            background-color: #e2e8f0;
-            border-radius: 9999px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background-color: #3b82f6;
-            transition: width 0.3s ease;
-        }
-
-        .paypal-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            padding: 2rem;
-        }
-
-        .paypal-logo img {
-            width: 200px;
-            height: auto;
-        }
-
-        .paypal-description {
-            text-align: center;
-            color: #64748b;
-        }
-    </style>
-    <style>
-        .card-container {
-            position: relative;
-            width: 300px;
-            height: 180px;
-            perspective: 1000px;
-        }
-
-        .front,
-        .back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            transition: transform 0.6s;
-        }
-
-        .front {
-            transform: rotateY(0deg);
-        }
-
-        .back {
-            transform: rotateY(180deg);
-        }
-
-        .card-container.flipped .front {
-            transform: rotateY(180deg);
-        }
-
-        .card-container.flipped .back {
-            transform: rotateY(0deg);
-        }
-    </style> --}}
-
     <style>
         /* General Styles */
         body {
@@ -848,7 +652,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     {{-- progress bar JS --}}
-    <script>
+    {{-- <script>
         document.getElementById('submit-button').addEventListener('click', function(event) {
             event.preventDefault(); // 阻止表单默认提交行为
 
@@ -913,7 +717,7 @@
                 }
             }, 500);
         });
-    </script>
+    </script> --}}
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -1345,6 +1149,7 @@
             const cardPaymentSection = document.getElementById('card-payment-section');
             const paypalPaymentSection = document.getElementById('paypal-payment-section');
             const paymentMethodInput = document.getElementById('payment_method');
+            let isSubmitting = false; // Flag to prevent double submission
 
             paymentOptions.forEach(option => {
                 option.addEventListener('click', function() {
@@ -1377,18 +1182,26 @@
                     },
                     onApprove: function(data, actions) {
                         return actions.order.capture().then(function(details) {
-                            startProgressBarAndSubmit();
+                            if (!isSubmitting) {
+                                startProgressBarAndSubmit();
+                            }
                         });
                     }
                 }).render('#paypal-button-container');
             }
 
+            // Single event listener for submit button
             document.getElementById('submit-button').addEventListener('click', function(event) {
                 event.preventDefault();
-                startProgressBarAndSubmit();
+                if (!isSubmitting) {
+                    startProgressBarAndSubmit();
+                }
             });
 
             function startProgressBarAndSubmit() {
+                if (isSubmitting) return;
+                isSubmitting = true;
+
                 let progressBarContainer = document.getElementById('progressBarContainer');
                 progressBarContainer.style.display = 'block';
                 let progressBar = document.querySelector('.progress-bar');
@@ -1429,7 +1242,8 @@
                         method: 'POST',
                         body: formData,
                         headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
                         }
                     })
                     .then(response => response.json())
@@ -1462,44 +1276,10 @@
                     })
                     .finally(() => {
                         document.getElementById('progressBarContainer').style.display = 'none';
+                        isSubmitting = false; // Reset the submission flag
                     });
             }
-
-            // Card input visualization
-            // const cardNumber = document.querySelector('.card-number-box');
-            // const cardHolder = document.querySelector('.card-holder-name');
-            // const cardMonth = document.querySelector('.exp-month');
-            // const cardYear = document.querySelector('.exp-year');
-            // const cardCVV = document.querySelector('.cvv-box');
-
-            // document.querySelector('#card_number').oninput = () => {
-            //     cardNumber.innerText = document.querySelector('#card_number').value;
-            // }
-
-            // document.querySelector('#card_holder').oninput = () => {
-            //     cardHolder.innerText = document.querySelector('#card_holder').value;
-            // }
-
-            // document.querySelector('#card_month').oninput = () => {
-            //     cardMonth.innerText = document.querySelector('#card_month').value;
-            // }
-
-            // document.querySelector('#card_year').oninput = () => {
-            //     cardYear.innerText = document.querySelector('#card_year').value;
-            // }
-
-            // document.querySelector('#cvv').onfocus = () => {
-            //     document.querySelector('.card-container').classList.add('flipped');
-            // }
-
-            // document.querySelector('#cvv').onblur = () => {
-            //     document.querySelector('.card-container').classList.remove('flipped');
-            // }
-
-            // document.querySelector('#cvv').oninput = () => {
-            //     cardCVV.innerText = document.querySelector('#cvv').value;
-            // }
         });
     </script>
-
+    
 @endsection
