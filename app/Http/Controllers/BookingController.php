@@ -1193,7 +1193,7 @@ class BookingController extends Controller
 
             // 获取已预订的日期范围
             $bookedDates = $this->getBookedHotelDates($id);
-
+            
             // dd($bookedDates);
 
             return view('frontend-auth.special.bookinghotel', compact('hotels', 'genders', 'rooms', 'bookedDates'));
