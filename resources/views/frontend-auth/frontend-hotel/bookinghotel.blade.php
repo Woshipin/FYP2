@@ -656,344 +656,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    {{-- progress bar JS --}}
-    {{-- <script>
-        document.getElementById('submit-button').addEventListener('click', function(event) {
-            event.preventDefault(); // 阻止表单默认提交行为
-
-            // 显示进度条
-            let progressBarContainer = document.getElementById('progressBarContainer');
-            progressBarContainer.style.display = 'block';
-            let progressBar = document.querySelector('.progress-bar');
-            let width = 0;
-
-            let interval = setInterval(function() {
-                if (width >= 100) {
-                    clearInterval(interval);
-
-                    // 使用 AJAX 提交表单
-                    let form = document.getElementById('bookingForm');
-                    let formData = new FormData(form);
-
-                    fetch(form.action, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                    .getAttribute('content')
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                Toastify({
-                                    text: data.message,
-                                    duration: 10000,
-                                    style: {
-                                        background: "linear-gradient(to right, #00b09b, #96c93d)"
-                                    }
-                                }).showToast();
-                                window.location.href = "{{ route('home') }}";
-                            } else {
-                                Toastify({
-                                    text: data.message,
-                                    duration: 10000,
-                                    style: {
-                                        background: "linear-gradient(to right, #b90000, #c99396)"
-                                    }
-                                }).showToast();
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            Toastify({
-                                text: 'An error occurred while processing your request.',
-                                duration: 10000,
-                                style: {
-                                    background: "linear-gradient(to right, #b90000, #c99396)"
-                                }
-                            }).showToast();
-                        });
-                } else {
-                    width += 10;
-                    progressBar.style.width = width + '%';
-                    progressBar.setAttribute('aria-valuenow', width);
-                    progressBar.textContent = width + '%';
-                }
-            }, 500);
-        });
-    </script> --}}
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    {{-- DB Check Invalid Room Type and Calculate Total Room Price --}}
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const roomSelect = document.getElementById('room-select');
-            const roomPriceInput = document.getElementById('room_price_input');
-            const roomNameInput = document.getElementById('room_name_input');
-            const roomTypeInput = document.getElementById('room_type_input');
-            const roomPriceDisplay = document.getElementById('room_price_display');
-            const totalPriceDisplay = document.getElementById('total_price_display');
-            const checkinDateInput = document.getElementById('checkin_date');
-            const checkoutDateInput = document.getElementById('checkout_date');
-
-            function calculateTotalPrice() {
-                const checkinDate = new Date(checkinDateInput.value);
-                const checkoutDate = new Date(checkoutDateInput.value);
-                const roomPrice = parseFloat(roomPriceInput.value);
-
-                if (checkinDate && checkoutDate && !isNaN(roomPrice)) {
-                    const timeDiff = checkoutDate - checkinDate;
-                    const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-
-                    if (dayDiff > 0) {
-                        const totalPrice = roomPrice * dayDiff;
-                        totalPriceDisplay.textContent = totalPrice.toFixed(2);
-                    } else {
-                        totalPriceDisplay.textContent = '0.00';
-                    }
-                } else {
-                    totalPriceDisplay.textContent = '0.00';
-                }
-            }
-
-            roomSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-
-                if (selectedOption.value !== '0') {
-                    const roomName = selectedOption.dataset.name;
-                    const roomType = selectedOption.dataset.type;
-                    const roomPrice = selectedOption.dataset.price;
-
-                    roomNameInput.value = roomName || '';
-                    roomTypeInput.value = roomType || '';
-                    roomPriceInput.value = roomPrice || '';
-
-                    if (roomPrice) {
-                        roomPriceDisplay.textContent = parseFloat(roomPrice).toFixed(2);
-                    } else {
-                        roomPriceDisplay.textContent = '0.00';
-                    }
-
-                    calculateTotalPrice();
-                }
-            });
-
-            checkinDateInput.addEventListener('change', calculateTotalPrice);
-            checkoutDateInput.addEventListener('change', calculateTotalPrice);
-        });
-
-        var bookedDates = {!! json_encode($bookedDates) !!};
-        var rooms = {!! json_encode($rooms) !!};
-
-        function disablePastDates() {
-            var today = new Date().toISOString().split('T')[0];
-            document.getElementById("checkin_date").setAttribute("min", today);
-            document.getElementById("checkout_date").setAttribute("min", today);
-        }
-
-        function getSelectedDates() {
-            var checkinDate = document.getElementById("checkin_date").value;
-            var checkoutDate = document.getElementById("checkout_date").value;
-
-            var selectedDates = [];
-            if (checkinDate && checkoutDate) {
-                var currentDate = new Date(checkinDate);
-
-                while (currentDate <= new Date(checkoutDate)) {
-                    selectedDates.push(currentDate.toISOString().slice(0, 10));
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-            }
-
-            return selectedDates;
-        }
-
-        function isRoomAvailable(roomId, selectedDates) {
-            for (var i = 0; i < bookedDates.length; i++) {
-                var bookedDate = bookedDates[i];
-                if (bookedDate.room_id === roomId && selectedDates.includes(bookedDate.date)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        function updateRoomOptions() {
-            var selectedDates = getSelectedDates();
-            var availableRooms = [];
-
-            for (var i = 0; i < rooms.length; i++) {
-                var room = rooms[i];
-                if (isRoomAvailable(room.id, selectedDates)) {
-                    availableRooms.push(room);
-                }
-            }
-
-            var roomSelect = document.getElementById("room-select");
-
-            roomSelect.innerHTML = "";
-
-            var defaultOption = document.createElement("option");
-            defaultOption.text = "--- Select A Room ---";
-            defaultOption.value = "0";
-            defaultOption.disabled = true;
-            defaultOption.selected = true;
-            roomSelect.appendChild(defaultOption);
-
-            for (var k = 0; k < availableRooms.length; k++) {
-                var option = document.createElement("option");
-                option.text = availableRooms[k].type + " | Type: " + availableRooms[k].name + " | Price: $" +
-                    availableRooms[k].price;
-                option.value = availableRooms[k].id;
-                option.dataset.name = availableRooms[k].name;
-                option.dataset.type = availableRooms[k].type;
-                option.dataset.price = availableRooms[k].price;
-                roomSelect.appendChild(option);
-            }
-        }
-
-        document.getElementById("checkin_date").addEventListener("change", updateRoomOptions);
-        document.getElementById("checkout_date").addEventListener("change", updateRoomOptions);
-
-        updateRoomOptions();
-        disablePastDates();
-    </script> --}}
-    {{-- ok code --}}
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const roomSelect = document.getElementById('room_select');
-            const roomPriceInput = document.getElementById('room_price_input');
-            const roomNameInput = document.getElementById('room_name_input');
-            const roomTypeInput = document.getElementById('room_type_input');
-            const roomPriceDisplay = document.getElementById('room_price_display');
-            const totalPriceDisplay = document.getElementById('total_price_display');
-            const checkinDateInput = document.getElementById('checkin_date');
-            const checkoutDateInput = document.getElementById('checkout_date');
-
-            function calculateTotalPrice() {
-                const checkinDate = new Date(checkinDateInput.value);
-                const checkoutDate = new Date(checkoutDateInput.value);
-                const roomPrice = parseFloat(roomPriceInput.value);
-
-                if (checkinDate && checkoutDate && !isNaN(roomPrice)) {
-                    const timeDiff = checkoutDate - checkinDate;
-                    const dayDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-
-                    if (dayDiff > 0) {
-                        const totalPrice = roomPrice * dayDiff;
-                        totalPriceDisplay.textContent = totalPrice.toFixed(2);
-                    } else {
-                        totalPriceDisplay.textContent = '0.00';
-                    }
-                } else {
-                    totalPriceDisplay.textContent = '0.00';
-                }
-            }
-
-            roomSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-
-                if (selectedOption.value !== '0') {
-                    const roomName = selectedOption.dataset.name;
-                    const roomType = selectedOption.dataset.type;
-                    const roomPrice = selectedOption.dataset.price;
-
-                    roomNameInput.value = roomName || '';
-                    roomTypeInput.value = roomType || '';
-                    roomPriceInput.value = roomPrice || '';
-
-                    if (roomPrice) {
-                        roomPriceDisplay.textContent = parseFloat(roomPrice).toFixed(2);
-                    } else {
-                        roomPriceDisplay.textContent = '0.00';
-                    }
-
-                    calculateTotalPrice();
-                }
-            });
-
-            checkinDateInput.addEventListener('change', calculateTotalPrice);
-            checkoutDateInput.addEventListener('change', calculateTotalPrice);
-        });
-
-        var bookedDates = {!! json_encode($bookedDates) !!};
-        var rooms = {!! json_encode($rooms) !!};
-
-        function disablePastDates() {
-            var today = new Date().toISOString().split('T')[0];
-            document.getElementById("checkin_date").setAttribute("min", today);
-            document.getElementById("checkout_date").setAttribute("min", today);
-        }
-
-        function getSelectedDates() {
-            var checkinDate = document.getElementById("checkin_date").value;
-            var checkoutDate = document.getElementById("checkout_date").value;
-
-            var selectedDates = [];
-            if (checkinDate && checkoutDate) {
-                var currentDate = new Date(checkinDate);
-
-                while (currentDate <= new Date(checkoutDate)) {
-                    selectedDates.push(currentDate.toISOString().slice(0, 10));
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
-            }
-
-            return selectedDates;
-        }
-
-        function isRoomAvailable(roomId, selectedDates) {
-            for (var i = 0; i < bookedDates.length; i++) {
-                var bookedDate = bookedDates[i];
-                if (bookedDate.room_id === roomId && selectedDates.includes(bookedDate.date)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        function updateRoomOptions() {
-            var selectedDates = getSelectedDates();
-            var availableRooms = [];
-
-            for (var i = 0; i < rooms.length; i++) {
-                var room = rooms[i];
-                if (isRoomAvailable(room.id, selectedDates)) {
-                    availableRooms.push(room);
-                }
-            }
-
-            var roomSelect = document.getElementById("room_select");
-
-            roomSelect.innerHTML = "";
-
-            var defaultOption = document.createElement("option");
-            defaultOption.text = "--- Select A Room ---";
-            defaultOption.value = "0";
-            defaultOption.disabled = true;
-            defaultOption.selected = true;
-            roomSelect.appendChild(defaultOption);
-
-            for (var k = 0; k < availableRooms.length; k++) {
-                var option = document.createElement("option");
-                option.text = availableRooms[k].type + " | Type: " + availableRooms[k].name + " | Price: $" +
-                    availableRooms[k].price;
-                option.value = availableRooms[k].id;
-                option.dataset.name = availableRooms[k].name;
-                option.dataset.type = availableRooms[k].type;
-                option.dataset.price = availableRooms[k].price;
-                roomSelect.appendChild(option);
-            }
-        }
-
-        document.getElementById("checkin_date").addEventListener("change", updateRoomOptions);
-        document.getElementById("checkout_date").addEventListener("change", updateRoomOptions);
-
-        updateRoomOptions();
-        disablePastDates();
-    </script> --}}
 
     {{-- Check Date Valid and Past Date Check --}}
     <script>
@@ -1114,40 +777,6 @@
 
     {{-- Toastr New JS --}}
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    {{-- New Toastr --}}
-    <script>
-        @if (Session::has('success'))
-            Toastify({
-                text: "{{ Session::get('success') }}",
-                duration: 10000,
-                style: {
-                    background: "linear-gradient(to right, #00b09b, #96c93d)"
-                }
-            }).showToast();
-        @endif
-
-        @if (Session::has('error'))
-            Toastify({
-                text: "{{ Session::get('error') }}",
-                duration: 10000,
-                style: {
-                    background: "linear-gradient(to right, #b90000, #c99396)"
-                }
-            }).showToast();
-        @endif
-
-        @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                Toastify({
-                    text: "{{ $error }}",
-                    duration: 10000,
-                    style: {
-                        background: "linear-gradient(to right, #b90000, #c99396)"
-                    }
-                }).showToast();
-            @endforeach
-        @endif
-    </script>
 
     {{-- Check Quantity 1-20 --}}
     <script>
@@ -1423,169 +1052,219 @@
         src="https://www.paypal.com/sdk/js?client-id=AevCq5WDpuSoYCJlkxHD-N_Yf13gKJmf9sOESVMmYa9lDzN9bVvgfNUqTy4C62CthVk9r5qoEgwDM8Un">
     </script>
 
-
     <script>
+        // 从后端传递的数据
+        const bookedDates = @json($bookedDates);
+        const rooms = @json($rooms);
+
+        console.log(bookedDates);
+        console.log(rooms);
+
         document.addEventListener('DOMContentLoaded', function() {
-            const checkinInput = document.getElementById('checkin_date');
-            const checkoutInput = document.getElementById('checkout_date');
-            const totalPriceElement = document.getElementById('total_price');
             const roomSelect = document.getElementById('room_select');
             const roomPriceInput = document.getElementById('room_price_input');
             const roomNameInput = document.getElementById('room_name_input');
             const roomTypeInput = document.getElementById('room_type_input');
-            const roomPriceDisplay = document.getElementById('room_price_display');
+            const totalPriceDisplay = document.getElementById('total_price');
+            const checkinDateInput = document.getElementById('checkin_date');
+            const checkoutDateInput = document.getElementById('checkout_date');
+            const DEPOSIT_AMOUNT = 100;
+
+            // Payment related elements
             const paymentOptions = document.querySelectorAll('.payment-option');
             const cardPaymentSection = document.getElementById('card-payment-section');
             const paypalPaymentSection = document.getElementById('paypal-payment-section');
             const paymentMethodInput = document.getElementById('payment_method');
-
-            const depositFee = 100.00;
-            let roomPrice = 0;
             let isSubmitting = false;
-            let hasSubmitted = false;
 
+            // Calculate number of nights between two dates
+            function calculateNights(checkinDate, checkoutDate) {
+                const oneDay = 24 * 60 * 60 * 1000;
+                const diffDays = Math.round(Math.abs((checkoutDate - checkinDate) / oneDay));
+                return diffDays;
+            }
+
+            // Calculate total price based on room price and number of nights
             function calculateTotalPrice() {
-                const checkinDate = new Date(checkinInput.value);
-                const checkoutDate = new Date(checkoutInput.value);
-                let finalTotalPrice = 0;
+                const checkinDate = new Date(checkinDateInput.value);
+                const checkoutDate = new Date(checkoutDateInput.value);
+                const roomPrice = parseFloat(roomPriceInput.value);
 
-                console.log('Check-in Date:', checkinDate);
-                console.log('Check-out Date:', checkoutDate);
-                console.log('depositFee:', depositFee);
-                console.log('Room Price:', roomPrice);
+                // Reset total price if dates or room price are invalid
+                if (!checkinDateInput.value || !checkoutDateInput.value || isNaN(roomPrice)) {
+                    totalPriceDisplay.textContent = '0.00';
+                    return;
+                }
+
+                // Validate dates
+                if (checkoutDate <= checkinDate) {
+                    alert('Checkout date must be after check-in date');
+                    checkoutDateInput.value = '';
+                    totalPriceDisplay.textContent = '0.00';
+                    return;
+                }
+
+                const numberOfNights = calculateNights(checkinDate, checkoutDate);
+                const roomTotalPrice = roomPrice * numberOfNights;
+                const totalPriceWithDeposit = roomTotalPrice + DEPOSIT_AMOUNT;
+
+                // Update total price display
+                totalPriceDisplay.textContent = totalPriceWithDeposit.toFixed(2);
+            }
+
+            // Handle room selection change
+            roomSelect.addEventListener('change', function() {
+                const selectedOption = this.options[this.selectedIndex];
+
+                if (selectedOption.value !== '0') {
+                    roomNameInput.value = selectedOption.dataset.name || '';
+                    roomTypeInput.value = selectedOption.dataset.type || '';
+                    roomPriceInput.value = selectedOption.dataset.price || '0';
+                    calculateTotalPrice();
+                } else {
+                    roomNameInput.value = '';
+                    roomTypeInput.value = '';
+                    roomPriceInput.value = '0';
+                    totalPriceDisplay.textContent = '0.00';
+                }
+            });
+
+            // Update available rooms and prices when dates change
+            function updateRoomOptions() {
+                const selectedDates = getSelectedDates();
+                const availableRooms = rooms.filter(room => isRoomAvailable(room.id, selectedDates));
+
+                roomSelect.innerHTML = '<option value="0" disabled selected>--- Choose a Room ---</option>';
+
+                availableRooms.forEach(room => {
+                    const option = document.createElement('option');
+                    option.value = room.id;
+                    option.dataset.name = room.name;
+                    option.dataset.type = room.type;
+                    option.dataset.price = room.price;
+                    option.textContent = `Name: ${room.type} | Type: ${room.name} | Price: $${room.price}`;
+                    roomSelect.appendChild(option);
+                });
+
+                calculateTotalPrice();
+            }
+
+            // Get array of dates between checkin and checkout
+            function getSelectedDates() {
+                const dates = [];
+                const checkinDate = new Date(checkinDateInput.value);
+                const checkoutDate = new Date(checkoutDateInput.value);
 
                 if (checkinDate && checkoutDate && checkoutDate > checkinDate) {
-                    const timeDifference = checkoutDate.getTime() - checkinDate.getTime();
-                    const dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
-                    if (dayDifference > 0 && roomPrice > 0) {
-                        const roomTotalPrice = dayDifference * roomPrice;
-                        if (roomPriceDisplay) {
-                            roomPriceDisplay.textContent = roomTotalPrice.toFixed(2);
-                        }
-                        finalTotalPrice = roomTotalPrice + depositFee;
-                        totalPriceElement.textContent = finalTotalPrice.toFixed(2);
-                        console.log('Total Price:', finalTotalPrice.toFixed(2));
-                    } else {
-                        resetPrices();
+                    let currentDate = new Date(checkinDate);
+                    while (currentDate < checkoutDate) {
+                        dates.push(currentDate.toISOString().slice(0, 10));
+                        currentDate.setDate(currentDate.getDate() + 1);
                     }
-                } else {
-                    resetPrices();
                 }
-                return finalTotalPrice;
+                return dates;
             }
 
-            function resetPrices() {
-                if (roomPriceDisplay) {
-                    roomPriceDisplay.textContent = '0.00';
-                }
-                totalPriceElement.textContent = '0.00';
+            // Check if room is available for selected dates
+            function isRoomAvailable(roomId, selectedDates) {
+                // Check if any booked date overlaps with selected dates for the given room
+                return !bookedDates.some(booking => {
+                    const isRoomMatch = booking.room_id === roomId;
+                    const isDateOverlap = selectedDates.includes(booking.date);
+                    return isRoomMatch && isDateOverlap;
+                });
             }
 
+            // Disable past dates in date inputs
+            function disablePastDates() {
+                const today = new Date().toISOString().split('T')[0];
+                checkinDateInput.setAttribute('min', today);
+                checkoutDateInput.setAttribute('min', today);
+            }
+
+            // Payment method selection handling
             paymentOptions.forEach(option => {
                 option.addEventListener('click', function() {
-                    if (isSubmitting) return;
                     paymentOptions.forEach(opt => opt.classList.remove('active'));
                     this.classList.add('active');
                     const method = this.getAttribute('data-method');
                     paymentMethodInput.value = method;
-                    cardPaymentSection.style.display = method === 'credit_card' ? 'block' : 'none';
-                    paypalPaymentSection.style.display = method === 'paypal' ? 'block' : 'none';
-                    if (method === 'paypal') {
-                        initializePayPalButtons();
+
+                    if (method === 'credit_card') {
+                        cardPaymentSection.style.display = 'block';
+                        paypalPaymentSection.style.display = 'none';
+                    } else if (method === 'paypal') {
+                        cardPaymentSection.style.display = 'none';
+                        paypalPaymentSection.style.display = 'block';
+                        initialisePayPalButtons();
                     }
                 });
             });
 
-            function initializePayPalButtons() {
-                if (document.querySelector('#paypal-button-container').children.length > 0) {
-                    return;
-                }
+            // Initialize PayPal buttons
+            function initialisePayPalButtons() {
                 paypal.Buttons({
                     createOrder: function(data, actions) {
-                        const finalTotal = calculateTotalPrice();
-                        if (finalTotal <= 0) {
-                            alert('Please select room and dates before proceeding with payment');
-                            return null;
+                        const totalPrice = parseFloat(totalPriceDisplay.textContent);
+                        if (isNaN(totalPrice) || totalPrice <= 0) {
+                            alert('Invalid total price. Please check room selection and dates.');
+                            return;
                         }
                         return actions.order.create({
                             purchase_units: [{
                                 amount: {
-                                    value: finalTotal.toFixed(2)
+                                    value: totalPrice.toFixed(2)
                                 }
                             }]
                         });
                     },
                     onApprove: function(data, actions) {
                         return actions.order.capture().then(function(details) {
-                            if (!hasSubmitted) {
-                                submitBooking('paypal');
+                            if (!isSubmitting) {
+                                startProgressBarAndSubmit();
                             }
                         });
                     }
                 }).render('#paypal-button-container');
             }
 
-            roomSelect.addEventListener('change', function() {
-                const selectedOption = this.options[this.selectedIndex];
-                if (selectedOption.value !== '0') {
-                    roomPrice = parseFloat(selectedOption.dataset.price);
-                    roomPriceInput.value = selectedOption.dataset.price;
-                    roomNameInput.value = selectedOption.dataset.name;
-                    roomTypeInput.value = selectedOption.dataset.type;
-                    console.log('Selected Room Price:', roomPrice);
-                    calculateTotalPrice();
-                } else {
-                    roomPrice = 0;
-                    resetPrices();
-                }
-            });
-
-            checkinInput.addEventListener('change', calculateTotalPrice);
-            checkoutInput.addEventListener('change', calculateTotalPrice);
-
+            // Submit button handler
             document.getElementById('submit-button').addEventListener('click', function(event) {
                 event.preventDefault();
-                submitBooking();
-            }, {
-                once: true
+                if (!isSubmitting) {
+                    startProgressBarAndSubmit();
+                }
             });
 
-            function submitBooking(source = 'credit_card') {
-                if (isSubmitting || hasSubmitted) return;
-                const finalTotal = calculateTotalPrice();
-
-                // finalRoomTotal = finalTotal + depositFee;
-
-                if (finalRoomTotal <= 0) {
-                    alert('Please complete your booking details before submitting');
-                    return;
-                }
+            // Progress bar and submission handling
+            function startProgressBarAndSubmit() {
+                if (isSubmitting) return;
                 isSubmitting = true;
-                hasSubmitted = true;
-                const submitButton = document.getElementById('submit-button');
-                submitButton.disabled = true;
-                const progressBarContainer = document.getElementById('progressBarContainer');
+                let progressBarContainer = document.getElementById('progressBarContainer');
                 progressBarContainer.style.display = 'block';
-                const progressBar = document.querySelector('.progress-bar');
+                let progressBar = document.querySelector('.progress-bar');
                 let width = 0;
-                const interval = setInterval(function() {
+                let interval = setInterval(function() {
                     if (width >= 100) {
                         clearInterval(interval);
+                        submitBooking();
                     } else {
-                        width += 10;
+                        width += 5;
                         progressBar.style.width = width + '%';
                         progressBar.setAttribute('aria-valuenow', width);
                         progressBar.textContent = width + '%';
                     }
-                }, 500);
+                }, 50);
+            }
 
+            // Form submission
+            function submitBooking() {
                 const formData = new FormData(document.getElementById('bookingForm'));
-                const paymentMethod = document.getElementById('payment_method').value;
+                const paymentMethod = paymentMethodInput.value;
+                const totalPrice = parseFloat(totalPriceDisplay.textContent);
 
-                formData.append('total_price', finalTotal);
-                formData.append('room_price', roomPrice);
-                formData.append('deposit_fee', depositFee);
-                formData.append('submission_source', source);
+                formData.append('total_price', totalPrice.toFixed(2));
+                formData.append('deposit_amount', DEPOSIT_AMOUNT.toFixed(2));
 
                 if (paymentMethod === 'credit_card') {
                     formData.append('card_number', document.getElementById('card_number').value);
@@ -1605,7 +1284,8 @@
                         method: 'POST',
                         body: formData,
                         headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content')
                         }
                     })
                     .then(response => response.json())
@@ -1621,7 +1301,6 @@
                                 window.location.href = '{{ route('home') }}';
                             });
                         } else {
-                            hasSubmitted = false;
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Booking Failed',
@@ -1631,7 +1310,6 @@
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        hasSubmitted = false;
                         Swal.fire({
                             icon: 'error',
                             title: 'Oops...',
@@ -1639,15 +1317,34 @@
                         });
                     })
                     .finally(() => {
+                        document.getElementById('progressBarContainer').style.display = 'none';
                         isSubmitting = false;
-                        submitButton.disabled = false;
-                        progressBarContainer.style.display = 'none';
-                        progressBar.style.width = '0%';
-                        progressBar.setAttribute('aria-valuenow', 0);
-                        progressBar.textContent = '0%';
                     });
             }
+
+            // Event listeners for date changes
+            checkinDateInput.addEventListener('change', function() {
+                if (this.value) {
+                    const minCheckout = new Date(this.value);
+                    minCheckout.setDate(minCheckout.getDate() + 1);
+                    checkoutDateInput.setAttribute('min', minCheckout.toISOString().split('T')[0]);
+
+                    if (checkoutDateInput.value && new Date(checkoutDateInput.value) <= new Date(this
+                            .value)) {
+                        checkoutDateInput.value = '';
+                    }
+                }
+                updateRoomOptions();
+            });
+
+            checkoutDateInput.addEventListener('change', function() {
+                updateRoomOptions();
+            });
+
+            // Initialize
+            disablePastDates();
+            updateRoomOptions();
         });
     </script>
-    
+
 @endsection

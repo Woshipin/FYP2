@@ -298,30 +298,12 @@ class ResortController extends Controller
     // }
 
     // good
-    public function AllResort()
-    {
-        $resort = Resort::with('images')->where('register_status', 1)->get();
-        $resortRatings = [];
-
-        foreach ($resort as $r) {
-            $ratings = $r->ratings;
-            $averageRating = $ratings->avg('rating') ?? 0; // 如果没有评分，默认为 0
-            $resortRatings[$r->id] = [
-                'averageRating' => $averageRating,
-                'count' => $ratings->count()
-            ];
-        }
-
-        // 确保 $resort 是一个数组
-        $resortArray = $resort->toArray();
-
-        return view('frontend-auth.frontend-resort.resort', compact('resort','resortArray', 'resortRatings'));
-    }
-
-    // NLP Testing
     // public function AllResort()
     // {
     //     $resort = Resort::with('images')->where('register_status', 1)->get();
+
+    //     // dd($resort);
+
     //     $resortRatings = [];
 
     //     foreach ($resort as $r) {
@@ -331,6 +313,8 @@ class ResortController extends Controller
     //             'averageRating' => $averageRating,
     //             'count' => $ratings->count()
     //         ];
+
+    //         // dd($averageRating);
     //     }
 
     //     // 确保 $resort 是一个数组
@@ -338,6 +322,75 @@ class ResortController extends Controller
 
     //     return view('frontend-auth.frontend-resort.resort', compact('resort','resortArray', 'resortRatings'));
     // }
+
+    // public function AllResort()
+    // {
+    //     // Get all resorts with preloaded relationships
+    //     $resort = Resort::with(['images', 'ratings'])
+    //         ->where('register_status', 1)
+    //         ->get();
+
+    //     $resortRatings = [];
+
+    //     // Calculate average ratings for each resort
+    //     foreach ($resort as $r) {
+    //         $ratings = $r->ratings;
+    //         $averageRating = $ratings->isEmpty() ? 0 : $ratings->avg('rating');
+
+    //         $resortRatings[$r->id] = [
+    //             'averageRating' => round($averageRating, 1), // Round to 1 decimal place
+    //             'count' => $ratings->count()
+    //         ];
+
+    //         // dd($averageRating);
+    //     }
+
+    //     // Convert resorts to array for JavaScript use
+    //     $resortsArray = $resort->toArray();
+
+    //     // Pass data to view with resortRatings as JSON for JavaScript
+    //     return view('frontend-auth.frontend-resort.resort', [
+    //         'resort' => $resort,
+    //         'resortsArray' => $resortsArray,
+    //         'resortRatings' => $resortRatings
+    //     ]);
+    // }
+
+    public function AllResort()
+    {
+        // Get all resorts with preloaded images
+        $resort = Resort::with(['images'])
+            ->where('register_status', 1)
+            ->get();
+
+        $resortRatings = [];
+
+        // Calculate average ratings for each resort using Query Builder
+        foreach ($resort as $r) {
+            // Get ratings using Query Builder
+            $ratings = DB::table('resort_ratings')
+                ->where('rateable_id', $r->id)
+                ->where('rateable_name', $r->name);
+
+            // Calculate average rating
+            $averageRating = $ratings->avg('rating') ?? 0;
+
+            // Get rating count
+            $ratingCount = $ratings->count();
+
+            $resortRatings[$r->id] = [
+                'averageRating' => round($averageRating, 1), // Round to 1 decimal place
+                'count' => $ratingCount
+            ];
+        }
+
+        // Pass data to view with resortRatings as JSON for JavaScript
+        return view('frontend-auth.frontend-resort.resort', [
+            'resort' => $resort,
+            'resortsArray' => $resort->toArray(),
+            'resortRatings' => $resortRatings
+        ]);
+    }
 
     public function ResortDetail($id)
     {
@@ -403,96 +456,6 @@ class ResortController extends Controller
 
         return view('frontend-auth.frontend-resort.resort',compact('resort'));
     }
-
-    // public function uploadAndSearch(Request $request)
-    // {
-    //     $request->validate([
-    //         'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    //     ]);
-
-    //     $image = $request->file('image');
-    //     $matchedResorts = $this->findMatchingResorts($image);
-
-    //     return response()->json($matchedResorts);
-    // }
-
-    // private function findMatchingResorts($image)
-    // {
-    //     // 你的图片匹配逻辑
-    //     // 示例：通过图片名匹配
-    //     $imageName = $image->getClientOriginalName();
-
-    //     // 假设 Resort 模型中有一个 image 字段存储图片名
-    //     return Resort::where('image', $imageName)->get();
-    // }
-
-    // New
-    // public function uploadAndSearch(Request $request)
-    // {
-    //     $request->validate([
-    //         'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-    //     ]);
-    //     try {
-    //         $image = $request->file('image');
-    //         $matchedResorts = $this->findMatchingResorts($image);
-    //         \Log::info('Matched resorts:', $matchedResorts);
-    //         return response()->json($matchedResorts);
-    //     } catch (\Exception $e) {
-    //         \Log::error('Error in uploadAndSearch:', ['error' => $e->getMessage()]);
-    //         return response()->json(['error' => $e->getMessage()], 500);
-    //     }
-    // }
-
-    // private function findMatchingResorts($image)
-    // {
-    //     $hasher = new ImageHash(new DifferenceHash());
-    //     $uploadedImagePath = $image->getRealPath();
-    //     if (!file_exists($uploadedImagePath)) {
-    //         \Log::error('Uploaded image file does not exist: ' . $uploadedImagePath);
-    //         throw new \Exception('Uploaded image file does not exist');
-    //     }
-    //     $uploadedImageHash = $hasher->hash($uploadedImagePath);
-    //     $resortImages = ResortImage::all();
-    //     $matchedResortIds = [];
-    //     $threshold = 10;
-
-    //     foreach ($resortImages as $resortImage) {
-    //         $dbImagePath = public_path('images/' . $resortImage->image);
-    //         if (!file_exists($dbImagePath)) {
-    //             \Log::warning('Database image file does not exist: ' . $dbImagePath);
-    //             continue;
-    //         }
-    //         try {
-    //             $dbImageHash = $hasher->hash($dbImagePath);
-    //             $distance = $hasher->distance($uploadedImageHash, $dbImageHash);
-    //             \Log::info("Image comparison:", [
-    //                 'uploaded_image' => $uploadedImagePath,
-    //                 'db_image' => $dbImagePath,
-    //                 'distance' => $distance
-    //             ]);
-    //             if ($distance <= $threshold) {
-    //                 $matchedResortIds[] = $resortImage->resort_id;
-    //             }
-    //         } catch (\Exception $e) {
-    //             \Log::error('Error processing image: ' . $dbImagePath, ['error' => $e->getMessage()]);
-    //         }
-    //     }
-    //     $matchedResortIds = array_unique($matchedResortIds);
-    //     $matchedResorts = Resort::with('images')->whereIn('id', $matchedResortIds)->get();
-    //     $matchedResortsArray = $matchedResorts->map(function ($resort) {
-    //         $resortArray = $resort->toArray();
-    //         $resortArray['images'] = $resort->images->map(function ($image) {
-    //             return [
-    //                 'id' => $image->id,
-    //                 'image' => $image->image,
-    //                 'url' => asset('images/' . $image->image)
-    //             ];
-    //         });
-    //         return $resortArray;
-    //     })->toArray();
-    //     \Log::info('Matched resorts:', $matchedResortsArray);
-    //     return $matchedResortsArray;
-    // }
 
     public function uploadAndSearch(Request $request)
     {
@@ -561,106 +524,6 @@ class ResortController extends Controller
         return $matchedResortsArray;
     }
 
-    // private function findMatchingResorts($image)
-    // {
-    //     $hasher = new ImageHash(new DifferenceHash());
-
-    //     $uploadedImagePath = $image->getRealPath();
-    //     if (!file_exists($uploadedImagePath)) {
-    //         \Log::error('Uploaded image file does not exist: ' . $uploadedImagePath);
-    //         throw new \Exception('Uploaded image file does not exist');
-    //     }
-
-    //     $uploadedImageHash = $hasher->hash($uploadedImagePath);
-
-    //     $resortImages = ResortImage::all();
-
-    //     $matchedResortIds = [];
-    //     $threshold = 10; // Increased threshold for more matches
-
-    //     foreach ($resortImages as $resortImage) {
-    //         $dbImagePath = public_path('images/' . $resortImage->image); // 确保路径正确
-    //         if (!file_exists($dbImagePath)) {
-    //             \Log::warning('Database image file does not exist: ' . $dbImagePath);
-    //             continue;
-    //         }
-
-    //         try {
-    //             $dbImageHash = $hasher->hash($dbImagePath);
-    //             $distance = $hasher->distance($uploadedImageHash, $dbImageHash);
-
-    //             \Log::info("Image comparison:", [
-    //                 'uploaded_image' => $uploadedImagePath,
-    //                 'db_image' => $dbImagePath,
-    //                 'distance' => $distance
-    //             ]);
-
-    //             if ($distance <= $threshold) {
-    //                 $matchedResortIds[] = $resortImage->resort_id;
-    //             }
-    //         } catch (\Exception $e) {
-    //             \Log::error('Error processing image: ' . $dbImagePath, ['error' => $e->getMessage()]);
-    //         }
-    //     }
-
-    //     $matchedResortIds = array_unique($matchedResortIds);
-    //     $matchedResorts = Resort::whereIn('id', $matchedResortIds)->get();
-
-    //     \Log::info('Matched resorts:', $matchedResorts->toArray());
-
-    //     return $matchedResorts->toArray();
-    // }
-
-    // public function gpsSearch(Request $request)
-    // {
-    //     $latitude = $request->query('latitude');
-    //     $longitude = $request->query('longitude');
-    //     $radius = 50000; // 50 km radius
-
-    //     // Haversine formula to calculate distance
-    //     $resorts = DB::select(
-    //         'SELECT *,
-    //         (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
-    //         FROM resorts
-    //         HAVING distance < ?
-    //         ORDER BY distance',
-    //         [$latitude, $longitude, $latitude, $radius / 1000]
-    //     );
-
-    //     return response()->json($resorts);
-    // }
-
-    // public function gpsSearch(Request $request)
-    // {
-    //     $latitude = $request->query('latitude');
-    //     $longitude = $request->query('longitude');
-    //     $radius = 500; // 50 km 范围
-
-    //     try {
-
-    //         $resorts = DB::select(
-    //             'SELECT *,
-    //             (6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance
-    //             FROM resorts
-    //             HAVING distance < ?
-    //             ORDER BY distance',
-    //             [$latitude, $longitude, $latitude, $radius]
-    //         );
-
-    //         return response()->json($resorts);
-
-    //     } catch (\Exception $e) {
-
-    //         return response()->json([
-    //             'message' => $e->getMessage(),
-    //             'exception' => get_class($e),
-    //             'file' => $e->getFile(),
-    //             'line' => $e->getLine(),
-    //             'trace' => $e->getTrace()
-    //         ], 500);
-    //     }
-    // }
-
     // Final Full GPS Search
     public function ResortgpsSearch(Request $request)
     {
@@ -705,61 +568,6 @@ class ResortController extends Controller
             ], 500);
         }
     }
-
-    // Testing
-    // public function ResortgpsSearch(Request $request)
-    // {
-    //     $latitude = $request->query('latitude');
-    //     $longitude = $request->query('longitude');
-    //     $radius = 15; // 15 km range
-
-    //     try {
-    //         // 打印接收到的参数
-    //         \Log::info('Received GPS coordinates:', [
-    //             'latitude' => $latitude,
-    //             'longitude' => $longitude,
-    //         ]);
-
-    //         // 增加距离计算
-    //         $resorts = DB::table('resorts')
-    //             ->select('resorts.*',
-    //                 DB::raw('(6371 * acos(cos(radians(?)) * cos(radians(latitude)) * cos(radians(longitude) - radians(?)) + sin(radians(?)) * sin(radians(latitude)))) AS distance'))
-    //             ->where('register_status', 1) // 只选择 register_status 为 1 的酒店
-    //             ->having('distance', '<', $radius)
-    //             ->orderBy('distance')
-    //             ->setBindings([$latitude, $longitude, $latitude])
-    //             ->get();
-
-    //         // 打印查询结果
-    //         \Log::info('Query result:', ['resorts' => $resorts]);
-
-    //         // Fetch the first image for each resort
-    //         foreach ($resorts as $resort) {
-    //             $image = DB::table('resort_images')
-    //                 ->where('resort_id', $resort->id)
-    //                 ->value('image');
-    //             $resort->image = $image;
-    //         }
-
-    //         return response()->json($resorts);
-
-    //     } catch (\Exception $e) {
-    //         // Log the error to Laravel's log files
-    //         \Log::error('Error in GPS Search:', [
-    //             'message' => $e->getMessage(),
-    //             'exception' => get_class($e),
-    //             'file' => $e->getFile(),
-    //             'line' => $e->getLine(),
-    //             'trace' => $e->getTraceAsString(), // Using getTraceAsString to limit the output
-    //         ]);
-
-    //         // Return a JSON response indicating failure
-    //         return response()->json([
-    //             'error' => 'Internal Server Error',
-    //             'message' => 'An error occurred while processing your request. Please try again.'
-    //         ], 500);
-    //     }
-    // }
 
     // --------------------------------------------------------- Resort Promotion Area  ---------------------------------------------- //
 
@@ -1134,7 +942,7 @@ class ResortController extends Controller
     public function showResortCommunityDetail($id) {
 
         $community = ResortCommunity::find($id);
-        
+
         return view('frontend-auth.frontend-resort.resort-community-detail', compact('community'));
     }
 

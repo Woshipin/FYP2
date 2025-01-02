@@ -37,6 +37,12 @@ class Resort extends Model
         return $this->morphMany(ResortRating::class, 'rateable');
     }
 
+    // public function ratings()
+    // {
+    //     return $this->morphMany(ResortRating::class, 'rateable')
+    //         ->where('rateable_type', 'Small Resort');  // 添加具体的类型匹配
+    // }
+
     // Mutliple Image Model
     public function images()
     {

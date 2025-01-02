@@ -2311,7 +2311,9 @@
 
     {{-- Gemini Filter --}}
     <script type="module">
-        import { GoogleGenerativeAI } from "@google/generative-ai";
+        import {
+            GoogleGenerativeAI
+        } from "@google/generative-ai";
 
         document.addEventListener('DOMContentLoaded', function() {
             const chatButton = document.querySelector('.chatbox__button');
@@ -2380,6 +2382,7 @@
                 }
             }
 
+            // First declare the rating generation function
             function generateStarRating(rating) {
                 let stars = '';
                 for (let i = 1; i <= 5; i++) {
@@ -2395,23 +2398,32 @@
             }
 
             function generateResortHTML(resort) {
-                var isDisabled = resort.status === 1;
+                const isDisabled = resort.status === 1;
                 const resortId = resort.id;
-                var resortName = resort.name;
-                var resortLocation = resort.location;
-                var resortState = resort.state;
-                var resortCountry = resort.country;
-                var resortDescription = resort.description;
-                var resortImages = resort.images || [];
-                var resortRating = resortRatings[resortId] || {
+                const resortName = resort.name;
+                const resortLocation = resort.location;
+                const resortState = resort.state;
+                const resortCountry = resort.country;
+                const resortDescription = resort.description;
+                const resortImages = resort.images || [];
+
+                // Get the rating for this specific resort
+                const resortRating = resortRatings[resortId] || {
                     averageRating: 0,
                     count: 0
                 };
 
-                var averageRating = resortRating.averageRating !== undefined && !isNaN(resortRating.averageRating) ?
-                    resortRating.averageRating : 0;
+                // Define averageRating after resortRating is retrieved
+                const averageRating = resortRating.averageRating !== undefined && !isNaN(resortRating
+                        .averageRating) ?
+                    parseFloat(resortRating.averageRating) : 0;
 
-                var imageURL = (resort.image || (resortImages.length > 0 && resortImages[0].image)) ?
+                // For debugging
+                console.log("Resort ID:", resortId);
+                console.log("Resort Rating:", resortRating);
+                console.log("Average Rating:", averageRating);
+
+                const imageURL = (resort.image || (resortImages.length > 0 && resortImages[0].image)) ?
                     "{{ asset('images/') }}/" + (resort.image || resortImages[0].image) :
                     null;
 
@@ -2419,9 +2431,9 @@
                     <div class="resort-card ${isDisabled ? 'disabled' : ''}" id="resortcard_${resortId}">
                         <div class="resort-image">
                             ${imageURL ? `<img src="${imageURL}" alt="${resortName}">` : `
-                                                            <div class="no-image-box">
-                                                                <span>No Image</span>
-                                                            </div>`}
+                                            <div class="no-image-box">
+                                                <span>No Image</span>
+                                            </div>`}
                         </div>
                         <div class="resort-content">
                             <h2 class="resort-title">
@@ -2440,20 +2452,19 @@
                             </div>
                             <div class="resort-rating">
                                 ${generateStarRating(averageRating)}
-                                <span>(${averageRating.toFixed(1)})</span>
                             </div>
                             <div class="resort-actions">
                                 ${isDisabled ?
                                     '<button class="btn btn-disabled">Closed</button>' :
                                     `<div class="actions">
-                                                                <form id="wishlistForm_${resortId}" action="{{ url('/wishlist/add/resort') }}/${resortId}" method="POST" style="display: inline;">
-                                                                    @csrf
-                                                                    <button type="submit" id="wishlist" class="btn btn-wishlist">
-                                                                        <i class="fas fa-heart"></i> Wishlist
-                                                                    </button>
-                                                                </form>
-                                                                <a href="{{ url('Resortdetail/') }}/${resortId}/view" class="btn btn-book" id="viewresort${resortId}">Book Now</a>
-                                                            </div>`
+                                                    <form id="wishlistForm_${resortId}" action="{{ url('/wishlist/add/resort') }}/${resortId}" method="POST" style="display: inline;">
+                                                        @csrf
+                                                        <button type="submit" id="wishlist" class="btn btn-wishlist">
+                                                            <i class="fas fa-heart"></i> Wishlist
+                                                        </button>
+                                                    </form>
+                                                    <a href="{{ url('Resortdetail/') }}/${resortId}/view" class="btn btn-book" id="viewresort${resortId}">Book Now</a>
+                                                </div>`
                                 }
                             </div>
                         </div>
@@ -3105,5 +3116,4 @@
             });
         });
     </script> --}}
-    
 @endsection

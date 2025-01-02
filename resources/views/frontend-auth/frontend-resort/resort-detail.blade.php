@@ -1193,9 +1193,22 @@
             <div class="info-column">
                 <div class="info-card">
                     <!-- Rating -->
-                    <div class="rating">
+                    {{-- <div class="rating">
                         @for ($i = 1; $i <= 5; $i++)
                             <i class="fas fa-star star"></i>
+                        @endfor
+                        <span class="rating-count">({{ $averageRating ?? '0' }})</span>
+                    </div> --}}
+
+                    <div class="rating">
+                        @for ($i = 1; $i <= 5; $i++)
+                            @if ($i <= $averageRating)
+                                <i class="fas fa-star star" style="color: gold;"></i> <!-- 点亮星星 -->
+                            @elseif ($i - $averageRating < 1)
+                                <i class="fas fa-star-half-alt star" style="color: gold;"></i> <!-- 半颗星星 -->
+                            @else
+                                <i class="far fa-star star" style="color: gray;"></i> <!-- 未点亮星星 -->
+                            @endif
                         @endfor
                         <span class="rating-count">({{ $averageRating ?? '0' }})</span>
                     </div>

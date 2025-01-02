@@ -81,9 +81,9 @@ class UserController extends Controller
             return back()->withInput()->withErrors($errors);
         }
 
-        if ($user->status == 0) {
-            return back()->withInput()->with('fail', "Your account is not verified. Please verify your email first.");
-        }
+        // if ($user->status == 0) {
+        //     return back()->withInput()->with('fail', "Your account is not verified. Please verify your email first.");
+        // }
 
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             return redirect('/')->with('success', "You are logged in successfully!");

@@ -11,9 +11,14 @@ class ResortRating extends Model
 
     protected $fillable = ['user_id', 'rateable_id', 'rateable_name', 'rateable_type', 'rating'];
 
+    // public function rateable()
+    // {
+    //     return $this->morphTo();
+    // }
+
     public function rateable()
     {
-        return $this->morphTo();
+        return $this->morphTo('rateable', 'rateable_type', 'rateable_id');
     }
 
     public function user()
