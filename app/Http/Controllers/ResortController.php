@@ -356,6 +356,7 @@ class ResortController extends Controller
     //     ]);
     // }
 
+    // Full SHow All Resort
     public function AllResort()
     {
         // Get all resorts with preloaded images
@@ -390,6 +391,7 @@ class ResortController extends Controller
             'resortsArray' => $resort->toArray(),
             'resortRatings' => $resortRatings
         ]);
+
     }
 
     public function ResortDetail($id)

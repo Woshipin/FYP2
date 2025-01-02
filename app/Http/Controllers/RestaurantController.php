@@ -295,24 +295,60 @@ class RestaurantController extends Controller
     // -------------------------------------------------Frontend----------------------------------------------------------- //
 
     //Frontend Function
+    // public function allRestaurant()
+    // {
+    //     $restaurant = Restaurant::with('images')->where('register_status', 1)->get();
+    //     $restaurantRatings = [];
+
+    //     foreach ($restaurant as $r) {
+    //         $ratings = $r->ratings;
+    //         $averageRating = $ratings->avg('rating') ?? 0; // 如果没有评分，默认为 0
+    //         $restaurantRatings[$r->id] = [
+    //             'averageRating' => $averageRating,
+    //             'count' => $ratings->count()
+    //         ];
+    //     }
+
+    //     // 确保 $restaurant 是一个数组
+    //     $restaurantArray = $restaurant->toArray();
+
+    //     return view('frontend-auth.frontend-restaurant.restaurant', compact('restaurant', 'restaurantArray', 'restaurantRatings'));
+    // }
+
     public function allRestaurant()
     {
-        $restaurant = Restaurant::with('images')->where('register_status', 1)->get();
+        // Get all restaurants with preloaded images
+        $restaurant = Restaurant::with('images')
+            ->where('register_status', 1)
+            ->get();
+
         $restaurantRatings = [];
 
+        // Calculate average ratings for each restaurant using Query Builder
         foreach ($restaurant as $r) {
-            $ratings = $r->ratings;
-            $averageRating = $ratings->avg('rating') ?? 0; // 如果没有评分，默认为 0
+            // Get ratings using Query Builder
+            $ratings = DB::table('restaurant_ratings')
+                ->where('rateable_id', $r->id)
+                ->where('rateable_name', $r->name);
+
+            // Calculate average rating
+            $averageRating = $ratings->avg('rating') ?? 0;
+
+            // Get rating count
+            $ratingCount = $ratings->count();
+
             $restaurantRatings[$r->id] = [
-                'averageRating' => $averageRating,
-                'count' => $ratings->count()
+                'averageRating' => round($averageRating, 1), // Round to 1 decimal place
+                'count' => $ratingCount
             ];
         }
 
-        // 确保 $restaurant 是一个数组
-        $restaurantArray = $restaurant->toArray();
-
-        return view('frontend-auth.frontend-restaurant.restaurant', compact('restaurant', 'restaurantArray', 'restaurantRatings'));
+        // Pass data to view with restaurantRatings as JSON for JavaScript
+        return view('frontend-auth.frontend-restaurant.restaurant', [
+            'restaurant' => $restaurant,
+            'restaurantArray' => $restaurant->toArray(),
+            'restaurantRatings' => $restaurantRatings
+        ]);
     }
 
     public function RestaurantDetail($id){

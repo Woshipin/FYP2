@@ -604,6 +604,42 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+    {{-- back-arrow-circle css --}}
+    <style>
+        .back-arrow-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            margin-left: 15px;
+            /* 与容器的左边距对齐 */
+            margin-top: 10px;
+            /* 进一步缩短上边距 */
+        }
+
+        .back-arrow-circle a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .container {
+            margin-top: 0;
+            /* 完全去除容器的上边距 */
+        }
+    </style>
+
+    <div class="back-arrow-circle">
+        <a href="{{ url('/showHotel') }}">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+    </div>
+
     <div class="container">
 
         <h1>Community</h1><br>

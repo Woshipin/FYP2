@@ -375,24 +375,60 @@ class HotelController extends Controller
     //     return view('frontend-auth.frontend-hotel.hotel', compact('hotels'));
     // }
 
+    // public function AllHotel()
+    // {
+    //     $hotels = Hotel::with('images')->where('register_status', 1)->get();
+    //     $hotelRatings = [];
+
+    //     foreach ($hotels as $h) {
+    //         $ratings = $h->ratings;
+    //         $averageRating = $ratings->avg('rating') ?? 0; // 如果没有评分，默认为 0
+    //         $hotelRatings[$h->id] = [
+    //             'averageRating' => $averageRating,
+    //             'count' => $ratings->count()
+    //         ];
+    //     }
+
+    //     // 确保 $hotels 是一个数组
+    //     $hotelsArray = $hotels->toArray();
+
+    //     return view('frontend-auth.frontend-hotel.hotel', compact('hotels', 'hotelsArray', 'hotelRatings'));
+    // }
+
     public function AllHotel()
     {
-        $hotels = Hotel::with('images')->where('register_status', 1)->get();
+        // Get all hotels with preloaded images
+        $hotels = Hotel::with('images')
+            ->where('register_status', 1)
+            ->get();
+
         $hotelRatings = [];
 
+        // Calculate average ratings for each hotel using Query Builder
         foreach ($hotels as $h) {
-            $ratings = $h->ratings;
-            $averageRating = $ratings->avg('rating') ?? 0; // 如果没有评分，默认为 0
+            // Get ratings using Query Builder
+            $ratings = DB::table('hotel_ratings')
+                ->where('rateable_id', $h->id)
+                ->where('rateable_name', $h->name);
+
+            // Calculate average rating
+            $averageRating = $ratings->avg('rating') ?? 0;
+
+            // Get rating count
+            $ratingCount = $ratings->count();
+
             $hotelRatings[$h->id] = [
-                'averageRating' => $averageRating,
-                'count' => $ratings->count()
+                'averageRating' => round($averageRating, 1), // Round to 1 decimal place
+                'count' => $ratingCount
             ];
         }
 
-        // 确保 $hotels 是一个数组
-        $hotelsArray = $hotels->toArray();
-
-        return view('frontend-auth.frontend-hotel.hotel', compact('hotels', 'hotelsArray', 'hotelRatings'));
+        // Pass data to view with hotelRatings as JSON for JavaScript
+        return view('frontend-auth.frontend-hotel.hotel', [
+            'hotels' => $hotels,
+            'hotelsArray' => $hotels->toArray(),
+            'hotelRatings' => $hotelRatings
+        ]);
     }
 
     public function HotelDetail($id)

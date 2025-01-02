@@ -1140,7 +1140,43 @@
     <!-- Leaflet Routing Machine JS -->
     <script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
 
+    {{-- back-arrow-circle css --}}
+    <style>
+        .back-arrow-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            margin-left: 15px;
+            /* 与容器的左边距对齐 */
+            margin-top: 10px;
+            /* 进一步缩短上边距 */
+        }
+
+        .back-arrow-circle a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .container {
+            margin-top: 0;
+            /* 完全去除容器的上边距 */
+        }
+    </style>
+    
     <br>
+
+    <div class="back-arrow-circle">
+        <a href="{{ url('/allRestaurant') }}">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+    </div>
 
     <div class="container">
         <!-- Restaurant Header -->
@@ -1191,7 +1227,13 @@
                     <!-- Rating -->
                     <div class="rating">
                         @for ($i = 1; $i <= 5; $i++)
-                            <i class="fas fa-star star"></i>
+                            @if ($i <= $averageRating)
+                                <i class="fas fa-star star" style="color: gold;"></i> <!-- 点亮星星 -->
+                            @elseif ($i - $averageRating < 1)
+                                <i class="fas fa-star-half-alt star" style="color: gold;"></i> <!-- 半颗星星 -->
+                            @else
+                                <i class="far fa-star star" style="color: gray;"></i> <!-- 未点亮星星 -->
+                            @endif
                         @endfor
                         <span class="rating-count">({{ $averageRating ?? '0' }})</span>
                     </div>
@@ -1243,6 +1285,11 @@
                         <a href="{{ url('bookingrestaurant/' . $restaurants->id) }}" class="btn btn-primary" id="btn">
                             <i class="fas fa-calendar-check"></i>
                             Book Now
+                        </a>
+
+                        <a href="{{ route('restaurants.contact', ['id' => $restaurants->id]) }}" class="btn btn-primary" id="btn">
+                            <i class="far fa-envelope"></i>
+                            Contact
                         </a>
                         <a href="https://wa.me/601110801649" class="btn btn-outline"
                             id="btncontact">

@@ -998,6 +998,8 @@ class BookingController extends Controller
         // Get the resort IDs booked by the user
         $resortIds = $user->resorts()->pluck('id')->toArray();
 
+        // dd($resortIds);
+
         // Get the count of unpaid bookings for resorts
         $unpaidResortBookingsCount = BookingResort::whereIn('resort_id', $resortIds)
             ->where('payment_status', 'unpaid')
@@ -1006,8 +1008,36 @@ class BookingController extends Controller
         // Get the paginated list of booked resorts
         $resortbookeds = BookingResort::whereIn('resort_id', $resortIds)->paginate(10);
 
+        // dd($resortbookeds);
+
         return view('backend-user.hasbooked.bookedresort', compact('resortbookeds', 'unpaidResortBookingsCount'));
     }
+
+    // public function hasbookingResort()
+    // {
+    //     $user = auth()->user();
+
+    //     // 获取用户关联的度假村 ID
+    //     $resortIds = $user->resorts()->pluck('id')->toArray();
+
+    //     // 调试：检查 resortIds
+    //     // dd($resortIds);
+
+    //     // 获取未支付的预订数量
+    //     $unpaidResortBookingsCount = BookingResort::whereIn('resort_id', $resortIds)
+    //         ->where('payment_status', 'unpaid')
+    //         ->count();
+
+    //     // 获取预订的度假村列表，并预加载 resort 关系
+    //     $resortbookeds = BookingResort::whereIn('resort_id', $resortIds)
+    //         ->with('resort')
+    //         ->paginate(10);
+
+    //     // 调试：检查查询结果
+    //     // dd($resortbookeds);
+
+    //     return view('backend-user.hasbooked.bookedresort', compact('resortbookeds', 'unpaidResortBookingsCount'));
+    // }
 
     public function mybookedResort()
     {
@@ -1193,7 +1223,7 @@ class BookingController extends Controller
 
             // 获取已预订的日期范围
             $bookedDates = $this->getBookedHotelDates($id);
-            
+
             // dd($bookedDates);
 
             return view('frontend-auth.special.bookinghotel', compact('hotels', 'genders', 'rooms', 'bookedDates'));

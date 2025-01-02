@@ -1,7 +1,6 @@
 @extends('backend-user.newlayout')
 
 @section('newuser-section')
-
     <!-- Include required CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -183,10 +182,47 @@
         }
     </style>
 
+    {{-- back-arrow-circle css --}}
+    <style>
+        .back-arrow-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            margin-left: 15px;
+            /* 与容器的左边距对齐 */
+            margin-top: 10px;
+            /* 进一步缩短上边距 */
+        }
+
+        .back-arrow-circle a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .container {
+            margin-top: 0;
+            /* 完全去除容器的上边距 */
+        }
+    </style>
+
+    <div class="back-arrow-circle">
+        <a href="{{ url('/showResort') }}">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+    </div>
+
     <div class="main-container">
         <div class="card">
             <div class="card-header">
-                <h1 class="card-title">Discount Management for Resort:<br>{{ $discounts->first()->resort->name ?? 'Unknown Resort' }}</h1>
+                <h1 class="card-title">Discount Management for
+                    Resort:<br>{{ $discounts->first()->resort->name ?? 'Unknown Resort' }}</h1>
             </div>
             <div class="card-content">
                 <!-- Add New Rule Section -->
@@ -209,13 +245,13 @@
                                 <span class="text-success fw-medium">{{ $discount->discount }}% discount</span>
                             </div>
                             <div class="btn-group">
-                                <button class="btn-modern btn-success" data-bs-toggle="modal" data-bs-target="#editDiscountModal{{ $discount->id }}">
+                                <button class="btn-modern btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#editDiscountModal{{ $discount->id }}">
                                     <i class="fas fa-edit"></i>
                                     Edit
                                 </button>
-                                <a href="{{ route('resort.discount.delete', $discount->id) }}"
-                                   class="btn-modern btn-danger"
-                                   onclick="return confirm('Are you sure you want to delete this discount?');">
+                                <a href="{{ route('resort.discount.delete', $discount->id) }}" class="btn-modern btn-danger"
+                                    onclick="return confirm('Are you sure you want to delete this discount?');">
                                     <i class="fas fa-trash"></i>
                                     Delete
                                 </a>
@@ -224,32 +260,38 @@
 
                         <!-- Edit Discount Modal -->
                         <div class="modal fade" id="editDiscountModal{{ $discount->id }}" tabindex="-1"
-                             aria-labelledby="editDiscountLabel{{ $discount->id }}" aria-hidden="true">
+                            aria-labelledby="editDiscountLabel{{ $discount->id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <form action="{{ route('resort.discount.update') }}" method="POST">
                                         @csrf
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="editDiscountLabel{{ $discount->id }}">Edit Discount</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            <h5 class="modal-title" id="editDiscountLabel{{ $discount->id }}">Edit Discount
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
                                             <input type="hidden" name="id" value="{{ $discount->id }}">
                                             <div class="mb-3">
-                                                <label for="nights{{ $discount->id }}" class="form-label">Minimum Nights</label>
+                                                <label for="nights{{ $discount->id }}" class="form-label">Minimum
+                                                    Nights</label>
                                                 <input type="number" class="form-control" name="nights"
                                                     id="nights{{ $discount->id }}" value="{{ $discount->nights }}"
                                                     min="1" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="discount{{ $discount->id }}" class="form-label">Discount (%)</label>
+                                                <label for="discount{{ $discount->id }}" class="form-label">Discount
+                                                    (%)
+                                                </label>
                                                 <input type="number" class="form-control" name="discount"
                                                     id="discount{{ $discount->id }}" value="{{ $discount->discount }}"
                                                     min="0" max="100" required>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn-modern btn-danger" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn-modern btn-danger"
+                                                data-bs-dismiss="modal">Close</button>
                                             <button type="submit" class="btn-modern btn-success">Update Discount</button>
                                         </div>
                                     </form>
@@ -260,15 +302,16 @@
                 </div>
 
                 <!-- Add Discount Modal -->
-                <div class="modal fade" id="addDiscountModal" tabindex="-1"
-                     aria-labelledby="addDiscountLabel" aria-hidden="true">
+                <div class="modal fade" id="addDiscountModal" tabindex="-1" aria-labelledby="addDiscountLabel"
+                    aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <form action="{{ route('resort.discount.save', $id) }}" method="POST">
                                 @csrf
                                 <div class="modal-header">
                                     <h5 class="modal-title" id="addDiscountLabel">Add New Discount Rule</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
                                     <div class="mb-3">
@@ -279,11 +322,13 @@
                                     <div class="mb-3">
                                         <label for="discount" class="form-label">Discount (%)</label>
                                         <input type="number" class="form-control" name="discount" id="discount"
-                                            placeholder="Enter discount percentage" min="0" max="100" required>
+                                            placeholder="Enter discount percentage" min="0" max="100"
+                                            required>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
-                                    <button type="button" class="btn-modern btn-danger" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" class="btn-modern btn-danger"
+                                        data-bs-dismiss="modal">Close</button>
                                     <button type="submit" class="btn-modern btn-success">Add Discount</button>
                                 </div>
                             </form>

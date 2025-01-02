@@ -1,7 +1,6 @@
 @extends('backend-user.newlayout')
 
 @section('newuser-section')
-
     {{-- toastify --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 
@@ -126,7 +125,8 @@
         .facility-icon-container {
             display: flex;
             align-items: center;
-            margin-right: 1rem; /* 增加图标和名称之间的间距 */
+            margin-right: 1rem;
+            /* 增加图标和名称之间的间距 */
         }
 
         .facility-name {
@@ -157,6 +157,42 @@
         }
     </style>
 
+    {{-- back-arrow-circle css --}}
+    <style>
+        .back-arrow-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            margin-left: 15px;
+            /* 与容器的左边距对齐 */
+            margin-top: 10px;
+            /* 进一步缩短上边距 */
+        }
+
+        .back-arrow-circle a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .container {
+            margin-top: 0;
+            /* 完全去除容器的上边距 */
+        }
+    </style>
+
+    <div class="back-arrow-circle">
+        <a href="{{ url('/showHotel') }}">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+    </div>
+
     <div class="container">
         <div class="card">
             <div class="card-header">
@@ -164,12 +200,14 @@
                 <p class="card-description">Select the available facilities for this hotel</p>
             </div>
             <div class="card-content">
-                <form action="{{ url('backend-user/backend-hotel/hotelfacility/' . $hotel->id . '/add-facilities') }}" method="POST">
+                <form action="{{ url('backend-user/backend-hotel/hotelfacility/' . $hotel->id . '/add-facilities') }}"
+                    method="POST">
                     @csrf
                     <div class="facilities-grid">
-                        @foreach($facilities as $facility)
+                        @foreach ($facilities as $facility)
                             <label class="facility-item">
-                                <input type="checkbox" name="facilities[]" value="{{ $facility->id }}" {{ in_array($facility->id, $selectedFacilities) ? 'checked' : '' }}>
+                                <input type="checkbox" name="facilities[]" value="{{ $facility->id }}"
+                                    {{ in_array($facility->id, $selectedFacilities) ? 'checked' : '' }}>
                                 <span class="checkmark"></span>
                                 <div class="facility-icon-container">
                                     <i class="fas {{ $facility->icon_class }}"></i>
@@ -228,5 +266,4 @@
             @endforeach
         @endif
     </script>
-
 @endsection

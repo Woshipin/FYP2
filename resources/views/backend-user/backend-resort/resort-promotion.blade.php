@@ -49,142 +49,34 @@
         }
     </style>
 
-    {{-- <div class="container mt-5">
-        <div class="card shadow-lg">
-            <div class="card-header bg-primary text-white">
-                <h1 class="mb-0">Promotion Dates for {{ $resort->name }}</h1>
-            </div>
-            <div class="card-body">
-                <form action="{{ route('resort.promotion.save', $resort->id) }}" method="POST">
-                    @csrf
-                    <div class="form-group mb-3">
-                        <label for="promotion_dates_display" class="form-label">Select Promotion Dates</label>
-                        <div class="input-group">
-                            <input type="text" id="promotion_dates_display" class="form-control" readonly>
-                            <div id="hidden-dates-container"></div>
-                            <div class="input-group-append">
-                                <span class="input-group-text" id="calendar-icon">
-                                    <i class="fa fa-calendar"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div id="calendar-container" class="mt-3" style="display: none;"></div>
-                    </div>
-                    <div class="mt-3">
-                        <button type="submit" class="btn btn-primary">Save Promotion Dates</button>
-                        <button type="button" id="reset-dates" class="btn btn-secondary">Reset</button>
-                    </div>
-                </form>
+    {{-- back-arrow-circle css --}}
+    <style>
+        .back-arrow-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            margin-left: 15px; /* 与容器的左边距对齐 */
+            margin-top: 10px; /* 进一步缩短上边距 */
+        }
 
-                <!-- 显示现有促销日期 -->
-                <div class="mt-4">
-                    <h3>Current Promotion Dates</h3>
-                    @if ($promotionDates->count() > 0)
-                        <div class="row">
-                            @foreach ($promotionDates as $month => $dates)
-                                <div class="col-md-4 mb-3">
-                                    <div class="card">
-                                        <div class="card-header bg-info text-white">
-                                            {{ $month }}
-                                        </div>
-                                        <div class="card-body">
-                                            <ul class="list-unstyled">
-                                                @foreach ($dates as $date)
-                                                    <li>{{ Carbon\Carbon::parse($date->date)->format('j F Y') }}</li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <div class="alert alert-info">
-                            No promotion dates set yet.
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
+        .back-arrow-circle a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 20px;
+        }
 
-    <script>
-        $(document).ready(function() {
-            // 获取现有的促销日期
-            var existingDates = [
-                @foreach ($promotionDates->flatten() as $date)
-                    "{{ Carbon\Carbon::parse($date->date)->format('Y-m-d') }}",
-                @endforeach
-            ];
+        .container {
+            margin-top: 0; /* 完全去除容器的上边距 */
+        }
+    </style>
 
-            // 初始化 Flatpickr
-            var fp = flatpickr("#promotion_dates_display", {
-                mode: "multiple",
-                dateFormat: "Y-m-d",
-                altInput: true,
-                altFormat: "F j, Y",
-                inline: true,
-                defaultDate: existingDates, // 设置默认选中的日期
-                appendTo: document.getElementById('calendar-container'),
-                time_24hr: true,
-                onChange: function(selectedDates, dateStr, instance) {
-                    $('#hidden-dates-container').empty();
-
-                    selectedDates.forEach(date => {
-                        let formattedDate = moment(date).format('YYYY-MM-DD');
-                        $('#hidden-dates-container').append(
-                            `<input type="hidden" name="promotion_dates[]" value="${formattedDate}">`
-                        );
-                    });
-
-                    // 不更新输入框的值，以免显示已选择日期
-                    if (selectedDates.length === 0) {
-                        $('#promotion_dates_display').val('');
-                    }
-                }
-            });
-
-            // 日历图标点击事件
-            $('#calendar-icon').on('click', function() {
-                $('#calendar-container').toggle();
-            });
-
-            // 点击文档其他地方时关闭日历
-            $(document).on('click', function(e) {
-                if (!$(e.target).closest('#calendar-container, #calendar-icon, .flatpickr-calendar')
-                    .length) {
-                    $('#calendar-container').hide();
-                }
-            });
-
-            // 表单提交验证
-            $('form').on('submit', function(e) {
-                let selectedDatesInputs = $('input[name="promotion_dates[]"]');
-
-                if (selectedDatesInputs.length === 0) {
-                    e.preventDefault();
-                    Toastify({
-                        text: "Please select at least one promotion date",
-                        duration: 3000,
-                        style: {
-                            background: "linear-gradient(to right, #b90000, #c99396)"
-                        }
-                    }).showToast();
-                    return false;
-                }
-            });
-
-            // 重置按钮功能
-            $('#reset-dates').on('click', function() {
-                fp.clear();
-                $('#hidden-dates-container').empty();
-                $('#promotion_dates_display').val('');
-            });
-
-            // 设置最小日期为今天
-            fp.set('minDate', 'today');
-        });
-    </script> --}}
+    {{-- -------------------------------------------------------- HTML Area ---------------------------------------------------------- --}}
 
     {{-- <div class="container mt-5">
         <div class="card shadow-lg">
@@ -207,13 +99,23 @@
                         </div>
                         <div id="calendar-container" class="mt-3" style="display: none;"></div>
                     </div>
+
+                    <!-- 添加价格输入框 -->
+                    <div class="form-group mb-3">
+                        <label for="promotion_price" class="form-label">Enter Promotion Price</label>
+                        <div class="input-group">
+                            <input type="number" id="promotion_price" name="promotion_price" class="form-control"
+                                placeholder="Enter price for selected dates">
+                        </div>
+                    </div>
+
                     <div class="mt-3">
                         <button type="submit" class="btn btn-primary">Save Promotion Dates</button>
                         <button type="button" id="reset-dates" class="btn btn-secondary">Reset</button>
                     </div>
                 </form>
 
-                <!-- 显示现有促销日期 -->
+                <!-- 显示现有促销日期和价格 -->
                 <div class="mt-4">
                     <h3>Current Promotion Dates</h3>
                     @if ($promotionDates->count() > 0)
@@ -228,7 +130,14 @@
                                             <ul class="list-unstyled">
                                                 @foreach ($dates as $date)
                                                     <li>
-                                                        {{ Carbon\Carbon::parse($date->date)->format('j F Y') }}
+                                                        {{ Carbon\Carbon::parse($date->date)->format('j F Y') }} -
+                                                        RM{{ $date->price }}
+                                                        <a href="#" class="btn btn-link text-primary edit-price"
+                                                            data-date-id="{{ $date->id }}"
+                                                            data-date="{{ $date->date }}"
+                                                            data-price="{{ $date->price }}">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
                                                         <a href="{{ route('resort.promotion.delete', ['id' => $resort->id, 'date_id' => $date->id]) }}"
                                                             onclick="return confirm('Are you sure to delete this date?')"
                                                             class="btn btn-link text-danger">
@@ -248,12 +157,15 @@
                         </div>
                     @endif
                 </div>
-
-
-
             </div>
         </div>
     </div> --}}
+
+    <div class="back-arrow-circle">
+        <a href="{{ url('/showResort') }}">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+    </div>
 
     <div class="container mt-5">
         <div class="card shadow-lg">
@@ -337,6 +249,7 @@
             </div>
         </div>
     </div>
+
 
     <!-- 编辑价格的模态框 -->
     <div class="modal fade" id="editPriceModal" tabindex="-1" aria-labelledby="editPriceModalLabel" aria-hidden="true">
@@ -604,5 +517,11 @@
             @endforeach
         @endif
     </script>
+
+    {{-- <script>
+        function goBack() {
+            window.history.back();
+        }
+    </script> --}}
 
 @endsection

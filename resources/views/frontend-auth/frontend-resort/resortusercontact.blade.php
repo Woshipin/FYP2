@@ -47,7 +47,43 @@
         }
     </style>
 
+    {{-- back-arrow-circle css --}}
+    <style>
+        .back-arrow-circle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            margin-left: 15px;
+            /* 与容器的左边距对齐 */
+            margin-top: 10px;
+            /* 进一步缩短上边距 */
+        }
+
+        .back-arrow-circle a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 20px;
+        }
+
+        .container {
+            margin-top: 0;
+            /* 完全去除容器的上边距 */
+        }
+    </style>
+
     <br><br><br><br><br><br><br>
+
+    <div class="back-arrow-circle">
+        <a href="{{ route('resort-detail', ['id' => $resorts->id]) }}">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+    </div>
 
     <!-- Contact Section Starts -->
     <section class="contact" id="contact">
