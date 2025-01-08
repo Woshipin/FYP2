@@ -29,7 +29,13 @@ class RoomController extends Controller
             'type' => 'required',
             'available' => 'required',
             'type' => 'required',
+            'hotel_id' => 'required', // 确保 hotel_id 是必填项
         ]);
+
+        // 检查 hotel_id 是否为 null
+        if (is_null($request->hotel_id)) {
+            return back()->with('error', 'The hotel ID cannot be null.')->withInput();
+        }
 
         $newRoom = new Room(); // Use a different variable name
 
@@ -41,7 +47,7 @@ class RoomController extends Controller
         $newRoom->price = $request->price;
         $newRoom->save();
 
-        return back()->with('room', 'You have added a new Room successfully');
+        return back()->with('success', 'You have added a new Room successfully');
     }
 
     public function editRoom($id) {
@@ -55,8 +61,28 @@ class RoomController extends Controller
 
     public function updateRoom(Request $request, $id){
 
+        // 验证请求数据
+        $request->validate([
+            'name' => 'required|string',
+            'type' => 'required',
+            'available' => 'required',
+            'hotel_id' => 'required', // 确保 hotel_id 是必填项
+        ]);
+
+        // 检查 hotel_id 是否为 null
+        if (is_null($request->hotel_id)) {
+            return back()->with('error', 'The hotel ID cannot be null.')->withInput();
+        }
+
+        // 查找房间记录
         $rooms = Room::find($id);
 
+        // 如果找不到房间记录，返回错误
+        if (!$rooms) {
+            return back()->with('error', 'Room not found.')->withInput();
+        }
+
+        // 更新房间信息
         $rooms->hotel_id = $request->hotel_id;
         $rooms->name = $request->name;
         $rooms->type = $request->type;
@@ -64,7 +90,8 @@ class RoomController extends Controller
         $rooms->price = $request->price;
         $rooms->save();
 
-        return back()->with('room','This Room has been updated successfully.');
+        // 返回成功消息
+        return back()->with('success', 'This Room has been updated successfully.');
     }
 
     public function deleteRoom($id){

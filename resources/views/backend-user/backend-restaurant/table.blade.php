@@ -2,6 +2,8 @@
 
 @section('newuser-section')
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
     {{-- Modal CSS --}}
     <style>
         .modal-dialog {
@@ -510,6 +512,51 @@
                 }
             });
         });
+    </script>
+
+    {{-- Toastr JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <script>
+        @if (Session::has('success'))
+            Toastify({
+                text: "{{ Session::get('success') }}",
+                duration: 10000,
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)"
+                }
+            }).showToast();
+        @elseif (Session::has('fail'))
+            Toastify({
+                text: "{{ Session::get('fail') }}",
+                duration: 10000,
+                style: {
+                    background: "linear-gradient(to right, #b90000, #c99396)"
+                }
+            }).showToast();
+        @endif
+
+        @if (Session::has('error'))
+            Toastify({
+                text: "{{ Session::get('error') }}",
+                duration: 10000,
+                style: {
+                    background: "linear-gradient(to right, #b90000, #c99396)"
+                }
+            }).showToast();
+        @endif
+
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                Toastify({
+                    text: "{{ $error }}",
+                    duration: 10000,
+                    style: {
+                        background: "linear-gradient(to right, #b90000, #c99396)"
+                    }
+                }).showToast();
+            @endforeach
+        @endif
     </script>
 
 @endsection

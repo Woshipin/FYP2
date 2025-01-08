@@ -24,24 +24,31 @@ class TableController extends Controller
     {
         $user = auth()->user();
 
+        // 验证请求数据
         $validatedData = $request->validate([
-            'restaurant_id' => 'required',
+            'restaurant_id' => 'required|exists:restaurants,id', // 确保 restaurant_id 存在
             'title' => 'required|string',
-            // Add validation rules for other table columns
+            // 添加其他字段的验证规则
         ]);
 
-        $restaurant = Restaurant::findOrFail($validatedData['restaurant_id']);
+        // 查找餐厅记录
+        $restaurant = Restaurant::find($validatedData['restaurant_id']);
 
+        // 如果餐厅不存在，返回错误
+        if (!$restaurant) {
+            return back()->with('error', 'Restaurant not found.')->withInput();
+        }
+
+        // 创建新桌子记录
         $table = $user->tables()->create([
             'user_id' => $user->id,
             'restaurant_id' => $restaurant->id,
             'title' => $validatedData['title'],
-            // Add other table column values
+            // 添加其他字段的值
         ]);
 
-        // Perform any additional actions if needed
-
-        return redirect()->back()->with('table', 'Table added successfully.');
+        // 返回成功消息
+        return back()->with('success', 'Table added successfully.');
     }
 
     public function editTable($id){
@@ -49,18 +56,33 @@ class TableController extends Controller
         $tables = Table::find($id);
         $restaurantd = Restaurant::find($id);
 
+        return view('backend-user.backend-restaurant.edit-table',compact('restaurantd','tables'));
         return view('backend-user.backend-restaurant.restaurant',compact('restaurantd','tables'));
     }
 
-    public function updateTable(Request $request, $id){
+    public function updateTable(Request $request, $id)
+    {
+        // 验证请求数据
+        $validatedData = $request->validate([
+            'restaurant_id' => 'required|exists:restaurants,id', // 确保 restaurant_id 存在
+            'title' => 'required|string',
+        ]);
 
+        // 查找桌子记录
         $tables = Table::find($id);
 
-        $tables->restaurant_id = $request->restaurant_id;
-        $tables->title = $request->title;
+        // 如果桌子不存在，返回错误
+        if (!$tables) {
+            return back()->with('error', 'Table not found.')->withInput();
+        }
+
+        // 更新桌子信息
+        $tables->restaurant_id = $validatedData['restaurant_id'];
+        $tables->title = $validatedData['title'];
         $tables->save();
 
-        return back()->with('table','This Table has been updated successfully.');
+        // 返回成功消息
+        return back()->with('success', 'Table updated successfully.');
     }
 
     public function deleteTable($id){

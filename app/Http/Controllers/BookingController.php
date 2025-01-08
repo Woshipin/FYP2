@@ -1699,7 +1699,7 @@ class BookingController extends Controller
             Mail::to('ahpin7762@gmail.com')->send(new ResortPaymentVerification($bookedResort));
 
             // 返回之前的页面，并显示成功消息
-            return redirect('http://192.168.119.154:8000/mybookingsresort')->with('success', 'Payment status updated successfully and verification information sent to your email.');
+            return redirect('http://192.168.203.154:8000/mybookingsresort')->with('success', 'Payment status updated successfully and verification information sent to your email.');
         } else {
             // 如果不匹配，则返回验证失败的信息
             return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
@@ -1760,7 +1760,7 @@ class BookingController extends Controller
             Mail::to('ahpin7762@gmail.com')->send(new HotelPaymentVerification($bookedHotel));
 
             // 返回之前的页面，并显示成功消息
-            return redirect('http://192.168.111.154:8000/mybookingshotel')->with('success', 'Payment status updated successfully and verification information sent to your email.');
+            return redirect('http://192.168.203.154:8000/mybookingshotel')->with('success', 'Payment status updated successfully and verification information sent to your email.');
         } else {
             // 如果不匹配，则返回验证失败的信息
             return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
@@ -1819,7 +1819,7 @@ class BookingController extends Controller
             Mail::to('ahpin7762@gmail.com')->send(new RestaurantPaymentVerification($bookedRestaurant));
 
             // 返回之前的页面，并显示成功消息
-            return redirect('http://192.168.111.154:8000/mybookingsrestaurant')->with('success', 'Payment status updated successfully and verification information sent to your email.');
+            return redirect('http://192.168.203.154:8000/mybookingsrestaurant')->with('success', 'Payment status updated successfully and verification information sent to your email.');
         } else {
             // 如果不匹配，则返回验证失败的信息
             return redirect()->back()->with('fail', 'Verify Fail, Information Verify Not Match.');
